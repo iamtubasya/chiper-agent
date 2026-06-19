@@ -460,31 +460,27 @@ init_config() {
 
     mkdir -p "$CHIPER_HOME"
 
-    # Create .env if not exists
+    # Create .env from .env.example if not exists
     if [ ! -f "$CHIPER_HOME/.env" ]; then
-        cat > "$CHIPER_HOME/.env" << 'ENVFILE'
+        if [ -f "$INSTALL_DIR/.env.example" ]; then
+            cp "$INSTALL_DIR/.env.example" "$CHIPER_HOME/.env"
+            log_success "Created .env from .env.example at $CHIPER_HOME/.env"
+        else
+            # Fallback: create minimal .env
+            cat > "$CHIPER_HOME/.env" << 'ENVFILE'
 # ChiperFlux Agent Configuration
 # ================================
-# Fill in your API keys below
+# Run 'chiper setup' or 'chiper env wizard' to configure
 
 # LLM Provider (choose one)
 OPENROUTER_API_KEY=
-# OR
-OPENAI_API_KEY=
-# OR
-XAI_API_KEY=
 
-# Telegram Bot (optional)
+# Telegram Bot
 TELEGRAM_BOT_TOKEN=
-
-# Discord Bot (optional)
-DISCORD_BOT_TOKEN=
-
-# Other optional keys
-ANTHROPIC_API_KEY=
-GOOGLE_API_KEY=
+TELEGRAM_ALLOWED_USERS=
 ENVFILE
-        log_success "Created default .env at $CHIPER_HOME/.env"
+            log_success "Created default .env at $CHIPER_HOME/.env"
+        fi
     else
         log_info ".env already exists, skipping"
     fi
@@ -540,9 +536,15 @@ post_install() {
 
     cd "$INSTALL_DIR"
 
-    # Run setup if interactive
+    # Run setup if interactive - use full path to chiper
+    local _chiper_cmd="$INSTALL_DIR/.venv/bin/chiper"
+    if [ ! -f "$_chiper_cmd" ]; then
+        _chiper_cmd="/usr/local/bin/chiper"
+    fi
+
     if [ "$IS_INTERACTIVE" = true ]; then
-        chiper setup 2>/dev/null || log_warn "Setup wizard skipped (non-critical)"
+        log_info "Starting chiper setup..."
+        "$_chiper_cmd" setup || log_warn "Setup wizard skipped (non-critical)"
     else
         log_info "Non-interactive mode, skipping setup wizard"
         log_info "Run 'chiper setup' manually to configure"
