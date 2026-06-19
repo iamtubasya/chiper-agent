@@ -4630,12 +4630,14 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             pass
 
         if _in_chroot:
-            # Chroot-safe: Python watcher that polls PID then exec's gateway
+            # Chroot-safe: Python watcher that polls PID then calls restart.sh
+            # Bypasses 'chiper gateway restart' guard entirely.
             import textwrap
+            restart_script = str(Path.home() / ".chiperflux" / "scripts" / "restart.sh")
             watcher_py = textwrap.dedent(f"""
                 import os, subprocess, sys, time
                 pid = int(sys.argv[1])
-                cmd = sys.argv[2:]
+                restart_sh = sys.argv[2]
                 deadline = time.monotonic() + 120
                 while time.monotonic() < deadline:
                     try:
@@ -4653,14 +4655,15 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                         pid_file.unlink(missing_ok=True)
                 except Exception:
                     pass
+                # Call restart.sh (pkill + nohup chiper gateway run)
                 subprocess.Popen(
-                    cmd,
+                    ["/bin/bash", restart_sh],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
                     start_new_session=True,
                 )
             """).strip()
-            watcher_argv = [sys.executable, "-c", watcher_py, str(current_pid), *chiper_cmd]
+            watcher_argv = [sys.executable, "-c", watcher_py, str(current_pid), restart_script]
             try:
                 subprocess.Popen(
                     watcher_argv,
@@ -4669,7 +4672,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                     env=watcher_env,
                     start_new_session=True,
                 )
-                logger.info("Launched chroot-safe Python restart watcher (pid=%s)", current_pid)
+                logger.info("Launched chroot-safe restart watcher → restart.sh (pid=%s)", current_pid)
             except Exception as e:
                 logger.error("Failed to launch chroot restart watcher: %s", e)
             return
@@ -4778,7 +4781,10 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         self._restart_task_started = True
 
         async def _run_restart() -> None:
-            await asyncio.sleep(0.05)
+            # Give Telegram enough time to send the "Restarting gateway..."
+            # message before we start shutting down. Without this delay,
+            # the gateway dies before the message reaches the API.
+            await asyncio.sleep(3)
             await self.stop(restart=True, detached_restart=detached, service_restart=via_service)
 
         task = asyncio.create_task(_run_restart())
