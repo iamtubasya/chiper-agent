@@ -479,6 +479,127 @@ CONFIGFILE
     fi
 
     sleep 2
+
+    # Create IDENTITY.md if it doesn't exist
+    if [ ! -f "$CHIPER_HOME/IDENTITY.md" ]; then
+        cat > "$CHIPER_HOME/IDENTITY.md" << 'IDENTITY_EOF'
+# IDENTITY.md - Name, Vibe & Fingerprint
+
+Name: **CHIPERFLUX**
+Tagline: "Execute first. Explain after."
+Core: Crypto + Dev execution agent
+Runtime: Chiper Agent (fork of Hermes by Nous Research)
+
+## Character Modes
+
+- Problem solving: Calm, decisive
+- Business / monetize: Sharp, ROI-focused
+- Coding / DevOps: Precise, no-nonsense
+- Content: Punchy, conversion-first
+- Web3 / on-chain ops: Methodical, risk-aware
+- Operator stuck: Empathetic, solution-first
+- Casual chat: Relaxed, still sharp
+- Audit / debug: Forensic, structured
+IDENTITY_EOF
+        log_success "Created $CHIPER_HOME/IDENTITY.md"
+    fi
+
+    # Create MEMORY.md if it doesn't exist
+    if [ ! -f "$CHIPER_HOME/MEMORY.md" ]; then
+        cat > "$CHIPER_HOME/MEMORY.md" << 'MEMORY_EOF'
+# MEMORY.md - Long-Term Context
+# Auto-injected every session. Compact format.
+
+## OWNER
+
+Name: (your name here)
+Niche: (your niche: crypto, dev, content, business, etc.)
+Audience: (your audience)
+Model: (your business model)
+
+## STACK BIASES
+
+Server: (your server: VPS, Android, etc.)
+Runtime: Python + Node.js
+DB: SQLite (simple, file-based)
+Deploy: (your deploy method)
+
+## ACTIVE PROJECTS
+
+(project name) | active | (tech stack) | (description)
+
+## LOCKED DECISIONS
+
+(date) | (decision) | (reason)
+
+## OPERATOR PREFERENCES
+
+- Jawaban singkat & langsung
+- Pakai emoji
+- (add your preferences here)
+MEMORY_EOF
+        log_success "Created $CHIPER_HOME/MEMORY.md (edit to add your context)"
+    fi
+
+    # Create USER.md if it doesn't exist
+    if [ ! -f "$CHIPER_HOME/USER.md" ]; then
+        cat > "$CHIPER_HOME/USER.md" << 'USER_EOF'
+# USER.md - Operator Profile
+
+## Identity
+
+Name: (your name)
+Role: (your role: developer, trader, content creator, etc.)
+Location: (your timezone/location)
+
+## Communication Style
+
+- Language: (your preferred language)
+- Tone: (casual, professional, etc.)
+- Detail level: (concise, detailed, etc.)
+
+## Technical Level
+
+- Programming: (beginner, intermediate, advanced)
+- Crypto: (beginner, intermediate, advanced)
+- DevOps: (beginner, intermediate, advanced)
+USER_EOF
+        log_success "Created $CHIPER_HOME/USER.md (edit to add your profile)"
+    fi
+
+    # Create TOOLS.md if it doesn't exist
+    if [ ! -f "$CHIPER_HOME/TOOLS.md" ]; then
+        cat > "$CHIPER_HOME/TOOLS.md" << 'TOOLS_EOF'
+# TOOLS.md - Available Tools & Skills
+
+## Core Tools
+
+- terminal: Run shell commands
+- file: Read/write files
+- web: Search and browse
+- browser: Browser automation
+- image_gen: Generate images
+- tts: Text to speech
+
+## CLI Commands
+
+- chiper: Start interactive chat
+- chiper setup: Full setup wizard
+- chiper model: Choose LLM provider
+- chiper telegram setup: Setup Telegram gateway
+- chiper gateway: Start gateway (Telegram, Discord, etc.)
+- chiper env show: View .env config
+- chiper env check: Check required vars
+- chiper platform detect: Detect platforms
+- chiper doctor: Diagnose issues
+
+## Skills
+
+Skills are loaded from ~/.chiperflux/skills/
+Use chiper skills list to see available skills.
+TOOLS_EOF
+        log_success "Created $CHIPER_HOME/TOOLS.md"
+    fi
 }
 
 # ============================================================================
