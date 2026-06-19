@@ -1373,10 +1373,22 @@ def _container_systemd_operational() -> bool:
     return False
 
 
+def _is_chroot() -> bool:
+    """Detect if running inside a chroot environment."""
+    try:
+        if os.path.exists("/proc/1/root"):
+            return os.stat("/proc/1/root").st_ino != os.stat("/").st_ino
+    except Exception:
+        pass
+    return False
+
+
 def supports_systemd_services() -> bool:
     if not is_linux() or is_termux():
         return False
     if shutil.which("systemctl") is None:
+        return False
+    if _is_chroot():
         return False
     if is_wsl():
         return _wsl_systemd_operational()
@@ -6774,8 +6786,11 @@ def _gateway_command_inner(args):
             print("Or run the gateway directly: chiper gateway run")
             sys.exit(0)
         else:
-            print("Not supported on this platform.")
-            sys.exit(1)
+            # No service manager available — fall back to direct run
+            print("No service manager (systemd/launchd) available.")
+            print("Starting gateway directly...")
+            run_gateway(verbose=0)
+            return
 
     elif subcmd == "stop":
         # Defense: refuse self-targeting gateway stop from inside the gateway.
@@ -6873,7 +6888,9 @@ def _gateway_command_inner(args):
     elif subcmd == "restart":
         # Defense: refuse self-targeting gateway restart from inside the gateway.
         # Prevents agent-initiated kill loops when combined with supervisor KeepAlive.
-        if os.getenv("_CHIPER_GATEWAY") == "1":
+        # Bypass when _CHIPER_RESTARTING=1 (set by the detached restart watcher
+        # in gateway/run.py — this is a legitimate restart, not a loop).
+        if os.getenv("_CHIPER_GATEWAY") == "1" and os.getenv("_CHIPER_RESTARTING") != "1":
             print_error(
                 "Refusing to restart the gateway from inside the gateway process.\n"
                 "This command was blocked to prevent restart loops.\n"

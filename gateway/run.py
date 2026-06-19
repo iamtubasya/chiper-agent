@@ -4616,6 +4616,9 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         # gateway stops and never comes back.
         watcher_env = os.environ.copy()
         watcher_env.pop("_CHIPER_GATEWAY", None)
+        # Set _CHIPER_RESTARTING=1 so the CLI's self-restart guard knows this
+        # is a legitimate restart initiated by the detached watcher, not a loop.
+        watcher_env["_CHIPER_RESTARTING"] = "1"
 
         # Detect chroot: use Python-based watcher instead of setsid+bash
         # because setsid and process group management can be unreliable in
