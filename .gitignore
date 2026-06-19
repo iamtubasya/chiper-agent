@@ -1,0 +1,144 @@
+# ============================================================================
+# ChiperFlux Agent .gitignore
+# ============================================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+venv/
+.venv/
+_venv/
+venv.old/
+
+# Environment & Secrets
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+*.ppk
+*.pem
+privvy*
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs & Temp
+logs/
+tmp/
+temp_vision_images/
+testlogs
+*.log
+
+# Data & State
+data/
+source-data/*
+export*
+examples/
+wandb/
+
+# Browser & Automation
+browser-use/
+agent-browser/
+
+# Cache
+.pip-cache/
+.uv-cache/
+.pytest_cache/
+.pytest-cache/
+.nix-stamps/
+.direnv/
+result
+
+# Build Output
+hermes_cli/web_dist/
+hermes_cli/tui_dist/*
+hermes_cli/scripts/
+apps/desktop/build/
+apps/desktop/dist/
+apps/desktop/release/
+apps/desktop/*.tsbuildinfo
+apps/desktop/demo/
+
+# Web UI Assets (synced at build time)
+web/public/fonts/
+web/public/ds-assets/
+
+# Website Build Artifacts
+website/static/api/skills-index.json
+website/static/api/skills.json
+website/static/api/skills-meta.json
+website/static/api/automation-blueprints-index.json
+
+# Release & Temp Files
+.release_notes.md
+RELEASE_v*.md
+mini-swe-agent/
+
+# CLI Config (may contain sensitive paths)
+cli-config.yaml
+
+# Skills Hub State
+skills/.hub/
+
+# Ignored & Worktrees
+ignored/
+.worktrees/
+environments/benchmarks/evals/
+
+# Test Files
+tests/quick_test_dataset.jsonl
+tests/sample_dataset.jsonl
+test_durations.json
+scripts/out/
+
+# Agent State (runtime, not code)
+.chiper/
+.chiper-bootstrap-complete
+.update-incomplete
+.update-incomplete.lock
+
+# Local Editor / Agent Tooling
+.codex/
+.cursor/
+.gemini/
+.zed/
+.mcp.json
+opencode.json
+config/mcporter.json
+
+# Docker
+.chiper-docker/
+compose.chiper.local.yml
+
+# NotebookLM
+.notebooklm-home/
+.notebooklm-cli-venv/
+.notebooklm-playwright/
+
+# Nix
+models-dev-upstream/
+
+# Desktop App
+apps/desktop/node_modules/
+apps/desktop/.env
