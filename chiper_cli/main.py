@@ -285,6 +285,7 @@ from chiper_cli.subcommands.backup import build_backup_parser
 from chiper_cli.subcommands.import_cmd import build_import_cmd_parser
 from chiper_cli.subcommands.config import build_config_parser
 from chiper_cli.subcommands.env import build_env_parser
+from chiper_cli.subcommands.telegram import build_telegram_parser, build_platform_parser
 from chiper_cli.subcommands.version import build_version_parser
 from chiper_cli.subcommands.update import build_update_parser
 from chiper_cli.subcommands.uninstall import build_uninstall_parser
@@ -4234,6 +4235,20 @@ def cmd_env(args):
     from chiper_cli.env_manager import env_command
 
     env_command(args)
+
+
+def cmd_telegram(args):
+    """Telegram gateway management."""
+    from chiper_cli.telegram_setup import telegram_command
+
+    telegram_command(args)
+
+
+def cmd_platform(args):
+    """Platform gateway management."""
+    from chiper_cli.telegram_setup import platform_command
+
+    platform_command(args)
 
 
 def cmd_backup(args):
@@ -11890,6 +11905,16 @@ def main():
     # env command  (parser built in chiper_cli/subcommands/env.py)
     # =========================================================================
     build_env_parser(subparsers, cmd_env=cmd_env)
+
+    # =========================================================================
+    # telegram command  (parser built in chiper_cli/subcommands/telegram.py)
+    # =========================================================================
+    build_telegram_parser(subparsers, cmd_telegram=cmd_telegram)
+
+    # =========================================================================
+    # platform command  (parser built in chiper_cli/subcommands/telegram.py)
+    # =========================================================================
+    build_platform_parser(subparsers, cmd_platform=cmd_platform)
 
     # =========================================================================
     # pairing command  (parser built in chiper_cli/subcommands/pairing.py)

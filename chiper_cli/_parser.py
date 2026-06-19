@@ -63,6 +63,11 @@ Examples:
     chiper env wizard           Interactive .env setup
     chiper env set KEY VALUE    Set an env var
     chiper env check            Check for missing required vars
+    chiper telegram setup       Setup Telegram gateway (auto-detect)
+    chiper telegram status      Show Telegram gateway status
+    chiper telegram test        Test Telegram bot connection
+    chiper platform detect      Detect all configured platforms
+    chiper platform setup       Setup a platform gateway
     chiper gateway                Run messaging gateway
     chiper -s chiper-agent-dev,github-auth
     chiper -w                     Start in isolated git worktree
