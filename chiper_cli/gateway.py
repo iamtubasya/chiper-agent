@@ -4037,12 +4037,47 @@ def run_gateway(verbose: int = 0, quiet: bool = False, replace: bool = False, fo
 
     from gateway.run import start_gateway
 
-    print("┌─────────────────────────────────────────────────────────┐")
-    print("│           ⚕ Chiper Gateway Starting...                 │")
-    print("├─────────────────────────────────────────────────────────┤")
-    print("│  Messaging platforms + cron scheduler                    │")
-    print("│  Press Ctrl+C to stop                                   │")
-    print("└─────────────────────────────────────────────────────────┘")
+    # Detect configured platforms for banner
+    def _detect_active_platforms():
+        """Quick detect which platforms have tokens configured."""
+        platforms = []
+        try:
+            from pathlib import Path
+            env_path = Path(os.environ.get("CHIPER_HOME", os.path.expanduser("~/.chiperflux"))) / ".env"
+            if env_path.exists():
+                for line in env_path.read_text(encoding="utf-8").splitlines():
+                    line = line.strip()
+                    if line.startswith("#") or "=" not in line:
+                        continue
+                    key, _, val = line.partition("=")
+                    val = val.strip()
+                    if key == "TELEGRAM_BOT_TOKEN" and val and not val.startswith("#"):
+                        platforms.append("📱 Telegram")
+                    elif key == "DISCORD_BOT_TOKEN" and val and not val.startswith("#"):
+                        platforms.append("🎮 Discord")
+                    elif key == "SLACK_BOT_TOKEN" and val and not val.startswith("#"):
+                        platforms.append("💬 Slack")
+                    elif key == "WHATSAPP_ACCESS_TOKEN" and val and not val.startswith("#"):
+                        platforms.append("📞 WhatsApp")
+        except Exception:
+            pass
+        return platforms or ["📱 Telegram"]
+
+    _platforms = _detect_active_platforms()
+    _plat_str = " | ".join(_platforms)
+    _plat_line = f"  Platforms: {_plat_str}"
+
+    print()
+    print("  ╔═══════════════════════════════════════════════════════════╗")
+    print("  ║                                                           ║")
+    print("  ║   ⚡  C H I P E R   G A T E W A Y                        ║")
+    print("  ║                                                           ║")
+    print(f"  ║   {_plat_line:<56s}║")
+    print("  ║   Scheduler: ✅ Cron active                               ║")
+    print("  ║                                                           ║")
+    print("  ║   Press Ctrl+C to stop                                    ║")
+    print("  ║                                                           ║")
+    print("  ╚═══════════════════════════════════════════════════════════╝")
     print()
 
     # Exit with code 1 if gateway fails to connect any platform,
