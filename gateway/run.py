@@ -1146,7 +1146,7 @@ def _clear_planned_restart_notification() -> None:
 
 # Mark this process as a gateway so cli.py's module-level load_cli_config()
 # knows not to clobber TERMINAL_CWD if lazily imported.
-os.environ["_HERMES_GATEWAY"] = "1"
+os.environ["_CHIPER_GATEWAY"] = "1"
 
 _ensure_ssl_certs()
 
@@ -1940,17 +1940,23 @@ def _resolve_gateway_model(config: dict | None = None) -> str:
 
 
 def _resolve_chiper_bin() -> Optional[list[str]]:
-    """Resolve the Chiper update command as argv parts.
+    """Resolve the Chiper/ChiperFlux update command as argv parts.
 
     Tries in order:
-    1. ``shutil.which("hermes")`` — standard PATH lookup
-    2. ``sys.executable -m chiper_cli.main`` — fallback when Hermes is running
-       from a venv/module invocation and the ``hermes`` shim is not on PATH
+    1. ``shutil.which("chiper")`` — standard PATH lookup (ChiperFlux)
+    2. ``shutil.which("hermes")`` — standard PATH lookup (Hermes fallback)
+    3. ``sys.executable -m chiper_cli.main`` — fallback when running from venv
 
     Returns argv parts ready for quoting/joining, or ``None`` if neither works.
     """
     import shutil
 
+    # Try chiper first (ChiperFlux)
+    chiper_bin = shutil.which("chiper")
+    if chiper_bin:
+        return [chiper_bin]
+
+    # Try hermes (fallback)
     hermes_bin = shutil.which("hermes")
     if hermes_bin:
         return [hermes_bin]
@@ -4516,9 +4522,9 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         import shutil
         import subprocess
 
-        hermes_cmd = _resolve_chiper_bin()
-        if not hermes_cmd:
-            logger.error("Could not locate hermes binary for detached /restart")
+        chiper_cmd = _resolve_chiper_bin()
+        if not chiper_cmd:
+            logger.error("Could not locate chiper binary for detached /restart")
             return
 
         current_pid = os.getpid()
@@ -4532,7 +4538,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             import textwrap
             from chiper_cli._subprocess_compat import windows_detach_popen_kwargs
 
-            cmd_argv = [*hermes_cmd, "gateway", "restart"]
+            cmd_argv = [*chiper_cmd, "gateway", "restart"]
             watcher = textwrap.dedent(
                 """
                 import os, subprocess, sys, time
@@ -4586,7 +4592,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             # This watcher is intentionally outside the running gateway. If it
             # inherits the gateway marker, `chiper gateway restart` refuses to
             # run as a self-restart loop guard and the gateway stays stopped.
-            watcher_env.pop("_HERMES_GATEWAY", None)
+            watcher_env.pop("_CHIPER_GATEWAY", None)
             project_root = Path(__file__).resolve().parent.parent
             venv_dir = Path(watcher_env.get("VIRTUAL_ENV") or project_root / "venv")
             site_packages = venv_dir / "Lib" / "site-packages"
@@ -4605,18 +4611,18 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             )
             return
 
-        cmd = " ".join(shlex.quote(part) for part in hermes_cmd)
+        cmd = " ".join(shlex.quote(part) for part in chiper_cmd)
         shell_cmd = (
             f"while kill -0 {current_pid} 2>/dev/null; do sleep 0.2; done; "
             f"{cmd} gateway restart"
         )
         # Same marker scrub as the Windows watcher above: this watcher runs
         # `chiper gateway restart` from outside the gateway, but it inherits
-        # _HERMES_GATEWAY=1 from us, and the CLI's self-restart loop guard
+        # _CHIPER_GATEWAY=1 from us, and the CLI's self-restart loop guard
         # refuses to run when that marker is set — silently (DEVNULL), so the
         # gateway stops and never comes back.
         watcher_env = os.environ.copy()
-        watcher_env.pop("_HERMES_GATEWAY", None)
+        watcher_env.pop("_CHIPER_GATEWAY", None)
         setsid_bin = shutil.which("setsid")
         if setsid_bin:
             subprocess.Popen(
