@@ -230,8 +230,16 @@ detect_os() {
         log_info "Detected: macOS"
     fi
 
-    # Check for Termux (must have pkg command - skip in chroot/proot)
-    if [[ -d /data/data/com.termux ]] && command -v pkg &>/dev/null; then
+    # Detect proot-distro (Debian/Ubuntu inside Termux)
+    if [[ -d /data/data/com.termux ]] && [[ -f /etc/os-release ]]; then
+        if grep -qiE "debian|ubuntu|fedora|arch" /etc/os-release 2>/dev/null; then
+            log_info "Environment: proot-distro ($(grep PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"'))"
+            IS_TERMUX=false
+        elif command -v pkg &>/dev/null; then
+            IS_TERMUX=true
+            log_info "Environment: Termux (Android)"
+        fi
+    elif [[ -d /data/data/com.termux ]] && command -v pkg &>/dev/null; then
         IS_TERMUX=true
         log_info "Environment: Termux (Android)"
     fi
