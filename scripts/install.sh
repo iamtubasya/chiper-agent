@@ -428,6 +428,21 @@ tools:
 gateway:
   enabled: false
   platforms: []
+
+# Port settings (avoid conflict with Hermes)
+# Hermes: 8642, 8644, 8645
+# Chiper: 1511, 1512, 1513
+api_server:
+  host: "127.0.0.1"
+  port: 1511
+
+webhook:
+  host: "0.0.0.0"
+  port: 1512
+
+proxy:
+  host: "127.0.0.1"
+  port: 1513
 CONFIGFILE
         log_success "Created default config at $CHIPER_HOME/config.yaml"
     else
