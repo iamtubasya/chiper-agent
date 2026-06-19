@@ -625,8 +625,8 @@ def cmd_telegram_setup(_args) -> None:
     print(f"  📄 Config: {_cyan(str(_get_env_path()))}")
     print()
     print(f"  {_bold('Next steps:')}")
-    print(f"    {cyan('chiper telegram test')}   — Test koneksi")
-    print(f"    {cyan('chiper gateway run')}     — Jalankan gateway")
+    print(f"    {_cyan('chiper telegram test')}   — Test koneksi")
+    print(f"    {_cyan('chiper gateway run')}     — Jalankan gateway")
     print()
 
 
