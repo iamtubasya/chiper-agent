@@ -933,6 +933,13 @@ class GatewaySlashCommandsMixin:
         # exits when the gateway dies, taking the detached helper with it).
         _under_service = bool(os.environ.get("INVOCATION_ID"))  # systemd sets this
         _in_container = os.path.exists("/.dockerenv") or os.path.exists("/run/.containerenv")
+        # Detect chroot: systemd doesn't work in chroot, so we need the
+        # detached restart path even though we're "not in a container".
+        _in_chroot = os.path.exists("/proc/1/root") and not os.environ.get("INVOCATION_ID")
+        try:
+            _in_chroot = _in_chroot and os.stat("/proc/1/root").st_ino != os.stat("/").st_ino
+        except Exception:
+            pass
         if _under_service or _in_container:
             self.request_restart(detached=False, via_service=True)
         else:

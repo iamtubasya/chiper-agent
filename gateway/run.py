@@ -4616,6 +4616,61 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         # gateway stops and never comes back.
         watcher_env = os.environ.copy()
         watcher_env.pop("_CHIPER_GATEWAY", None)
+
+        # Detect chroot: use Python-based watcher instead of setsid+bash
+        # because setsid and process group management can be unreliable in
+        # chroot environments (Termux, proot, etc.)
+        _in_chroot = os.path.exists("/proc/1/root") and not os.environ.get("INVOCATION_ID")
+        try:
+            _in_chroot = _in_chroot and os.stat("/proc/1/root").st_ino != os.stat("/").st_ino
+        except Exception:
+            pass
+
+        if _in_chroot:
+            # Chroot-safe: Python watcher that polls PID then exec's gateway
+            import textwrap
+            watcher_py = textwrap.dedent(f"""
+                import os, subprocess, sys, time
+                pid = int(sys.argv[1])
+                cmd = sys.argv[2:]
+                deadline = time.monotonic() + 120
+                while time.monotonic() < deadline:
+                    try:
+                        os.kill(pid, 0)
+                    except ProcessLookupError:
+                        break
+                    except OSError:
+                        break
+                    time.sleep(0.2)
+                # Clean up PID file before restart
+                try:
+                    from chiper_constants import get_chiper_home
+                    pid_file = get_chiper_home() / "gateway.pid"
+                    if pid_file.exists():
+                        pid_file.unlink(missing_ok=True)
+                except Exception:
+                    pass
+                subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    start_new_session=True,
+                )
+            """).strip()
+            watcher_argv = [sys.executable, "-c", watcher_py, str(current_pid), *chiper_cmd]
+            try:
+                subprocess.Popen(
+                    watcher_argv,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    env=watcher_env,
+                    start_new_session=True,
+                )
+                logger.info("Launched chroot-safe Python restart watcher (pid=%s)", current_pid)
+            except Exception as e:
+                logger.error("Failed to launch chroot restart watcher: %s", e)
+            return
+
         setsid_bin = shutil.which("setsid")
         if setsid_bin:
             subprocess.Popen(
