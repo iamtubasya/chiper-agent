@@ -51,6 +51,38 @@ log_error() {
     echo -e "  ${RED}[ERROR]${NC} $1"
 }
 
+# Spinner animation
+spinner() {
+    local pid=$1
+    local delay=0.1
+    local spinstr='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+        local temp=${spinstr#?}
+        printf "  ${CYAN}[%c]${NC} " "$spinstr"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\r"
+    done
+    printf "    \r"
+}
+
+# Run command with spinner
+run_with_spinner() {
+    local msg="$1"
+    shift
+    "$@" > /dev/null 2>&1 &
+    local pid=$!
+    spinner $pid
+    wait $pid
+    local exit_code=$?
+    if [ $exit_code -eq 0 ]; then
+        log_success "$msg"
+    else
+        log_error "$msg failed (exit code: $exit_code)"
+        return $exit_code
+    fi
+}
+
 # ============================================================================
 # Banner
 # ============================================================================
@@ -173,22 +205,20 @@ install_dependencies() {
     log_step "📦 Installing system dependencies..."
 
     if [[ "$IS_TERMUX" == true ]]; then
-        pkg update -y
-        pkg install -y python git nodejs
+        run_with_spinner "System packages" pkg update -y && pkg install -y python git nodejs
     elif command -v apt-get &> /dev/null; then
-        sudo apt-get update
-        sudo apt-get install -y python3 python3-pip python3-venv git nodejs npm curl wget
+        run_with_spinner "Updating package lists" sudo apt-get update -qq
+        run_with_spinner "Installing packages" sudo apt-get install -y -qq python3 python3-pip python3-venv git nodejs npm curl wget
     elif command -v dnf &> /dev/null; then
-        sudo dnf install -y python3 python3-pip git nodejs npm curl wget
+        run_with_spinner "Installing packages" sudo dnf install -y -q python3 python3-pip git nodejs npm curl wget
     elif command -v pacman &> /dev/null; then
-        sudo pacman -Syu --noconfirm python python-pip git nodejs npm curl wget
+        run_with_spinner "Installing packages" sudo pacman -Syu --noconfirm --quiet python python-pip git nodejs npm curl wget
     elif command -v brew &> /dev/null; then
-        brew install python git node curl wget
+        run_with_spinner "Installing packages" brew install python git node curl wget
     else
         log_warn "Unknown package manager. Please install manually: python3, git, nodejs, npm"
     fi
 
-    log_success "System dependencies installed"
     sleep 2
 }
 
@@ -210,14 +240,12 @@ install_python() {
 
     # Install UV if not present
     if ! command -v uv &> /dev/null; then
-        log_info "Installing uv..."
-        curl -LsSf https://astral.sh/uv/install.sh | sh
+        run_with_spinner "Installing uv" bash -c "curl -LsSf https://astral.sh/uv/install.sh | sh"
         export PATH="$HOME/.local/bin:$PATH"
     else
         log_info "uv already installed"
     fi
 
-    log_success "Python ready"
     sleep 2
 }
 
@@ -259,18 +287,15 @@ setup_venv() {
     cd "$INSTALL_DIR"
 
     if [ "$IS_TERMUX" = true ]; then
-        # Termux: use stdlib venv
-        python -m venv venv
+        run_with_spinner "Creating venv" python -m venv venv
         source venv/bin/activate
-        pip install -e ".[termux]"
+        run_with_spinner "Installing dependencies" pip install -e ".[termux]"
     else
-        # Desktop/Server: use uv
-        uv venv
+        run_with_spinner "Creating venv" uv venv
         source .venv/bin/activate
-        uv pip install -e ".[all]"
+        run_with_spinner "Installing dependencies" uv pip install -e ".[all]"
     fi
 
-    log_success "Virtual environment ready"
     sleep 2
 }
 
@@ -284,8 +309,7 @@ install_node_deps() {
     cd "$INSTALL_DIR"
 
     if [ -f "package.json" ]; then
-        npm install --production 2>/dev/null || true
-        log_success "Node.js dependencies installed"
+        run_with_spinner "Node.js dependencies" npm install --production
     else
         log_info "No package.json found, skipping"
     fi
@@ -307,8 +331,7 @@ install_browser() {
 
     # Install Playwright browsers
     if command -v npx &> /dev/null; then
-        npx playwright install chromium 2>/dev/null || true
-        log_success "Browser ready"
+        run_with_spinner "Browser engine" npx playwright install chromium
     else
         log_warn "npx not found, skipping browser installation"
     fi
