@@ -70,12 +70,10 @@ PLATFORMS = {
             {
                 "key": "TELEGRAM_HOME_CHANNEL",
                 "label": "Home Channel",
-                "description": "Chat ID default untuk delivery (biasanya = user ID)",
-                "required": True,
-                "validate": lambda v: bool(re.match(r"^-?\d+$", v)),
-                "hint": "Biasanya sama dengan user ID kamu",
-                "auto_fill_from": "TELEGRAM_ALLOWED_USERS",
-                "auto_fill_logic": lambda vals: vals.get("TELEGRAM_ALLOWED_USERS", "").split(",")[0].strip() if vals.get("TELEGRAM_ALLOWED_USERS") else None,
+                "description": "Chat ID default untuk delivery (kosongkan, bisa di-set lewat gateway chat)",
+                "required": False,
+                "validate": lambda v: not v or bool(re.match(r"^-?\d+$", v)),
+                "hint": "Kosongkan aja, nanti di-set otomatis dari chat",
             },
             {
                 "key": "TELEGRAM_HOME_CHANNEL_THREAD_ID",
