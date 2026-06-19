@@ -1,5 +1,5 @@
 """
-Profile management for multiple isolated Hermes instances.
+Profile management for multiple isolated Chiper instances.
 
 Each profile is a fully independent CHIPER_HOME directory with its own
 config.yaml, .env, memory, sessions, skills, gateway, cron, and logs.
