@@ -54,16 +54,22 @@ log_error() {
 # Spinner animation
 spinner() {
     local pid=$1
-    local delay=0.1
-    local spinstr='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+    local delay=0.3
+    local dots=""
+    local max_dots=5
+    local count=0
     while kill -0 "$pid" 2>/dev/null; do
-        local temp=${spinstr#?}
-        printf "  \033[0;36m[%c]\033[0m " "$spinstr"
-        local spinstr=$temp${spinstr%"$temp"}
+        count=$((count + 1))
+        dots="$dots."
+        printf "  \033[0;36m%-*s\033[0m" "$max_dots" "$dots"
+        printf "\r"
         sleep $delay
-        printf ""
+        if [ $count -ge $max_dots ]; then
+            dots=""
+            count=0
+        fi
     done
-    printf "    "
+    printf "       \r"
 }
 
 # Run command with spinner
