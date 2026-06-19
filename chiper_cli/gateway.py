@@ -4065,19 +4065,26 @@ def run_gateway(verbose: int = 0, quiet: bool = False, replace: bool = False, fo
 
     _platforms = _detect_active_platforms()
     _plat_str = " | ".join(_platforms)
-    _plat_line = f"  Platforms: {_plat_str}"
+
+    # Colors
+    _B = "\033[1m"     # Bold
+    _C = "\033[36m"    # Cyan
+    _Y = "\033[33m"    # Yellow
+    _G = "\033[32m"    # Green
+    _D = "\033[2m"     # Dim
+    _R = "\033[0m"     # Reset
+
+    if not sys.stdout.isatty():
+        _B = _C = _Y = _G = _D = _R = ""
 
     print()
-    print("  ╔═══════════════════════════════════════════════════════════╗")
-    print("  ║                                                           ║")
-    print("  ║   ⚡  C H I P E R   G A T E W A Y                        ║")
-    print("  ║                                                           ║")
-    print(f"  ║   {_plat_line:<56s}║")
-    print("  ║   Scheduler: ✅ Cron active                               ║")
-    print("  ║                                                           ║")
-    print("  ║   Press Ctrl+C to stop                                    ║")
-    print("  ║                                                           ║")
-    print("  ╚═══════════════════════════════════════════════════════════╝")
+    print(f"  {_C}╔══════════════════════════════════════════╗{_R}")
+    print(f"  {_C}║{_R}  ⚡ {_B}{_Y}CHIPER GATEWAY RUNNING{_R}              {_C}║{_R}")
+    print(f"  {_C}╠══════════════════════════════════════════╣{_R}")
+    print(f"  {_C}║{_R}  {_G}Platforms:{_R} {_plat_str:<28s}{_C}║{_R}")
+    print(f"  {_C}║{_R}  {_G}Scheduler:{_R} ✅ Cron active              {_C}║{_R}")
+    print(f"  {_C}║{_R}  {_D}Press Ctrl+C to stop{_R}                   {_C}║{_R}")
+    print(f"  {_C}╚══════════════════════════════════════════╝{_R}")
     print()
 
     # Exit with code 1 if gateway fails to connect any platform,
