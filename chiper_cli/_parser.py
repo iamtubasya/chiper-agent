@@ -1,5 +1,5 @@
 """
-Top-level argparse construction for the hermes CLI.
+Top-level argparse construction for the chiper CLI.
 
 Lives in its own module so other modules (e.g. ``relaunch.py``) can
 introspect the parser to discover which flags exist without running the
@@ -39,45 +39,45 @@ def _inherited_flag(parser, *args, **kwargs):
 
 _EPILOGUE = """
 Examples:
-    hermes                        Start interactive chat
-    hermes chat -q "Hello"        Single query mode
-    hermes --tui                  Launch the modern TUI (or set display.interface: tui)
-    hermes --cli                  Force the classic REPL (overrides display.interface: tui)
-    hermes -c                     Resume the most recent session
-    hermes -c "my project"        Resume a session by name (latest in lineage)
-    hermes --resume <session_id>  Resume a specific session by ID
+    chiper                        Start interactive chat
+    chiper chat -q "Hello"        Single query mode
+    chiper --tui                  Launch the modern TUI (or set display.interface: tui)
+    chiper --cli                  Force the classic REPL (overrides display.interface: tui)
+    chiper -c                     Resume the most recent session
+    chiper -c "my project"        Resume a session by name (latest in lineage)
+    chiper --resume <session_id>  Resume a specific session by ID
     chiper setup                  Run setup wizard
-    hermes logout                 Clear stored authentication
+    chiper logout                 Clear stored authentication
     chiper auth add <provider>    Add a pooled credential
     chiper auth list              List pooled credentials
     chiper auth remove <p> <t>    Remove pooled credential by index, id, or label
     chiper auth reset <provider>  Clear exhaustion status for a provider
     chiper model                  Select default model
-    hermes fallback [list]        Show fallback provider chain
-    hermes fallback add           Add a fallback provider (same picker as `chiper model`)
-    hermes fallback remove        Remove a fallback provider from the chain
+    chiper fallback [list]        Show fallback provider chain
+    chiper fallback add           Add a fallback provider (same picker as `chiper model`)
+    chiper fallback remove        Remove a fallback provider from the chain
     chiper config                 View configuration
     chiper config edit            Edit config in $EDITOR
     chiper config set model gpt-4 Set a config value
     chiper gateway                Run messaging gateway
-    hermes -s chiper-agent-dev,github-auth
-    hermes -w                     Start in isolated git worktree
+    chiper -s chiper-agent-dev,github-auth
+    chiper -w                     Start in isolated git worktree
     chiper gateway install        Install gateway background service
-    hermes sessions list          List past sessions
-    hermes sessions browse        Interactive session picker
-    hermes sessions rename ID T   Rename/title a session
-    hermes logs                   View agent.log (last 50 lines)
-    hermes logs -f                Follow agent.log in real time
-    hermes logs errors            View errors.log
-    hermes logs --since 1h        Lines from the last hour
-    hermes debug share             Upload debug report for support
+    chiper sessions list          List past sessions
+    chiper sessions browse        Interactive session picker
+    chiper sessions rename ID T   Rename/title a session
+    chiper logs                   View agent.log (last 50 lines)
+    chiper logs -f                Follow agent.log in real time
+    chiper logs errors            View errors.log
+    chiper logs --since 1h        Lines from the last hour
+    chiper debug share            Upload debug report for support
     chiper update                 Update to latest version
-    hermes dashboard              Start web UI dashboard (port 9119)
-    hermes dashboard --stop       Stop running dashboard processes
-    hermes dashboard --status     List running dashboard processes
+    chiper dashboard              Start web UI dashboard (port 9119)
+    chiper dashboard --stop       Stop running dashboard processes
+    chiper dashboard --status     List running dashboard processes
 
 For more help on a command:
-    hermes <command> --help
+    chiper <command> --help
 """
 
 
@@ -114,7 +114,7 @@ def build_top_level_parser():
     # --model / --provider are accepted at the top level so they can pair
     # with -z without needing the `chat` subcommand.  If neither -z nor a
     # subcommand consumes them, they fall through harmlessly as None.
-    # Mirrors `hermes chat --model ... --provider ...` semantics.
+    # Mirrors `chiper chat --model ... --provider ...` semantics.
     _inherited_flag(
         parser,
         "-m",

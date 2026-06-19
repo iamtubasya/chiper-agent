@@ -315,7 +315,7 @@ class HonchoMemoryProvider(MemoryProvider):
                 self._context_cadence = int(raw.get("contextCadence", 1))
                 # Backwards-compat: unset dialecticCadence falls back to 1
                 # (every turn) so existing honcho.json configs without the key
-                # behave as they did before. New setups via `hermes honcho setup`
+                # behave as they did before. New setups via `chiper honcho setup`
                 # get dialecticCadence=2 written explicitly by the wizard.
                 self._dialectic_cadence = int(raw.get("dialecticCadence", 1))
                 self._dialectic_depth = max(1, min(cfg.dialectic_depth, 3))
@@ -371,7 +371,7 @@ class HonchoMemoryProvider(MemoryProvider):
     def _start_session_init_background(self, *, wait_timeout: float = 0.0) -> None:
         """Start Honcho session initialization in a daemon thread.
 
-        This keeps Hermes CLI/gateway startup responsive when Honcho is down,
+        This keeps Chiper CLI/gateway startup responsive when Honcho is down,
         slow, or its database is unhealthy. The thread may still take the SDK
         timeout path, but it cannot block agent construction or first prompt
         assembly. ``wait_timeout`` lets fast/mock initializations finish before

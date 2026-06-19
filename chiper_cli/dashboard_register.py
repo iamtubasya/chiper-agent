@@ -1,4 +1,4 @@
-"""``hermes dashboard register`` — register a self-hosted dashboard OAuth client.
+"""``chiper dashboard register`` — register a self-hosted dashboard OAuth client.
 
 Automates what a user otherwise does by hand: open the Nous Portal
 ``/local-dashboards`` page in a browser, click "register", copy the
@@ -104,7 +104,7 @@ def _register_self_hosted_client(
     When ``existing_client_id`` is provided (the client_id this install
     persisted on a prior run), it is sent so the portal updates that existing
     dashboard record in place instead of minting a duplicate — this is what
-    makes re-running ``hermes dashboard register`` idempotent. The portal
+    makes re-running ``chiper dashboard register`` idempotent. The portal
     falls back to creating a fresh client if the id no longer resolves to a row
     in the caller's org (stale/deleted), so passing it is always safe.
 
@@ -199,7 +199,7 @@ def _print_post_register_hint(
     print()
     print(
         "  Heads up — Nous login only *engages* on a non-loopback bind. A plain\n"
-        "  `hermes dashboard` (localhost) leaves the gate off and serves locally\n"
+        "  `chiper dashboard` (localhost) leaves the gate off and serves locally\n"
         "  without auth, which is fine for your own machine."
     )
     print()
@@ -216,7 +216,7 @@ def _print_post_register_hint(
         print("  at its /login page.")
     else:
         print("  To require Nous login (e.g. exposing on your LAN or a public host):")
-        print("    hermes dashboard --host 0.0.0.0")
+        print("    chiper dashboard --host 0.0.0.0")
         print("  …then log in at the dashboard's /login page.")
     print()
     print(
@@ -238,7 +238,7 @@ def cmd_dashboard_register(args) -> None:
     # mistake — and save_env_value refuses to write anyway.
     if is_managed():
         print(
-            "✗ `hermes dashboard register` is not available in a managed/hosted "
+            "✗ `chiper dashboard register` is not available in a managed/hosted "
             "install.\n"
             "  The dashboard OAuth client is provisioned by the hosting platform."
         )

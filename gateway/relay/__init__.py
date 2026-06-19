@@ -1,4 +1,4 @@
-"""Relay/connector support package for the Hermes gateway.
+"""Relay/connector support package for the Chiper gateway.
 
 EXPERIMENTAL. This package implements the gateway side of the "Gateway Gateway"
 relay design: a generic ``RelayAdapter`` plus the wire-serializable
@@ -58,7 +58,7 @@ def relay_platform_identity() -> tuple[str, str]:
 def relay_connection_auth() -> tuple[Optional[str], Optional[str]]:
     """The (gateway_id, upgrade_secret) this gateway authenticates the WS upgrade with.
 
-    Both come from enrollment (``hermes gateway enroll`` writes them to
+    Both come from enrollment (``chiper gateway enroll`` writes them to
     ``~/.chiperflux/.env``): ``GATEWAY_RELAY_ID`` identifies the enrolled instance,
     ``GATEWAY_RELAY_SECRET`` is the per-gateway signing secret. Either absent ->
     ``(None, None)`` and the transport dials unauthenticated (dev/test, or a

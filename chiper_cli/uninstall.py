@@ -144,7 +144,7 @@ def remove_node_symlinks(chiper_home: Path) -> list:
     We check all candidate directories so that uninstall works regardless of
     how the install was done (e.g. a root FHS install that placed links in
     ``/usr/local/bin``, or an older install that used ``~/.local/bin`` before
-    the FHS fix).  Only symlinks that resolve into this Hermes home's ``node``
+    the FHS fix).  Only symlinks that resolve into this Chiper home's ``node``
     directory are removed — links the user has repointed elsewhere (nvm, fnm,
     etc.) are left untouched.
     """
@@ -306,7 +306,7 @@ def uninstall_gateway_service():
 #   3. Downloads PortableGit to ``%LOCALAPPDATA%\hermes\git\`` and Node to
 #      ``%LOCALAPPDATA%\hermes\node\`` as user-scoped, isolated copies.
 #      These are ~200MB combined and serve no purpose after uninstall.
-#   4. On the ``hermes dashboard`` + gateway paths, drops files into
+#   4. On the ``chiper dashboard`` + gateway paths, drops files into
 #      ``%LOCALAPPDATA%\hermes\gateway-service\`` and sometimes
 #      ``%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\`` — the
 #      latter is handled by ``gateway_windows.uninstall()`` already.
@@ -446,7 +446,7 @@ def _uninstall_profile(profile) -> None:
     """Fully uninstall a single named profile: stop its gateway service,
     remove its alias wrapper, and wipe its CHIPER_HOME directory.
 
-    We shell out to ``hermes -p <name> gateway stop|uninstall`` because
+    We shell out to ``chiper -p <name> gateway stop|uninstall`` because
     service names, unit paths, and plist paths are all derived from the
     current CHIPER_HOME and can't be easily switched in-process.
     """
@@ -495,7 +495,7 @@ def _uninstall_profile(profile) -> None:
 def run_gui_uninstall(args):
     """GUI-only uninstall: remove the Chat GUI, leave the agent + data intact.
 
-    Mirrors ``hermes uninstall --gui``. Removes the desktop app's built
+    Mirrors ``chiper uninstall --gui``. Removes the desktop app's built
     artifacts, the packaged app bundle (best-effort), and the Electron
     userData dir — nothing under ``$CHIPER_HOME`` config/sessions/.env, and
     never the Python agent or its venv.
@@ -560,7 +560,7 @@ def run_gui_uninstall(args):
     print(color("└─────────────────────────────────────────────────────────┘", Colors.GREEN, Colors.BOLD))
     print()
     print("The Hermes agent is still installed. Run 'hermes' to use the CLI,")
-    print("or 'hermes uninstall' to remove the agent too.")
+    print("or 'chiper uninstall' to remove the agent too.")
     print()
 
 
@@ -680,7 +680,7 @@ def run_uninstall(args):
                 Colors.RED
             ))
     else:
-        print("This will remove the Hermes code but keep your configuration and data.")
+        print("This will remove the Chiper code but keep your configuration and data.")
     
     print()
     try:
@@ -770,7 +770,7 @@ def _perform_uninstall(
         log_info("No wrapper script found")
 
     # 3b. Remove node/npm/npx symlinks the installer left in ~/.local/bin
-    #     (only when they still point into this Hermes home's node dir, so we
+    #     (only when they still point into this Chiper home's node dir, so we
     #     never clobber an existing nvm / user-managed Node).
     log_info("Removing Hermes-managed node/npm/npx symlinks...")
     removed_node_links = remove_node_symlinks(chiper_home)

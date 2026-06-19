@@ -8,7 +8,7 @@ This adapter is the transport shim that converts those OpenAI-style
 
 Why this exists
 ---------------
-Google's OpenAI-compatible endpoint has been brittle for Hermes's multi-turn
+Google's OpenAI-compatible endpoint has been brittle for Chiper's multi-turn
 agent/tool loop (auth churn, tool-call replay quirks, thought-signature
 requirements).  The native Gemini API is the canonical path and avoids the
 OpenAI-compat layer entirely.
@@ -72,7 +72,7 @@ def probe_gemini_tier(
 
     Returns one of:
 
-    - ``"free"``    -- key is on the free tier (unusable with Hermes)
+    - ``"free"``    -- key is on the free tier (unusable with Chiper)
     - ``"paid"``    -- key is on a paid tier
     - ``"unknown"`` -- probe failed; callers should proceed without blocking.
     """
@@ -153,7 +153,7 @@ _FREE_TIER_GUIDANCE = (
 
 
 class GeminiAPIError(Exception):
-    """Error shape compatible with Hermes retry/error classification."""
+    """Error shape compatible with Chiper retry/error classification."""
 
     def __init__(
         self,
@@ -848,7 +848,7 @@ class GeminiNativeClient:
             raise RuntimeError(
                 "Gemini native client requires an API key, but none was provided. "
                 "Set GOOGLE_API_KEY or GEMINI_API_KEY in your environment / ~/.chiperflux/.env "
-                "(get one at https://aistudio.google.com/app/apikey), or run `hermes setup` "
+                "(get one at https://aistudio.google.com/app/apikey), or run `chiper setup` "
                 "to configure the Google provider."
             )
         self.api_key = api_key

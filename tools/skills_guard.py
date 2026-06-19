@@ -9,7 +9,7 @@ and a trust-aware install policy that determines whether a skill is allowed
 based on both the scan verdict and the source's trust level.
 
 Trust levels:
-  - builtin:   Ships with Hermes. Never scanned, always trusted.
+  - builtin:   Ships with Chiper. Never scanned, always trusted.
   - trusted:   openai/skills and anthropics/skills only. Caution verdicts allowed.
   - community: Everything else. Any findings = blocked unless --force.
 
@@ -953,7 +953,7 @@ def _unicode_char_name(char: str) -> str:
 # ---------------------------------------------------------------------------
 
 # Ignore-file names a skill may ship to exclude dev/docs artifacts from the
-# scan. `.skillignore` is the Hermes-native name; `.clawhubignore` is honored
+# scan. `.skillignore` is the Chiper-native name; `.clawhubignore` is honored
 # for compatibility with skills published through ClawHub.
 _SKILL_IGNORE_FILENAMES = (".skillignore", ".clawhubignore")
 

@@ -1,6 +1,6 @@
-"""``hermes slack ...`` CLI subcommands.
+"""``chiper slack ...`` CLI subcommands.
 
-Today only ``hermes slack manifest`` is implemented — it generates the
+Today only ``chiper slack manifest`` is implemented — it generates the
 Slack app manifest JSON for registering every gateway command as a native
 Slack slash (``/btw``, ``/stop``, ``/model``, …) so users get the same
 first-class slash UX Discord and Telegram already have.
@@ -27,9 +27,9 @@ def _build_full_manifest(bot_name: str, bot_description: str) -> dict:
     """Build a full Slack manifest merging display info + our slash list.
 
     The slash-command list is always generated from ``COMMAND_REGISTRY`` so
-    it stays in sync with the rest of Hermes. Other manifest sections
+    it stays in sync with the rest of Chiper. Other manifest sections
     (display info, OAuth scopes, socket mode) are set to sensible defaults
-    for a Hermes deployment — users can tweak them in the Slack UI after
+    for a Chiper deployment — users can tweak them in the Slack UI after
     pasting.
     """
     from chiper_cli.commands import slack_app_manifest
@@ -59,7 +59,7 @@ def _build_full_manifest(bot_name: str, bot_description: str) -> dict:
             },
             "slash_commands": slashes,
             "assistant_view": {
-                "assistant_description": "Chat with Hermes in threads and DMs.",
+                "assistant_description": "Chat with Chiper in threads and DMs.",
             },
         },
         "oauth_config": {

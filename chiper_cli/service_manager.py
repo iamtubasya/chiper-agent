@@ -166,7 +166,7 @@ def _s6_running() -> bool:
 # in ``chiper_cli.gateway`` (systemd/launchd) and ``chiper_cli.gateway_windows``
 # (Windows Scheduled Tasks). The protocol's ``name`` parameter is currently
 # unused for host backends — they operate on whichever profile is currently
-# active (set via the ``hermes -p <profile>`` flag before the call). This
+# active (set via the ``chiper -p <profile>`` flag before the call). This
 # matches existing host-side semantics; the parameter shape is designed
 # for s6 where each profile maps to a distinct service directory.
 # ---------------------------------------------------------------------------
@@ -321,7 +321,7 @@ def get_service_manager() -> ServiceManager:
 # ---------------------------------------------------------------------------
 # S6ServiceManager (container-only)
 #
-# Per-profile gateways are registered dynamically when `hermes profile create`
+# Per-profile gateways are registered dynamically when `chiper profile create`
 # runs inside the container (Phase 4). Static services (main-hermes, dashboard)
 # live in /etc/s6-overlay/s6-rc.d/ and are NOT managed by this class — they're
 # part of the image, not runtime-created.
@@ -560,7 +560,7 @@ class S6Error(RuntimeError):
 class GatewayNotRegisteredError(S6Error):
     """Raised when a lifecycle method targets a slot that doesn't exist.
 
-    Most commonly: ``hermes -p typo gateway start`` when no profile
+    Most commonly: ``chiper -p typo gateway start`` when no profile
     ``typo`` exists. Carries the unprefixed profile name (not the
     full ``gateway-<profile>`` service-dir name) so callers can phrase
     a user-facing message like "no such gateway 'typo'".
@@ -570,7 +570,7 @@ class GatewayNotRegisteredError(S6Error):
         self.profile = profile
         super().__init__(
             f"no such gateway {profile!r}: register it with "
-            f"`hermes profile create {profile}` first, or pass "
+            f"`chiper profile create {profile}` first, or pass "
             "an existing profile name via `-p <name>`",
             service=f"gateway-{profile}",
         )
@@ -636,7 +636,7 @@ class S6ServiceManager:
              unprivileged gateway process.
           3. Activates the bundled venv.
           4. Drops to the hermes user and exec's
-             ``hermes -p <profile> gateway run`` (or just ``hermes
+             ``chiper -p <profile> gateway run`` (or just ``hermes
              gateway run`` for the default profile — see below).
 
         Special case: ``profile == "default"`` emits ``chiper gateway
@@ -702,7 +702,7 @@ class S6ServiceManager:
         if profile == "default":
             gateway_cmd = "chiper gateway run --replace"
         else:
-            gateway_cmd = f"hermes -p {shlex.quote(profile)} gateway run --replace"
+            gateway_cmd = f"chiper -p {shlex.quote(profile)} gateway run --replace"
         # Skip the drop when already non-root (setgroups() lacks CAP_SETGID →
         # s6 boot-loop).
         lines.append(f'[ "$(id -u)" = 0 ] || exec {gateway_cmd}')
@@ -736,7 +736,7 @@ class S6ServiceManager:
              banner output and other plain stdout writes.)
           2. ``T <log_dir>`` — also write a timestamped copy to the
              rotated log directory (``current`` + archived ``@*.s``
-             files). This is what ``hermes logs`` reads and what
+             files). This is what ``chiper logs`` reads and what
              persists across container restarts via the volume mount.
 
         ``T`` is non-sticky: it only prefixes lines for the next
@@ -924,7 +924,7 @@ class S6ServiceManager:
         up immediately.  When *start_now* is ``True`` (the default) the
         service starts immediately; when ``False`` a ``down`` marker file
         is written so s6-supervise leaves the service stopped until the
-        user explicitly runs ``hermes -p <profile> gateway start``.
+        user explicitly runs ``chiper -p <profile> gateway start``.
 
         Raises:
             ValueError: if the profile name is invalid or the service

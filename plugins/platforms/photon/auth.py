@@ -72,7 +72,7 @@ DEFAULT_DASHBOARD_HOST = "https://app.photon.codes"
 DEFAULT_SPECTRUM_HOST = "https://spectrum.photon.codes"
 
 # Default name of the project Hermes provisions for the operator.
-DEFAULT_PROJECT_NAME = "Hermes Agent"
+DEFAULT_PROJECT_NAME = "ChiperFlux Agent"
 
 # Polling defaults per RFC 8628.  Photon overrides via `interval` /
 # `expires_in` in the device-code response — those win.
@@ -986,7 +986,7 @@ def print_credential_summary(emit: Any = print) -> None:
     labels: Dict[str, str] = {}
     labels["device_token"] = (
         "✓ stored" if load_photon_token()
-        else "✗ missing (run `hermes photon setup`)"
+        else "✗ missing (run `chiper photon setup`)"
     )
     sid, sec = load_project_credentials()
     # Dashboard id and Spectrum id are the same value now (ids unified), so
@@ -995,10 +995,10 @@ def print_credential_summary(emit: Any = print) -> None:
     labels["project_key"] = "✓ stored" if sec else "✗ missing"
     phone, assigned = load_user_numbers()
     labels["phone_number"] = (
-        phone if phone else "✗ missing (run `hermes photon setup --phone ...`)"
+        phone if phone else "✗ missing (run `chiper photon setup --phone ...`)"
     )
     labels["assigned_phone_number"] = (
-        assigned if assigned else "✗ missing (run `hermes photon setup`)"
+        assigned if assigned else "✗ missing (run `chiper photon setup`)"
     )
 
     rows = [
@@ -1018,7 +1018,7 @@ def credential_summary() -> Dict[str, str]:
     def _present_token() -> str:
         return (
             "✓ stored" if load_photon_token()
-            else "✗ missing (run `hermes photon setup`)"
+            else "✗ missing (run `chiper photon setup`)"
         )
 
     def _present_project_id() -> str:
@@ -1031,11 +1031,11 @@ def credential_summary() -> Dict[str, str]:
 
     def _present_phone() -> str:
         phone, _assigned = load_user_numbers()
-        return phone or "✗ missing (run `hermes photon setup --phone ...`)"
+        return phone or "✗ missing (run `chiper photon setup --phone ...`)"
 
     def _present_assigned_phone() -> str:
         _phone, assigned = load_user_numbers()
-        return assigned or "✗ missing (run `hermes photon setup`)"
+        return assigned or "✗ missing (run `chiper photon setup`)"
 
     return {
         "device_token": _present_token(),

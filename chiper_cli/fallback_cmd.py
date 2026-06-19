@@ -1,16 +1,16 @@
 """
-hermes fallback — manage the fallback provider chain.
+chiper fallback — manage the fallback provider chain.
 
 Fallback providers are tried in order when the primary model fails with
 rate-limit, overload, or connection errors. See:
 https://chiper-agent.nousresearch.com/docs/user-guide/features/fallback-providers
 
 Subcommands:
-  hermes fallback [list]   Show the current fallback chain (default when no subcommand)
-  hermes fallback add      Pick provider + model via the same picker as `chiper model`,
+  chiper fallback [list]   Show the current fallback chain (default when no subcommand)
+  chiper fallback add      Pick provider + model via the same picker as `chiper model`,
                            then append the selection to the chain
-  hermes fallback remove   Pick an entry to delete from the chain
-  hermes fallback clear    Remove all fallback entries
+  chiper fallback remove   Pick an entry to delete from the chain
+  chiper fallback clear    Remove all fallback entries
 
 Storage: ``fallback_providers`` in ``~/.chiperflux/config.yaml`` (top-level, list of
 ``{provider, model, base_url?, api_mode?}`` dicts).  The legacy single-dict
@@ -115,7 +115,7 @@ def cmd_fallback_list(args) -> None:  # noqa: ARG001
     if not chain:
         print("  No fallback providers configured.")
         print()
-        print("  Add one with:  hermes fallback add")
+        print("  Add one with:  chiper fallback add")
         print()
         return
 
@@ -221,7 +221,7 @@ def cmd_fallback_add(args) -> None:
     print(f"  Added fallback: {_format_entry(new_entry)}")
     print(f"  Chain is now {len(chain)} {'entry' if len(chain) == 1 else 'entries'} long.")
     print()
-    print("  Run `hermes fallback list` to view, or `hermes fallback remove` to delete.")
+    print("  Run `chiper fallback list` to view, or `chiper fallback remove` to delete.")
 
 
 def _restore_model_cfg(model_before: Any) -> None:
@@ -338,7 +338,7 @@ def _numbered_pick(question: str, choices: List[str]) -> Optional[int]:
 # ---------------------------------------------------------------------------
 
 def cmd_fallback(args) -> None:
-    """Top-level dispatcher for ``hermes fallback [subcommand]``."""
+    """Top-level dispatcher for ``chiper fallback [subcommand]``."""
     sub = getattr(args, "fallback_command", None)
     if sub in {None, "", "list", "ls"}:
         cmd_fallback_list(args)

@@ -223,7 +223,7 @@ def register_from_config(
 
 def iter_configured_hooks(cfg: Optional[Dict[str, Any]]) -> List[ShellHookSpec]:
     """Return the parsed ``ShellHookSpec`` entries from config without
-    registering anything.  Used by ``hermes hooks list`` and ``doctor``."""
+    registering anything.  Used by ``chiper hooks list`` and ``doctor``."""
     if not isinstance(cfg, dict):
         return []
     return _parse_hooks_block(cfg.get("hooks"))
@@ -494,7 +494,7 @@ def _block_message(primary: Any, secondary: Any) -> str:
 
 
 def _parse_response(event: str, stdout: str) -> Optional[Dict[str, Any]]:
-    """Translate stdout JSON into a Hermes wire-shape dict.
+    """Translate stdout JSON into a Chiper wire-shape dict.
 
     For ``pre_tool_call`` the Claude-Code-style ``{"decision": "block",
     "reason": "..."}`` payload is translated into the canonical Hermes
@@ -774,7 +774,7 @@ def _resolve_effective_accept(
 
 
 # ---------------------------------------------------------------------------
-# Introspection (used by `hermes hooks` CLI)
+# Introspection (used by `chiper hooks` CLI)
 # ---------------------------------------------------------------------------
 
 def allowlist_entry_for(event: str, command: str) -> Optional[Dict[str, Any]]:
@@ -831,12 +831,12 @@ def run_once(
     spec: ShellHookSpec, kwargs: Dict[str, Any],
 ) -> Dict[str, Any]:
     """Fire a single shell-hook invocation with a synthetic payload.
-    Used by ``hermes hooks test`` and ``hermes hooks doctor``.
+    Used by ``chiper hooks test`` and ``chiper hooks doctor``.
 
     ``kwargs`` is the same dict that :func:`chiper_cli.plugins.invoke_hook`
     would pass at runtime.  It is routed through :func:`_serialize_payload`
     so the synthetic stdin exactly matches what a real hook firing would
-    produce — otherwise scripts tested via ``hermes hooks test`` could
+    produce — otherwise scripts tested via ``chiper hooks test`` could
     diverge silently from production behaviour.
 
     Returns the :func:`_spawn` diagnostic dict plus a ``parsed`` field

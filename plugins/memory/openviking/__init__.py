@@ -1601,7 +1601,7 @@ def _run_create_profile_setup(
     save_choice = select(
         "  Save OpenViking config",
         [
-            ("Keep in Hermes only", "write values only to Hermes .env"),
+            ("Keep in Hermes only", "write values only to Chiper .env"),
             ("Mirror to OpenViking store", "write ~/.openviking/ovcli.conf.<name> and link it"),
         ],
         default=1,
@@ -1634,7 +1634,7 @@ def _run_create_profile_setup(
         env_path=env_path,
         values=values,
     )
-    _print_openviking_ready("Connection saved to Hermes .env.")
+    _print_openviking_ready("Connection saved to Chiper .env.")
     return True
 
 

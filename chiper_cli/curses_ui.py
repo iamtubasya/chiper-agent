@@ -1,6 +1,6 @@
 """Shared curses-based UI components for Chiper CLI.
 
-Used by `hermes tools` and `chiper skills` for interactive checklists.
+Used by `chiper tools` and `chiper skills` for interactive checklists.
 Provides a curses multi-select with keyboard navigation, plus a
 text-based numbered fallback for terminals without curses support.
 """

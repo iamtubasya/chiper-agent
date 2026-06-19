@@ -167,7 +167,7 @@ def _loopback_rewrite_enabled(camofox_cfg: Dict[str, Any]) -> bool:
     """Return whether loopback navigation URLs should be rewritten for Docker.
 
     ``CAMOFOX_URL`` itself often points at a host-published Docker port such as
-    ``http://127.0.0.1:9377``.  That is correct for Hermes talking to the
+    ``http://127.0.0.1:9377``.  That is correct for Chiper talking to the
     Camofox control API, but a page URL like ``http://127.0.0.1:3000`` is opened
     by the browser *inside* the Docker container.  In that context loopback
     points at the container, not the host running the web app.
@@ -296,7 +296,7 @@ def _get_session(task_id: Optional[str]) -> Dict[str, Any]:
     """Get or create a camofox session for the given task.
 
     When managed persistence is enabled, uses a deterministic userId
-    derived from the Hermes profile so the Camofox server can map it
+    derived from the Chiper profile so the Camofox server can map it
     to the same persistent browser profile across restarts.
     """
     task_id = task_id or "default"

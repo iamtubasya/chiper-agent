@@ -159,7 +159,7 @@ def _get_parent_pid(pid: int) -> int | None:
     older implementation shelled out to ``ps -o ppid= -p <pid>``, which
     silently fails on Windows (no ``ps``) so the ancestor walk terminated
     at self — the caller's dedup / exclude logic then couldn't distinguish
-    "hermes CLI that invoked this scan" from "real gateway process".
+    "chiper CLI that invoked this scan" from "real gateway process".
     """
     if pid <= 1:
         return None
@@ -567,7 +567,7 @@ def find_gateway_pids(
             profiles (the pre-7923 global behaviour).  ``chiper update``
             needs this because a code update affects every profile.
             When ``False`` (default), only PIDs belonging to the current
-            Hermes profile are returned.
+            Chiper profile are returned.
     """
     _exclude = set(exclude_pids or set())
     pids: list[int] = []
@@ -588,7 +588,7 @@ def find_gateway_pids(
 def find_profile_gateway_processes(
     exclude_pids: set | None = None,
 ) -> list[ProfileGatewayProcess]:
-    """Return running gateway PIDs mapped to Hermes profiles via PID files."""
+    """Return running gateway PIDs mapped to Chiper profiles via PID files."""
     _exclude = set(exclude_pids or set())
     processes: list[ProfileGatewayProcess] = []
     try:
@@ -3947,12 +3947,12 @@ def _guard_official_docker_root_gateway() -> None:
         return
 
     print_error(
-        "Refusing to run the Hermes gateway as root inside the official Docker image."
+        "Refusing to run the Chiper gateway as root inside the official Docker image."
     )
     print(
         "  The image entrypoint normally drops privileges to the 'hermes' user. "
         "If you override entrypoint in Docker Compose, include "
-        "/opt/hermes/docker/entrypoint.sh before the Hermes command."
+        "/opt/hermes/docker/entrypoint.sh before the Chiper command."
     )
     print(
         "  Running the gateway as root can leave root-owned files in "
@@ -5007,7 +5007,7 @@ def _setup_standard_platform(platform: dict):
                 print()
                 access_choices = [
                     "Enable open access (anyone can message the bot)",
-                    "Use DM pairing (unknown users request access, you approve with 'hermes pairing approve')",
+                    "Use DM pairing (unknown users request access, you approve with 'chiper pairing approve')",
                     "Skip for now (bot will deny all users until configured)",
                 ]
                 access_idx = prompt_choice(
@@ -5213,7 +5213,7 @@ def _setup_wecom():
         print()
         access_choices = [
             "Enable open access (anyone can message the bot)",
-            "Use DM pairing (unknown users request access, you approve with 'hermes pairing approve')",
+            "Use DM pairing (unknown users request access, you approve with 'chiper pairing approve')",
             "Disable direct messages",
             "Skip for now (bot will deny all users until configured)",
         ]
@@ -5406,7 +5406,7 @@ def _setup_weixin():
         save_env_value("WEIXIN_ALLOWED_USERS", "")
         print_success("  DM pairing enabled.")
         print_info(
-            "  Unknown DM users can request access and you approve them with `hermes pairing approve`."
+            "  Unknown DM users can request access and you approve them with `chiper pairing approve`."
         )
     elif access_idx == 1:
         save_env_value("WEIXIN_DM_POLICY", "open")
@@ -5635,7 +5635,7 @@ def _setup_feishu():
         save_env_value("FEISHU_ALLOWED_USERS", "")
         print_success("  DM pairing enabled.")
         print_info(
-            "  Unknown users can request access; approve with `hermes pairing approve`."
+            "  Unknown users can request access; approve with `chiper pairing approve`."
         )
     elif access_idx == 1:
         save_env_value("FEISHU_ALLOW_ALL_USERS", "true")
@@ -5770,7 +5770,7 @@ def _setup_qqbot():
             save_env_value("QQ_ALLOWED_USERS", "")
         print_success("  DM pairing enabled.")
         print_info(
-            "  Unknown users can request access; approve with `hermes pairing approve`."
+            "  Unknown users can request access; approve with `chiper pairing approve`."
         )
     elif access_idx == 1:
         save_env_value("QQ_ALLOW_ALL_USERS", "true")
@@ -6603,7 +6603,7 @@ def _gateway_command_inner(args):
                 print("Per-profile gateways are auto-registered when you create a profile.")
                 print()
                 print("  hermes profile create <name>     # creates the s6 service slot")
-                print("  hermes -p <name> gateway start   # bring it up via s6")
+                print("  chiper -p <name> gateway start   # bring it up via s6")
                 print("  hermes status                    # see currently-supervised gateways")
                 return
             # Fallback for pre-s6 containers or other container runtimes
@@ -6652,7 +6652,7 @@ def _gateway_command_inner(args):
                 print("Per-profile gateways are auto-unregistered when you delete the profile.")
                 print()
                 print("  hermes profile delete <name>     # tears down the s6 service slot")
-                print("  hermes -p <name> gateway stop    # stop without deleting the profile")
+                print("  chiper -p <name> gateway stop    # stop without deleting the profile")
                 return
             print("Service uninstall is not applicable inside a Docker container.")
             print("To stop the gateway, stop or remove the container:")
@@ -6671,7 +6671,7 @@ def _gateway_command_inner(args):
         # Phase 4: inside a container with s6, dispatch via the service
         # manager instead of falling through to systemd/launchd/windows.
         # `--all` isn't meaningful here (each profile has its own service
-        # slot — start them individually via `hermes -p <name> gateway
+        # slot — start them individually via `chiper -p <name> gateway
         # start`), so just bring up the current profile's slot.
         if not start_all and _dispatch_via_service_manager_if_s6("start"):
             return

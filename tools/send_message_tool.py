@@ -394,7 +394,7 @@ def _handle_send(args):
             return json.dumps({
                 "error": f"No home channel set for {platform_name} to determine where to send the message. "
                 f"Either specify a channel directly with '{platform_name}:CHANNEL_NAME', "
-                f"or set a home channel via: hermes config set {home_env} <channel_id>"
+                f"or set a home channel via: chiper config set {home_env} <channel_id>"
             })
 
     duplicate_skip = _maybe_skip_cron_duplicate_send(platform_name, chat_id, thread_id)
@@ -1435,7 +1435,7 @@ async def _send_email(extra, chat_id, message):
         msg = MIMEText(message, "plain", "utf-8")
         msg["From"] = address
         msg["To"] = chat_id
-        msg["Subject"] = "Hermes Agent"
+        msg["Subject"] = "ChiperFlux Agent"
         msg["Date"] = formatdate(localtime=True)
 
         server = smtplib.SMTP(smtp_host, smtp_port)
@@ -1907,7 +1907,7 @@ from tools.registry import tool_error
 # ``_send_via_adapter``, ``_parse_target_ref``, the per-platform ``_send_*``
 # helpers) remains the shared transport used by:
 #   - cron delivery (cron/scheduler.py)
-#   - the ``hermes send`` CLI command (chiper_cli/send_cmd.py)
+#   - the ``chiper send`` CLI command (chiper_cli/send_cmd.py)
 #   - the gateway kanban notifier (dashboard-toggled, outside agent control)
 #   - the standalone MCP server (mcp_serve.py), which is an opt-in surface
 # Those callers import the helpers directly; none of them need the registry

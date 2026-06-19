@@ -921,7 +921,7 @@ class SlackAdapter(BasePlatformAdapter):
             # N identical @app.command() decorators.
             #
             # The slash commands must ALSO be declared in the Slack app
-            # manifest (see `hermes slack manifest`). In Socket Mode, Slack
+            # manifest (see `chiper slack manifest`). In Socket Mode, Slack
             # routes the command event through the socket regardless of the
             # manifest's request URL, but it will not deliver an event for
             # a slash command the manifest doesn't declare.

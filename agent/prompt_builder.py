@@ -121,7 +121,7 @@ def _strip_yaml_frontmatter(content: str) -> str:
 # =========================================================================
 
 DEFAULT_AGENT_IDENTITY = (
-    "You are Hermes Agent, an intelligent AI assistant created by Nous Research. "
+    "You are ChiperFlux Agent, an intelligent AI assistant created by Nous Research. "
     "You are helpful, knowledgeable, and direct. You assist users with a wide "
     "range of tasks including answering questions, writing and editing code, "
     "analyzing information, creative work, and executing actions via your tools. "
@@ -131,7 +131,7 @@ DEFAULT_AGENT_IDENTITY = (
 )
 
 CHIPER_AGENT_HELP_GUIDANCE = (
-    "You run on Hermes Agent (by Nous Research). When the user needs help with "
+    "You run on ChiperFlux Agent (by Nous Research). When the user needs help with "
     "Hermes itself — configuring, setting up, using, extending, or troubleshooting "
     "it — or when you need to understand your own features, tools, or capabilities, "
     "the documentation at https://chiper-agent.nousresearch.com/docs is your "
@@ -240,7 +240,7 @@ KANBAN_GUIDANCE = (
     "\n"
     "## Do NOT\n"
     "\n"
-    "- Do not shell out to `hermes kanban <verb>` for board operations. Use "
+    "- Do not shell out to `chiper kanban <verb>` for board operations. Use "
     "the `kanban_*` tools — they work across all terminal backends.\n"
     "- Do not complete a task you didn't actually finish. Block it.\n"
     "- Do not call `clarify` to ask questions. You are running headless — "
@@ -715,7 +715,7 @@ PLATFORM_HINTS = {
         "brief and natural."
     ),
     "webui": (
-        "You are in the Hermes WebUI, a browser-based chat interface. "
+        "You are in the Chiper WebUI, a browser-based chat interface. "
         "Full Markdown rendering is supported — headings, bold, italic, code "
         "blocks, tables, math (LaTeX), and Mermaid diagrams all render natively. "
         "To display local or remote media/files inline, include "
@@ -936,7 +936,7 @@ def build_environment_hints() -> str:
                 f"`write_file`, `patch`, and `search_files` tools all operate "
                 f"inside this {backend} environment — NOT on the machine "
                 f"where Hermes itself is running. The host OS, home, and cwd "
-                f"of the Hermes process are irrelevant; only the following "
+                f"of the Chiper process are irrelevant; only the following "
                 f"backend state matters:\n{probe}"
             )
         else:
@@ -961,7 +961,7 @@ def build_environment_hints() -> str:
     _in_desktop = (os.getenv("CHIPER_DESKTOP") or "").strip().lower() in _truthy
     _in_desktop_term = (os.getenv("CHIPER_DESKTOP_TERMINAL") or "").strip().lower() in _truthy
     if _in_desktop or _in_desktop_term:
-        _desktop_hint = "Runtime surface: you're running inside the Hermes desktop GUI app."
+        _desktop_hint = "Runtime surface: you're running inside the Chiper desktop GUI app."
         if _in_desktop_term:
             _desktop_hint += (
                 " You're in its embedded terminal pane, beside the GUI chat — the user can "
@@ -1483,10 +1483,10 @@ def build_skills_system_prompt(
             "for tasks like code review, planning, and testing — load them even for tasks you "
             "already know how to do, because the skill defines how it should be done here.\n"
             "Whenever the user asks you to configure, set up, install, enable, disable, modify, "
-            "or troubleshoot Hermes Agent itself — its CLI, config, models, providers, tools, "
+            "or troubleshoot ChiperFlux Agent itself — its CLI, config, models, providers, tools, "
             "skills, voice, gateway, plugins, or any feature — load the `chiper-agent` skill "
-            "first. It has the actual commands (e.g. `hermes config set …`, `hermes tools`, "
-            "`hermes setup`) so you don't have to guess or invent workarounds.\n"
+            "first. It has the actual commands (e.g. `chiper config set …`, `chiper tools`, "
+            "`chiper setup`) so you don't have to guess or invent workarounds.\n"
             "If a skill has issues, fix it with skill_manage(action='patch').\n"
             "After difficult/iterative tasks, offer to save as a skill. "
             "If a skill you loaded was missing steps, had wrong commands, or needed "
@@ -1570,7 +1570,7 @@ def build_nous_subscription_prompt(valid_tool_names: "set[str] | None" = None) -
             "When a Nous-managed feature is active, do not ask the user for Firecrawl, FAL, OpenAI TTS, OpenAI Whisper, or Browser-Use API keys.",
             "If the user is not subscribed and asks for a capability that Nous subscription would unlock or simplify, suggest Nous subscription as one option alongside direct setup or local alternatives.",
             "Do not mention subscription unless the user asks about it or it directly solves the current missing capability.",
-            "Useful commands: hermes setup, hermes setup tools, hermes setup terminal, hermes status.",
+            "Useful commands: chiper setup, chiper setup tools, chiper setup terminal, hermes status.",
         ]
     )
     return "\n".join(lines)

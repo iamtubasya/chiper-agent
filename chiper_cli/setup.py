@@ -453,7 +453,7 @@ def _print_setup_summary(config: dict, chiper_home):
         else:
             tool_status.append(("Image Generation", False, "FAL_KEY or OPENAI_API_KEY"))
 
-    # Video generation — opt-in via `hermes tools` → Video Generation.
+    # Video generation — opt-in via `chiper tools` → Video Generation.
     # Only show the row when a plugin reports available so we don't badger
     # users who don't care about video gen with a "missing" status line.
     if subscription_features.video_gen.managed_by_nous:
@@ -682,7 +682,7 @@ def _prompt_container_resources(config: dict):
 
 
 # Tool categories and provider config are now in tools_config.py (shared
-# between `hermes tools` and `chiper setup tools`).
+# between `chiper tools` and `chiper setup tools`).
 
 
 # =============================================================================
@@ -1900,14 +1900,14 @@ def _write_slack_manifest_and_instruct():
             "reinstall if scopes or slash commands changed."
         )
         print_info(
-            "   Re-run `hermes slack manifest --write` anytime to refresh after "
+            "   Re-run `chiper slack manifest --write` anytime to refresh after "
             "Hermes adds new commands."
         )
     except Exception as exc:  # pragma: no cover - best-effort UX helper
         print_warning(f"Couldn't write Slack manifest: {exc}")
         print_info(
             "   You can generate it manually later with: "
-            "hermes slack manifest --write"
+            "chiper slack manifest --write"
         )
 
 
@@ -2150,7 +2150,7 @@ def setup_gateway(config: dict):
     from chiper_cli.gateway import _all_platforms, _platform_status, _configure_platform
 
     print_header("Messaging Platforms")
-    print_info("Connect to messaging platforms to chat with Hermes from anywhere.")
+    print_info("Connect to messaging platforms to chat with Chiper from anywhere.")
     print_info("Toggle with Space, confirm with Enter.")
     print()
 
@@ -2388,7 +2388,7 @@ def setup_gateway(config: dict):
 def setup_tools(config: dict, first_install: bool = False):
     """Configure tools — delegates to the unified tools_command() in tools_config.py.
 
-    Both `chiper setup tools` and `hermes tools` use the same flow:
+    Both `chiper setup tools` and `chiper tools` use the same flow:
     platform selection → toolset toggles → provider/API key configuration.
 
     Args:
@@ -2594,7 +2594,7 @@ _HIGH_IMPACT_KIND_KEYWORDS = {
     "slack": "⚠ Slack — this will point Hermes at your OpenClaw Slack workspace",
     "discord": "⚠ Discord — this will point Hermes at your OpenClaw Discord bot",
     "whatsapp": "⚠ WhatsApp — this will point Hermes at your OpenClaw WhatsApp connection",
-    "config": "⚠ Config values — OpenClaw settings may not map 1:1 to Hermes equivalents",
+    "config": "⚠ Config values — OpenClaw settings may not map 1:1 to Chiper equivalents",
     "soul": "⚠ Instruction file — may contain OpenClaw-specific setup/restart procedures",
     "memory": "⚠ Memory/context file — may reference OpenClaw-specific infrastructure",
     "context": "⚠ Context file — may contain OpenClaw-specific instructions",
@@ -2638,7 +2638,7 @@ def _print_migration_preview(report: dict):
         print()
 
     if conflict_items:
-        print(color("  Would overwrite (conflicts with existing Hermes config):", Colors.YELLOW))
+        print(color("  Would overwrite (conflicts with existing Chiper config):", Colors.YELLOW))
         for item in conflict_items:
             kind = item.get("kind", "unknown")
             reason = item.get("reason", "already exists")
@@ -2659,7 +2659,7 @@ def _print_migration_preview(report: dict):
         for warning in sorted(warnings_shown):
             print(color(f"    {warning}", Colors.YELLOW))
         print()
-        print(color("  Note: OpenClaw config values may have different semantics in Hermes.", Colors.YELLOW))
+        print(color("  Note: OpenClaw config values may have different semantics in Chiper.", Colors.YELLOW))
         print(color("  For example, OpenClaw's tool_call_execution: \"auto\" ≠ Chiper's yolo mode.", Colors.YELLOW))
         print(color("  Instruction files (.md) from OpenClaw may contain incompatible procedures.", Colors.YELLOW))
         print()
@@ -2753,7 +2753,7 @@ def _offer_openclaw_migration(chiper_home: Path) -> bool:
         )
         return False
 
-    # Execute the migration — overwrite=False so existing Hermes configs are
+    # Execute the migration — overwrite=False so existing Chiper configs are
     # preserved. The user saw the preview; conflicts are skipped by default.
     try:
         migrator = mod.Migrator(
@@ -2761,7 +2761,7 @@ def _offer_openclaw_migration(chiper_home: Path) -> bool:
             target_root=chiper_home.resolve(),
             execute=True,
             workspace_target=None,
-            overwrite=False,  # preserve existing Hermes config
+            overwrite=False,  # preserve existing Chiper config
             migrate_secrets=True,
             output_dir=None,
             selected_options=selected,
@@ -2784,7 +2784,7 @@ def _offer_openclaw_migration(chiper_home: Path) -> bool:
     if migrated:
         print_success(f"Imported {migrated} item(s) from OpenClaw.")
     if conflicts:
-        print_info(f"Skipped {conflicts} item(s) that already exist in Hermes (use hermes claw migrate --overwrite to force).")
+        print_info(f"Skipped {conflicts} item(s) that already exist in Chiper (use hermes claw migrate --overwrite to force).")
     if skipped:
         print_info(f"Skipped {skipped} item(s) (not found or unchanged).")
     if errors:
@@ -2815,10 +2815,10 @@ SETUP_SECTIONS = [
 def _run_portal_one_shot(config: dict) -> None:
     """One-shot Nous Portal setup — OAuth + model pick + provider + Tool Gateway.
 
-    Wired into ``chiper setup --portal`` and ``hermes portal``. This is the
+    Wired into ``chiper setup --portal`` and ``chiper portal``. This is the
     Nous-Portal slice of the first-time quick setup, collapsed into a single
     shareable command so a brand-new user goes from zero to a fully working
-    Hermes session — model selected, provider set, and web/image/tts/browser
+    Chiper session — model selected, provider set, and web/image/tts/browser
     tools routed via their Portal sub — without being told to run
     ``chiper setup`` and hunt for the quick-setup option.
 
@@ -2826,7 +2826,7 @@ def _run_portal_one_shot(config: dict) -> None:
     delegated to ``_model_flow_nous`` — the exact same flow quick setup uses
     (``_run_first_time_quick_setup``) and the same one ``chiper model`` runs
     when you pick Nous. Routing through it (instead of hand-rolling the auth +
-    provider write here) means ``hermes portal`` always offers a model picker,
+    provider write here) means ``chiper portal`` always offers a model picker,
     and there is a single source of truth for the Nous onboarding steps.
     """
     from chiper_cli.config import load_config
@@ -2857,7 +2857,7 @@ def _run_portal_one_shot(config: dict) -> None:
     # which selects a model internally) and the already-logged-in path (curated
     # Nous model picker), then offers the Tool Gateway opt-in and sets
     # provider=nous via the login/model save. This is the same routine quick
-    # setup calls, so `hermes portal` == quick setup's Nous step.
+    # setup calls, so `chiper portal` == quick setup's Nous step.
     try:
         from chiper_cli.main import _model_flow_nous
 
@@ -2870,13 +2870,13 @@ def _run_portal_one_shot(config: dict) -> None:
         # Treat all of these as a graceful cancel/abort for the portal flow.
         print()
         print_info("  Setup cancelled.")
-        print_info("  You can retry later with `hermes portal`.")
+        print_info("  You can retry later with `chiper portal`.")
         return
     except Exception as exc:
-        logger.debug("_model_flow_nous error during `hermes portal`: %s", exc)
+        logger.debug("_model_flow_nous error during `chiper portal`: %s", exc)
         print()
         print_error(f"  Nous Portal setup encountered an error: {exc}")
-        print_info("  You can retry later with `hermes portal`.")
+        print_info("  You can retry later with `chiper portal`.")
         return
 
     # Re-sync the in-memory config from disk — _model_flow_nous (and the
@@ -2892,7 +2892,7 @@ def _run_portal_one_shot(config: dict) -> None:
 
     print()
     print_success("Portal setup complete.")
-    print_info("  Run `hermes portal info` to inspect routing.")
+    print_info("  Run `chiper portal info` to inspect routing.")
     print_info("  Run `hermes` to start chatting.")
 
 
@@ -3044,7 +3044,7 @@ def run_setup_wizard(args):
 
         print()
         print_header("Reconfigure")
-        print_success("You already have Hermes configured.")
+        print_success("You already have Chiper configured.")
         print_info("Running the full wizard — each prompt shows your current value.")
         print_info("Press Enter to keep it, or type a new value to change it.")
         print_info("")

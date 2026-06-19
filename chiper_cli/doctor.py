@@ -234,7 +234,7 @@ def _check_version_consistency(issues: list[str]) -> None:
     """Verify pyproject.toml version matches chiper_cli.__version__.
 
     A git conflict resolution (reset/merge) can revert one file without the
-    other, leaving ``hermes --version`` reporting a stale version while
+    other, leaving ``chiper --version`` reporting a stale version while
     ``pyproject.toml`` is current. Detect that drift so users can re-sync.
     Silent no-op for installed wheels where pyproject.toml isn't present.
     """
@@ -296,7 +296,7 @@ def _check_s6_supervision(issues: list[str]) -> None:
 
     profiles = mgr.list_profile_gateways()
     if not profiles:
-        check_info("No per-profile gateways registered yet — create one with `hermes profile create <name>`")
+        check_info("No per-profile gateways registered yet — create one with `chiper profile create <name>`")
         return
 
     up_count = sum(1 for p in profiles if mgr.is_running(f"gateway-{p}"))
@@ -1239,7 +1239,7 @@ def run_doctor(args):
                 else:
                     issues.append(
                         "state.db schema malformed — run 'chiper doctor --fix' "
-                        "(or 'hermes sessions repair') to recover hidden sessions"
+                        "(or 'chiper sessions repair') to recover hidden sessions"
                     )
             else:
                 check_warn(f"{_DHH}/state.db exists but has issues: {e}")
@@ -1621,7 +1621,7 @@ def run_doctor(args):
                         # tooling (esbuild/vite, etc.), not runtime code that ships
                         # to users. Manual npm remediation may error with a known
                         # arborist crash (edgesOut / isDescendantOf) on this monorepo
-                        # tree — in that case it is an npm bug, not a Hermes one.
+                        # tree — in that case it is an npm bug, not a Chiper one.
                         check_info(
                             "  ^ build-time tooling (not runtime); if manual npm remediation "
                             "errors with an arborist crash it's a known npm bug — clears "
@@ -2180,7 +2180,7 @@ def run_doctor(args):
                 _fail_and_issue(
                     "Honcho API key or base URL not set",
                     "run: hermes memory setup",
-                    "No Honcho API key — run 'hermes memory setup'",
+                    "No Honcho API key — run 'chiper memory setup'",
                     issues,
                 )
             else:
@@ -2273,8 +2273,8 @@ def run_doctor(args):
                         continue
                     try:
                         content = wrapper.read_text()
-                        if "hermes -p" in content:
-                            _m = _re.search(r"hermes -p (\S+)", content)
+                        if "chiper -p" in content:
+                            _m = _re.search(r"chiper -p (\S+)", content)
                             if _m and not profile_exists(_m.group(1)):
                                 check_warn(f"Orphan alias: {wrapper.name} → profile '{_m.group(1)}' no longer exists")
                     except Exception:

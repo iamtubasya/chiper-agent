@@ -1,7 +1,7 @@
 """
 Unified tool configuration for Chiper Agent.
 
-`hermes tools` and `chiper setup tools` both enter this module.
+`chiper tools` and `chiper setup tools` both enter this module.
 Select a platform → toggle toolsets on/off → for newly enabled tools
 that need API keys, run through provider-aware configuration.
 
@@ -102,13 +102,13 @@ def gui_toolset_label(label: str) -> str:
 # but the setup checklist won't pre-select them for first-time users.
 #
 # Video gen is off by default — it's a niche, paid, slow feature. Users
-# who want it opt in via `hermes tools` → Video Generation, which walks
+# who want it opt in via `chiper tools` → Video Generation, which walks
 # them through provider + model selection.
 #
 # X search is off by default for users without xAI credentials, but
 # auto-enables when SuperGrok OAuth tokens are stored OR XAI_API_KEY is
 # set — mirroring the HASS_TOKEN → homeassistant auto-enable below. The
-# `hermes tools` → X (Twitter) Search setup walks users through credential
+# `chiper tools` → X (Twitter) Search setup walks users through credential
 # setup. The tool's check_fn means the schema still won't appear to the
 # model if the credential later goes missing or expires.
 _DEFAULT_OFF_TOOLSETS = {"moa", "homeassistant", "spotify", "discord", "discord_admin", "video", "video_gen", "x_search"}
@@ -139,7 +139,7 @@ def _xai_credentials_present() -> bool:
         pass
     return bool(str(os.environ.get("XAI_API_KEY") or "").strip())
 
-# Platform-scoped toolsets: only appear in the `hermes tools` checklist for
+# Platform-scoped toolsets: only appear in the `chiper tools` checklist for
 # these platforms, and only resolve/save for these platforms.  A toolset
 # absent from this map is available on every platform (current behaviour).
 #
@@ -169,7 +169,7 @@ def _get_effective_configurable_toolsets():
     already appears in ``CONFIGURABLE_TOOLSETS`` is skipped — bundled
     plugins (e.g. ``plugins/spotify``) share their toolset key with the
     built-in entry, and we want the built-in label/description to win.
-    Without the dedupe, ``hermes tools`` → "reconfigure existing" would
+    Without the dedupe, ``chiper tools`` → "reconfigure existing" would
     list the same toolset twice.
     """
     result = list(CONFIGURABLE_TOOLSETS)
@@ -198,7 +198,7 @@ def _get_plugin_toolset_keys() -> set:
 
 
 def _checklist_toolset_keys(platform: str) -> Set[str]:
-    """Return the toolset keys the ``hermes tools`` checklist actually offers
+    """Return the toolset keys the ``chiper tools`` checklist actually offers
     for ``platform``.
 
     This mirrors exactly what ``_prompt_toolset_checklist`` renders:
@@ -210,7 +210,7 @@ def _checklist_toolset_keys(platform: str) -> Set[str]:
     time — ``kanban`` and other check_fn-gated toolsets, recovered platform
     composites, MCP server names — are NOT in this set because the checklist
     never shows them. Use this to scope the added/removed diff the UI prints,
-    so ``hermes tools`` never claims to add or remove a toolset the user was
+    so ``chiper tools`` never claims to add or remove a toolset the user was
     never given a checkbox for. The underlying config is unaffected — those
     entries are preserved by ``_save_platform_tools`` regardless.
     """
@@ -707,7 +707,7 @@ def install_cua_driver(upgrade: bool = False) -> bool:
       we don't want to surprise the user with a network fetch.
     * ``upgrade=True`` — always re-run the installer (or call ``cua-driver
       update`` if the binary supports it). Used by ``chiper update`` and
-      by ``hermes computer-use install --upgrade``.
+      by ``chiper computer-use install --upgrade``.
 
     Returns True iff cua-driver is installed (or successfully refreshed)
     when the function returns. macOS-only — silently returns False on
@@ -1176,7 +1176,7 @@ def valid_post_setup_keys() -> Set[str]:
 
     Collected from ``TOOL_CATEGORIES`` plus the plugin-registered web /
     image-gen / video-gen / browser providers (which can also carry a
-    ``post_setup``). This is the allowlist the ``hermes tools post-setup``
+    ``post_setup``). This is the allowlist the ``chiper tools post-setup``
     command and the dashboard post-setup endpoint validate against, so a
     caller can't drive ``_run_post_setup`` with an arbitrary key.
     """
@@ -1204,7 +1204,7 @@ def valid_post_setup_keys() -> Set[str]:
 
 
 def run_post_setup_command(args) -> int:
-    """``hermes tools post-setup <key>`` — non-interactive post-setup runner.
+    """``chiper tools post-setup <key>`` — non-interactive post-setup runner.
 
     Runs the install/bootstrap hook a provider declares (npm install for
     browser/Camofox, pip install for kittentts/piper/ddgs, cua-driver fetch,
@@ -1379,7 +1379,7 @@ def _get_platform_tools(
         # NOT include, so the subset loop never picks it up. Inject it
         # directly here, mirroring the HASS_TOKEN → ``homeassistant`` rule
         # below: once you have working creds, you don't have to also click
-        # through ``hermes tools`` to flip the toolset on. Only fires when
+        # through ``chiper tools`` to flip the toolset on. Only fires when
         # the user has not yet saved an explicit toolset list — once they
         # do, the saved list is authoritative.
         x_search_auto_enabled = (
@@ -1417,7 +1417,7 @@ def _get_platform_tools(
     # feishu_drive).  These are part of the platform's default composite but
     # absent from CONFIGURABLE_TOOLSETS, so they can't appear in the TUI
     # checklist or in a user-saved config.  Must run in BOTH branches —
-    # otherwise saving via `hermes tools` (which flips has_explicit_config
+    # otherwise saving via `chiper tools` (which flips has_explicit_config
     # to True) silently drops them.
     _plat_info = PLATFORMS.get(platform)
     _default_ts = _plat_info["default_toolset"] if _plat_info else f"hermes-{platform}"
@@ -1451,9 +1451,9 @@ def _get_platform_tools(
 
     # Plugin toolsets: enabled by default unless explicitly disabled, or
     # unless the toolset is in _DEFAULT_OFF_TOOLSETS (e.g. spotify —
-    # shipped as a bundled plugin but user must opt in via `hermes tools`
+    # shipped as a bundled plugin but user must opt in via `chiper tools`
     # so we don't ship 7 Spotify tool schemas to users who don't use it).
-    # A plugin toolset is "known" for a platform once `hermes tools`
+    # A plugin toolset is "known" for a platform once `chiper tools`
     # has been saved for that platform (tracked via known_plugin_toolsets).
     # Unknown plugins default to enabled; known-but-absent = disabled.
     if plugin_ts_keys:
@@ -1576,7 +1576,7 @@ def _save_platform_tools(config: dict, platform: str, enabled_toolset_keys: Set[
         entry for entry in existing_toolsets
         if entry not in configurable_keys and entry not in platform_default_keys
     }
-    # Opening `hermes tools` is the user's opt-in to reconfigure tools, so treat
+    # Opening `chiper tools` is the user's opt-in to reconfigure tools, so treat
     # saving from the picker as consent to clear the "no_mcp" sentinel. The
     # picker has no checkbox for no_mcp, so without this users who once set it
     # by hand could never re-enable MCP servers through the UI.
@@ -2131,7 +2131,7 @@ _POST_SETUP_INSTALLED: dict = {
     # is already satisfied. Used by `_toolset_needs_configuration_prompt`
     # to force the provider-setup flow when a no-key provider still needs
     # a binary/dependency install (otherwise an already-configured user
-    # who toggles the toolset on via `hermes tools` gets a silent no-op
+    # who toggles the toolset on via `chiper tools` gets a silent no-op
     # because the gate sees "no env vars to ask about" and skips the
     # provider-setup flow that would have run the post_setup hook).
     #
@@ -3373,7 +3373,7 @@ def _reconfigure_simple_requirements(ts_key: str):
 # ─── Main Entry Point ─────────────────────────────────────────────────────────
 
 def tools_command(args=None, first_install: bool = False, config: dict = None):
-    """Entry point for `hermes tools` and `chiper setup tools`.
+    """Entry point for `chiper tools` and `chiper setup tools`.
 
     Args:
         first_install: When True (set by the setup wizard on fresh installs),

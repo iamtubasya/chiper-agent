@@ -1,4 +1,4 @@
-"""CLI handlers for the ``hermes proxy`` subcommand."""
+"""CLI handlers for the ``chiper proxy`` subcommand."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 def _print_aiohttp_missing() -> None:
     print(
-        "hermes proxy requires aiohttp. Install one of:\n"
+        "chiper proxy requires aiohttp. Install one of:\n"
         "  pip install 'chiper-agent[messaging]'\n"
         "  pip install aiohttp",
         file=sys.stderr,
@@ -56,7 +56,7 @@ def cmd_proxy_start(args: Any) -> int:
     port = getattr(args, "port", None) or DEFAULT_PORT
 
     print(
-        f"Starting Hermes proxy for {adapter.display_name}\n"
+        f"Starting Chiper proxy for {adapter.display_name}\n"
         f"  Listening on:  http://{host}:{port}/v1\n"
         f"  Forwarding to: (resolved per-request from your subscription)\n"
         f"  Use any bearer token in the client — the proxy attaches your real credential.\n"
@@ -77,7 +77,7 @@ def cmd_proxy_start(args: Any) -> int:
 
 def cmd_proxy_status(args: Any) -> int:
     """Print the status of each configured upstream adapter."""
-    print("Hermes proxy upstream adapters\n")
+    print("Chiper proxy upstream adapters\n")
     for name in sorted(ADAPTERS):
         adapter = get_adapter(name)
         if not adapter.is_authenticated():
@@ -94,7 +94,7 @@ def cmd_proxy_status(args: Any) -> int:
         expires = f" (bearer expires {cred.expires_at})" if cred.expires_at else ""
         print(f"  [{name:8s}] {adapter.display_name} — ready{expires}")
     print(
-        "\nStart the proxy with: hermes proxy start [--provider <name>]"
+        "\nStart the proxy with: chiper proxy start [--provider <name>]"
     )
     return 0
 
@@ -109,7 +109,7 @@ def cmd_proxy_list_providers(args: Any) -> int:
 
 
 def cmd_proxy(args: Any) -> int:
-    """Dispatch ``hermes proxy <subcommand>``."""
+    """Dispatch ``chiper proxy <subcommand>``."""
     sub = getattr(args, "proxy_command", None)
     if sub == "start":
         return cmd_proxy_start(args)
@@ -119,15 +119,15 @@ def cmd_proxy(args: Any) -> int:
         return cmd_proxy_list_providers(args)
     # No subcommand → print short help.
     print(
-        "hermes proxy — local OpenAI-compatible proxy that attaches your\n"
+        "chiper proxy — local OpenAI-compatible proxy that attaches your\n"
         "OAuth-authenticated provider credentials to outbound requests.\n"
         "\n"
         "Subcommands:\n"
-        "  hermes proxy start [--provider nous|xai] [--host 127.0.0.1] [--port 8645]\n"
+        "  chiper proxy start [--provider nous|xai] [--host 127.0.0.1] [--port 8645]\n"
         "      Run the proxy in the foreground.\n"
-        "  hermes proxy status\n"
+        "  chiper proxy status\n"
         "      Show which upstream adapters are ready.\n"
-        "  hermes proxy providers\n"
+        "  chiper proxy providers\n"
         "      List available upstream providers.\n",
         file=sys.stderr,
     )

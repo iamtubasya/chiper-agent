@@ -2357,7 +2357,7 @@ def _model_flow_api_key_provider(config, provider_id, current_model=""):
                 print("   an agent session.")
                 print()
                 print(
-                    "   To use Gemini with Hermes, enable billing on your "
+                    "   To use Gemini with Chiper, enable billing on your "
                     "Google Cloud project and regenerate"
                 )
                 print(

@@ -1,4 +1,4 @@
-"""Projects codex app-server events into Hermes' messages list.
+"""Projects codex app-server events into Chiper' messages list.
 
 The translator that lets Hermes' memory/skill review keep working under the
 Codex runtime: it converts Codex `item/*` notifications into the standard

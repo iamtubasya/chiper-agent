@@ -47,7 +47,7 @@ def _flip_console_code_page_to_utf8() -> None:
     """Set the attached console's input and output code pages to UTF-8.
 
     Uses ``SetConsoleCP`` / ``SetConsoleOutputCP`` via ``ctypes``.  Failure
-    is silent — if there's no attached console (e.g. Hermes is running
+    is silent — if there's no attached console (e.g. Chiper is running
     behind a redirected stdout, under a service, or inside a PTY-less CI
     runner) these calls simply return 0 and we move on.
 
@@ -127,7 +127,7 @@ def configure_windows_stdio() -> bool:
     if _default_editor and not os.environ.get("EDITOR") and not os.environ.get("VISUAL"):
         os.environ["EDITOR"] = _default_editor
 
-    # Augment PATH with the Hermes-managed Git install directories so
+    # Augment PATH with the Chiper-managed Git install directories so
     # subprocess calls (bash, rg, grep, etc.) resolve even in sessions
     # that started before the User PATH broadcast reached them.  When
     # install.ps1 adds these to User PATH via SetEnvironmentVariable,

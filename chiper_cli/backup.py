@@ -1,10 +1,10 @@
 """
 Backup and import commands for hermes CLI.
 
-`hermes backup` creates a zip archive of the entire ~/.chiperflux/ directory
+`chiper backup` creates a zip archive of the entire ~/.chiperflux/ directory
 (excluding the chiper-agent repo and transient files).
 
-`hermes import` restores from a backup zip, overlaying onto the current
+`chiper import` restores from a backup zip, overlaying onto the current
 CHIPER_HOME root.
 """
 
@@ -64,7 +64,7 @@ _EXCLUDED_NAMES = {
     "cron.pid",
 }
 
-# File names that ``hermes import`` must never overwrite, matched by basename so
+# File names that ``chiper import`` must never overwrite, matched by basename so
 # they're caught for the root profile (``gateway_state.json``) and for named
 # profiles alike (``profiles/<name>/gateway_state.json``).
 #
@@ -183,11 +183,11 @@ def _format_size(nbytes: int) -> str:
 
 
 def run_backup(args) -> None:
-    """Create a zip backup of the Hermes home directory."""
+    """Create a zip backup of the Chiper home directory."""
     hermes_root = get_default_chiper_root()
 
     if not hermes_root.is_dir():
-        print(f"Error: Hermes home directory not found at {hermes_root}")
+        print(f"Error: Chiper home directory not found at {hermes_root}")
         sys.exit(1)
 
     # Determine output path
@@ -313,7 +313,7 @@ def run_backup(args) -> None:
 # ---------------------------------------------------------------------------
 
 def _validate_backup_zip(zf: zipfile.ZipFile) -> tuple[bool, str]:
-    """Check that a zip looks like a Hermes backup.
+    """Check that a zip looks like a Chiper backup.
 
     Returns (ok, reason).
     """
@@ -332,7 +332,7 @@ def _validate_backup_zip(zf: zipfile.ZipFile) -> tuple[bool, str]:
 
     if not found:
         return False, (
-            "zip does not appear to be a Hermes backup "
+            "zip does not appear to be a Chiper backup "
             "(no config.yaml, .env, or state databases found)"
         )
 
@@ -364,7 +364,7 @@ def _detect_prefix(zf: zipfile.ZipFile) -> str:
 
 
 def run_import(args) -> None:
-    """Restore a Hermes backup from a zip file."""
+    """Restore a Chiper backup from a zip file."""
     zip_path = Path(args.zipfile).expanduser().resolve()
 
     if not zip_path.is_file():
@@ -400,7 +400,7 @@ def run_import(args) -> None:
 
         if (has_config or has_env) and not args.force:
             print()
-            print("Warning: Target directory already has Hermes configuration.")
+            print("Warning: Target directory already has Chiper configuration.")
             print("Importing will overwrite existing files with backup contents.")
             print()
             try:
@@ -538,9 +538,9 @@ def run_import(args) -> None:
             gw_profiles = [n for n, _ in restored_profiles]
             print("\nTo re-enable gateway services for profiles:")
             for pname in gw_profiles:
-                print(f"  hermes -p {pname} gateway install")
+                print(f"  chiper -p {pname} gateway install")
 
-        print("Done. Your Hermes configuration has been restored.")
+        print("Done. Your Chiper configuration has been restored.")
 
 
 # ---------------------------------------------------------------------------
@@ -798,7 +798,7 @@ def restore_cron_jobs_if_emptied(
     Args:
         snapshot_id: The pre-update quick-snapshot id (from
             :func:`create_quick_snapshot`).
-        chiper_home: Override for the Hermes home directory (tests).
+        chiper_home: Override for the Chiper home directory (tests).
 
     Returns:
         ``None`` when no action was taken (the common, healthy path). On a
@@ -1043,7 +1043,7 @@ def create_pre_update_backup(
 
 
 # ---------------------------------------------------------------------------
-# Pre-migration auto-backup (used by `hermes claw migrate`)
+# Pre-migration auto-backup (used by `chiper claw migrate`)
 # ---------------------------------------------------------------------------
 
 _PRE_MIGRATION_PREFIX = "pre-migration-"
@@ -1083,11 +1083,11 @@ def create_pre_migration_backup(
     keep: int = _PRE_MIGRATION_DEFAULT_KEEP,
 ) -> Optional[Path]:
     """Create a full zip backup of CHIPER_HOME under ``backups/`` before a
-    ``hermes claw migrate`` apply.
+    ``chiper claw migrate`` apply.
 
     Shares implementation with :func:`create_pre_update_backup` via
     ``_write_full_zip_backup`` — same exclusions, same SQLite safe-copy,
-    restorable with ``hermes import <archive>``.  Writes to
+    restorable with ``chiper import <archive>``.  Writes to
     ``<CHIPER_HOME>/backups/pre-migration-<timestamp>.zip`` and auto-prunes
     old pre-migration backups.
 
@@ -1099,7 +1099,7 @@ def create_pre_migration_backup(
     if not hermes_root.is_dir():
         return None
 
-    # Reuses the shared backups/ directory so `hermes import` and the
+    # Reuses the shared backups/ directory so `chiper import` and the
     # update-backup listing pick up pre-migration archives too.
     backup_dir = _pre_update_backup_dir(hermes_root)
     try:

@@ -1,6 +1,6 @@
 """On-demand supply-chain audit for Chiper Agent installs.
 
-Scans three surfaces a Hermes user actually controls and we can map to
+Scans three surfaces a Chiper user actually controls and we can map to
 upstream advisories without auth or extra binaries:
 
 1. The Hermes venv (every PyPI dist via ``importlib.metadata``).
@@ -526,7 +526,7 @@ def _count_components(
 
 
 def cmd_security_audit(args: argparse.Namespace) -> int:
-    """Implementation of `hermes security audit`."""
+    """Implementation of `chiper security audit`."""
     home = Path(get_chiper_home())
     skip_venv = bool(getattr(args, "skip_venv", False))
     skip_plugins = bool(getattr(args, "skip_plugins", False))

@@ -349,7 +349,7 @@ _PROVIDERS_WITHOUT_VISION: frozenset = frozenset({
 # reads; the previous `X-OpenRouter-Title` label was not recognized there.
 _OR_HEADERS_BASE = {
     "HTTP-Referer": "https://chiper-agent.nousresearch.com",
-    "X-Title": "Hermes Agent",
+    "X-Title": "ChiperFlux Agent",
     "X-OpenRouter-Categories": "productivity,cli-agent",
 }
 
@@ -519,7 +519,7 @@ def _codex_cloudflare_headers(access_token: str) -> Dict[str, str]:
     crash at client construction.
     """
     headers = {
-        "User-Agent": "codex_cli_rs/0.0.0 (Hermes Agent)",
+        "User-Agent": "codex_cli_rs/0.0.0 (ChiperFlux Agent)",
         "originator": "codex_cli_rs",
     }
     if not isinstance(access_token, str) or not access_token.strip():
@@ -1332,7 +1332,7 @@ def _resolve_xai_oauth_for_aux() -> Optional[Tuple[str, str]]:
     Prefer the credential pool, matching the main runtime/provider status
     path.  Some xAI OAuth logins live only as pool entries; falling straight
     to the singleton auth-store resolver would make auxiliary tasks such as
-    compression report "no provider configured" even though ``hermes auth
+    compression report "no provider configured" even though ``chiper auth
     status`` shows xAI OAuth as logged in.
 
     Falls back to ``chiper_cli.auth``'s singleton runtime resolver for older
@@ -1382,7 +1382,7 @@ def _resolve_xai_oauth_for_aux() -> Optional[Tuple[str, str]]:
 
 
 def _read_codex_access_token() -> Optional[str]:
-    """Read a valid, non-expired Codex OAuth access token from Hermes auth store.
+    """Read a valid, non-expired Codex OAuth access token from Chiper auth store.
 
     If a credential pool exists but currently has no selectable runtime entry
     (for example all pool slots are marked exhausted), fall back to the
@@ -1902,7 +1902,7 @@ def _validate_base_url(base_url: str) -> None:
     except ValueError as exc:
         raise RuntimeError(
             f"Malformed custom endpoint URL: {candidate!r}. "
-            "Run `hermes setup` or `hermes model` and enter a valid http(s) base URL."
+            "Run `chiper setup` or `chiper model` and enter a valid http(s) base URL."
         ) from exc
 
 
@@ -2345,7 +2345,7 @@ def _log_skip_unhealthy(label: str, task: Optional[str] = None) -> None:
 
 def _reset_aux_unhealthy_cache() -> None:
     """Clear the unhealthy cache. Used by tests and by a future explicit
-    user trigger (e.g. ``hermes config aux reset``)."""
+    user trigger (e.g. ``chiper config aux reset``)."""
     _aux_unhealthy_until.clear()
     _aux_unhealthy_logged_at.clear()
 
@@ -3140,7 +3140,7 @@ def _try_main_fallback_chain(
     """Try the top-level main-agent fallback chain for an auxiliary call.
 
     ``provider: auto`` auxiliary tasks should respect the user's declared
-    main fallback policy before dropping into Hermes' built-in discovery
+    main fallback policy before dropping into Chiper' built-in discovery
     chain. The top-level chain is read through ``get_fallback_chain`` so
     both modern ``fallback_providers`` and legacy ``fallback_model`` entries
     participate in the same order as the main agent.
@@ -3259,7 +3259,7 @@ def _resolve_auto(
 
     # ── Warn once if OPENAI_BASE_URL is set but config.yaml uses a named
     #    provider (not 'custom').  This catches the common "env poisoning"
-    #    scenario where a user switches providers via `hermes model` but the
+    #    scenario where a user switches providers via `chiper model` but the
     #    old OPENAI_BASE_URL lingers in ~/.chiperflux/.env. ──
     if not _stale_base_url_warned:
         _env_base = os.getenv("OPENAI_BASE_URL", "").strip()
@@ -5230,7 +5230,7 @@ def call_llm(
         if client is None:
             raise RuntimeError(
                 f"No LLM provider configured for task={task} provider={resolved_provider}. "
-                f"Run: hermes setup"
+                f"Run: chiper setup"
             )
         resolved_provider = effective_provider or resolved_provider
     else:
@@ -5251,7 +5251,7 @@ def call_llm(
                 raise RuntimeError(
                     f"Provider '{_explicit}' is set in config.yaml but no API key "
                     f"was found. Set the {_explicit.upper()}_API_KEY environment "
-                    f"variable, or switch to a different provider with `hermes model`."
+                    f"variable, or switch to a different provider with `chiper model`."
                 )
             # For auto/custom with no credentials, try the full auto chain
             # rather than hardcoding OpenRouter (which may be depleted).
@@ -5265,7 +5265,7 @@ def call_llm(
         if client is None:
             raise RuntimeError(
                 f"No LLM provider configured for task={task} provider={resolved_provider}. "
-                f"Run: hermes setup")
+                f"Run: chiper setup")
 
     effective_timeout = timeout if timeout is not None else _get_task_timeout(task)
 
@@ -5739,7 +5739,7 @@ async def async_call_llm(
         if client is None:
             raise RuntimeError(
                 f"No LLM provider configured for task={task} provider={resolved_provider}. "
-                f"Run: hermes setup"
+                f"Run: chiper setup"
             )
         resolved_provider = effective_provider or resolved_provider
     else:
@@ -5757,7 +5757,7 @@ async def async_call_llm(
                 raise RuntimeError(
                     f"Provider '{_explicit}' is set in config.yaml but no API key "
                     f"was found. Set the {_explicit.upper()}_API_KEY environment "
-                    f"variable, or switch to a different provider with `hermes model`."
+                    f"variable, or switch to a different provider with `chiper model`."
                 )
             if not resolved_base_url:
                 logger.info("Auxiliary %s: provider %s unavailable, trying auto-detection chain",
@@ -5766,7 +5766,7 @@ async def async_call_llm(
         if client is None:
             raise RuntimeError(
                 f"No LLM provider configured for task={task} provider={resolved_provider}. "
-                f"Run: hermes setup")
+                f"Run: chiper setup")
 
     effective_timeout = timeout if timeout is not None else _get_task_timeout(task)
 

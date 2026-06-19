@@ -687,7 +687,7 @@ class DiscordAdapter(BasePlatformAdapter):
 
         discord.py reconnects normal gateway interruptions internally. When its
         top-level ``Bot.start()`` task actually exits after the adapter has been
-        marked running, the Discord websocket is dead while the Hermes gateway
+        marked running, the Discord websocket is dead while the Chiper gateway
         process can remain alive. Treat that split-brain state as a retryable
         fatal adapter error so ``GatewayRunner._handle_adapter_fatal_error`` can
         remove this adapter and queue Discord for the existing reconnect watcher.
@@ -3443,11 +3443,11 @@ class DiscordAdapter(BasePlatformAdapter):
         async def slash_voice(interaction: discord.Interaction, mode: str = ""):
             await self._run_simple_slash(interaction, f"/voice {mode}".strip())
 
-        @tree.command(name="update", description="Update Hermes Agent to the latest version")
+        @tree.command(name="update", description="Update ChiperFlux Agent to the latest version")
         async def slash_update(interaction: discord.Interaction):
             await self._run_simple_slash(interaction, "/update", "Update initiated~")
 
-        @tree.command(name="restart", description="Gracefully restart the Hermes gateway")
+        @tree.command(name="restart", description="Gracefully restart the Chiper gateway")
         async def slash_restart(interaction: discord.Interaction):
             await self._run_simple_slash(interaction, "/restart", "Restart requested~")
 
@@ -3461,10 +3461,10 @@ class DiscordAdapter(BasePlatformAdapter):
         async def slash_deny(interaction: discord.Interaction, scope: str = ""):
             await self._run_simple_slash(interaction, f"/deny {scope}".strip())
 
-        @tree.command(name="thread", description="Create a new thread and start a Hermes session in it")
+        @tree.command(name="thread", description="Create a new thread and start a Chiper session in it")
         @discord.app_commands.describe(
             name="Thread name",
-            message="Optional first message to send to Hermes in the thread",
+            message="Optional first message to send to Chiper in the thread",
             auto_archive_duration="Auto-archive in minutes (60, 1440, 4320, 10080)",
         )
         async def slash_thread(
@@ -3788,7 +3788,7 @@ class DiscordAdapter(BasePlatformAdapter):
 
             cmd = discord.app_commands.Command(
                 name="skill",
-                description="Run a Hermes skill",
+                description="Run a Chiper skill",
                 callback=_skill_handler,
             )
             tree.add_command(cmd)
@@ -4633,7 +4633,7 @@ class DiscordAdapter(BasePlatformAdapter):
     ) -> SendResult:
         """Send an interactive button-based update prompt (Yes / No).
 
-        Used by the gateway ``/update`` watcher when ``hermes update --gateway``
+        Used by the gateway ``/update`` watcher when ``chiper update --gateway``
         needs user input (stash restore, config migration).
         """
         if not self._client or not DISCORD_AVAILABLE:
@@ -5683,7 +5683,7 @@ def _define_discord_view_classes() -> None:
                     pass
 
     class UpdatePromptView(discord.ui.View):
-        """Interactive Yes/No buttons for ``hermes update`` prompts.
+        """Interactive Yes/No buttons for ``chiper update`` prompts.
 
         Clicking a button writes the answer to ``.update_response`` so the
         detached update process can pick it up.  Only authorized users can
@@ -6299,7 +6299,7 @@ if DISCORD_AVAILABLE:
 
 # ── Standalone (out-of-process) sender ────────────────────────────────────────
 # Used by ``tools/send_message_tool._send_via_adapter`` when the gateway runner
-# is not in this process (e.g. ``hermes cron`` running standalone) and no live
+# is not in this process (e.g. ``chiper cron`` running standalone) and no live
 # DiscordAdapter instance is available.  Implements the same forum/thread/
 # multipart logic the live adapter would use, via Discord's REST API directly.
 #
@@ -6764,7 +6764,7 @@ def _build_adapter(config):
 
 
 def register(ctx) -> None:
-    """Plugin entry point — called by the Hermes plugin system."""
+    """Plugin entry point — called by the Chiper plugin system."""
     ctx.register_platform(
         name="discord",
         label="Discord",

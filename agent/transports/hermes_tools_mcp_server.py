@@ -106,7 +106,7 @@ EXPOSED_TOOLS: tuple[str, ...] = (
 
 
 def _build_server() -> Any:
-    """Create the FastMCP server with Hermes tools attached. Lazy imports
+    """Create the FastMCP server with Chiper tools attached. Lazy imports
     so the module can be imported without the mcp package installed
     (we degrade to a clear error only when actually run)."""
     try:
@@ -125,7 +125,7 @@ def _build_server() -> Any:
     mcp = FastMCP(
         "hermes-tools",
         instructions=(
-            "Hermes Agent's tool surface, exposed for use inside a Codex "
+            "ChiperFlux Agent's tool surface, exposed for use inside a Codex "
             "session. Use these for capabilities Codex's built-in toolset "
             "doesn't cover: web search/extract, browser automation, "
             "subagent delegation, vision, image generation, persistent "

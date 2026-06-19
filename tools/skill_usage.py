@@ -268,7 +268,7 @@ def read_suppressed_names() -> Set[str]:
     """Built-in skills the curator pruned — the re-seeder must leave archived.
 
     One skill name per line in ``~/.chiperflux/skills/.curator_suppressed``. This is
-    what makes pruning a built-in durable: without it, ``hermes update`` would
+    what makes pruning a built-in durable: without it, ``chiper update`` would
     re-copy the bundled skill on the next sync.
     """
     path = _suppressed_file()
@@ -382,8 +382,8 @@ def list_archived_skill_names() -> List[str]:
     """Enumerate skills in ``~/.chiperflux/skills/.archive/``.
 
     Archive layout is flat (``.archive/<skill>/``) as set by ``archive_skill``,
-    so the directory name is the skill name. Used by ``hermes curator
-    list-archived`` to help users pass a name to ``hermes curator restore``.
+    so the directory name is the skill name. Used by ``chiper curator
+    list-archived`` to help users pass a name to ``chiper curator restore``.
     """
     archive_root = _archive_dir()
     if not archive_root.exists():

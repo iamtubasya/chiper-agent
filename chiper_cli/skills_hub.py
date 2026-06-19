@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Skills Hub CLI — Unified interface for the Hermes Skills Hub.
+Skills Hub CLI — Unified interface for the Chiper Skills Hub.
 
 Powers both:
   - `chiper skills <subcommand>` (CLI argparse entry point)
@@ -891,7 +891,7 @@ def do_list(source_filter: str = "all",
         enabled_only: If True, hide disabled skills from the output.
 
     Enabled/disabled state is resolved against the currently active profile's
-    config — ``hermes -p <profile> skills list`` reads that profile's
+    config — ``chiper -p <profile> skills list`` reads that profile's
     ``skills.disabled`` list because ``-p`` swaps ``CHIPER_HOME`` at process
     start.  No explicit profile flag needed here.
     """
@@ -1553,8 +1553,8 @@ def _github_publish(skill_path: Path, skill_name: str, target_repo: str,
             headers=headers, timeout=15,
             json={
                 "title": f"Add skill: {skill_name}",
-                "body": f"Submitting the `{skill_name}` skill via Hermes Skills Hub.\n\n"
-                        f"This skill was scanned by the Hermes Skills Guard before submission.",
+                "body": f"Submitting the `{skill_name}` skill via Chiper Skills Hub.\n\n"
+                        f"This skill was scanned by the Chiper Skills Guard before submission.",
                 "head": f"{fork_repo.split('/')[0]}:{branch_name}",
                 "base": default_branch,
             },

@@ -1,5 +1,5 @@
 """
-``hermes photon ...`` CLI subcommands — registered by the plugin via
+``chiper photon ...`` CLI subcommands — registered by the plugin via
 ``ctx.register_cli_command()``.
 
 Subcommands:
@@ -37,7 +37,7 @@ _SIDECAR_DIR = Path(__file__).parent / "sidecar"
 # argparse wiring
 
 def register_cli(parser: argparse.ArgumentParser) -> None:
-    """Wire up `hermes photon ...` subcommands."""
+    """Wire up `chiper photon ...` subcommands."""
     subs = parser.add_subparsers(dest="photon_command", required=False)
 
     p_setup = subs.add_parser(
@@ -45,7 +45,7 @@ def register_cli(parser: argparse.ArgumentParser) -> None:
         help="First-time setup (device login + project + user + sidecar)",
     )
     p_setup.add_argument("--project-name", default=None,
-                         help="Project name (default: 'Hermes Agent')")
+                         help="Project name (default: 'ChiperFlux Agent')")
     p_setup.add_argument("--phone", default=None,
                          help="Your E.164 phone number (e.g. +15551234567)")
     p_setup.add_argument("--first-name", default=None)
@@ -98,7 +98,7 @@ def _run_device_login(args: argparse.Namespace) -> int:
     """Run the RFC 8628 device-code login flow and persist the token.
 
     Internal helper — invoked as the first step of ``setup``. There is
-    no standalone ``hermes photon login`` command; Photon onboards
+    no standalone ``chiper photon login`` command; Photon onboards
     through the single ``setup`` surface like every other channel.
     """
     def _print_code(code):
@@ -141,7 +141,7 @@ def _cmd_setup(args: argparse.Namespace) -> int:
     else:
         print("[1/5] Reusing existing Photon token")
 
-    # 2. Find or create the "Hermes Agent" project.
+    # 2. Find or create the "ChiperFlux Agent" project.
     name = args.project_name or photon_auth.DEFAULT_PROJECT_NAME
     dashboard_id = photon_auth.load_dashboard_project_id()
     try:
@@ -272,7 +272,7 @@ def _cmd_setup(args: argparse.Namespace) -> int:
 
     print()
     print("✓ Photon setup complete.")
-    print("  Start the gateway:  hermes gateway start")
+    print("  Start the gateway:  chiper gateway start")
     return 0
 
 
@@ -312,8 +312,8 @@ def _cmd_status(_args: argparse.Namespace) -> int:
     node_bin = os.getenv("PHOTON_NODE_BIN") or shutil.which("node")
     sidecar_installed = (_SIDECAR_DIR / "node_modules").exists()
     print(f"  node binary         : {node_bin or '✗ missing (install Node 18+)'}")
-    print(f"  sidecar deps        : {'✓ installed' if sidecar_installed else '✗ run `hermes photon install-sidecar`'}")
-    print(f"  telemetry           : {'on' if _telemetry_enabled() else 'off'} (`hermes photon telemetry on|off`)")
+    print(f"  sidecar deps        : {'✓ installed' if sidecar_installed else '✗ run `chiper photon install-sidecar`'}")
+    print(f"  telemetry           : {'on' if _telemetry_enabled() else 'off'} (`chiper photon telemetry on|off`)")
     return 0
 
 
@@ -352,7 +352,7 @@ def _cmd_telemetry(args: argparse.Namespace) -> int:
     state = getattr(args, "state", None)
     if state is None:
         print(f"Photon telemetry: {'on' if _telemetry_enabled() else 'off'}")
-        print("  Toggle with `hermes photon telemetry on` / `hermes photon telemetry off`.")
+        print("  Toggle with `chiper photon telemetry on` / `chiper photon telemetry off`.")
         return 0
     try:
         from chiper_cli.config import save_env_value
@@ -361,7 +361,7 @@ def _cmd_telemetry(args: argparse.Namespace) -> int:
         print(f"could not save PHOTON_TELEMETRY: {e}", file=sys.stderr)
         return 1
     print(f"✓ Spectrum telemetry turned {state} (PHOTON_TELEMETRY in ~/.chiperflux/.env)")
-    print("  Restart the gateway for the sidecar to pick it up:  hermes gateway restart")
+    print("  Restart the gateway for the sidecar to pick it up:  chiper gateway restart")
     return 0
 
 
@@ -402,15 +402,15 @@ def _install_sidecar() -> int:
 # ---------------------------------------------------------------------------
 # Gateway-setup entry point
 #
-# `hermes gateway setup` discovers platforms via the registry and calls each
+# `chiper gateway setup` discovers platforms via the registry and calls each
 # entry's zero-arg ``setup_fn``. Photon registers this function so it appears
 # in the unified setup wizard alongside every other channel — same onboarding
 # surface, no Photon-specific detour. It runs the identical device-login +
-# project + user + sidecar flow as ``hermes photon setup`` with interactive
+# project + user + sidecar flow as ``chiper photon setup`` with interactive
 # defaults (phone is prompted when stdin is a TTY).
 
 def gateway_setup() -> None:
-    """Run Photon first-time setup from the `hermes gateway setup` wizard."""
+    """Run Photon first-time setup from the `chiper gateway setup` wizard."""
     args = argparse.Namespace(
         photon_command="setup",
         project_name=None,

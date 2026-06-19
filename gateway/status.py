@@ -165,7 +165,7 @@ def _read_process_cmdline(pid: int) -> Optional[str]:
 
 
 def _looks_like_gateway_process(pid: int) -> bool:
-    """Return True when the live PID still looks like the Hermes gateway."""
+    """Return True when the live PID still looks like the Chiper gateway."""
     cmdline = _read_process_cmdline(pid)
     if not cmdline:
         return False
@@ -173,7 +173,7 @@ def _looks_like_gateway_process(pid: int) -> bool:
     patterns = (
         "chiper_cli.main gateway",
         "chiper_cli/main.py gateway",
-        "hermes gateway",
+        "chiper gateway",
         "chiper-gateway",
         "gateway/run.py",
     )
@@ -194,7 +194,7 @@ def _record_looks_like_gateway(record: dict[str, Any]) -> bool:
     patterns = (
         "chiper_cli.main gateway",
         "chiper_cli/main.py gateway",
-        "hermes gateway",
+        "chiper gateway",
         "gateway/run.py",
     )
     return any(pattern in cmdline for pattern in patterns)
@@ -875,7 +875,7 @@ def _consume_pid_marker_for_self(
     # platforms without ``/proc`` (macOS, native Windows — the very
     # platform the planned-stop watcher exists for). Requiring a non-None
     # match there would make every consume return False, so a legitimate
-    # ``hermes gateway stop`` on Windows would be misclassified as an
+    # ``chiper gateway stop`` on Windows would be misclassified as an
     # unexpected ``UNKNOWN`` exit (exit 1) and revived by the service
     # manager. So: when both start_times are known they must match; when
     # either is unknown, fall back to PID equality alone (bounded by the

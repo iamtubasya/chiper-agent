@@ -1,7 +1,7 @@
 """
-MCP Server Management CLI — ``hermes mcp`` subcommand.
+MCP Server Management CLI — ``chiper mcp`` subcommand.
 
-Implements ``hermes mcp add/remove/list/test/configure`` for interactive
+Implements ``chiper mcp add/remove/list/test/configure`` for interactive
 MCP server lifecycle management (issue #690 Phase 2).
 
 Relies on tools/mcp_tool.py for connection/discovery and keeps
@@ -265,7 +265,7 @@ def _probe_single_server(
 def _oauth_tokens_present(name: str) -> bool:
     """Return True if an OAuth token file exists on disk for ``name``.
 
-    Used after ``hermes mcp login`` to distinguish a genuine authentication
+    Used after ``chiper mcp login`` to distinguish a genuine authentication
     from a probe that succeeded only because the server allowed
     initialize/tools-list without auth (so no token was ever acquired).
     """
@@ -521,7 +521,7 @@ def cmd_mcp_remove(args):
 
     # Clean up OAuth tokens if they exist — route through MCPOAuthManager so
     # any provider instance cached in the current process (e.g. from an
-    # earlier `hermes mcp test` in the same session) is evicted too.
+    # earlier `chiper mcp test` in the same session) is evicted too.
     try:
         from tools.mcp_oauth_manager import get_manager
         get_manager().remove(name)
@@ -694,7 +694,7 @@ def cmd_mcp_login(args):
         return
     if server_config.get("auth") != "oauth":
         _error(f"Server '{name}' is not configured for OAuth (auth={server_config.get('auth')})")
-        _info("Use `hermes mcp remove` + `hermes mcp add` to reconfigure auth.")
+        _info("Use `chiper mcp remove` + `chiper mcp add` to reconfigure auth.")
         return
 
     # Wipe both disk and in-memory cache so the next probe forces a fresh
@@ -740,7 +740,7 @@ def cmd_mcp_login(args):
             print(color(f"          client_id: \"<your-oauth-client-id>\"", Colors.DIM))
             print(color(f"          client_secret: \"<your-oauth-client-secret>\"", Colors.DIM))
             print()
-            _info("Then re-run `hermes mcp login " + name + "`.")
+            _info("Then re-run `chiper mcp login " + name + "`.")
             return
         if tools:
             _success(f"Authenticated — {len(tools)} tool(s) available")
@@ -756,7 +756,7 @@ def cmd_mcp_configure(args):
     """Reconfigure which tools are enabled for an existing MCP server."""
     import sys as _sys
     if not _sys.stdin.isatty():
-        print("Error: 'hermes mcp configure' requires an interactive terminal.", file=_sys.stderr)
+        print("Error: 'chiper mcp configure' requires an interactive terminal.", file=_sys.stderr)
         _sys.exit(1)
     name = args.name
     servers = _get_mcp_servers()
@@ -852,7 +852,7 @@ def cmd_mcp_configure(args):
 # ─── Dispatcher ───────────────────────────────────────────────────────────────
 
 def mcp_command(args):
-    """Main dispatcher for ``hermes mcp`` subcommands."""
+    """Main dispatcher for ``chiper mcp`` subcommands."""
     action = getattr(args, "mcp_action", None)
 
     if action == "serve":
@@ -895,20 +895,20 @@ def mcp_command(args):
         handler(args)
     else:
         # No subcommand — drop the user into the catalog picker. This is the
-        # "try enabling and it flows you into setup" UX matching `hermes plugin`.
+        # "try enabling and it flows you into setup" UX matching `chiper plugin`.
         from chiper_cli.mcp_picker import run_picker
         run_picker()
         print(color("  Commands:", Colors.CYAN))
-        _info("hermes mcp                                    Open the catalog picker (default)")
-        _info("hermes mcp catalog                            List Nous-approved MCPs")
-        _info("hermes mcp install <name>                     Install a catalog MCP")
-        _info("hermes mcp serve                              Run as MCP server")
-        _info("hermes mcp add <name> --url <endpoint>        Add a custom MCP server")
-        _info("hermes mcp add <name> --command <cmd>         Add a stdio server")
-        _info("hermes mcp add <name> --preset <preset>       Add from a known preset")
-        _info("hermes mcp remove <name>                      Remove a server")
-        _info("hermes mcp list                               List configured servers")
-        _info("hermes mcp test <name>                        Test connection")
-        _info("hermes mcp configure <name>                   Toggle tools")
-        _info("hermes mcp login <name>                       Re-authenticate OAuth")
+        _info("chiper mcp                                    Open the catalog picker (default)")
+        _info("chiper mcp catalog                            List Nous-approved MCPs")
+        _info("chiper mcp install <name>                     Install a catalog MCP")
+        _info("chiper mcp serve                              Run as MCP server")
+        _info("chiper mcp add <name> --url <endpoint>        Add a custom MCP server")
+        _info("chiper mcp add <name> --command <cmd>         Add a stdio server")
+        _info("chiper mcp add <name> --preset <preset>       Add from a known preset")
+        _info("chiper mcp remove <name>                      Remove a server")
+        _info("chiper mcp list                               List configured servers")
+        _info("chiper mcp test <name>                        Test connection")
+        _info("chiper mcp configure <name>                   Toggle tools")
+        _info("chiper mcp login <name>                       Re-authenticate OAuth")
         print()

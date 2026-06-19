@@ -1394,7 +1394,7 @@ def is_provider_explicitly_configured(provider_id: str) -> bool:
 
     # 3. Check provider-specific env vars
     # Exclude CLAUDE_CODE_OAUTH_TOKEN — it's set by Claude Code itself,
-    # not by the user explicitly configuring anthropic in Hermes.
+    # not by the user explicitly configuring anthropic in Chiper.
     _IMPLICIT_ENV_VARS = {"CLAUDE_CODE_OAUTH_TOKEN"}
     pconfig = PROVIDER_REGISTRY.get(normalized)
     if pconfig and pconfig.auth_type == "api_key":
@@ -1409,7 +1409,7 @@ def is_provider_explicitly_configured(provider_id: str) -> bool:
 
 def clear_provider_auth(provider_id: Optional[str] = None) -> bool:
     """
-    Clear auth state for a provider. Used by `hermes logout`.
+    Clear auth state for a provider. Used by `chiper logout`.
     If provider_id is None, clears the active provider.
     Returns True if something was cleared.
     """
@@ -2223,7 +2223,7 @@ def resolve_gemini_oauth_runtime_credentials(
 
 
 def get_gemini_oauth_auth_status() -> Dict[str, Any]:
-    """Return a status dict for `chiper auth list` / `hermes status`."""
+    """Return a status dict for `chiper auth list` / `chiper status`."""
     try:
         from agent.google_oauth import _credentials_path, load_credentials
     except ImportError:
@@ -4690,7 +4690,7 @@ def _poll_for_token(
 
 # -----------------------------------------------------------------------------
 # Shared Nous token store — lets OAuth credentials persist across profiles
-# so a new `hermes --profile <name> auth add nous --type oauth` can one-tap
+# so a new `chiper --profile <name> auth add nous --type oauth` can one-tap
 # import instead of running the full device-code flow every time.
 #
 # File lives at ${CHIPER_SHARED_AUTH_DIR}/nous_auth.json, defaulting to
@@ -5258,7 +5258,7 @@ def resolve_nous_access_token(
 
         if not state:
             raise AuthError(
-                "Hermes is not logged into Nous Portal.",
+                "Chiper is not logged into Nous Portal.",
                 provider="nous",
                 relogin_required=True,
             )
@@ -5567,7 +5567,7 @@ def resolve_nous_runtime_credentials(
         state = _load_provider_state(auth_store, "nous")
 
         if not state:
-            raise AuthError("Hermes is not logged into Nous Portal.",
+            raise AuthError("Chiper is not logged into Nous Portal.",
                             provider="nous", relogin_required=True)
 
         persisted_state = dict(state)
@@ -5852,8 +5852,8 @@ def _snapshot_nous_pool_status() -> Dict[str, Any]:
 # ── Process-level memo for get_nous_auth_status() ──
 # get_nous_auth_status() validates state by calling resolve_nous_runtime_credentials(),
 # which does a synchronous OAuth refresh POST to portal.nousresearch.com. That can take
-# ~350ms even on the failure path, and read-only UI surfaces (`hermes tools`, status panels,
-# subscription-feature checks) call it many times per render — `hermes tools` → "All Platforms"
+# ~350ms even on the failure path, and read-only UI surfaces (`chiper tools`, status panels,
+# subscription-feature checks) call it many times per render — `chiper tools` → "All Platforms"
 # was firing the refresh ~31× during one menu paint, racking up >13s of HTTP and burning
 # single-use refresh tokens. Cache the snapshot for a few seconds, keyed on the auth.json
 # path + mtime so that profile switches do not share a process memo and
@@ -6446,7 +6446,7 @@ def _should_reset_config_provider_on_logout(provider_id: Optional[str]) -> bool:
 def _logout_default_provider_from_config() -> Optional[str]:
     """Fallback logout target when auth.json has no active provider.
 
-    `hermes logout` historically keyed off auth.json.active_provider only.
+    `chiper logout` historically keyed off auth.json.active_provider only.
     That left users stuck when auth state had already been cleared but
     config.yaml still selected an OAuth provider such as openai-codex for the
     agent model: there was no active auth provider to target, so logout printed
@@ -6731,7 +6731,7 @@ def _save_model_choice(model_id: str) -> None:
 
 def login_command(args) -> None:
     """Deprecated: use 'chiper model' or 'chiper setup' instead."""
-    print("The 'hermes login' command has been removed.")
+    print("The 'chiper login' command has been removed.")
     print("Use 'chiper auth' to manage credentials,")
     print("'chiper model' to select a provider, or 'chiper setup' for full setup.")
     raise SystemExit(0)
@@ -6934,7 +6934,7 @@ def _xai_oauth_exchange_code_for_tokens(
     if not code_verifier:
         raise AuthError(
             "xAI token exchange refused locally: PKCE code_verifier is empty. "
-            "This is a bug in Hermes — please report at "
+            "This is a bug in Chiper — please report at "
             "https://github.com/NousResearch/chiper-agent/issues/26990.",
             provider="xai-oauth",
             code="xai_pkce_verifier_missing",
@@ -7796,7 +7796,7 @@ def resolve_minimax_oauth_runtime_credentials(
     :func:`build_minimax_oauth_token_provider` for the rationale.
 
     The default (string ``api_key``) preserves the historical contract for
-    diagnostic call sites like ``hermes status`` that just want to know
+    diagnostic call sites like ``chiper status`` that just want to know
     whether a valid token exists right now.
     """
     state = get_provider_auth_state("minimax-oauth")

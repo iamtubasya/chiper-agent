@@ -132,7 +132,7 @@ def _format_messages_as_prompt(
     tool_choice: Any = None,
 ) -> str:
     sections: list[str] = [
-        "You are being used as the active ACP agent backend for Hermes.",
+        "You are being used as the active ACP agent backend for Chiper.",
         "Use ACP capabilities to complete tasks.",
         "IMPORTANT: If you take an action with a tool, you MUST output tool calls using <tool_call>{...}</tool_call> blocks with JSON exactly in OpenAI function-call shape.",
         "If no tool is needed, answer normally.",
@@ -533,7 +533,7 @@ class CopilotACPClient:
                         "point Hermes at it explicitly:\n"
                         "  export CHIPER_COPILOT_ACP_COMMAND=/path/to/new/copilot\n\n"
                         "Alternative: use the `copilot` provider (no ACP, hits the Copilot API\n"
-                        "directly with a Copilot subscription token) via `hermes setup`.\n\n"
+                        "directly with a Copilot subscription token) via `chiper setup`.\n\n"
                         f"Original error:\n{stderr_text}"
                     )
                 raise RuntimeError(f"Copilot ACP process exited early: {stderr_text}")
@@ -552,7 +552,7 @@ class CopilotACPClient:
                     },
                     "clientInfo": {
                         "name": "chiper-agent",
-                        "title": "Hermes Agent",
+                        "title": "ChiperFlux Agent",
                         "version": "0.0.0",
                     },
                 },

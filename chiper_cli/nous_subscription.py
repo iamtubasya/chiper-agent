@@ -31,7 +31,7 @@ _DEFAULT_PLATFORM_TOOLSETS = {
 
 # Maps a tools_config provider's ``managed_nous_feature`` to the tool-pool
 # coverage category (chiper_cli.nous_account.TOOL_COVERAGE_CATEGORIES). Lets the
-# `hermes tools` picker scope its entitlement gate to the selected backend, so a
+# `chiper tools` picker scope its entitlement gate to the selected backend, so a
 # free-tool-pool user is allowed image gen but denied video gen at select time —
 # consistent with the per-category feature gates in get_nous_subscription_features.
 MANAGED_FEATURE_COVERAGE_CATEGORY: Dict[str, str] = {
@@ -1125,7 +1125,7 @@ def prompt_enable_tool_gateway(
 
 
 # ---------------------------------------------------------------------------
-# Inline Nous Portal login for the Tool Gateway picker (`hermes tools`)
+# Inline Nous Portal login for the Tool Gateway picker (`chiper tools`)
 # ---------------------------------------------------------------------------
 
 
@@ -1137,7 +1137,7 @@ def ensure_nous_portal_access(
     """Make sure the user is entitled to the Nous Tool Gateway, logging in if
     needed.
 
-    Used by ``hermes tools`` when a user selects a Nous-managed Tool Gateway
+    Used by ``chiper tools`` when a user selects a Nous-managed Tool Gateway
     backend (e.g. "Firecrawl (Nous Portal)").  Unlike ``chiper model``'s Nous
     login, this:
 

@@ -1,4 +1,4 @@
-"""Lightweight internationalization (i18n) for Hermes static user-facing messages.
+"""Lightweight internationalization (i18n) for Chiper static user-facing messages.
 
 Scope (thin slice, by design): only the highest-impact static strings shown
 to the user by Hermes itself -- approval prompts, a handful of gateway slash

@@ -251,7 +251,7 @@ def _apply_external_secret_sources(home_path: Path) -> None:
     """Pull secrets from external sources (currently Bitwarden) into env.
 
     Runs AFTER dotenv loads so .env values are visible (we use them to
-    locate the access token) but BEFORE the rest of Hermes reads
+    locate the access token) but BEFORE the rest of Chiper reads
     ``os.environ`` for credentials.  Any failure here is logged and
     swallowed — external secret sources must never block startup.
 
@@ -261,7 +261,7 @@ def _apply_external_secret_sources(home_path: Path) -> None:
     run_agent.py, trajectory_compressor.py, ...), so without this guard
     the Bitwarden status line would print 3-5x per CLI startup.  Use
     ``reset_secret_source_cache()`` if you need to force a re-pull
-    (tests, future ``hermes secrets bitwarden sync`` from a long-running
+    (tests, future ``chiper secrets bitwarden sync`` from a long-running
     process).
     """
     home_key = str(Path(home_path).resolve())

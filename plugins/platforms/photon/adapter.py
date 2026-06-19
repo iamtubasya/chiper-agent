@@ -1,5 +1,5 @@
 """
-Photon Spectrum (iMessage) platform adapter for Hermes Agent.
+Photon Spectrum (iMessage) platform adapter for ChiperFlux Agent.
 
 Both directions of traffic flow through a small supervised Node sidecar
 (see ``sidecar/index.mjs``) that runs the ``spectrum-ts`` SDK — the SDK is
@@ -49,7 +49,7 @@ else:
     try:
         import httpx
         HTTPX_AVAILABLE = True
-    except ImportError:  # pragma: no cover - httpx is already a Hermes dep
+    except ImportError:  # pragma: no cover - httpx is already a Chiper dep
         HTTPX_AVAILABLE = False
         httpx = None
 
@@ -112,9 +112,9 @@ def check_requirements() -> bool:
     if not shutil.which(os.getenv("PHOTON_NODE_BIN") or "node"):
         return False
     if not (_SIDECAR_DIR / "node_modules").exists():
-        # spectrum-ts not installed yet — `hermes photon setup` will
+        # spectrum-ts not installed yet — `chiper photon setup` will
         # install it.  check_fn still returns False so the gateway
-        # surfaces the missing-deps state in `hermes setup` / status.
+        # surfaces the missing-deps state in `chiper setup` / status.
         return False
     return True
 
@@ -749,7 +749,7 @@ class PhotonAdapter(BasePlatformAdapter):
         if not (_SIDECAR_DIR / "node_modules").exists():
             raise RuntimeError(
                 f"Photon sidecar deps not installed. Run: "
-                f"cd {_SIDECAR_DIR} && npm install   (or `hermes photon setup`)"
+                f"cd {_SIDECAR_DIR} && npm install   (or `chiper photon setup`)"
             )
         await self._reap_stale_sidecar()
 
@@ -1534,9 +1534,9 @@ async def _standalone_send(
 # Plugin entry point
 
 def register(ctx) -> None:
-    """Called by the Hermes plugin loader at startup."""
+    """Called by the Chiper plugin loader at startup."""
     # Local import to avoid argparse work at module load; reused for both the
-    # gateway-setup hook and the `hermes photon` CLI command below.
+    # gateway-setup hook and the `chiper photon` CLI command below.
     from . import cli as _cli
 
     ctx.register_platform(
@@ -1552,7 +1552,7 @@ def register(ctx) -> None:
             "Spectrum project, links your phone number, installs the "
             "spectrum-ts sidecar)."
         ),
-        # Surfaces Photon in `hermes gateway setup` alongside every other
+        # Surfaces Photon in `chiper gateway setup` alongside every other
         # channel — same unified onboarding wizard, no Photon-only detour.
         setup_fn=_cli.gateway_setup,
         env_enablement_fn=_env_enablement,
@@ -1577,7 +1577,7 @@ def register(ctx) -> None:
         ),
     )
 
-    # Register CLI subcommands — `hermes photon ...`
+    # Register CLI subcommands — `chiper photon ...`
     ctx.register_cli_command(
         name="photon",
         help="Set up and manage the Photon iMessage integration",

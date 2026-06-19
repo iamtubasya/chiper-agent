@@ -1,4 +1,4 @@
-"""``hermes dashboard`` subcommand parser.
+"""``chiper dashboard`` subcommand parser.
 
 Extracted verbatim from ``chiper_cli/main.py:main()`` (god-file Phase 2).
 Handler injected to avoid importing ``main``.
@@ -69,20 +69,20 @@ def build_dashboard_parser(
     # start-a-server flags above (if both are passed, --stop / --status win
     # because they exit before the server is started).  The dashboard has
     # no service manager and no PID file, so these scan the process table
-    # for `hermes dashboard` cmdlines and SIGTERM them directly — the same
+    # for `chiper dashboard` cmdlines and SIGTERM them directly — the same
     # path `chiper update` uses to clean up stale dashboards.
     dashboard_parser.add_argument(
         "--stop",
         action="store_true",
-        help="Stop all running hermes dashboard processes and exit",
+        help="Stop all running chiper dashboard processes and exit",
     )
     dashboard_parser.add_argument(
         "--status",
         action="store_true",
-        help="List running hermes dashboard processes and exit",
+        help="List running chiper dashboard processes and exit",
     )
     # Backward-compat shim: older Hermes desktop app shells (<= 0.15.x) spawn the
-    # backend as `hermes dashboard --no-open --tui --host ... --port ...`. The
+    # backend as `chiper dashboard --no-open --tui --host ... --port ...`. The
     # `--tui` flag was removed from this subcommand in cae6b5486 (embedded chat is
     # always on now). When a user's CLI updates past that commit but their desktop
     # app binary has not, argparse used to hard-error with "unrecognized arguments:
@@ -98,9 +98,9 @@ def build_dashboard_parser(
     )
     dashboard_parser.set_defaults(func=cmd_dashboard)
 
-    # `hermes dashboard register` — register a self-hosted dashboard OAuth
+    # `chiper dashboard register` — register a self-hosted dashboard OAuth
     # client with Nous Portal and write the client_id into ~/.chiperflux/.env.
-    # Nested subparser so bare `hermes dashboard` keeps launching the server
+    # Nested subparser so bare `chiper dashboard` keeps launching the server
     # (set_defaults(func=cmd_dashboard) above remains the default).
     dashboard_subparsers = dashboard_parser.add_subparsers(
         dest="dashboard_subcommand"

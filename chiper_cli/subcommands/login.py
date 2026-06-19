@@ -1,4 +1,4 @@
-"""``hermes login`` subcommand parser.
+"""``chiper login`` subcommand parser.
 
 Extracted verbatim from ``chiper_cli/main.py:main()`` (god-file Phase 2).
 Handler injected to avoid importing ``main``.
@@ -12,20 +12,20 @@ from typing import Callable
 def build_login_parser(subparsers, *, cmd_login: Callable) -> None:
     """Attach the deprecated ``login`` subcommand to ``subparsers``.
 
-    ``hermes login`` was removed in favor of ``chiper auth`` / ``chiper model``
+    ``chiper login`` was removed in favor of ``chiper auth`` / ``chiper model``
     (the runtime handler in ``chiper_cli/auth.py::login_command`` just prints a
     deprecation message and exits).  The subparser is kept registered so that
-    old scripts/aliases invoking ``hermes login [--flags]`` still receive the
+    old scripts/aliases invoking ``chiper login [--flags]`` still receive the
     actionable deprecation message rather than an argparse ``invalid choice:
     'login'`` error — but:
 
     - The subparser is registered WITHOUT a ``help=`` kwarg so the row is
-      omitted from ``hermes --help`` (argparse only lists subcommands that
+      omitted from ``chiper --help`` (argparse only lists subcommands that
       have a help string).  This hides a command that no longer works (#24756)
       without the ``help=argparse.SUPPRESS`` ``==SUPPRESS==`` leak that
       argparse emits for a top-level subparser on Python 3.12+.
     - ``--provider`` accepts ANY value (no ``choices=``) so that, e.g.,
-      ``hermes login --provider anthropic`` reaches the deprecation handler and
+      ``chiper login --provider anthropic`` reaches the deprecation handler and
       gets pointed at ``chiper model`` instead of crashing in argparse with
       ``invalid choice: 'anthropic'`` before the handler can run.
     """

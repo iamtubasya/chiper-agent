@@ -2,8 +2,8 @@
 
 Mirrors the optional-skills/ pattern: each catalog entry lives under
 ``optional-mcps/<name>/manifest.yaml`` and ships disabled. Users discover
-entries via ``hermes mcp catalog`` or the interactive ``hermes mcp picker``,
-and install them with ``hermes mcp install <name>`` (or by toggling in the
+entries via ``chiper mcp catalog`` or the interactive ``chiper mcp picker``,
+and install them with ``chiper mcp install <name>`` (or by toggling in the
 picker, which flows them through any required env/OAuth setup).
 
 Catalog policy:
@@ -11,7 +11,7 @@ Catalog policy:
   ``optional-mcps/`` directory = Nous approval. No community tier, no trust
   signals beyond "it's in the catalog".
 - Manifests pin transport details (commands, args, refs). MCPs are never
-  auto-updated; users explicitly re-run ``hermes mcp install <name>`` to
+  auto-updated; users explicitly re-run ``chiper mcp install <name>`` to
   pull a new manifest version after a repo update.
 - Secrets prompted at install time go to ``~/.chiperflux/.env`` (the
   .env-is-for-secrets rule). Non-secret env vars also go to .env to keep
@@ -268,7 +268,7 @@ def list_catalog() -> List[CatalogEntry]:
     Invalid manifests are skipped silently (CI tests catch them at PR time).
     Manifests with a future ``manifest_version`` are also skipped, but the
     skip is surfaced via :func:`catalog_diagnostics` so the picker / catalog
-    UIs can tell the user their Hermes is out of date.
+    UIs can tell the user their Chiper is out of date.
     """
     root = _catalog_root()
     if not root.exists():
@@ -554,7 +554,7 @@ def _apply_tool_selection(
     Probe-fail path:
       - If manifest declares ``tools.default_enabled`` → apply directly.
       - Otherwise → leave config with no filter (all on when reachable).
-      - Either way, point the user at ``hermes mcp configure <name>``.
+      - Either way, point the user at ``chiper mcp configure <name>``.
     """
     print()
     print(color(f"  Probing '{entry.name}' for available tools...", Colors.CYAN))
@@ -568,7 +568,7 @@ def _apply_tool_selection(
             print(color(
                 f"  Couldn\'t probe server. Applied manifest default "
                 f"({len(manifest_default)} tools). "
-                f"Run `hermes mcp configure {entry.name}` after the server "
+                f"Run `chiper mcp configure {entry.name}` after the server "
                 "is reachable to refine.",
                 Colors.YELLOW,
             ))
@@ -577,7 +577,7 @@ def _apply_tool_selection(
             print(color(
                 f"  Couldn\'t probe server; installed with no tool filter "
                 "(all tools enabled when reachable). "
-                f"Run `hermes mcp configure {entry.name}` after first "
+                f"Run `chiper mcp configure {entry.name}` after first "
                 "connect to prune.",
                 Colors.YELLOW,
             ))
@@ -638,7 +638,7 @@ def _apply_tool_selection(
         # so the server is installed but contributes nothing until reconfigured.
         _write_tools_include(entry.name, [])
         print(color(
-            f"  No tools selected. Run `hermes mcp configure {entry.name}` "
+            f"  No tools selected. Run `chiper mcp configure {entry.name}` "
             "to change.",
             Colors.YELLOW,
         ))
@@ -648,7 +648,7 @@ def _apply_tool_selection(
         # Everything selected — clear filter for the cleanest config shape.
         # NOTE: this means any tools the server adds later (e.g. a future MCP
         # version) will also be auto-enabled. To pin to the current set,
-        # the user can re-run `hermes mcp configure <name>` and unselect a
+        # the user can re-run `chiper mcp configure <name>` and unselect a
         # tool to switch back to include-mode.
         _write_tools_include(entry.name, None)
         print(color(
@@ -744,7 +744,7 @@ def install_entry(entry: CatalogEntry, *, enable: bool = True) -> None:
     print(color(
         f"  ✓ Installed '{entry.name}' "
         f"({'enabled' if enable else 'disabled'}). "
-        f"Start a new Hermes session to load its tools.",
+        f"Start a new Chiper session to load its tools.",
         Colors.GREEN,
     ))
     if entry.post_install:

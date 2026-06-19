@@ -47,7 +47,7 @@ def _build_gemini_thinking_config(model: str, reasoning_config: dict | None) -> 
 
     thinking_config: Dict[str, Any] = {"includeThoughts": True}
 
-    # Gemini 2.5 accepts thinkingBudget; don't guess a budget from Hermes'
+    # Gemini 2.5 accepts thinkingBudget; don't guess a budget from Chiper'
     # coarse effort levels. ``includeThoughts`` alone is enough to surface
     # thought parts without risking request validation errors.
     if normalized_model.startswith("gemini-2.5-"):

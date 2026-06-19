@@ -425,12 +425,12 @@ DANGEROUS_PATTERNS = [
     # Gateway lifecycle protection: prevent the agent from killing its own
     # gateway process.  These commands trigger a gateway restart/stop that
     # terminates all running agents mid-work.
-    (r'\bhermes\s+gateway\s+(stop|restart)\b', "stop/restart hermes gateway (kills running agents)"),
-    (r'\bhermes\s+update\b', "hermes update (restarts gateway, kills running agents)"),
+    (r'\bhermes\s+gateway\s+(stop|restart)\b', "stop/restart chiper gateway (kills running agents)"),
+    (r'\bhermes\s+update\b', "chiper update (restarts gateway, kills running agents)"),
     # Docker container lifecycle — any user with docker.sock mounted (a common
     # Docker Compose pattern) gives the agent the ability to restart/stop/kill
     # containers without approval.  These are agent-initiated lifecycle operations
-    # that should always require user consent, just like `hermes gateway restart`
+    # that should always require user consent, just like `chiper gateway restart`
     # already does for the gateway process.
     (r'\bdocker\s+compose\s+(restart|stop|kill|down)\b', "docker compose restart/stop/kill/down (container lifecycle)"),
     (r'\bdocker\s+(restart|stop|kill)\b', "docker restart/stop/kill (container lifecycle)"),
@@ -472,12 +472,12 @@ DANGEROUS_PATTERNS = [
     (rf'\b(?:perl|ruby)\b.*(?:^|\s)-[^\s]*i\b.*(?:{_USER_SENSITIVE_WRITE_TARGET})[^\s"\']*', "in-place edit of sensitive credential/SSH/shell-rc path (perl/ruby)"),
     (rf'\bsed\s+-[^\s]*i.*\s{_SYSTEM_CONFIG_PATH}', "in-place edit of system config"),
     (rf'\bsed\s+--in-place\b.*\s{_SYSTEM_CONFIG_PATH}', "in-place edit of system config (long flag)"),
-    # In-place edit of a Hermes-managed security file (~/.chiperflux/config.yaml or
+    # In-place edit of a Chiper-managed security file (~/.chiperflux/config.yaml or
     # .env). sed -i bypasses the redirection/tee patterns above because it
     # mutates the file directly. Pairs the file_tools write_file/patch deny so
     # the terminal side is not an open door. See #14639.
-    (rf'\bsed\s+-[^\s]*i.*(?:{_HERMES_CONFIG_PATH}|{_HERMES_ENV_PATH})', "in-place edit of Hermes config/env"),
-    (rf'\bsed\s+--in-place\b.*(?:{_HERMES_CONFIG_PATH}|{_HERMES_ENV_PATH})', "in-place edit of Hermes config/env (long flag)"),
+    (rf'\bsed\s+-[^\s]*i.*(?:{_HERMES_CONFIG_PATH}|{_HERMES_ENV_PATH})', "in-place edit of Chiper config/env"),
+    (rf'\bsed\s+--in-place\b.*(?:{_HERMES_CONFIG_PATH}|{_HERMES_ENV_PATH})', "in-place edit of Chiper config/env (long flag)"),
     # perl -i and ruby -i perform the same in-place mutation as sed -i but are
     # not caught by the -e/-c script-execution pattern above (which targets code
     # evaluation, not file mutation). Pairs the sed -i coverage from #14639.
@@ -486,7 +486,7 @@ DANGEROUS_PATTERNS = [
     # backup suffix (`perl -i.bak`). Match any flag token containing `i`
     # anywhere in the args, not just the first token — `perl -e '...'` (code
     # eval, no -i) does not trip because it has no `-...i` flag token.
-    (rf'\b(?:perl|ruby)\b.*(?:^|\s)-[^\s]*i\b.*(?:{_HERMES_CONFIG_PATH}|{_HERMES_ENV_PATH})', "in-place edit of Hermes config/env (perl/ruby)"),
+    (rf'\b(?:perl|ruby)\b.*(?:^|\s)-[^\s]*i\b.*(?:{_HERMES_CONFIG_PATH}|{_HERMES_ENV_PATH})', "in-place edit of Chiper config/env (perl/ruby)"),
     # Script execution via heredoc — bypasses the -e/-c flag patterns above.
     # `python3 << 'EOF'` feeds arbitrary code via stdin without -c/-e flags.
     (r'\b(python[23]?|perl|ruby|node)\s+<<', "script execution via heredoc"),
@@ -582,7 +582,7 @@ def _normalize_command_for_detection(command: str) -> str:
     # profile/session launchers can set HOME after this module is imported.
     command = _rewrite_resolved_user_home(command)
     # Fold the resolved absolute active-profile home path into the canonical
-    # ~/.chiperflux/ form so the Hermes config/env patterns catch it. In Docker and
+    # ~/.chiperflux/ form so the Chiper config/env patterns catch it. In Docker and
     # gateway deployments the agent often references the resolved absolute path
     # directly (e.g. `sed -i ... /home/hermes/.chiperflux/config.yaml`) rather than
     # ~, $HOME, or $CHIPER_HOME. Done at detection time (not via an import-time
@@ -623,7 +623,7 @@ def _rewrite_resolved_user_home(command: str) -> str:
 
 
 def _rewrite_resolved_chiper_home(command: str) -> str:
-    """Rewrite the resolved absolute Hermes home prefix to ``~/.chiperflux/``.
+    """Rewrite the resolved absolute Chiper home prefix to ``~/.chiperflux/``.
 
     Resolves the active ``CHIPER_HOME`` at call time (and its symlink-resolved
     form) and replaces an occurrence of ``<home>/`` in *command* with

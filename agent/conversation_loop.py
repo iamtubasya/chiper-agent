@@ -117,7 +117,7 @@ def _ollama_context_limit_error(agent: Any, request_tokens: int) -> Optional[str
     tool_count = len(getattr(agent, "tools", None) or [])
 
     logger.warning(
-        "Ollama runtime context too small for Hermes tool use: "
+        "Ollama runtime context too small for Chiper tool use: "
         "model=%s provider=%s base_url=%s runtime_context=%d "
         "minimum_context=%d estimated_request_tokens=%d tool_count=%d "
         "session=%s",
@@ -437,7 +437,7 @@ def _get_continuation_prompt(is_partial_stub: bool, dropped_tools: Optional[List
 # share one trailer to keep the guidance from drifting between the two sites.
 _CONTENT_POLICY_RECOVERY_HINT = (
     "Try rephrasing the request, narrowing the context, or "
-    "adding a fallback provider with `hermes fallback add`."
+    "adding a fallback provider with `chiper fallback add`."
 )
 
 
@@ -762,7 +762,7 @@ def run_conversation(
         # NOTE: Plugin context from pre_llm_call hooks is injected into the
         # user message (see injection block above), NOT the system prompt.
         # This is intentional — system prompt modifications break the prompt
-        # cache prefix.  The system prompt is reserved for Hermes internals.
+        # cache prefix.  The system prompt is reserved for Chiper internals.
         #
         # Hermes invariant: the system prompt is built ONCE per session
         # (cached on ``_cached_system_prompt``) and replayed verbatim on
@@ -868,7 +868,7 @@ def run_conversation(
             failed = True
             _turn_exit_reason = "ollama_runtime_context_too_small"
             messages.append({"role": "assistant", "content": final_response})
-            agent._emit_status("❌ Ollama runtime context is too small for Hermes tool use")
+            agent._emit_status("❌ Ollama runtime context is too small for Chiper tool use")
             api_call_count -= 1
             agent._api_call_count = api_call_count
             try:
@@ -1507,7 +1507,7 @@ def run_conversation(
                     )
                     _refusal_response = (
                         "⚠️  The model declined to respond to this request "
-                        "(safety refusal — not a Hermes/gateway failure).\n\n"
+                        "(safety refusal — not a Chiper/gateway failure).\n\n"
                         f"{_refusal_detail}\n\n"
                         f"{_CONTENT_POLICY_RECOVERY_HINT}"
                     )
@@ -2418,7 +2418,7 @@ def run_conversation(
                         # means Azure rejected the JWT (RBAC role missing,
                         # az login expired, IMDS unreachable, etc.).
                         print(f"{agent.log_prefix}   Auth method: Microsoft Entra ID (httpx event hook)")
-                        print(f"{agent.log_prefix}   Run `hermes doctor` for credential-chain diagnostics, or")
+                        print(f"{agent.log_prefix}   Run `chiper doctor` for credential-chain diagnostics, or")
                         print(f"{agent.log_prefix}   `az login` if your developer session expired.")
                     else:
                         auth_method = "Bearer (OAuth/setup-token)" if _is_oauth_token(key) else "x-api-key (API key)"
@@ -2427,12 +2427,12 @@ def run_conversation(
                     print(f"{agent.log_prefix}   Troubleshooting:")
                     from chiper_constants import display_chiper_home as _dhh_fn
                     _dhh = _dhh_fn()
-                    print(f"{agent.log_prefix}     • Check ANTHROPIC_TOKEN in {_dhh}/.env for Hermes-managed OAuth/setup tokens")
+                    print(f"{agent.log_prefix}     • Check ANTHROPIC_TOKEN in {_dhh}/.env for Chiper-managed OAuth/setup tokens")
                     print(f"{agent.log_prefix}     • Check ANTHROPIC_API_KEY in {_dhh}/.env for API keys or legacy token values")
                     print(f"{agent.log_prefix}     • For API keys: verify at https://platform.claude.com/settings/keys")
                     print(f"{agent.log_prefix}     • For Claude Code: run 'claude /login' to refresh, then retry")
-                    print(f"{agent.log_prefix}     • Legacy cleanup: hermes config set ANTHROPIC_TOKEN \"\"")
-                    print(f"{agent.log_prefix}     • Clear stale keys: hermes config set ANTHROPIC_API_KEY \"\"")
+                    print(f"{agent.log_prefix}     • Legacy cleanup: chiper config set ANTHROPIC_TOKEN \"\"")
+                    print(f"{agent.log_prefix}     • Clear stale keys: chiper config set ANTHROPIC_API_KEY \"\"")
 
                 # Thinking block signature recovery.
                 #
@@ -3230,10 +3230,10 @@ def run_conversation(
                                 agent._vprint(f"{agent.log_prefix}   💡 Codex OAuth token was rejected (HTTP 401). Your token may have been", force=True)
                                 agent._vprint(f"{agent.log_prefix}      refreshed by another client (Codex CLI, VS Code). To fix:", force=True)
                                 agent._vprint(f"{agent.log_prefix}      1. Run `codex` in your terminal to generate fresh tokens.", force=True)
-                                agent._vprint(f"{agent.log_prefix}      2. Then run `hermes auth` to re-authenticate.", force=True)
+                                agent._vprint(f"{agent.log_prefix}      2. Then run `chiper auth` to re-authenticate.", force=True)
                             elif _provider == "xai-oauth":
                                 agent._vprint(f"{agent.log_prefix}   💡 xAI OAuth token was rejected (HTTP 401). To fix:", force=True)
-                                agent._vprint(f"{agent.log_prefix}      re-authenticate with xAI Grok OAuth (SuperGrok / Premium+) from `hermes model`.", force=True)
+                                agent._vprint(f"{agent.log_prefix}      re-authenticate with xAI Grok OAuth (SuperGrok / Premium+) from `chiper model`.", force=True)
                             else:  # nous
                                 agent._vprint(f"{agent.log_prefix}   💡 Nous Portal OAuth token was rejected (HTTP 401). Your token may be", force=True)
                                 agent._vprint(f"{agent.log_prefix}      expired, revoked, or your account may be out of credits. To fix:", force=True)
@@ -3247,7 +3247,7 @@ def run_conversation(
                                     agent._vprint(f"{agent.log_prefix}         Nous catalog model, or run `/model openrouter:{_model}` to use OpenRouter.", force=True)
                         else:
                             agent._vprint(f"{agent.log_prefix}   💡 Your API key was rejected by the provider. Check:", force=True)
-                            agent._vprint(f"{agent.log_prefix}      • Is the key valid? Run: hermes setup", force=True)
+                            agent._vprint(f"{agent.log_prefix}      • Is the key valid? Run: chiper setup", force=True)
                             agent._vprint(f"{agent.log_prefix}      • Does your account have access to {_model}?", force=True)
                             if base_url_host_matches(str(_base), "openrouter.ai"):
                                 agent._vprint(f"{agent.log_prefix}      • Check credits: https://openrouter.ai/settings/credits", force=True)
@@ -3272,7 +3272,7 @@ def run_conversation(
                             force=True,
                         )
                         agent._vprint(
-                            f"{agent.log_prefix}        hermes fallback add   (interactive picker — same as `hermes model`)",
+                            f"{agent.log_prefix}        hermes fallback add   (interactive picker — same as `chiper model`)",
                             force=True,
                         )
                     logger.error(f"{agent.log_prefix}Non-retryable client error: {api_error}")
@@ -3293,7 +3293,7 @@ def run_conversation(
                         _summary = agent._summarize_api_error(api_error)
                         _policy_response = (
                             "⚠️  The model provider's safety filter blocked this request "
-                            "(not a Hermes/gateway failure).\n\n"
+                            "(not a Chiper/gateway failure).\n\n"
                             f"Provider message: {_summary}\n\n"
                             f"{_CONTENT_POLICY_RECOVERY_HINT}"
                         )

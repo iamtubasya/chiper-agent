@@ -1,4 +1,4 @@
-"""``chiper gateway`` and ``hermes proxy`` subcommand parsers.
+"""``chiper gateway`` and ``chiper proxy`` subcommand parsers.
 
 Extracted verbatim from ``chiper_cli/main.py:main()`` (god-file Phase 2).
 Both parsers are built together because they shared one inline block (the
@@ -308,7 +308,7 @@ def build_gateway_parser(
     proxy_start.add_argument(
         "--provider",
         default="nous",
-        help="Upstream provider: nous or xai (default: nous). See `hermes proxy providers`.",
+        help="Upstream provider: nous or xai (default: nous). See `chiper proxy providers`.",
     )
     proxy_start.add_argument(
         "--host",

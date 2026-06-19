@@ -248,7 +248,7 @@ class CodexAppServerSession:
             )
         self._client.initialize(
             client_name="hermes",
-            client_title="Hermes Agent",
+            client_title="ChiperFlux Agent",
             client_version=_get_chiper_version(),
         )
         # Permission selection is intentionally NOT sent on thread/start.
@@ -372,7 +372,7 @@ class CodexAppServerSession:
     ) -> TurnResult:
         """Send a user message and block until turn/completed, while
         forwarding server-initiated approval requests and projecting items
-        into Hermes' messages shape.
+        into Chiper' messages shape.
 
         post_tool_quiet_timeout: if codex emits a tool completion and then
         goes quiet for this many seconds without emitting another item or
@@ -637,7 +637,7 @@ class CodexAppServerSession:
             logger.warning("turn/interrupt timed out")
 
     def _handle_server_request(self, req: dict) -> None:
-        """Translate a codex server request (approval) into Hermes' approval
+        """Translate a codex server request (approval) into Chiper' approval
         flow, then send the response.
 
         Method names verified live against codex 0.130.0 (Apr 2026):

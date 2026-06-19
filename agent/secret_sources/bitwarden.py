@@ -72,7 +72,7 @@ _BWS_RUN_TIMEOUT = 30
 _CacheKey = Tuple[str, str, str]  # (access_token_fingerprint, project_id, server_url)
 _CACHE: Dict[_CacheKey, "_CachedFetch"] = {}
 
-# Disk-persisted cache so back-to-back CLI invocations (e.g. `hermes chat -q ...`
+# Disk-persisted cache so back-to-back CLI invocations (e.g. `chiper chat -q ...`
 # called from scripts, cron, the gateway forking new agents) don't each pay the
 # ~380ms `bws secret list` tax. The in-process _CACHE above only saves repeated
 # fetches WITHIN one process; this saves repeated fetches ACROSS processes.
@@ -292,7 +292,7 @@ def install_bws(*, force: bool = False) -> Path:
 
     Returns the path to the installed executable.  Raises on any
     failure (network, checksum, extraction) — callers in the auto-install
-    path catch these; the user-facing ``hermes secrets bitwarden setup``
+    path catch these; the user-facing ``chiper secrets bitwarden setup``
     surface lets them propagate so the wizard can show a clear error.
     """
     bin_dir = _chiper_bin_dir()
@@ -492,7 +492,7 @@ def fetch_bitwarden_secrets(
             "bws binary not available — auto-install failed and `bws` is "
             "not on PATH.  Install manually from "
             "https://github.com/bitwarden/sdk-sm/releases or re-run "
-            "`hermes secrets bitwarden setup`."
+            "`chiper secrets bitwarden setup`."
         )
 
     secrets, warnings = _run_bws_list(bws, access_token, project_id, server_url)
@@ -621,14 +621,14 @@ def apply_bitwarden_secrets(
     if not access_token:
         result.error = (
             f"secrets.bitwarden.enabled is true but {access_token_env} is "
-            "not set.  Run `hermes secrets bitwarden setup`."
+            "not set.  Run `chiper secrets bitwarden setup`."
         )
         return result
 
     if not project_id:
         result.error = (
             "secrets.bitwarden.project_id is empty.  "
-            "Run `hermes secrets bitwarden setup`."
+            "Run `chiper secrets bitwarden setup`."
         )
         return result
 
@@ -637,7 +637,7 @@ def apply_bitwarden_secrets(
     if binary is None:
         result.error = (
             "bws binary not available and auto-install is disabled.  "
-            "Run `hermes secrets bitwarden setup` to install."
+            "Run `chiper secrets bitwarden setup` to install."
         )
         return result
 

@@ -252,7 +252,7 @@ def fetch_models_dev(force_refresh: bool = False) -> Dict[str, Any]:
       4. Network fails → fall back to ANY available disk cache (even stale)
          with a short 5 min in-mem grace period before retrying network.
 
-    When ``force_refresh=True`` (used by ``hermes config refresh``, the
+    When ``force_refresh=True`` (used by ``chiper config refresh``, the
     \"refresh model catalog\" code path), stages 1 and 2 are skipped. The
     function always hits the network and only falls back to disk if the
     network call fails.
@@ -411,7 +411,7 @@ class ModelCapabilities:
 
 
 def _get_provider_models(provider: str) -> Optional[Dict[str, Any]]:
-    """Resolve a Hermes provider ID to its models dict from models.dev.
+    """Resolve a Chiper provider ID to its models dict from models.dev.
 
     Returns the models dict or None if the provider is unknown or has no data.
     """
@@ -674,7 +674,7 @@ def _parse_provider_info(provider_id: str, raw: Dict[str, Any]) -> ProviderInfo:
 def get_provider_info(provider_id: str) -> Optional[ProviderInfo]:
     """Get full provider metadata from models.dev.
 
-    Accepts either a Hermes provider ID (e.g. "kilocode") or a models.dev
+    Accepts either a Chiper provider ID (e.g. "kilocode") or a models.dev
     ID (e.g. "kilo").  Returns None if the provider is not in the catalog.
     """
     # Resolve Hermes ID → models.dev ID

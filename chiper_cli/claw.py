@@ -1,4 +1,4 @@
-"""hermes claw — OpenClaw migration commands.
+"""chiper claw — OpenClaw migration commands.
 
 Usage:
     hermes claw migrate              # Preview then migrate (always shows preview first)
@@ -149,7 +149,7 @@ def _warn_if_openclaw_running(auto_yes: bool) -> None:
 
 
 def _warn_if_gateway_running(auto_yes: bool) -> None:
-    """Check if a Hermes gateway is running with connected platforms.
+    """Check if a Chiper gateway is running with connected platforms.
 
     Migrating bot tokens while the gateway is polling will cause conflicts
     (e.g. Telegram 409 "terminated by other getUpdates request"). Warn the
@@ -304,10 +304,10 @@ def claw_command(args):
         print("Usage: hermes claw <command> [options]")
         print()
         print("Commands:")
-        print("  migrate          Migrate settings from OpenClaw to Hermes")
+        print("  migrate          Migrate settings from OpenClaw to Chiper")
         print("  cleanup          Archive leftover OpenClaw directories after migration")
         print()
-        print("Run 'hermes claw <command> --help' for options.")
+        print("Run 'chiper claw <command> --help' for options.")
 
 
 def _cmd_migrate(args):
@@ -398,7 +398,7 @@ def _cmd_migrate(args):
     # active will cause conflicts (e.g. Telegram 409).
     _warn_if_openclaw_running(auto_yes)
 
-    # Check if a Hermes gateway is running with connected platforms.
+    # Check if a Chiper gateway is running with connected platforms.
     _warn_if_gateway_running(auto_yes)
 
     # Ensure config.yaml exists before migration tries to read it
@@ -498,11 +498,11 @@ def _cmd_migrate(args):
             print_info("Migration cancelled.")
             return
 
-    # ── Phase 2b: Pre-apply backup of the Hermes home ─────────
+    # ── Phase 2b: Pre-apply backup of the Chiper home ─────────
     # Delegates to chiper_cli.backup.create_pre_migration_backup(), which
     # shares implementation with the pre-update backup (same exclusion
     # rules, same SQLite safe-copy, zip format) so the archive is
-    # restorable with `hermes import`.  Mirrors OpenClaw's
+    # restorable with `chiper import`.  Mirrors OpenClaw's
     # createPreMigrationBackup posture — one atomic restore point before
     # any mutation, auto-pruned to the last 5 pre-migration zips.
     backup_archive: Optional[Path] = None
@@ -519,7 +519,7 @@ def _cmd_migrate(args):
             print()
             print_error(f"Could not create pre-migration backup: {e}")
             print_info(
-                "Re-run with --no-backup to skip, or free up disk space under the Hermes home."
+                "Re-run with --no-backup to skip, or free up disk space under the Chiper home."
             )
             logger.debug("Pre-migration backup error", exc_info=True)
             return
@@ -552,7 +552,7 @@ def _cmd_migrate(args):
 
     # Source directory is left untouched — archiving is not the migration
     # tool's responsibility.  Users who want to clean up can run
-    # 'hermes claw cleanup' separately.
+    # 'chiper claw cleanup' separately.
 
 
 def _cmd_cleanup(args):

@@ -3898,7 +3898,7 @@ class FeishuAdapter(BasePlatformAdapter):
         *,
         is_bot: bool = False,
     ) -> Dict[str, Optional[str]]:
-        """Map Feishu's three-tier user IDs onto Hermes' SessionSource fields.
+        """Map Feishu's three-tier user IDs onto Chiper' SessionSource fields.
 
         Preference order for the primary ``user_id`` field:
           1. user_id  (tenant-scoped, most stable — requires permission scope)
@@ -4885,7 +4885,7 @@ class FeishuAdapter(BasePlatformAdapter):
 #
 # Device-code flow: user scans a QR code with Feishu/Lark mobile app and the
 # platform creates a fully configured bot application automatically.
-# Called by `hermes gateway setup` via _setup_feishu() in chiper_cli/gateway.py.
+# Called by `chiper gateway setup` via _setup_feishu() in chiper_cli/gateway.py.
 # =============================================================================
 
 

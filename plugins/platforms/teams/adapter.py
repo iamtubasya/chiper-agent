@@ -1,5 +1,5 @@
 """
-Microsoft Teams platform adapter for Hermes Agent.
+Microsoft Teams platform adapter for ChiperFlux Agent.
 
 Uses the microsoft-teams-apps SDK for authentication and activity processing.
 Runs an aiohttp webhook server to receive messages from Teams.
@@ -506,8 +506,8 @@ async def _standalone_send(
     """Acquire a Bot Framework bearer token and POST a single message activity.
 
     Used by ``tools/send_message_tool._send_via_adapter`` when the gateway
-    runner is not in this process (e.g. ``hermes cron`` running as a
-    separate process from ``hermes gateway``).  Without this hook,
+    runner is not in this process (e.g. ``chiper cron`` running as a
+    separate process from ``chiper gateway``).  Without this hook,
     ``deliver=teams`` cron jobs fail with ``No live adapter for platform``.
 
     Configuration: requires ``TEAMS_CLIENT_ID``, ``TEAMS_CLIENT_SECRET``,
@@ -1320,13 +1320,13 @@ def interactive_setup() -> None:
     print()
     print_success("Teams configuration saved to ~/.chiperflux/.env")
     print_info("Install the app in Teams:  teams app install --id <teamsAppId>")
-    print_info("Restart the gateway:       hermes gateway restart")
+    print_info("Restart the gateway:       chiper gateway restart")
 
 
 # ── Plugin entry point ────────────────────────────────────────────────────────
 
 def register(ctx) -> None:
-    """Plugin entry point — called by the Hermes plugin system."""
+    """Plugin entry point — called by the Chiper plugin system."""
     ctx.register_platform(
         name="teams",
         label="Microsoft Teams",

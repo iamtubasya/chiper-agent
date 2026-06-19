@@ -1,5 +1,5 @@
 """
-Session-scoped context variables for the Hermes gateway.
+Session-scoped context variables for the Chiper gateway.
 
 Replaces the previous ``os.environ``-based session state
 (``CHIPER_SESSION_PLATFORM``, ``CHIPER_SESSION_CHAT_ID``, etc.) with

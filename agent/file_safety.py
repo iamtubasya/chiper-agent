@@ -17,7 +17,7 @@ def _chiper_home_path() -> Path:
 
 
 def _hermes_root_path() -> Path:
-    """Resolve the Hermes root dir (always the parent of any profile, never per-profile)."""
+    """Resolve the Chiper root dir (always the parent of any profile, never per-profile)."""
     try:
         from chiper_constants import get_default_chiper_root  # local import to avoid cycles
         return get_default_chiper_root()
@@ -245,7 +245,7 @@ def get_read_block_error(path: str) -> Optional[str]:
                 continue
             if resolved == blocked:
                 return (
-                    f"Access denied: {path} is a Hermes credential store "
+                    f"Access denied: {path} is a Chiper credential store "
                     "and cannot be read directly. Provider tools consume "
                     "these credentials through internal channels. "
                     "(Defense-in-depth — not a security boundary; the "
@@ -261,7 +261,7 @@ def get_read_block_error(path: str) -> Optional[str]:
             continue
         if resolved == mcp_tokens:
             return (
-                f"Access denied: {path} is the Hermes MCP token directory "
+                f"Access denied: {path} is the Chiper MCP token directory "
                 "and cannot be read directly. (Defense-in-depth — not a "
                 "security boundary; the terminal tool can still bypass.)"
             )
@@ -270,7 +270,7 @@ def get_read_block_error(path: str) -> Optional[str]:
         except ValueError:
             continue
         return (
-            f"Access denied: {path} is a Hermes MCP token file "
+            f"Access denied: {path} is a Chiper MCP token file "
             "and cannot be read directly. (Defense-in-depth — not a "
             "security boundary; the terminal tool can still bypass.)"
         )
@@ -425,7 +425,7 @@ def get_cross_profile_warning(path: str) -> Optional[str]:
         return None
     return (
         f"Cross-profile write blocked by soft guard: {info['target_path']} "
-        f"belongs to Hermes profile {info['target_profile']!r}, but the "
+        f"belongs to Chiper profile {info['target_profile']!r}, but the "
         f"agent is running under profile {info['active_profile']!r}. "
         f"Editing another profile's {info['area']}/ will affect that "
         f"profile's future sessions, not the one you are currently in. "

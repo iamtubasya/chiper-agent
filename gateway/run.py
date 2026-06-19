@@ -19,7 +19,7 @@ try:
     import chiper_bootstrap  # noqa: F401
 except ModuleNotFoundError:
     # Graceful fallback when hermes_bootstrap isn't registered in the venv
-    # yet — happens during partial ``hermes update`` where git-reset landed
+    # yet — happens during partial ``chiper update`` where git-reset landed
     # new code but ``uv pip install -e .`` didn't finish.  Missing bootstrap
     # means UTF-8 stdio setup is skipped on Windows; POSIX is unaffected.
     pass
@@ -137,7 +137,7 @@ _GATEWAY_SECRET_PATTERNS = (
 
 
 def _ensure_windows_gateway_venv_imports() -> None:
-    """Make detached Windows gateway runs see the Hermes venv packages.
+    """Make detached Windows gateway runs see the Chiper venv packages.
 
     Some Windows restart paths run the gateway under uv's base ``pythonw.exe``
     to avoid the venv launcher respawning a visible console interpreter.  That
@@ -1153,7 +1153,7 @@ _ensure_ssl_certs()
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-# Resolve Hermes home directory (respects CHIPER_HOME override)
+# Resolve Chiper home directory (respects CHIPER_HOME override)
 from chiper_constants import get_chiper_home
 from utils import atomic_json_write, atomic_yaml_write, base_url_host_matches, is_truthy_value
 _chiper_home = get_chiper_home()
@@ -1308,7 +1308,7 @@ if _config_path.exists():
         # settings — it unconditionally wins over .env values. Previously
         # the guards below read `if X not in os.environ` and let stale
         # .env entries (e.g. CHIPER_MAX_ITERATIONS=60 written by an old
-        # `hermes setup` run) silently shadow the user's current config.
+        # `chiper setup` run) silently shadow the user's current config.
         # See PR #18413 / the 60-vs-500 max_turns incident.
         _agent_cfg = _cfg.get("agent", {})
         if _agent_cfg and isinstance(_agent_cfg, dict):
@@ -1385,7 +1385,7 @@ if _config_path.exists():
         )
         print(
             "  Gateway will fall back to .env values, which may not match "
-            "your current config.yaml. Run `hermes doctor` to investigate.",
+            "your current config.yaml. Run `chiper doctor` to investigate.",
             file=sys.stderr,
         )
 
@@ -1832,7 +1832,7 @@ def _check_unavailable_skill(command_name: str) -> str | None:
                 if slug == normalized and declared_name in disabled:
                     return (
                         f"The **{command_name}** skill is installed but disabled.\n"
-                        f"Enable it with: `hermes skills config`"
+                        f"Enable it with: `chiper skills config`"
                     )
 
         # Check optional skills (shipped with repo but not installed)
@@ -1853,7 +1853,7 @@ def _check_unavailable_skill(command_name: str) -> str | None:
                     install_path = f"official/{'/'.join(parts)}"
                     return (
                         f"The **{command_name}** skill is available but not installed.\n"
-                        f"Install it with: `hermes skills install {install_path}`"
+                        f"Install it with: `chiper skills install {install_path}`"
                     )
     except Exception:
         pass
@@ -1940,7 +1940,7 @@ def _resolve_gateway_model(config: dict | None = None) -> str:
 
 
 def _resolve_chiper_bin() -> Optional[list[str]]:
-    """Resolve the Hermes update command as argv parts.
+    """Resolve the Chiper update command as argv parts.
 
     Tries in order:
     1. ``shutil.which("hermes")`` — standard PATH lookup
@@ -3082,7 +3082,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             )
 
         # When the config has no model.default but a provider was resolved
-        # (e.g. user ran `hermes auth add openai-codex` without `hermes model`),
+        # (e.g. user ran `chiper auth add openai-codex` without `chiper model`),
         # fall back to the provider's first catalog model so the API call
         # doesn't fail with "model must be a non-empty string".
         if not model and runtime_kwargs.get("provider"):
@@ -3225,7 +3225,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             #   • cron jobs still run
             #   • the reconnect watcher can recover platforms when the
             #     underlying problem clears (proxy comes back, user runs
-            #     `hermes whatsapp`, etc.)
+            #     `chiper whatsapp`, etc.)
             # We used to exit-with-failure here to trigger systemd restart,
             # but that converted a transient outage into a restart loop and
             # killed in-process state every time. The reconnect watcher
@@ -3449,7 +3449,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         logger.warning(
             "%s paused after %d consecutive failures (%s) — "
             "fix the underlying issue then run `/platform resume %s` "
-            "to retry, or `hermes gateway restart` to restart the gateway.",
+            "to retry, or `chiper gateway restart` to restart the gateway.",
             platform.value, info.get("attempts", 0),
             info["pause_reason"], platform.value,
         )
@@ -4525,7 +4525,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
 
         # On Windows there's no bash/setsid chain — spawn a tiny Python
         # watcher directly via sys.executable instead.  The watcher polls
-        # current_pid, waits for our exit, then runs `hermes gateway
+        # current_pid, waits for our exit, then runs `chiper gateway
         # restart` with detach flags so the respawn survives the CLI
         # that triggered the /restart command closing its console.
         if sys.platform == "win32":
@@ -4584,7 +4584,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             ).strip()
             watcher_env = os.environ.copy()
             # This watcher is intentionally outside the running gateway. If it
-            # inherits the gateway marker, `hermes gateway restart` refuses to
+            # inherits the gateway marker, `chiper gateway restart` refuses to
             # run as a self-restart loop guard and the gateway stays stopped.
             watcher_env.pop("_HERMES_GATEWAY", None)
             project_root = Path(__file__).resolve().parent.parent
@@ -4611,7 +4611,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             f"{cmd} gateway restart"
         )
         # Same marker scrub as the Windows watcher above: this watcher runs
-        # `hermes gateway restart` from outside the gateway, but it inherits
+        # `chiper gateway restart` from outside the gateway, but it inherits
         # _HERMES_GATEWAY=1 from us, and the CLI's self-restart loop guard
         # refuses to run when that marker is set — silently (DEVNULL), so the
         # gateway stops and never comes back.
@@ -4939,7 +4939,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
 
         # Sanity-check that systemd's TimeoutStopSec covers our drain
         # window.  When the user upgraded chiper-agent without re-running
-        # ``hermes setup``, their unit file may still encode the old
+        # ``chiper setup``, their unit file may still encode the old
         # default — in which case SIGKILL hits mid-drain and looks like
         # a phantom kill in the journal.  Best-effort, never raises.
         try:
@@ -4949,7 +4949,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 logger.warning(
                     "Stale systemd unit detected: %s has TimeoutStopSec=%.0fs but "
                     "drain_timeout=%.0fs (expected >=%.0fs). systemd may SIGKILL the "
-                    "gateway mid-drain. Run `hermes gateway service install --replace` "
+                    "gateway mid-drain. Run `chiper gateway service install --replace` "
                     "to regenerate the unit, or shorten agent.restart_drain_timeout.",
                     _alignment.get("unit", "(unknown)"),
                     _alignment["timeout_stop_sec"],
@@ -5007,7 +5007,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             pass
 
         # Log any active supply-chain security advisories. Operators see this
-        # in gateway.log and `hermes status` surfaces it; we do NOT block
+        # in gateway.log and `chiper status` surfaces it; we do NOT block
         # startup or surface it inline to user messages, since the gateway
         # operator is the one who can act on it (uninstall the package,
         # rotate credentials).  See chiper_cli/security_advisories.py.
@@ -5021,7 +5021,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             if _adv_msg:
                 logger.warning("%s", _adv_msg)
                 logger.warning(
-                    "Run `hermes doctor` on the gateway host for full "
+                    "Run `chiper doctor` on the gateway host for full "
                     "remediation steps."
                 )
         except Exception:
@@ -5174,8 +5174,8 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         #
         # SKIP suspension after a clean (graceful) shutdown — the previous
         # process already drained active agents, so sessions aren't stuck.
-        # This prevents unwanted auto-resets after `hermes update`,
-        # `hermes gateway restart`, or `/restart`.
+        # This prevents unwanted auto-resets after `chiper update`,
+        # `chiper gateway restart`, or `/restart`.
         _clean_marker = _chiper_home / ".clean_shutdown"
         if _clean_marker.exists():
             logger.info("Previous gateway exited cleanly — skipping session suspension")
@@ -5355,7 +5355,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                     #   • cron jobs still run
                     #   • the reconnect watcher gets a chance to recover the
                     #     failing platforms once the underlying problem is
-                    #     fixed (e.g. user runs `hermes whatsapp`, fixes
+                    #     fixed (e.g. user runs `chiper whatsapp`, fixes
                     #     proxy, etc.)
                     # Exiting here used to convert a single misconfigured
                     # platform into an infinite systemd restart loop.
@@ -5487,7 +5487,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
 
         # Start background kanban dispatcher — spawns workers for ready
         # tasks. Gated by `kanban.dispatch_in_gateway` (default True).
-        # When false, users run `hermes kanban daemon` externally or
+        # When false, users run `chiper kanban daemon` externally or
         # simply don't use kanban; this loop becomes a no-op.
         asyncio.create_task(self._kanban_dispatcher_watcher())
 
@@ -6485,7 +6485,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             # suppresses auto-start, so the messaging channels silently stay
             # dark until the operator manually restarts (issue #42675).
             #
-            # An operator-initiated stop (`hermes gateway stop`,
+            # An operator-initiated stop (`chiper gateway stop`,
             # systemd/launchd ExecStop, the s6 stop path, Ctrl+C) writes a
             # planned-stop marker BEFORE signalling, so it is classified as
             # a planned stop (not signal-initiated) and correctly persists
@@ -6861,7 +6861,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                             f"Hi~ I don't recognize you yet!\n\n"
                             f"Here's your pairing code: `{code}`\n\n"
                             f"Ask the bot owner to run:\n"
-                            f"`hermes pairing approve {platform_name} {code}`"
+                            f"`chiper pairing approve {platform_name} {code}`"
                         )
                 else:
                     adapter = self.adapters.get(source.platform)
@@ -7884,7 +7884,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                         if _skill_name in _get_plat_disabled(platform=_plat):
                             return (
                                 f"The **{_skill_name}** skill is disabled for {_plat}.\n"
-                                f"Enable it with: `hermes skills config`"
+                                f"Enable it with: `chiper skills config`"
                             )
                     user_instruction = event.get_command_args().strip()
                     msg = build_skill_invocation_message(
@@ -8133,7 +8133,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                                 "🎤 I received your voice message but can't transcribe it — "
                                 "no speech-to-text provider is configured.\n\n"
                                 "To enable voice: install faster-whisper "
-                                "(`uv pip install faster-whisper` in the Hermes venv; "
+                                "(`uv pip install faster-whisper` in the Chiper venv; "
                                 "`pip install faster-whisper` also works if pip is on PATH) "
                                 "and set `stt.enabled: true` in config.yaml, "
                                 "then /restart the gateway."
@@ -10844,7 +10844,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         try:
             send_result = await adapter.send(
                 source.chat_id,
-                "System topic for Hermes commands and status.",
+                "System topic for Chiper commands and status.",
                 metadata={"thread_id": str(thread_id)},
             )
             message_id = getattr(send_result, "message_id", None)
@@ -11644,7 +11644,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         stream_interval: float = 4.0,
         timeout: float = 1800.0,
     ) -> None:
-        """Watch ``hermes update --gateway``, streaming output + forwarding prompts.
+        """Watch ``chiper update --gateway``, streaming output + forwarding prompts.
 
         Polls ``.update_output.txt`` for new content and sends chunks to the
         user periodically.  Detects ``.update_prompt.json`` (written by the
@@ -11922,7 +11922,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             if not adapter and chat_id:
                 # The update finished, but the target platform has not
                 # reconnected yet (common right after the restart that
-                # `hermes update` triggers). Treating "adapter missing" as a
+                # `chiper update` triggers). Treating "adapter missing" as a
                 # definitive skip would delete the markers and silently lose the
                 # completion notification — the user never learns whether the
                 # update succeeded or timed out. Preserve the markers instead so
@@ -11958,7 +11958,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 elif exit_code == 0:
                     msg = "✅ Hermes update finished successfully."
                 else:
-                    msg = "❌ Hermes update failed. Check the gateway logs or run `hermes update` manually for details."
+                    msg = "❌ Hermes update failed. Check the gateway logs or run `chiper update` manually for details."
                 await adapter.send(chat_id, msg, metadata=metadata)
                 logger.info(
                     "Sent post-update notification to %s:%s (exit=%s)",
@@ -16387,7 +16387,7 @@ def _run_planned_stop_watcher(
 
     On Windows, ``asyncio.add_signal_handler`` raises NotImplementedError
     for SIGTERM/SIGINT, so the standard signal-driven shutdown path
-    never runs when ``hermes gateway stop`` signals the gateway. The
+    never runs when ``chiper gateway stop`` signals the gateway. The
     consequence is that the drain loop is skipped — in-flight agent
     sessions are killed mid-turn and ``resume_pending`` is never set,
     so the next gateway boot has no idea those sessions need to be
@@ -16469,13 +16469,13 @@ def _start_cron_ticker(stop_event: threading.Event, adapters=None, loop=None, in
     Background thread that ticks the cron scheduler at a regular interval.
     
     Runs inside the gateway process so cronjobs fire automatically without
-    needing a separate `hermes cron daemon` or system cron entry.
+    needing a separate `chiper cron daemon` or system cron entry.
 
     When ``adapters`` and ``loop`` are provided, passes them through to the
     cron delivery path so live adapters can be used for E2EE rooms.
 
     Also refreshes the channel directory every 5 minutes and prunes the
-    image/audio/document cache + expired ``hermes debug share`` pastes
+    image/audio/document cache + expired ``chiper debug share`` pastes
     once per hour.
     """
     from cron.scheduler import tick as cron_tick
@@ -16698,14 +16698,14 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
             chiper_home = str(get_chiper_home())
             logger.error(
                 "Another gateway instance is already running (PID %d, CHIPER_HOME=%s). "
-                "Use 'hermes gateway restart' to replace it, or 'hermes gateway stop' first.",
+                "Use 'chiper gateway restart' to replace it, or 'chiper gateway stop' first.",
                 existing_pid, chiper_home,
             )
             print(
                 f"\n❌ Gateway already running (PID {existing_pid}).\n"
-                f"   Use 'hermes gateway restart' to replace it,\n"
-                f"   or 'hermes gateway stop' to kill it first.\n"
-                f"   Or use 'hermes gateway run --replace' to auto-replace.\n"
+                f"   Use 'chiper gateway restart' to replace it,\n"
+                f"   or 'chiper gateway stop' to kill it first.\n"
+                f"   Or use 'chiper gateway run --replace' to auto-replace.\n"
             )
             return False
 
@@ -16764,7 +16764,7 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
         except Exception as e:
             logger.debug("Takeover marker check failed: %s", e)
 
-        # Planned stop check: service managers and `hermes gateway stop`
+        # Planned stop check: service managers and `chiper gateway stop`
         # also send SIGTERM, which is indistinguishable from an unexpected
         # external kill unless the CLI marks it first. SIGINT comes from an
         # interactive Ctrl+C and is likewise an intentional foreground stop.
@@ -16877,12 +16877,12 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
         logger.info("Skipping signal handlers (not running in main thread).")
 
     # Windows fallback: asyncio.add_signal_handler raises NotImplementedError
-    # on Windows, so `hermes gateway stop`'s SIGTERM (which Python maps to
+    # on Windows, so `chiper gateway stop`'s SIGTERM (which Python maps to
     # TerminateProcess on Windows) never invokes shutdown_signal_handler.
     # That means the drain loop never runs, mark_resume_pending never fires,
     # and sessions are silently lost across restarts (issue #33778).
     #
-    # The fix is a marker-polling thread: `hermes gateway stop` writes the
+    # The fix is a marker-polling thread: `chiper gateway stop` writes the
     # planned-stop marker BEFORE killing, and this thread notices it and
     # drives the same shutdown path the signal handler would have.  Runs
     # on every platform (cheap, defensive) so non-signal-bearing
@@ -16996,7 +16996,7 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
     #   - hermes update killing the gateway mid-work
     #   - External kill commands
     #   - WSL2/container runtime sending unexpected signals
-    # `hermes gateway stop` and interactive Ctrl+C are handled above as
+    # `chiper gateway stop` and interactive Ctrl+C are handled above as
     # planned stops and should not trigger service-manager revival.
     if _signal_initiated_shutdown and not runner._restart_requested:
         logger.info(

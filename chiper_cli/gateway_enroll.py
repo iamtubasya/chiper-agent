@@ -6,7 +6,7 @@ zero-touch enrollment in the connector repo's
 ``docs/connector-gateway-auth-design.md``:
 
   1. Resolve a fresh Nous Portal access token from the existing login
-     (``~/.chiperflux/auth.json``) — the same path ``hermes dashboard register``
+     (``~/.chiperflux/auth.json``) — the same path ``chiper dashboard register``
      uses (``resolve_nous_access_token``). This proves *which Nous org (tenant)*
      the caller owns; the connector derives the authoritative tenant from it via
      ``GET /api/oauth/account`` (never from anything the gateway asserts).

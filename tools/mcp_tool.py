@@ -461,7 +461,7 @@ def _resolve_stdio_command(command: str, env: dict) -> tuple[str, dict]:
                 os.path.join(os.path.expanduser("~"), ".local", "bin", resolved_command),
                 # /usr/local/bin is the canonical install location for Node on
                 # Linux from-source builds, the upstream node:bookworm-slim
-                # image (which the Hermes Docker image copies node + npm +
+                # image (which the Chiper Docker image copies node + npm +
                 # corepack from since #4977), and macOS Homebrew on Intel.
                 # Without this candidate, any MCP server configured with an
                 # env.PATH that omits /usr/local/bin (a common pattern when
@@ -2308,7 +2308,7 @@ def _handle_auth_error_and_retry(
     return json.dumps({
         "error": (
             f"MCP server '{server_name}' requires re-authentication. "
-            f"Run `hermes mcp login {server_name}` (or delete the tokens "
+            f"Run `chiper mcp login {server_name}` (or delete the tokens "
             f"file under ~/.chiperflux/mcp-tokens/ and restart). Do NOT retry "
             f"this tool — ask the user to re-authenticate."
         ),
@@ -2702,7 +2702,7 @@ def _filter_suspicious_mcp_servers(servers: Dict[str, dict]) -> Dict[str, dict]:
 
 
 def _load_mcp_config() -> Dict[str, dict]:
-    """Read ``mcp_servers`` from the Hermes config file.
+    """Read ``mcp_servers`` from the Chiper config file.
 
     Returns a dict of ``{server_name: server_config}`` or empty dict.
     Server config can contain either ``command``/``args``/``env`` for stdio
@@ -3295,7 +3295,7 @@ def sanitize_mcp_name_component(value: str) -> str:
 
 
 def _convert_mcp_schema(server_name: str, mcp_tool) -> dict:
-    """Convert an MCP tool listing to the Hermes registry schema format.
+    """Convert an MCP tool listing to the Chiper registry schema format.
 
     Args:
         server_name: The logical server name for prefixing.
@@ -3922,9 +3922,9 @@ def get_mcp_status() -> List[dict]:
 def probe_mcp_server_tools() -> Dict[str, List[tuple]]:
     """Temporarily connect to configured MCP servers and list their tools.
 
-    Designed for ``hermes tools`` interactive configuration — connects to each
+    Designed for ``chiper tools`` interactive configuration — connects to each
     enabled server, grabs tool names and descriptions, then disconnects.
-    Does NOT register tools in the Hermes registry.
+    Does NOT register tools in the Chiper registry.
 
     Returns:
         Dict mapping server name to list of (tool_name, description) tuples.

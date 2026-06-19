@@ -80,7 +80,7 @@ try:
     from pydantic import BaseModel
 except ImportError:
     # First try lazy-installing the dashboard extras. Only the user actually
-    # running `hermes dashboard` needs fastapi+uvicorn; lazy install keeps
+    # running `chiper dashboard` needs fastapi+uvicorn; lazy install keeps
     # them out of every other install path. After install, re-import.
     try:
         from tools.lazy_deps import ensure as _lazy_ensure
@@ -118,7 +118,7 @@ def _start_desktop_cron_ticker(stop_event: "threading.Event", interval: int = 60
     """Tick the cron scheduler from inside the desktop dashboard backend.
 
     The scheduler tick loop normally lives in ``chiper gateway run`` — but the
-    desktop app spawns a ``hermes dashboard`` backend, not a gateway, so a cron
+    desktop app spawns a ``chiper dashboard`` backend, not a gateway, so a cron
     a user creates in the app would never fire. We run a minimal ticker here
     (no live adapters; delivery falls back to the per-platform send path).
 
@@ -1801,7 +1801,7 @@ async def get_status(profile: Optional[str] = None):
             pass
 
         # Dashboard auth gate (Phase 7): surface whether the gate is engaged
-        # and which providers are registered so ``hermes status`` and the
+        # and which providers are registered so ``chiper status`` and the
         # SPA's StatusPage can show "OAuth gate ON via Nous Research" or
         # "loopback only — no auth gate" with no extra round trips.
         auth_required = bool(getattr(app.state, "auth_required", False))
@@ -1987,7 +1987,7 @@ async def get_system_stats():
 #
 # The curator periodically reviews skills (archive stale, prune, pin).  The
 # dashboard surfaces its state and the pause/resume/run-now controls that
-# `hermes curator` exposes.
+# `chiper curator` exposes.
 # ---------------------------------------------------------------------------
 
 
@@ -2228,7 +2228,7 @@ def _record_completed_action(name: str, message: str, exit_code: int = 1) -> Non
 
 
 def _spawn_hermes_action(subcommand: List[str], name: str) -> subprocess.Popen:
-    """Spawn ``hermes <subcommand>`` detached and record the Popen handle.
+    """Spawn ``chiper <subcommand>`` detached and record the Popen handle.
 
     Uses the running interpreter's ``chiper_cli.main`` module so the action
     inherits the same venv/PYTHONPATH the web server is using.
@@ -2445,7 +2445,7 @@ def _recent_upstream_commits(n: int = 20) -> List[Dict[str, Any]]:
 
 @app.get("/api/hermes/update/check")
 async def check_hermes_update(force: bool = False):
-    """Report whether a Hermes update is available, without applying it.
+    """Report whether a Chiper update is available, without applying it.
 
     Powers the dashboard's "check before you update" flow: the System page
     shows the commit-behind count and asks the user to confirm before
@@ -4003,14 +4003,14 @@ _PLATFORM_OVERRIDES: dict[str, dict[str, Any]] = {
     },
     "homeassistant": {
         "name": "Home Assistant",
-        "description": "Control your smart home from Hermes via Home Assistant.",
+        "description": "Control your smart home from Chiper via Home Assistant.",
         "docs_url": "https://www.home-assistant.io/docs/authentication/",
         "env_vars": ("HASS_URL", "HASS_TOKEN"),
         "required_env": ("HASS_URL", "HASS_TOKEN"),
     },
     "email": {
         "name": "Email",
-        "description": "Talk to Hermes through an IMAP/SMTP mailbox.",
+        "description": "Talk to Chiper through an IMAP/SMTP mailbox.",
         "docs_url": "https://chiper-agent.nousresearch.com/docs/user-guide/messaging/",
         "env_vars": (
             "EMAIL_ADDRESS",
@@ -5210,7 +5210,7 @@ def _claude_code_only_status() -> Dict[str, Any]:
     """Surface Claude Code CLI credentials as their own provider entry.
 
     Independent of the Anthropic entry above so users can see whether their
-    Claude Code subscription tokens are actively flowing into Hermes even
+    Claude Code subscription tokens are actively flowing into Chiper even
     when they also have a separate Hermes-managed PKCE login.
     """
     try:
@@ -5488,7 +5488,7 @@ async def disconnect_oauth_provider(
                 detail=f"{provider['name']} cannot be disconnected automatically. {disconnect_hint}",
             )
 
-        # Anthropic clears only the Hermes-managed PKCE file and auth-store entry.
+        # Anthropic clears only the Chiper-managed PKCE file and auth-store entry.
         # The separate claude-code catalog row is external/read-only and rejected
         # above so we never pretend to remove ~/.claude/* credentials owned by the CLI.
         if provider_id == "anthropic":
@@ -6794,7 +6794,7 @@ async def delete_empty_sessions_endpoint(profile: Optional[str] = None):
 
 @app.get("/api/sessions/stats")
 async def get_session_stats(profile: Optional[str] = None):
-    """Session-store statistics for the Sessions page (mirrors `hermes sessions stats`).
+    """Session-store statistics for the Sessions page (mirrors `chiper sessions stats`).
 
     Registered before ``/api/sessions/{session_id}`` so the literal ``stats``
     path isn't captured as a session id by the parameterized route.
@@ -6960,7 +6960,7 @@ class SessionPrune(BaseModel):
 
 @app.post("/api/sessions/prune")
 async def prune_sessions_endpoint(body: SessionPrune):
-    """Delete ended sessions older than N days (mirrors `hermes sessions prune`)."""
+    """Delete ended sessions older than N days (mirrors `chiper sessions prune`)."""
     if body.older_than_days < 1:
         raise HTTPException(status_code=400, detail="older_than_days must be >= 1")
     profile_home = _cron_profile_home(body.profile)[1] if body.profile else get_chiper_home()
@@ -7386,7 +7386,7 @@ async def instantiate_blueprint(body: AutomationBlueprintInstantiate, profile: s
 # MCP server endpoints — list / add / remove / test.
 #
 # Wraps the same config data layer the CLI uses (chiper_cli.mcp_config), so
-# servers managed here show up under `hermes mcp list` and vice versa.  Secrets
+# servers managed here show up under `chiper mcp list` and vice versa.  Secrets
 # in stdio `env` blocks are redacted on read; the agent picks them up from
 # config.yaml at session start exactly as with CLI-added servers.
 # ---------------------------------------------------------------------------
@@ -7573,7 +7573,7 @@ async def list_mcp_catalog(profile: Optional[str] = None):
 
     Each entry reports whether it's already installed and enabled so the UI
     can show install / enabled state inline.  This is the same catalog
-    `hermes mcp catalog` / `hermes mcp install` read.  ``profile`` scopes
+    `chiper mcp catalog` / `chiper mcp install` read.  ``profile`` scopes
     the installed/enabled annotations (the catalog itself is repo-shipped
     and identical for every profile).
     """
@@ -8112,7 +8112,7 @@ async def remove_credential_pool_entry(provider: str, index: int):
 #
 # Selecting a provider only writes config.memory.provider (full interactive
 # provider setup, with its API-key prompts, stays on the CLI via
-# `hermes memory setup`).  The dashboard covers the common admin actions:
+# `chiper memory setup`).  The dashboard covers the common admin actions:
 # see which provider is active, switch the built-in store on/off, and wipe
 # built-in memory files.
 # ---------------------------------------------------------------------------
@@ -8176,7 +8176,7 @@ async def set_memory_provider(body: MemoryProviderSelect):
         if provider not in valid:
             raise HTTPException(
                 status_code=400,
-                detail=f"Unknown memory provider '{provider}'. Run `hermes memory setup` to configure a new one.",
+                detail=f"Unknown memory provider '{provider}'. Run `chiper memory setup` to configure a new one.",
             )
 
     cfg = load_config()
@@ -8264,7 +8264,7 @@ async def run_backup(body: BackupRequest):
 
 class ImportRequest(BaseModel):
     archive: str
-    # Pass --force to `hermes import`. The spawned action runs with
+    # Pass --force to `chiper import`. The spawned action runs with
     # stdin=DEVNULL, so the CLI's interactive "Continue? [y/N]" overwrite
     # prompt hits EOF and auto-aborts ("Aborted.", exit 1) whenever the
     # target already has a config — which it always does when the dashboard
@@ -8936,7 +8936,7 @@ class ProfileCreate(BaseModel):
     # Empty list = leave the seeded bundle untouched (legacy behaviour).
     keep_skills: List[str] = []
     # Skills-hub identifiers to install into the new profile. Installed async
-    # via a subprocess scoped to the profile (`hermes -p <name> skills install`)
+    # via a subprocess scoped to the profile (`chiper -p <name> skills install`)
     # because skills_hub.SKILLS_DIR is import-time-bound and the CHIPER_HOME
     # override can't redirect it. Returns spawned PIDs for the UI to poll.
     hub_skills: List[str] = []
@@ -9307,7 +9307,7 @@ async def get_active_profile_endpoint():
     """Return the sticky active profile and the profile this dashboard
     process is currently running as.
 
-    ``active`` is the sticky default written by ``hermes profile use`` —
+    ``active`` is the sticky default written by ``chiper profile use`` —
     the profile new CLI invocations pick up. ``current`` is the profile
     the running dashboard/gateway is scoped to (derived from CHIPER_HOME).
     """
@@ -9325,7 +9325,7 @@ async def get_active_profile_endpoint():
 
 @app.post("/api/profiles/active")
 async def set_active_profile_endpoint(body: ProfileActiveUpdate):
-    """Set the sticky active profile (mirrors ``hermes profile use``).
+    """Set the sticky active profile (mirrors ``chiper profile use``).
 
     Note: this does not retarget the already-running dashboard process —
     it changes which profile subsequent CLI commands and gateways use.
@@ -9503,7 +9503,7 @@ async def update_profile_model_endpoint(name: str, body: ProfileModelUpdate):
 @app.post("/api/profiles/{name}/describe-auto")
 async def describe_profile_auto_endpoint(name: str, body: ProfileDescribeAuto):
     """Auto-generate a profile's description via the auxiliary LLM
-    (``auxiliary.profile_describer``). Mirrors ``hermes profile describe
+    (``auxiliary.profile_describer``). Mirrors ``chiper profile describe
     <name> --auto``.
 
     A failed generation (no aux client, LLM error, …) is returned as
@@ -9795,7 +9795,7 @@ async def toggle_toolset(name: str, body: ToolsetToggle, profile: Optional[str] 
     """Enable/disable a configurable toolset for the desktop (cli) platform.
 
     Persists to ``platform_toolsets.cli`` via the same ``_save_platform_tools``
-    helper the CLI ``hermes tools`` picker uses, so the GUI and CLI stay in
+    helper the CLI ``chiper tools`` picker uses, so the GUI and CLI stay in
     lockstep. Scoped to ``body.profile`` when provided. Returns 400 for
     unknown toolset keys.
     """
@@ -9826,7 +9826,7 @@ async def toggle_toolset(name: str, body: ToolsetToggle, profile: Optional[str] 
 async def get_toolset_config(name: str, profile: Optional[str] = None):
     """Return the provider matrix + key status for a toolset's config panel.
 
-    Surfaces the same provider rows the CLI ``hermes tools`` picker shows
+    Surfaces the same provider rows the CLI ``chiper tools`` picker shows
     (via ``_visible_providers``), each with its ``env_vars`` annotated with
     current ``is_set`` state so the GUI can render provider selection + key
     entry. Toolsets without a ``TOOL_CATEGORIES`` entry return an empty
@@ -9897,7 +9897,7 @@ async def select_toolset_provider(
     """Persist a provider selection for a toolset (no key prompting).
 
     Delegates to ``apply_provider_selection`` — the shared, non-interactive
-    core extracted from the CLI configurator — so the GUI and ``hermes tools``
+    core extracted from the CLI configurator — so the GUI and ``chiper tools``
     write identical config keys (``web.backend``, ``tts.provider``, etc.).
     API keys and post-setup flows are handled by separate endpoints. Returns
     400 for unknown toolset or provider names.
@@ -9931,7 +9931,7 @@ async def save_toolset_env(name: str, body: ToolsetEnvUpdate, profile: Optional[
     """Persist API keys for a toolset's provider env vars.
 
     Writes each ``key: value`` to ``~/.chiperflux/.env`` via ``save_env_value`` —
-    the same store ``hermes tools`` writes when it prompts for keys. Keys are
+    the same store ``chiper tools`` writes when it prompts for keys. Keys are
     validated against the env-var allowlist for the toolset's category (the
     union of every visible provider's ``env_vars``), so the GUI can't write an
     arbitrary env var through this endpoint. A blank value is treated as
@@ -9995,12 +9995,12 @@ async def run_toolset_post_setup(
     Post-setup hooks (npm install for browser/Camofox, pip install for
     KittenTTS/Piper/ddgs, cua-driver fetch, etc.) are long-running and
     text-output, so this follows the spawn-action pattern: it launches
-    ``hermes tools post-setup <key>`` and the frontend tails the log via
+    ``chiper tools post-setup <key>`` and the frontend tails the log via
     ``GET /api/actions/tools-post-setup/status``. The ``key`` is validated
     against the declared post-setup allowlist before spawning. Returns 400
     for unknown toolset or post-setup key.
 
-    ``profile`` spawns the hook as ``hermes -p <profile> tools post-setup``.
+    ``profile`` spawns the hook as ``chiper -p <profile> tools post-setup``.
     Most hooks install machine-level artifacts (repo node_modules, shared
     pip packages) where the scope is inert, but hooks that read config or
     write per-profile state must see the same CHIPER_HOME the rest of the
@@ -10306,7 +10306,7 @@ async def get_models_analytics(days: int = 30, profile: Optional[str] = None):
 # ---------------------------------------------------------------------------
 # /api/pty — PTY-over-WebSocket bridge for the dashboard "Chat" tab.
 #
-# The endpoint spawns the same ``hermes --tui`` binary the CLI uses, behind
+# The endpoint spawns the same ``chiper --tui`` binary the CLI uses, behind
 # a POSIX pseudo-terminal, and forwards bytes + resize escapes across a
 # WebSocket.  The browser renders the ANSI through xterm.js (see
 # web/src/pages/ChatPage.tsx).
@@ -10582,7 +10582,7 @@ def _resolve_chat_argv(
 ) -> tuple[list[str], Optional[str], Optional[dict]]:
     """Resolve the argv + cwd + env for the chat PTY.
 
-    Default: whatever ``hermes --tui`` would run.  Tests monkeypatch this
+    Default: whatever ``chiper --tui`` would run.  Tests monkeypatch this
     function to inject a tiny fake command (``cat``, ``sh -c 'printf …'``)
     so nothing has to build Node or the TUI bundle.
 
@@ -10604,7 +10604,7 @@ def _resolve_chat_argv(
     process (the TUI and the ``tui_gateway.entry`` it launches) resolves
     ``get_chiper_home()`` from that env var at its own import, so the child
     binds the profile's config, skills, memory, and state.db from the start
-    — the same propagation ``hermes -p <name>`` performs. The in-process
+    — the same propagation ``chiper -p <name>`` performs. The in-process
     ``CHIPER_TUI_GATEWAY_URL`` attach is SKIPPED for scoped chats: the
     dashboard's in-memory gateway runs under the dashboard's own profile,
     so a profile-scoped chat must spawn its own gateway subprocess.
@@ -11101,7 +11101,7 @@ def mount_spa(application: FastAPI):
     # absolute ``url(/fonts/...)`` and ``url(/ds-assets/...)`` references.
     # Browsers resolve those against the document origin, which means
     # under ``/hermes`` they'd hit ``mission-control.tilos.com/fonts/...``
-    # (the MC Pages app), not the Hermes backend. Intercept CSS asset
+    # (the MC Pages app), not the Chiper backend. Intercept CSS asset
     # requests BEFORE the StaticFiles mount and rewrite the absolute paths
     # when a prefix is in play.
     @application.get("/assets/{filename}.css")

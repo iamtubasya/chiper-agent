@@ -1,4 +1,4 @@
-"""hermes memory setup|status — configure memory provider plugins.
+"""chiper memory setup|status — configure memory provider plugins.
 
 Auto-detects installed memory providers via the plugin system.
 Interactive curses-based UI for provider selection, then walks through
@@ -226,7 +226,7 @@ def cmd_setup_provider(provider_name: str) -> None:
 
     if not match:
         print(f"\n  Memory provider '{provider_name}' not found.")
-        print("  Run 'hermes memory setup' to see available providers.\n")
+        print("  Run 'chiper memory setup' to see available providers.\n")
         return
 
     name, _, provider = match

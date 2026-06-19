@@ -173,7 +173,7 @@ def cmd_sync(args) -> None:
 
     cfg = _read_config()
     if not cfg:
-        print("  No Honcho config found. Run 'hermes honcho setup' first.\n")
+        print("  No Honcho config found. Run 'chiper honcho setup' first.\n")
         return
 
     hosts = cfg.get("hosts", {})
@@ -181,7 +181,7 @@ def cmd_sync(args) -> None:
     has_key = bool(cfg.get("apiKey") or os.environ.get("HONCHO_API_KEY"))
 
     if not default_block and not has_key:
-        print("  Honcho not configured on default profile. Run 'hermes honcho setup' first.\n")
+        print("  Honcho not configured on default profile. Run 'chiper honcho setup' first.\n")
         return
 
     created = 0
@@ -207,7 +207,7 @@ def cmd_sync(args) -> None:
 def sync_honcho_profiles_quiet() -> int:
     """Sync Honcho host blocks for all profiles. Returns count of newly created blocks.
 
-    Called from `hermes update` -- no output, no exceptions.
+    Called from `chiper update` -- no output, no exceptions.
     """
     try:
         from chiper_cli.profiles import list_profiles
@@ -635,7 +635,7 @@ def cmd_setup(args) -> None:
 
         if not cfg.get("apiKey"):
             print("\n  No API key configured. Get yours at https://app.honcho.dev")
-            print("  Run 'hermes honcho setup' again once you have a key.\n")
+            print("  Run 'chiper honcho setup' again once you have a key.\n")
             return
 
     # --- 3. Identity ---
@@ -655,7 +655,7 @@ def cmd_setup(args) -> None:
         hermes_host["workspace"] = new_workspace
 
     # --- 3b. Gateway identity mapping ---
-    # These keys only affect the Hermes GATEWAY (Telegram/Discord/Slack/...),
+    # These keys only affect the Chiper GATEWAY (Telegram/Discord/Slack/...),
     # the one entrypoint that supplies a runtime user ID.  CLI/TUI/desktop/ACP
     # sessions have no runtime ID and fall through to peerName, so the step is
     # moot off-gateway — gate it behind detection.
@@ -682,7 +682,7 @@ def cmd_setup(args) -> None:
     if gw_platforms is None:
         print("\n  Gateway identity mapping routes platform users to memory peers.")
         run_mapping = _prompt(
-            "Running the Hermes gateway (Telegram/Discord/etc.)? (y/N)",
+            "Running the Chiper gateway (Telegram/Discord/etc.)? (y/N)",
             default="n",
         ).strip().lower() in {"y", "yes"}
     elif not gw_platforms:
@@ -895,7 +895,7 @@ def cmd_setup(args) -> None:
         print("  Memory provider set to 'honcho' in config.yaml")
     except Exception as e:
         print(f"  Could not auto-enable in config.yaml: {e}")
-        print("  Run: hermes config set memory.provider honcho")
+        print("  Run: chiper config set memory.provider honcho")
 
     # --- Test connection ---
     print("  Testing connection... ", end="", flush=True)
@@ -1000,11 +1000,11 @@ def cmd_status(args) -> None:
                 cfg = {"apiKey": _env_cfg.api_key, "enabled": _env_cfg.enabled}
             else:
                 print(f"  No Honcho config found at {active_path}")
-                print("  Run 'hermes honcho setup' to configure.\n")
+                print("  Run 'chiper honcho setup' to configure.\n")
                 return
         except Exception:
             print(f"  No Honcho config found at {active_path}")
-            print("  Run 'hermes honcho setup' to configure.\n")
+            print("  Run 'chiper honcho setup' to configure.\n")
             return
 
     try:
@@ -1215,7 +1215,7 @@ def cmd_peer(args) -> None:
         print(f"  User peer:   {user}")
         print("    Your identity in Honcho. Messages you send build this peer's card.")
         print(f"  AI peer:     {ai}")
-        print("    Hermes' identity in Honcho. Seed with 'hermes honcho identity <file>'.")
+        print("    Hermes' identity in Honcho. Seed with 'chiper honcho identity <file>'.")
         print("    Dialectic calls ask this peer questions to warm session context.")
         print()
         print(f"  Dialectic reasoning:  {lvl}  ({', '.join(REASONING_LEVELS)})")
@@ -1365,7 +1365,7 @@ def cmd_identity(args) -> None:
     """Seed AI peer identity or show both peer representations."""
     cfg = _read_config()
     if not _resolve_api_key(cfg):
-        print("  No API key configured. Run 'hermes honcho setup' first.\n")
+        print("  No API key configured. Run 'chiper honcho setup' first.\n")
         return
 
     file_path = getattr(args, "file", None)
@@ -1402,7 +1402,7 @@ def cmd_identity(args) -> None:
             print(ai_rep["card"])
         else:
             print("  No representation built yet.")
-            print("  Run 'hermes honcho identity <file>' to seed one.")
+            print("  Run 'chiper honcho identity <file>' to seed one.")
         print()
         return
 
@@ -1488,14 +1488,14 @@ def cmd_migrate(args) -> None:
         print("  2. Run:  hermes honcho setup")
         print("     Paste the key when prompted.")
         print()
-        answer = _prompt("  Run 'hermes honcho setup' now?", default="y")
+        answer = _prompt("  Run 'chiper honcho setup' now?", default="y")
         if answer.lower() in {"y", "yes"}:
             cmd_setup(args)
             cfg = _read_config()
             has_key = bool(cfg.get("apiKey", ""))
         else:
             print()
-            print("  Run 'hermes honcho setup' when ready, then re-run this walkthrough.")
+            print("  Run 'chiper honcho setup' when ready, then re-run this walkthrough.")
 
     # ── Step 2: Detected files ────────────────────────────────────────────────
     print()
@@ -1563,7 +1563,7 @@ def cmd_migrate(args) -> None:
                 except Exception as e:
                     print(f"  Failed: {e}")
         else:
-            print("  Run 'hermes honcho setup' first, then re-run this step.")
+            print("  Run 'chiper honcho setup' first, then re-run this step.")
     else:
         print("  No user memory files detected. Nothing to migrate here.")
 
@@ -1609,7 +1609,7 @@ def cmd_migrate(args) -> None:
                 except Exception as e:
                     print(f"  Failed: {e}")
         else:
-            print("  Run 'hermes honcho setup' first, then seed manually:")
+            print("  Run 'chiper honcho setup' first, then seed manually:")
             for f in agent_files:
                 print(f"    hermes honcho identity {f}")
     else:
@@ -1673,7 +1673,7 @@ def honcho_command(args) -> None:
     if sub == "setup":
         # Redirect to memory setup — honcho setup goes through the unified path
         print("\n  Honcho is configured via the memory provider system.")
-        print("  Running 'hermes memory setup'...\n")
+        print("  Running 'chiper memory setup'...\n")
         from chiper_cli.memory_setup import cmd_setup_provider
         cmd_setup_provider("honcho")
         return
@@ -1711,10 +1711,10 @@ def honcho_command(args) -> None:
 
 
 def register_cli(subparser) -> None:
-    """Build the ``hermes honcho`` argparse subcommand tree.
+    """Build the ``chiper honcho`` argparse subcommand tree.
 
     Called by the plugin CLI registration system during argparse setup.
-    The *subparser* is the parser for ``hermes honcho``.
+    The *subparser* is the parser for ``chiper honcho``.
     """
 
     subparser.add_argument(
@@ -1801,7 +1801,7 @@ def register_cli(subparser) -> None:
 
     subs.add_parser(
         "migrate",
-        help="Step-by-step migration guide from openclaw-honcho to Hermes Honcho",
+        help="Step-by-step migration guide from openclaw-honcho to Chiper Honcho",
     )
     subs.add_parser("enable", help="Enable Honcho for the active profile")
     subs.add_parser("disable", help="Disable Honcho for the active profile")

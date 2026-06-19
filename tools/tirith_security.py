@@ -134,7 +134,7 @@ _MARKER_TTL = 86400  # 24 hours
 
 
 def _get_chiper_home() -> str:
-    """Return the Hermes home directory, respecting CHIPER_HOME env var."""
+    """Return the Chiper home directory, respecting CHIPER_HOME env var."""
     return str(get_chiper_home())
 
 

@@ -164,7 +164,7 @@ def _is_running_as_admin() -> bool:
 
 
 def _current_profile_cli_args() -> list[str]:
-    """Return CLI args that preserve the current Hermes profile."""
+    """Return CLI args that preserve the current Chiper profile."""
     from chiper_cli.gateway import _profile_arg
 
     profile_arg = _profile_arg()
@@ -726,7 +726,7 @@ def _install_startup_fallback(script_path: Path, start_now: bool, detail: str) -
     print(f"✓ Installed Windows login item: {entry}")
     print(f"  Task script: {script_path}")
 
-    # Re-running `hermes -p <profile> gateway install` must be safe.
+    # Re-running `chiper -p <profile> gateway install` must be safe.
     # Startup-folder fallback only installs login persistence. Starting is
     # controlled by the pre-UAC start_now answer so all user decisions happen
     # before any elevation prompt.
@@ -740,7 +740,7 @@ def _install_startup_fallback(script_path: Path, start_now: bool, detail: str) -
         _report_gateway_start(f"direct spawn (PID {pid})")
     else:
         profile_arg = _profile_arg()
-        start_cmd = f"hermes {profile_arg} gateway start" if profile_arg else "chiper gateway start"
+        start_cmd = f"chiper {profile_arg} gateway start" if profile_arg else "chiper gateway start"
         print("ℹ Startup fallback installed; gateway not started now.")
         print(f"  Start manually with: {start_cmd}")
     _print_next_steps()
@@ -848,7 +848,7 @@ def install(
         print(f"✓ Installed Windows login item: {entry}")
         print(f"  Task script: {script_path}")
 
-        # Re-running `hermes -p <profile> gateway install` must be safe.
+        # Re-running `chiper -p <profile> gateway install` must be safe.
         # Startup-folder fallback only installs login persistence. Starting is
         # controlled by the pre-UAC start_now answer so all user decisions happen
         # before any elevation prompt.
@@ -862,7 +862,7 @@ def install(
             _report_gateway_start(f"direct spawn (PID {pid})")
         else:
             profile_arg = _profile_arg()
-            start_cmd = f"hermes {profile_arg} gateway start" if profile_arg else "chiper gateway start"
+            start_cmd = f"chiper {profile_arg} gateway start" if profile_arg else "chiper gateway start"
             print("ℹ Startup fallback installed; gateway not started now.")
             print(f"  Start manually with: {start_cmd}")
         _print_next_steps()

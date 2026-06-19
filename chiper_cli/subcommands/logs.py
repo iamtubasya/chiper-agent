@@ -1,4 +1,4 @@
-"""``hermes logs`` subcommand parser.
+"""``chiper logs`` subcommand parser.
 
 Extracted verbatim from ``chiper_cli/main.py:main()`` (god-file Phase 2).
 Handler injected to avoid importing ``main``.
@@ -17,23 +17,23 @@ def build_logs_parser(subparsers, *, cmd_logs: Callable) -> None:
     # =========================================================================
     logs_parser = subparsers.add_parser(
         "logs",
-        help="View and filter Hermes log files",
+        help="View and filter Chiper log files",
         description="View, tail, and filter agent.log / errors.log / gateway.log / gui.log / desktop.log",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""\
 Examples:
-    hermes logs                    Show last 50 lines of agent.log
-    hermes logs -f                 Follow agent.log in real time
-    hermes logs errors             Show last 50 lines of errors.log
-    hermes logs gateway -n 100     Show last 100 lines of gateway.log
-    hermes logs gui -f             Follow gui.log in real time
-    hermes logs desktop -f         Follow desktop.log (Electron app boot/backend)
-    hermes logs --level WARNING    Only show WARNING and above
-    hermes logs --session abc123   Filter by session ID
-    hermes logs --component tools  Only show tool-related lines
-    hermes logs --since 1h         Lines from the last hour
-    hermes logs --since 30m -f     Follow, starting from 30 min ago
-    hermes logs list               List available log files with sizes
+    chiper logs                    Show last 50 lines of agent.log
+    chiper logs -f                 Follow agent.log in real time
+    chiper logs errors             Show last 50 lines of errors.log
+    chiper logs gateway -n 100     Show last 100 lines of gateway.log
+    chiper logs gui -f             Follow gui.log in real time
+    chiper logs desktop -f         Follow desktop.log (Electron app boot/backend)
+    chiper logs --level WARNING    Only show WARNING and above
+    chiper logs --session abc123   Filter by session ID
+    chiper logs --component tools  Only show tool-related lines
+    chiper logs --since 1h         Lines from the last hour
+    chiper logs --since 30m -f     Follow, starting from 30 min ago
+    chiper logs list               List available log files with sizes
 """,
     )
     logs_parser.add_argument(

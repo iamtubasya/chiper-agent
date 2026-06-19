@@ -137,7 +137,7 @@ def canonical_whatsapp_identifier(identifier: str) -> str:
 
     Plugins that need per-sender behaviour (role-based routing,
     authorisation, per-contact policy) should use this so their
-    bookkeeping lines up with Hermes' session bookkeeping even when
+    bookkeeping lines up with Chiper' session bookkeeping even when
     the bridge reshuffles aliases.
 
     Returns an empty string if ``identifier`` normalizes to empty. If no

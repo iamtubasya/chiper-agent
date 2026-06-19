@@ -1,4 +1,4 @@
-"""Persistent session goals — the Ralph loop for Hermes.
+"""Persistent session goals — the Ralph loop for Chiper.
 
 A goal is a free-form user objective that stays active across turns. After
 each turn completes, a small judge call asks an auxiliary model "is this
@@ -790,7 +790,7 @@ def run_kanban_goal_loop(
     """Drive a kanban worker through a Ralph-style goal loop.
 
     The dispatcher spawns a goal-mode worker exactly like a normal worker
-    (``hermes -p <profile> chat -q "work kanban task <id>"``). The worker's
+    (``chiper -p <profile> chat -q "work kanban task <id>"``). The worker's
     first turn has already run by the time this is called; ``first_response``
     is that turn's reply. From here we:
 

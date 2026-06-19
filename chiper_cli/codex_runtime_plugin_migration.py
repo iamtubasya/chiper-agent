@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 # Marker comments wrapping the managed section so re-runs can detect
 # what's ours and what's user-edited. Both must appear or strip is a no-op.
 MIGRATION_MARKER = (
-    "# managed by chiper-agent — `hermes codex-runtime migrate` regenerates this section"
+    "# managed by chiper-agent — `chiper codex-runtime migrate` regenerates this section"
 )
 MIGRATION_END_MARKER = (
     "# end chiper-agent managed section"
@@ -84,7 +84,7 @@ class MigrationReport:
                 )
                 lines.append(f"  - {name}{note}")
         else:
-            lines.append("No MCP servers found in Hermes config.")
+            lines.append("No MCP servers found in Chiper config.")
         if self.migrated_plugins:
             lines.append(
                 f"Migrated {len(self.migrated_plugins)} native Codex plugin(s):"
@@ -638,7 +638,7 @@ def migrate(
         expose_chiper_tools: when True (default), register Hermes' own
             tool surface (web_search, browser_*, delegate_task, vision,
             memory, skills, etc.) as an MCP server in ~/.codex/config.toml
-            so the codex subprocess can call back into Hermes for tools
+            so the codex subprocess can call back into Chiper for tools
             codex doesn't have built in. Set False to opt out.
     """
     report = MigrationReport(dry_run=dry_run)
@@ -649,7 +649,7 @@ def migrate(
     hermes_servers = (hermes_config or {}).get("mcp_servers") or {}
     if not isinstance(hermes_servers, dict):
         report.errors.append(
-            "mcp_servers in Hermes config is not a dict; cannot migrate."
+            "mcp_servers in Chiper config is not a dict; cannot migrate."
         )
         return report
 
@@ -688,7 +688,7 @@ def migrate(
         report.wrote_permissions_default = default_permission_profile
 
     # Inject Hermes' own tool surface as an MCP server so the spawned
-    # codex subprocess can call back into Hermes for the tools codex
+    # codex subprocess can call back into Chiper for the tools codex
     # doesn't ship with — web_search, browser_*, delegate_task, vision,
     # memory, skills, session_search, image_generate, text_to_speech.
     # The server itself is agent/transports/chiper_tools_mcp_server.py

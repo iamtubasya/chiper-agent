@@ -28,7 +28,7 @@ The check is invoked from three places:
    a one-line operator banner)
 
 This module is intentionally dependency-free beyond the stdlib so it can
-run in environments where the rest of Hermes failed to import.
+run in environments where the rest of Chiper failed to import.
 """
 
 from __future__ import annotations
