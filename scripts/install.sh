@@ -293,6 +293,7 @@ setup_venv() {
     else
         run_with_spinner "Creating venv" uv venv
         source .venv/bin/activate
+        .venv/bin/python3 -m ensurepip --upgrade 2>/dev/null  # Install pip for lazy installs
         run_with_spinner "Installing dependencies" uv pip install -e ".[all]"
     fi
 
