@@ -427,7 +427,7 @@ fi
 
 # Run CLI
 cd "$CHIPER_INSTALL_DIR"
-python -m chiper_cli "$@"
+python -c "from chiper_cli.main import main; main()" "$@"
 WRAPPER
 
     chmod +x /usr/local/bin/chiper
