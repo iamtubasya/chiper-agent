@@ -59,6 +59,10 @@ Examples:
     chiper config                 View configuration
     chiper config edit            Edit config in $EDITOR
     chiper config set model gpt-4 Set a config value
+    chiper env                  Show all env vars (secrets masked)
+    chiper env wizard           Interactive .env setup
+    chiper env set KEY VALUE    Set an env var
+    chiper env check            Check for missing required vars
     chiper gateway                Run messaging gateway
     chiper -s chiper-agent-dev,github-auth
     chiper -w                     Start in isolated git worktree

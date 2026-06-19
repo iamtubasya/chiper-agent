@@ -284,6 +284,7 @@ from chiper_cli.subcommands.debug import build_debug_parser
 from chiper_cli.subcommands.backup import build_backup_parser
 from chiper_cli.subcommands.import_cmd import build_import_cmd_parser
 from chiper_cli.subcommands.config import build_config_parser
+from chiper_cli.subcommands.env import build_env_parser
 from chiper_cli.subcommands.version import build_version_parser
 from chiper_cli.subcommands.update import build_update_parser
 from chiper_cli.subcommands.uninstall import build_uninstall_parser
@@ -4226,6 +4227,13 @@ def cmd_config(args):
     from chiper_cli.config import config_command
 
     config_command(args)
+
+
+def cmd_env(args):
+    """Environment variable management."""
+    from chiper_cli.env_manager import env_command
+
+    env_command(args)
 
 
 def cmd_backup(args):
@@ -11877,6 +11885,11 @@ def main():
     # config command  (parser built in chiper_cli/subcommands/config.py)
     # =========================================================================
     build_config_parser(subparsers, cmd_config=cmd_config)
+
+    # =========================================================================
+    # env command  (parser built in chiper_cli/subcommands/env.py)
+    # =========================================================================
+    build_env_parser(subparsers, cmd_env=cmd_env)
 
     # =========================================================================
     # pairing command  (parser built in chiper_cli/subcommands/pairing.py)
