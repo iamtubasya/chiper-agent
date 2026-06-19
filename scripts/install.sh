@@ -412,7 +412,7 @@ install_browser() {
 create_symlink() {
     log_step "🔗 Creating command symlink..."
 
-    # Create wrapper script
+    # Create wrapper script at /usr/local/bin/chiper
     cat > /usr/local/bin/chiper << 'WRAPPER'
 #!/bin/bash
 export CHIPER_HOME="${CHIPER_HOME:-$HOME/.chiperflux}"
@@ -432,6 +432,21 @@ WRAPPER
 
     chmod +x /usr/local/bin/chiper
     log_success "Command 'chiper' available at /usr/local/bin/chiper"
+
+    # Also create symlink at ~/.local/bin/chiper (for doctor check)
+    local _venv_bin="$CHIPER_INSTALL_DIR/.venv/bin/chiper"
+    local _local_bin="$HOME/.local/bin"
+    if [ -f "$_venv_bin" ]; then
+        mkdir -p "$_local_bin"
+        ln -sf "$_venv_bin" "$_local_bin/chiper"
+        log_success "Symlink '$_local_bin/chiper' → $_venv_bin"
+
+        # Check if ~/.local/bin is on PATH
+        if ! echo "$PATH" | tr ':' '\n' | grep -q "^$_local_bin$"; then
+            log_warn "~/.local/bin is not on PATH"
+            log_info "Add to your shell config: export PATH=\"\$HOME/.local/bin:\$PATH\""
+        fi
+    fi
 }
 
 # ============================================================================
