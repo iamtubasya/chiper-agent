@@ -204,7 +204,7 @@ PLATFORMS = {
 # ─── Helpers ─────────────────────────────────────────────────────────────────
 
 def _get_env_path() -> Path:
-    chiper_home = os.environ.get("CHIPER_HOME", os.path.expanduser("~/.hermes"))
+    chiper_home = os.environ.get("CHIPER_HOME", os.path.expanduser("~/.chiperflux"))
     return Path(chiper_home) / ".env"
 
 

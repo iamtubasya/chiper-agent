@@ -110,7 +110,7 @@ ENV_SECTIONS = [
 
 def _get_env_path() -> Path:
     """Get the .env file path."""
-    chiper_home = os.environ.get("CHIPER_HOME", os.path.expanduser("~/.hermes"))
+    chiper_home = os.environ.get("CHIPER_HOME", os.path.expanduser("~/.chiperflux"))
     return Path(chiper_home) / ".env"
 
 
