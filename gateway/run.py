@@ -4630,40 +4630,57 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             pass
 
         if _in_chroot:
-            # Chroot-safe: Python watcher that polls PID then calls restart.sh
-            # Bypasses 'chiper gateway restart' guard entirely.
+            # Chroot-safe: Python watcher that polls PID, kills leftovers,
+            # cleans PID file, then restarts via PM2 — all inline, no
+            # external script dependency.
             import textwrap
-            restart_script = str(Path.home() / ".chiperflux" / "scripts" / "restart.sh")
-            watcher_py = textwrap.dedent(f"""
-                import os, subprocess, sys, time
+            watcher_py = textwrap.dedent("""
+                import os, signal, subprocess, sys, time
                 pid = int(sys.argv[1])
-                restart_sh = sys.argv[2]
-                deadline = time.monotonic() + 120
+                # 1. Wait for old gateway to exit (max 60s)
+                deadline = time.monotonic() + 60
                 while time.monotonic() < deadline:
                     try:
                         os.kill(pid, 0)
-                    except ProcessLookupError:
+                    except (ProcessLookupError, OSError):
                         break
-                    except OSError:
-                        break
-                    time.sleep(0.2)
-                # Clean up PID file before restart
+                    time.sleep(0.3)
+                # 2. Kill any leftover chiper gateway processes
+                subprocess.run(["pkill", "-9", "-f", "chiper gateway"], capture_output=True)
+                time.sleep(1)
+                # 3. Clean PID file + lock file
                 try:
                     from chiper_constants import get_chiper_home
-                    pid_file = get_chiper_home() / "gateway.pid"
-                    if pid_file.exists():
-                        pid_file.unlink(missing_ok=True)
+                    home = get_chiper_home()
+                    for f in [home / "gateway.pid", home / ".gateway.lock"]:
+                        try:
+                            f.unlink(missing_ok=True)
+                        except Exception:
+                            pass
                 except Exception:
                     pass
-                # Call restart.sh (pkill + nohup chiper gateway run)
+                # 4. Wait until no chiper gateway running (max 15s)
+                for _ in range(75):
+                    try:
+                        out = subprocess.check_output(
+                            ["pgrep", "-f", "chiper gateway"],
+                            text=True, stderr=subprocess.DEVNULL
+                        )
+                        if not out.strip():
+                            break
+                    except Exception:
+                        break
+                    time.sleep(0.2)
+                # 5. Restart via PM2
+                subprocess.run(["pm2", "delete", "chiper"], capture_output=True)
                 subprocess.Popen(
-                    ["/bin/bash", restart_sh],
+                    ["pm2", "start", "chiper gateway", "--name", "chiper"],
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
                     start_new_session=True,
                 )
             """).strip()
-            watcher_argv = [sys.executable, "-c", watcher_py, str(current_pid), restart_script]
+            watcher_argv = [sys.executable, "-c", watcher_py, str(current_pid)]
             try:
                 subprocess.Popen(
                     watcher_argv,
