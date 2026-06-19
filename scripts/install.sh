@@ -18,6 +18,10 @@ echo ""
 
 set -e
 
+# Fix DNS for chroot/proot environments (prevents network issues during install)
+echo "nameserver 8.8.8.8" > /etc/resolv.conf 2>/dev/null || true
+echo "127.0.0.1 localhost" > /etc/hosts 2>/dev/null || true
+
 # Guard against environment leakage when the installer is launched from another
 # Python-driven tool session (e.g. Chiper terminal tool). A pre-set PYTHONPATH
 # can force pip/entrypoints to import a different checkout than the one being
