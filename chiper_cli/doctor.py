@@ -1290,6 +1290,9 @@ def run_doctor(args):
         if _is_termux_env and _prefix:
             _cmd_link_dir = Path(_prefix) / "bin"
             _cmd_link_display = "$PREFIX/bin"
+        elif os.geteuid() == 0:
+            _cmd_link_dir = Path("/usr/local/bin")
+            _cmd_link_display = "/usr/local/bin"
         else:
             _cmd_link_dir = Path.home() / ".local" / "bin"
             _cmd_link_display = "~/.local/bin"
