@@ -466,6 +466,12 @@ webhook:
 proxy:
   host: "127.0.0.1"
   port: 1513
+
+# Logging (ERROR only = no noise)
+logging:
+  level: ERROR
+  max_size_mb: 5
+  backup_count: 3
 CONFIGFILE
         log_success "Created default config at $CHIPER_HOME/config.yaml"
     else
