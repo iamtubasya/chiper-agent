@@ -57,7 +57,7 @@ PLATFORMS = {
             {
                 "key": "TELEGRAM_ALLOWED_USERS",
                 "label": "Allowed Users",
-                "description": "User ID yang diizinkan (comma-separated)",
+                "description": "User ID yang diizinkan untuk chat bot",
                 "required": True,
                 "validate": lambda v: bool(re.match(r"^\d+(,\d+)*$", v.replace(" ", ""))),
                 "hint": "Format: 123456789 atau 123,456,789",
@@ -70,10 +70,10 @@ PLATFORMS = {
             {
                 "key": "TELEGRAM_HOME_CHANNEL",
                 "label": "Home Channel",
-                "description": "Chat ID default untuk delivery (kosongkan, bisa di-set lewat gateway chat)",
+                "description": "Chat ID default untuk delivery",
                 "required": False,
                 "validate": lambda v: not v or bool(re.match(r"^-?\d+$", v)),
-                "hint": "Kosongkan aja, nanti di-set otomatis dari chat",
+                "hint": "Kosongkan aja, nanti di-set dari chat /sethome",
             },
             {
                 "key": "TELEGRAM_HOME_CHANNEL_THREAD_ID",
@@ -546,14 +546,22 @@ def cmd_telegram_setup(_args) -> None:
 
         # Special handling for BOT TOKEN
         if key == "TELEGRAM_BOT_TOKEN":
-            print(_bold(f"  ── {req['label']}{required_tag} ──"))
+            # If token exists, get bot name first
+            bot_label = req["label"]
+            if current:
+                ok, info = _test_telegram_token(current)
+                if ok:
+                    bot_label = f"{req['label']} ({info})"
+                    bot_info["token"] = info
+
+            print(_bold(f"  ── {bot_label}{required_tag} ──"))
             if not current and "howto" in req:
                 print()
                 for step in req["howto"]:
                     print(f"  {_cyan(step)}")
                 print()
 
-            # Show format hint separately
+            # Show format hint
             print(f"  {_dim(req.get('hint', ''))}")
             print()
 
@@ -584,12 +592,10 @@ def cmd_telegram_setup(_args) -> None:
                 print(f"  {_dim('Verifikasi token...')}")
                 ok, info = _test_telegram_token(token_input)
                 if ok:
-                    # info = "@username (Bot Name)"
                     bot_info["token"] = info
                     print(f"  {_green(f'✅ Bot: {info}')}")
                     values[key] = token_input
                     _save_env_value(key, token_input)
-                    print(f"  {_green('✅ Token saved!')}")
                     break
                 else:
                     print(_red(f"  ❌ Token tidak valid: {info}"))
@@ -598,7 +604,12 @@ def cmd_telegram_setup(_args) -> None:
 
         # Special handling for ALLOWED USERS
         elif key == "TELEGRAM_ALLOWED_USERS":
-            print(_bold(f"  ── {req['label']}{required_tag} ──"))
+            # Show label with current value if exists
+            users_label = req["label"]
+            if current:
+                users_label = f"{req['label']} ({current})"
+
+            print(_bold(f"  ── {users_label}{required_tag} ──"))
             print(f"  {req['description']}")
             if not current and "howto" in req:
                 print()
@@ -637,9 +648,12 @@ def cmd_telegram_setup(_args) -> None:
 
         # Special handling for HOME CHANNEL
         elif key == "TELEGRAM_HOME_CHANNEL":
-            print(_bold(f"  ── {req['label']}{required_tag} ──"))
+            home_label = req["label"]
+            if current:
+                home_label = f"{req['label']} ({current})"
+
+            print(_bold(f"  ── {home_label}{required_tag} ──"))
             print(f"  {req['description']}")
-            print(f"  {_dim(req.get('hint', ''))}")
             print()
 
             try:
@@ -657,13 +671,16 @@ def cmd_telegram_setup(_args) -> None:
                     _save_env_value(key, home_input)
                     print(f"  {_green('✅ Saved!')}")
             else:
-                # Leave empty - user will set via gateway chat
-                print(f"  {_dim('⬜ Kosong — bisa di-set nanti dari chat')}")
+                print(f"  {_dim('⬜ Kosong — set dari chat: /sethome')}")
             print()
 
-        # Default handling for other fields
+        # Default handling for other fields (Thread/Topic ID etc)
         else:
-            print(_bold(f"  ── {req['label']}{required_tag} ──"))
+            field_label = req["label"]
+            if current:
+                field_label = f"{req['label']} ({current})"
+
+            print(_bold(f"  ── {field_label}{required_tag} ──"))
             print(f"  {req['description']}")
 
             value = _input_with_validation(
