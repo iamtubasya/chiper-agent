@@ -499,23 +499,12 @@ def cmd_telegram_setup(_args) -> None:
     print(_bold("  📦 Step 1: Checking dependencies..."))
     print()
     pkg_ok, pkg_ver = _check_package(platform["package"], platform["import_check"])
-    print(f"  {pkg_ok} python-telegram-bot: {pkg_ver}")
 
-    if not pkg_ok:
-        print()
-        print(_yellow("  📥 Installing python-telegram-bot..."))
-        import subprocess
-        try:
-            subprocess.run(
-                [sys.executable, "-m", "pip", "install", "python-telegram-bot", "--quiet"],
-                check=True,
-                capture_output=True,
-            )
-            print(_green("  ✅ Installed!"))
-        except Exception as e:
-            print(_red(f"  ❌ Install failed: {e}"))
-            print(f"     Manual: {_cyan('pip install python-telegram-bot')}")
-            return
+    if pkg_ok:
+        print(f"  ✅ {platform['package']}: {pkg_ver}")
+    else:
+        print(f"  ⏳ {platform['package']}: not installed yet")
+        print(f"     {_dim('→ Akan di-install otomatis saat gateway pertama kali jalan')}")
 
     # ── Step 2: Auto-detect current config ──
     print()
@@ -728,23 +717,12 @@ def _generic_platform_setup(platform_key: str) -> None:
 
     # Check package
     pkg_ok, pkg_ver = _check_package(platform["package"], platform["import_check"])
-    print(f"  {pkg_ok} {platform['package']}: {pkg_ver}")
 
-    if not pkg_ok:
-        print(_yellow(f"\n  📥 Installing {platform['package']}..."))
-        import subprocess
-        try:
-            subprocess.run(
-                [sys.executable, "-m", "pip", "install", platform["package"], "--quiet"],
-                check=True, capture_output=True,
-            )
-            print(_green("  ✅ Installed!"))
-        except Exception as e:
-            print(_red(f"  ❌ Install failed: {e}"))
-            pkg_name = platform["package"]
-            print(f"     Manual: {_cyan('pip install ' + pkg_name)}")
-            return
-
+    if pkg_ok:
+        print(f"  ✅ {platform['package']}: {pkg_ver}")
+    else:
+        print(f"  ⏳ {platform['package']}: not installed yet")
+        print(f"     {_dim('→ Akan di-install otomatis saat gateway pertama kali jalan')}")
     print()
     print(_bold("  📝 Konfigurasi:"))
     print()
