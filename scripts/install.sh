@@ -56,14 +56,14 @@ spinner() {
     local pid=$1
     local delay=0.1
     local spinstr='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
-    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+    while kill -0 "$pid" 2>/dev/null; do
         local temp=${spinstr#?}
-        printf "  ${CYAN}[%c]${NC} " "$spinstr"
+        printf "  \033[0;36m[%c]\033[0m " "$spinstr"
         local spinstr=$temp${spinstr%"$temp"}
         sleep $delay
-        printf "\r"
+        printf ""
     done
-    printf "    \r"
+    printf "    "
 }
 
 # Run command with spinner
@@ -291,9 +291,9 @@ setup_venv() {
         source venv/bin/activate
         run_with_spinner "Installing dependencies" pip install -e ".[termux]"
     else
-        run_with_spinner "Creating venv" uv venv
+        run_with_spinner "Creating venv" uv venv --clear
         source .venv/bin/activate
-        .venv/bin/python3 -m ensurepip --upgrade 2>/dev/null  # Install pip for lazy installs
+        .venv/bin/python3 -m ensurepip --upgrade >/dev/null 2>&1  # Install pip for lazy installs
         run_with_spinner "Installing dependencies" uv pip install -e ".[all]"
     fi
 
@@ -310,7 +310,7 @@ install_node_deps() {
     cd "$INSTALL_DIR"
 
     if [ -f "package.json" ]; then
-        run_with_spinner "Node.js dependencies" npm install --production
+        run_with_spinner "Node.js dependencies" npm install --workspaces=false --production
     else
         log_info "No package.json found, skipping"
     fi
