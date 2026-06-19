@@ -307,12 +307,12 @@ clone_repo() {
         log_warn "Installation directory exists: $INSTALL_DIR"
         log_info "Updating existing installation..."
         cd "$INSTALL_DIR"
-        git fetch origin -q
+        git -c http.postBuffer=524288000 fetch origin -q
         git checkout "$BRANCH" -q
         git pull origin "$BRANCH" -q
     else
         log_info "Cloning to: $INSTALL_DIR"
-        git clone --quiet --branch "$BRANCH" "$REPO_URL_HTTPS" "$INSTALL_DIR"
+        git clone --quiet --depth 1 --single-branch --branch "$BRANCH" --no-tags "$REPO_URL_HTTPS" "$INSTALL_DIR"
     fi
 
     log_success "Repository ready"
