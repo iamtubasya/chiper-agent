@@ -231,22 +231,12 @@ detect_os() {
     fi
 
     # Detect environment: proot-distro > chroot > native Termux
-    if [[ -d /data/data/com.termux ]]; then
-        # Check if we have apt-get (proot-distro or chroot Debian/Ubuntu)
-        if command -v apt-get &>/dev/null; then
-            # proot-distro or chroot - use apt-get, NOT pkg
-            IS_TERMUX=false
-            if [[ -f /etc/os-release ]]; then
-                local _distro=$(grep PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"')
-                log_info "Environment: proot-distro ($_distro)"
-            else
-                log_info "Environment: proot/chroot (apt-get detected)"
-            fi
-        elif command -v pkg &>/dev/null; then
-            # Native Termux - use pkg
-            IS_TERMUX=true
-            log_info "Environment: Termux (Android)"
-        fi
+    # Priority: if apt-get exists, it's NOT native Termux
+    if command -v apt-get &>/dev/null; then
+        IS_TERMUX=false
+    elif [[ -d /data/data/com.termux ]] && command -v pkg &>/dev/null; then
+        IS_TERMUX=true
+        log_info "Environment: Termux (Android)"
     fi
 
     # Check if interactive
