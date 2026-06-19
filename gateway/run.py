@@ -13,12 +13,12 @@ Usage:
     python cli.py --gateway
 """
 
-# IMPORTANT: hermes_bootstrap must be the very first import — UTF-8 stdio
-# on Windows.  No-op on POSIX.  See hermes_bootstrap.py for full rationale.
+# IMPORTANT: chiper_bootstrap must be the very first import — UTF-8 stdio
+# on Windows.  No-op on POSIX.  See chiper_bootstrap.py for full rationale.
 try:
     import chiper_bootstrap  # noqa: F401
 except ModuleNotFoundError:
-    # Graceful fallback when hermes_bootstrap isn't registered in the venv
+    # Graceful fallback when chiper_bootstrap isn't registered in the venv
     # yet — happens during partial ``chiper update`` where git-reset landed
     # new code but ``uv pip install -e .`` didn't finish.  Missing bootstrap
     # means UTF-8 stdio setup is skipped on Windows; POSIX is unaffected.
@@ -489,7 +489,7 @@ def _telegramize_command_mentions(text: str, platform: Any) -> str:
 # after a gateway restart when the user's next message starts new work.
 #
 # The freshness signal is the timestamp of the last transcript row, which
-# ``hermes_state.get_messages`` carries on every persisted message.  This
+# ``chiper_state.get_messages`` carries on every persisted message.  This
 # handles the two auto-continue cases uniformly:
 #   * resume_pending (gateway restart/shutdown watchdog marked the session)
 #   * tool-tail     (last persisted message is a tool result the agent
@@ -1940,26 +1940,19 @@ def _resolve_gateway_model(config: dict | None = None) -> str:
 
 
 def _resolve_chiper_bin() -> Optional[list[str]]:
-    """Resolve the Chiper/ChiperFlux update command as argv parts.
+    """Resolve the ChiperFlux update command as argv parts.
 
     Tries in order:
-    1. ``shutil.which("chiper")`` — standard PATH lookup (ChiperFlux)
-    2. ``shutil.which("hermes")`` — standard PATH lookup (Hermes fallback)
-    3. ``sys.executable -m chiper_cli.main`` — fallback when running from venv
+    1. ``shutil.which("chiper")`` — standard PATH lookup
+    2. ``sys.executable -m chiper_cli.main`` — fallback when running from venv
 
     Returns argv parts ready for quoting/joining, or ``None`` if neither works.
     """
     import shutil
 
-    # Try chiper first (ChiperFlux)
     chiper_bin = shutil.which("chiper")
     if chiper_bin:
         return [chiper_bin]
-
-    # Try hermes (fallback)
-    hermes_bin = shutil.which("hermes")
-    if hermes_bin:
-        return [hermes_bin]
 
     try:
         import importlib.util
@@ -2432,7 +2425,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             # CHIPER_HOME silently lost /resume, /title, /history, /branch, and
             # session search without this.  The underlying cause (usually
             # "locking protocol" from NFS) is now also captured by
-            # hermes_state.get_last_init_error() for slash-command error strings.
+            # chiper_state.get_last_init_error() for slash-command error strings.
             logger.warning("SQLite session store not available: %s", e)
 
         # Opportunistic state.db maintenance: prune ended sessions older
@@ -4808,7 +4801,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             # Mark this replay so _handle_message does not queue it again while
             # the restore gate remains closed for any fresh inbound arrivals.
             try:
-                setattr(event, "_hermes_startup_restore_replay", True)
+                setattr(event, "_chiper_startup_restore_replay", True)
             except Exception:
                 pass
             await adapter.handle_message(event)
@@ -6784,7 +6777,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         if (
             getattr(self, "_startup_restore_in_progress", False)
             and not getattr(event, "internal", False)
-            and not getattr(event, "_hermes_startup_restore_replay", False)
+            and not getattr(event, "_chiper_startup_restore_replay", False)
         ):
             self._queue_startup_restore_event(event)
             return None
@@ -8922,7 +8915,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 # parent slash command `/hermes`; bare `/sethome` is not
                 # registered and would fail with "app did not respond".
                 sethome_cmd = (
-                    "/hermes sethome"
+                    "/chiper sethome"
                     if source.platform == Platform.SLACK
                     else "/sethome"
                 )
@@ -10044,7 +10037,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 generation = None
                 active = getattr(adapter, "_active_sessions", {}).get(session_key)
                 if active is not None:
-                    generation = getattr(active, "_hermes_run_generation", None)
+                    generation = getattr(active, "_chiper_run_generation", None)
                 adapter.register_post_delivery_callback(
                     session_key,
                     _deliver,
@@ -10411,7 +10404,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
             # Other platforms keep the existing MP3 default.
             audio_ext = "ogg" if event.source.platform == Platform.TELEGRAM else "mp3"
             audio_path = os.path.join(
-                tempfile.gettempdir(), "hermes_voice",
+                tempfile.gettempdir(), "chiper_voice",
                 f"tts_reply_{_uuid.uuid4().hex[:12]}.{audio_ext}",
             )
             os.makedirs(os.path.dirname(audio_path), exist_ok=True)
@@ -13105,7 +13098,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         try:
             interrupt_event = getattr(adapter, "_active_sessions", {}).get(session_key)
             if interrupt_event is not None:
-                setattr(interrupt_event, "_hermes_run_generation", int(generation))
+                setattr(interrupt_event, "_chiper_run_generation", int(generation))
         except Exception:
             pass
 
@@ -16761,7 +16754,7 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
         # before sending SIGTERM. If present, treat the signal as a
         # planned shutdown and exit 0 so systemd's Restart=on-failure
         # doesn't revive us (which would flap-fight the replacer when
-        # both services are enabled, e.g. hermes.service + hermes-
+        # both services are enabled, e.g. chiper.service + hermes-
         # gateway.service from pre-rename installs).
         planned_takeover = False
         try:
@@ -16999,7 +16992,7 @@ async def start_gateway(config: Optional[GatewayConfig] = None, replace: bool = 
     # When an unexpected SIGTERM caused the shutdown and it wasn't a planned
     # restart (/restart, /update, SIGUSR1), exit non-zero so systemd's
     # Restart=on-failure revives the process.  This covers:
-    #   - hermes update killing the gateway mid-work
+    #   - chiper update killing the gateway mid-work
     #   - External kill commands
     #   - WSL2/container runtime sending unexpected signals
     # `chiper gateway stop` and interactive Ctrl+C are handled above as
