@@ -537,87 +537,188 @@ def cmd_telegram_setup(_args) -> None:
     print()
 
     values = dict(env)  # Start with current values
-    auto_filled = {}
+    bot_info = {}  # Store bot name/username after validation
 
     for req in platform["requirements"]:
         key = req["key"]
         current = values.get(key, "")
         required_tag = f" {_red('*')}" if req["required"] else ""
 
-        print(_bold(f"  ── {req['label']}{required_tag} ──"))
-        print(f"  {req['description']}")
+        # Special handling for BOT TOKEN
+        if key == "TELEGRAM_BOT_TOKEN":
+            print(_bold(f"  ── {req['label']}{required_tag} ──"))
+            if not current and "howto" in req:
+                print()
+                for step in req["howto"]:
+                    print(f"  {_cyan(step)}")
+                print()
 
-        # Show howto for required fields that aren't set
-        if req["required"] and not current and "howto" in req:
+            # Show format hint separately
+            print(f"  {_dim(req.get('hint', ''))}")
             print()
-            for step in req["howto"]:
-                print(f"  {_cyan(step)}")
+
+            # Prompt for token
+            while True:
+                try:
+                    token_input = input(f"  {req['label']}: ").strip()
+                except (KeyboardInterrupt, EOFError):
+                    print("\n" + _yellow("⚠️  Cancelled"))
+                    return
+
+                if not token_input:
+                    if current:
+                        print(f"  {_dim('Keeping existing token')}")
+                        break
+                    if req["required"]:
+                        print(_red("  ❌ Bot token wajib diisi!"))
+                        continue
+                    break
+
+                # Validate format
+                if not req["validate"](token_input):
+                    print(_red("  ❌ Format salah!"))
+                    print(_dim(f"     {req.get('hint', '')}"))
+                    continue
+
+                # Test token via Telegram API
+                print(f"  {_dim('Verifikasi token...')}")
+                ok, info = _test_telegram_token(token_input)
+                if ok:
+                    # info = "@username (Bot Name)"
+                    bot_info["token"] = info
+                    print(f"  {_green(f'✅ Bot: {info}')}")
+                    values[key] = token_input
+                    _save_env_value(key, token_input)
+                    print(f"  {_green('✅ Token saved!')}")
+                    break
+                else:
+                    print(_red(f"  ❌ Token tidak valid: {info}"))
+                    continue
             print()
 
-        # Auto-fill logic
-        auto_value = None
-        if "auto_fill_logic" in req and not current:
-            auto_value = req["auto_fill_logic"](values)
-            if auto_value:
-                print(f"  {_green(f'Auto-detected: {auto_value}')}")
+        # Special handling for ALLOWED USERS
+        elif key == "TELEGRAM_ALLOWED_USERS":
+            print(_bold(f"  ── {req['label']}{required_tag} ──"))
+            print(f"  {req['description']}")
+            if not current and "howto" in req:
+                print()
+                for step in req["howto"]:
+                    print(f"  {_cyan(step)}")
+                print()
 
-        # Prompt
-        default = current or auto_value or ""
-        if current:
-            masked = current[:8] + "***" if len(current) > 12 else current
-            default = masked
+            # Prompt for user IDs
+            while True:
+                try:
+                    users_input = input(f"  {req['label']}: ").strip()
+                except (KeyboardInterrupt, EOFError):
+                    print("\n" + _yellow("⚠️  Cancelled"))
+                    return
 
-        value = _input_with_validation(
-            req["label"],
-            validate=req["validate"],
-            hint=req.get("hint", ""),
-            password="TOKEN" in key or "KEY" in key or "PASS" in key,
-            default="" if "TOKEN" in key or "KEY" in key else default,
-        )
+                if not users_input:
+                    if current:
+                        print(f"  {_dim('Keeping existing users')}")
+                        break
+                    if req["required"]:
+                        print(_red("  ❌ User ID wajib diisi!"))
+                        continue
+                    break
 
-        if value is None:  # Ctrl+C
-            return
+                # Validate format
+                if not req["validate"](users_input):
+                    print(_red("  ❌ Format salah!"))
+                    print(_dim(f"     {req.get('hint', '')}"))
+                    continue
 
-        if value:
-            values[key] = value
-            _save_env_value(key, value)
-            print(f"  {_green('✅ Saved!')}")
-        elif not current and auto_value:
-            values[key] = auto_value
-            _save_env_value(key, auto_value)
-            print(f"  {_green(f'✅ Using auto-detected: {auto_value}')}")
-        elif not current and req["required"]:
-            print(_red(f"  ❌ {req['label']} wajib diisi!"))
-            print(f"     Jalankan lagi: {_cyan('chiper telegram setup')}")
-            return
+                values[key] = users_input
+                _save_env_value(key, users_input)
+                print(f"  {_green('✅ Saved!')}")
+                break
+            print()
 
-        print()
+        # Special handling for HOME CHANNEL
+        elif key == "TELEGRAM_HOME_CHANNEL":
+            print(_bold(f"  ── {req['label']}{required_tag} ──"))
+            print(f"  {req['description']}")
+            print(f"  {_dim(req.get('hint', ''))}")
+            print()
+
+            try:
+                home_input = input(f"  {req['label']}: ").strip()
+            except (KeyboardInterrupt, EOFError):
+                print("\n" + _yellow("⚠️  Cancelled"))
+                return
+
+            if home_input:
+                if not req["validate"](home_input):
+                    print(_red("  ❌ Format salah!"))
+                    print(_dim("     Harus berupa angka"))
+                else:
+                    values[key] = home_input
+                    _save_env_value(key, home_input)
+                    print(f"  {_green('✅ Saved!')}")
+            else:
+                # Leave empty - user will set via gateway chat
+                print(f"  {_dim('⬜ Kosong — bisa di-set nanti dari chat')}")
+            print()
+
+        # Default handling for other fields
+        else:
+            print(_bold(f"  ── {req['label']}{required_tag} ──"))
+            print(f"  {req['description']}")
+
+            value = _input_with_validation(
+                req["label"],
+                validate=req["validate"],
+                hint=req.get("hint", ""),
+                password="TOKEN" in key or "KEY" in key or "PASS" in key,
+                default="",
+            )
+
+            if value is None:  # Ctrl+C
+                return
+
+            if value:
+                values[key] = value
+                _save_env_value(key, value)
+                print(f"  {_green('✅ Saved!')}")
+            elif not current and req["required"]:
+                print(_red(f"  ❌ {req['label']} wajib diisi!"))
+                print(f"     Jalankan lagi: {_cyan('chiper telegram setup')}")
+                return
+            print()
 
     # ── Step 4: Verify ──
-    print(_bold("  🔍 Step 4: Verifying configuration..."))
+    print(_bold("  🔍 Step 4: Verifikasi"))
     print()
 
     token = values.get("TELEGRAM_BOT_TOKEN", "")
     if token:
-        print(f"  🌐 Testing bot token...")
         ok, info = _test_telegram_token(token)
         if ok:
-            print(f"  {_green(f'✅ Bot verified: {info}')}")
+            print(f"  {_green(f'✅ Bot: {info}')}")
         else:
-            print(f"  {_yellow(f'⚠️  Could not verify: {info}')}")
-            print(f"     Token saved, but check if it's correct")
+            print(f"  {_yellow(f'⚠️  Gagal verifikasi: {info}')}")
+            print(f"     Token tersimpan, cek jika ada masalah")
 
     # ── Summary ──
     print()
-    print(_bold(f"{'═' * 50}"))
-    print(_bold(f"  {platform['emoji']} {platform['name']} Gateway — Setup Complete!"))
-    print(_bold(f"{'═' * 50}"))
+    print(_bold("  ══════════════════════════════════════"))
+    print(_bold(f"  {platform['emoji']} Telegram Gateway — Selesai!"))
+    print(_bold("  ══════════════════════════════════════"))
     print()
 
     for req in platform["requirements"]:
         val = values.get(req["key"], "")
-        status = _check(val) if req["required"] else _warn(bool(val))
-        print(f"  {status} {req['label']}: {'✅ configured' if val else _dim('not set')}")
+        if val:
+            status = _green("✅")
+            if req["key"] == "TELEGRAM_BOT_TOKEN" and bot_info.get("token"):
+                display = bot_info["token"]
+            else:
+                display = req["label"]
+        else:
+            status = _dim("⬜")
+            display = _dim("kosong")
+        print(f"  {status} {req['label']}: {display}")
 
     print()
     print(f"  📄 Config: {_cyan(str(_get_env_path()))}")
