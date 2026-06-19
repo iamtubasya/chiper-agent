@@ -1,14 +1,14 @@
 """Resolve CHIPER_HOME for standalone skill scripts.
 
-Skill scripts may run outside the Hermes process (e.g. system Python,
-nix env, CI) where ``hermes_constants`` is not importable.  This module
+Skill scripts may run outside the Chiper process (e.g. system Python,
+nix env, CI) where ``chiper_constants`` is not importable.  This module
 provides the same ``get_chiper_home()`` and ``display_chiper_home()``
-contracts as ``hermes_constants`` without requiring it on ``sys.path``.
+contracts as ``chiper_constants`` without requiring it on ``sys.path``.
 
-When ``hermes_constants`` IS available it is used directly so that any
+When ``chiper_constants`` IS available it is used directly so that any
 future enhancements (profile resolution, Docker detection, etc.) are
 picked up automatically.  The fallback path replicates the core logic
-from ``hermes_constants.py`` using only the stdlib.
+from ``chiper_constants.py`` using only the stdlib.
 
 All scripts under ``google-workspace/scripts/`` should import from here
 instead of duplicating the ``CHIPER_HOME = Path(os.getenv(...))`` pattern.
@@ -25,16 +25,16 @@ try:
 except (ModuleNotFoundError, ImportError):
 
     def get_chiper_home() -> Path:
-        """Return the Hermes home directory (default: ~/.chiperflux).
+        """Return the Chiper home directory (default: ~/.chiperflux).
 
-        Mirrors ``hermes_constants.get_chiper_home()``."""
+        Mirrors ``chiper_constants.get_chiper_home()``."""
         val = os.environ.get("CHIPER_HOME", "").strip()
         return Path(val) if val else Path.home() / ".chiperflux"
 
     def display_chiper_home() -> str:
         """Return a user-friendly ``~/``-shortened display string.
 
-        Mirrors ``hermes_constants.display_chiper_home()``."""
+        Mirrors ``chiper_constants.display_chiper_home()``."""
         home = get_chiper_home()
         try:
             return "~/" + str(home.relative_to(Path.home()))

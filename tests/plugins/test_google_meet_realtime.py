@@ -15,7 +15,7 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def _isolate_home(tmp_path, monkeypatch):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     yield chiper_home

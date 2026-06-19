@@ -66,7 +66,7 @@ def _get_lock_dir() -> Path:
     if override:
         return Path(override)
     state_home = Path(os.getenv("XDG_STATE_HOME", Path.home() / ".local" / "state"))
-    return state_home / "hermes" / _LOCKS_DIRNAME
+    return state_home / "chiper" / _LOCKS_DIRNAME
 
 
 def _utc_now_iso() -> str:
@@ -801,7 +801,7 @@ def release_all_scoped_locks(
 # unexpected kills — but that also means a --replace takeover target
 # exits 1, which tricks systemd into reviving it 30 seconds later,
 # starting a flap loop against the replacer when both services are
-# enabled in the user's systemd (e.g. ``hermes.service`` + ``hermes-
+# enabled in the user's systemd (e.g. ``chiper.service`` + ``chiper-
 # gateway.service``).
 #
 # The takeover marker breaks the loop: the replacer writes a short-lived

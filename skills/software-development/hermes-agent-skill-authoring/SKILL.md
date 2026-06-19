@@ -2,16 +2,16 @@
 name: chiper-agent-skill-authoring
 description: "Author in-repo SKILL.md: frontmatter, validator, structure."
 version: 1.0.0
-author: Hermes Agent
+author: Chiper Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
+  chiper:
     tags: [skills, authoring, chiper-agent, conventions, skill-md]
     related_skills: [plan, requesting-code-review]
 ---
 
-# Authoring Hermes-Agent Skills (in-repo)
+# Authoring Chiper-Agent Skills (in-repo)
 
 ## Overview
 
@@ -44,10 +44,10 @@ Peer-matched shape used by every skill under `skills/software-development/`:
 name: my-skill-name               # lowercase, hyphens, ≤64 chars (MAX_NAME_LENGTH)
 description: Use when <trigger>. <one-line behavior>.
 version: 1.0.0
-author: Hermes Agent
+author: Chiper Agent
 license: MIT
 metadata:
-  hermes:
+  chiper:
     tags: [short, descriptive, tags]
     related_skills: [other-skill, another-skill]
 ---
@@ -78,7 +78,7 @@ One or two paragraphs: what and why.
 ## <Topic sections specific to the skill>
 - Quick-reference tables are common
 - Code blocks with exact commands
-- Hermes-specific recipes (tests via scripts/run_tests.sh, ui-tui paths, etc.)
+- Chiper-specific recipes (tests via scripts/run_tests.sh, ui-tui paths, etc.)
 
 ## Common Pitfalls
 Numbered list of mistakes and their fixes.
@@ -127,7 +127,7 @@ Pick the closest existing category. Don't invent new top-level categories casual
 
 ## Cross-Referencing Other Skills
 
-`metadata.hermes.related_skills` unions both trees (`skills/` in-repo and `~/.chiperflux/skills/`) at load time. You CAN reference a user-local skill from an in-repo skill, but it won't resolve for other users who clone the repo fresh. Prefer referencing only in-repo skills from in-repo skills. If a frequently-referenced skill lives only in `~/.chiperflux/skills/`, consider promoting it to the repo.
+`metadata.chiper.related_skills` unions both trees (`skills/` in-repo and `~/.chiperflux/skills/`) at load time. You CAN reference a user-local skill from an in-repo skill, but it won't resolve for other users who clone the repo fresh. Prefer referencing only in-repo skills from in-repo skills. If a frequently-referenced skill lives only in `~/.chiperflux/skills/`, consider promoting it to the repo.
 
 ## Editing Existing In-Repo Skills
 
@@ -156,7 +156,7 @@ Pick the closest existing category. Don't invent new top-level categories casual
 
 - [ ] File is at `skills/<category>/<name>/SKILL.md` (not in `~/.chiperflux/skills/`)
 - [ ] Frontmatter starts at byte 0 with `---`, closes with `\n---\n`
-- [ ] `name`, `description`, `version`, `author`, `license`, `metadata.hermes.{tags, related_skills}` all present
+- [ ] `name`, `description`, `version`, `author`, `license`, `metadata.chiper.{tags, related_skills}` all present
 - [ ] Name ≤ 64 chars, lowercase + hyphens
 - [ ] Description ≤ 1024 chars and starts with "Use when ..."
 - [ ] Total file ≤ 100,000 chars (aim for 8-15k)

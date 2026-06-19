@@ -6,10 +6,10 @@ These skills ship with the chiper-agent repository but are not copied to
 `~/.chiperflux/skills/` during setup. They are discoverable via the Skills Hub:
 
 ```bash
-hermes skills browse               # browse all skills, official shown first
-hermes skills browse --source official  # browse only official optional skills
-hermes skills search <query>       # finds optional skills labeled "official"
-hermes skills install <identifier> # copies to ~/.chiperflux/skills/ and activates
+chiper skills browse               # browse all skills, official shown first
+chiper skills browse --source official  # browse only official optional skills
+chiper skills search <query>       # finds optional skills labeled "official"
+chiper skills install <identifier> # copies to ~/.chiperflux/skills/ and activates
 ```
 
 ## Why optional?

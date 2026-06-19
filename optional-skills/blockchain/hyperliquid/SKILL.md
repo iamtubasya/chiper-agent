@@ -2,11 +2,11 @@
 name: hyperliquid
 description: Hyperliquid market data, account history, trade review.
 version: 0.1.0
-author: Hugo Sequier (Hugo-SEQUIER), Hermes Agent
+author: Hugo Sequier (Hugo-SEQUIER), Chiper Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
+  chiper:
     tags: [Hyperliquid, Blockchain, Crypto, Trading, Perpetuals, Spot, DeFi]
     related_skills: []
 ---

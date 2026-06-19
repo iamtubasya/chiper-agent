@@ -1,4 +1,4 @@
-"""Shared Hermes-side execution flow for Modal transports.
+"""Shared Chiper-side execution flow for Modal transports.
 
 This module deliberately stops at the Chiper boundary:
 - command preparation

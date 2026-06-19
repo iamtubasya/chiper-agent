@@ -103,12 +103,12 @@ logger = logging.getLogger(__name__)
 # Version / platform constants (used in AUTH_BIND and sign-token headers)
 # ---------------------------------------------------------------------------
 try:
-    from chiper_cli import __version__ as _HERMES_VERSION
+    from chiper_cli import __version__ as _CHIPER_VERSION
 except ImportError:
-    _HERMES_VERSION = "0.0.0"
+    _CHIPER_VERSION = "0.0.0"
 
-_APP_VERSION = _HERMES_VERSION
-_BOT_VERSION = _HERMES_VERSION
+_APP_VERSION = _CHIPER_VERSION
+_BOT_VERSION = _CHIPER_VERSION
 _YUANBAO_INSTANCE_ID = str(CHIPER_INSTANCE_ID)  # single source: yuanbao_proto.CHIPER_INSTANCE_ID
 _OPERATION_SYSTEM = sys.platform
 

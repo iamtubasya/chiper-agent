@@ -10,7 +10,7 @@ Why tools instead of just shelling out to ``chiper kanban``?
 
 1. **Backend portability.** A worker whose terminal tool points at Docker
    / Modal / Singularity / SSH would run ``chiper kanban complete …``
-   inside the container, where ``hermes`` isn't installed and the DB
+   inside the container, where ``chiper`` isn't installed and the DB
    isn't mounted. Tools run in the agent's Python process, so they
    always reach ``~/.chiperflux/kanban.db`` regardless of terminal backend.
 
@@ -170,7 +170,7 @@ def _connect(board: Optional[str] = None):
     default) preserves the legacy resolution chain
     (``CHIPER_KANBAN_DB`` → ``CHIPER_KANBAN_BOARD`` env → current symlink
     → ``default``). Per-tool ``board`` lets a Telegram-side agent override
-    the env-pinned active board without restarting Hermes.
+    the env-pinned active board without restarting Chiper.
     """
     from chiper_cli import kanban_db as kb
     return kb, kb.connect(board=board)
@@ -700,7 +700,7 @@ def _handle_comment(args: dict, **kw) -> str:
     # into the next worker's system prompt by ``build_worker_context``
     # as ``**{author}** (timestamp): {body}`` — accepting an
     # ``args["author"]`` override let a worker forge a comment from
-    # an authoritative-looking name like ``hermes-system`` and poison
+    # an authoritative-looking name like ``chiper-system`` and poison
     # the future-worker context with what reads as a system directive.
     # Cross-task commenting itself remains unrestricted (see #19713) —
     # comments are the deliberate handoff channel between tasks.

@@ -23,7 +23,7 @@ def _client():
     client.headers[_SESSION_HEADER_NAME] = _SESSION_TOKEN
     # Keep the state DB under the isolated CHIPER_HOME for any handler that
     # touches it.
-    hermes_state.DEFAULT_DB_PATH = get_chiper_home() / "state.db"
+    chiper_state.DEFAULT_DB_PATH = get_chiper_home() / "state.db"
     return client, _SESSION_HEADER_NAME
 
 
@@ -237,7 +237,7 @@ class TestWebhookEndpoints:
             restart_calls.append((subcommand, name))
             return FakeRestartProc()
 
-        monkeypatch.setattr(ws, "_spawn_hermes_action", fake_spawn_action)
+        monkeypatch.setattr(ws, "_spawn_chiper_action", fake_spawn_action)
 
         r = self.client.post("/api/webhooks/enable")
 
@@ -266,7 +266,7 @@ class TestWebhookEndpoints:
             assert name == "gateway-restart"
             raise RuntimeError("supervisor unavailable")
 
-        monkeypatch.setattr(ws, "_spawn_hermes_action", fail_spawn_action)
+        monkeypatch.setattr(ws, "_spawn_chiper_action", fail_spawn_action)
 
         r = self.client.post("/api/webhooks/enable")
 
@@ -297,7 +297,7 @@ class TestWebhookEndpoints:
         def fail_spawn_action(subcommand, name):
             raise AssertionError("must not spawn a second concurrent restart")
 
-        monkeypatch.setattr(ws, "_spawn_hermes_action", fail_spawn_action)
+        monkeypatch.setattr(ws, "_spawn_chiper_action", fail_spawn_action)
 
         r = self.client.post("/api/webhooks/enable")
 
@@ -380,7 +380,7 @@ class TestSystemStatsEndpoint:
         assert r.status_code == 200
         s = r.json()
         # Identity fields always present (stdlib-sourced).
-        for key in ("os", "arch", "hostname", "python_version", "hermes_version"):
+        for key in ("os", "arch", "hostname", "python_version", "chiper_version"):
             assert key in s and s[key]
         # psutil flag tells the UI whether the richer metrics are populated.
         assert "psutil" in s
@@ -521,12 +521,12 @@ class TestSkillsHubSourcesEndpoint:
                 return self._sid
 
             def search(self, q, limit=10):
-                return [_FakeMeta("hermes-index/featured-skill", "trusted")]
+                return [_FakeMeta("chiper-index/featured-skill", "trusted")]
 
         def _fake_router():
             srcs = [_Src("official"), _Src("github")]
-            # hermes-index source advertises availability + featured search.
-            idx = _Src("hermes-index")
+            # chiper-index source advertises availability + featured search.
+            idx = _Src("chiper-index")
             idx.is_available = True
             srcs.insert(1, idx)
             return srcs
@@ -538,7 +538,7 @@ class TestSkillsHubSourcesEndpoint:
         assert r.status_code == 200
         body = r.json()
         ids = {s["id"] for s in body["sources"]}
-        assert {"official", "github", "hermes-index"} <= ids
+        assert {"official", "github", "chiper-index"} <= ids
         # Every source carries a human label.
         assert all(s.get("label") for s in body["sources"])
         assert body["index_available"] is True
@@ -722,7 +722,7 @@ class TestAdminEndpointsAuthGate:
             "/api/curator",
             "/api/portal",
             "/api/system/stats",
-            "/api/hermes/update/check",
+            "/api/chiper/update/check",
         ],
     )
     def test_gated(self, path):
@@ -735,11 +735,11 @@ class TestAdminEndpointsAuthGate:
 
 
 class TestUpdateCheckEndpoint:
-    """``GET /api/hermes/update/check`` reports availability without applying.
+    """``GET /api/chiper/update/check`` reports availability without applying.
 
     Powers the dashboard's check-before-you-update flow: the System page
     shows the commit-behind count and asks the user to confirm before
-    ``POST /api/hermes/update`` runs ``hermes update``.
+    ``POST /api/chiper/update`` runs ``chiper update``.
     """
 
     @pytest.fixture(autouse=True)
@@ -755,7 +755,7 @@ class TestUpdateCheckEndpoint:
 
         monkeypatch.setattr(banner, "check_for_updates", lambda: 5)
 
-        r = self.client.get("/api/hermes/update/check")
+        r = self.client.get("/api/chiper/update/check")
         assert r.status_code == 200
         body = r.json()
         assert {
@@ -780,7 +780,7 @@ class TestUpdateCheckEndpoint:
         monkeypatch.setattr(ws, "detect_install_method", lambda *a, **k: "git")
         monkeypatch.setattr(banner, "check_for_updates", lambda: 0)
 
-        body = self.client.get("/api/hermes/update/check").json()
+        body = self.client.get("/api/chiper/update/check").json()
         assert body["behind"] == 0
         assert body["update_available"] is False
 
@@ -788,7 +788,7 @@ class TestUpdateCheckEndpoint:
         import chiper_cli.web_server as ws
 
         monkeypatch.setattr(ws, "detect_install_method", lambda *a, **k: "docker")
-        body = self.client.get("/api/hermes/update/check").json()
+        body = self.client.get("/api/chiper/update/check").json()
         # Docker images are immutable — the dashboard can't apply an update.
         assert body["can_apply"] is False
         assert body["message"]
@@ -806,7 +806,7 @@ class TestUpdateCheckEndpoint:
             ),
         )
 
-        body = self.client.get("/api/hermes/update/check").json()
+        body = self.client.get("/api/chiper/update/check").json()
         assert body["install_method"] == "managed-runtime"
         assert body["can_apply"] is False
         assert body["update_available"] is False
@@ -824,7 +824,7 @@ class TestUpdateCheckEndpoint:
 
         monkeypatch.setattr(banner, "check_for_updates", _boom)
         # A failed check must not 500 — it returns behind=null with guidance.
-        r = self.client.get("/api/hermes/update/check")
+        r = self.client.get("/api/chiper/update/check")
         assert r.status_code == 200
         body = r.json()
         assert body["behind"] is None
@@ -845,7 +845,7 @@ class TestUpdateCheckEndpoint:
             ],
         )
 
-        body = self.client.get("/api/hermes/update/check").json()
+        body = self.client.get("/api/chiper/update/check").json()
         # The desktop overlay renders this as the "what's changed" list.
         assert isinstance(body["commits"], list)
         assert body["commits"][0]["sha"] == "abc1234"
@@ -858,7 +858,7 @@ class TestUpdateCheckEndpoint:
         monkeypatch.setattr(ws, "detect_install_method", lambda *a, **k: "git")
         monkeypatch.setattr(banner, "check_for_updates", lambda: 0)
 
-        body = self.client.get("/api/hermes/update/check").json()
+        body = self.client.get("/api/chiper/update/check").json()
         # No commits list when there's nothing to show (additive, non-breaking).
         assert body.get("commits", []) == []
 
@@ -958,7 +958,7 @@ class TestDebugShareEndpoint:
 
 class TestToolsConfigEndpoints:
     """Provider selection, API-key save, and post-setup spawn for toolsets —
-    the dashboard surface that replicates the `hermes tools` configurator."""
+    the dashboard surface that replicates the `chiper tools` configurator."""
 
     @pytest.fixture(autouse=True)
     def _setup(self, _isolate_chiper_home):
@@ -1060,7 +1060,7 @@ class TestToolsConfigEndpoints:
             spawned["name"] = name
             return _FakeProc()
 
-        monkeypatch.setattr(ws, "_spawn_hermes_action", _fake_spawn)
+        monkeypatch.setattr(ws, "_spawn_chiper_action", _fake_spawn)
         r = self.client.post(
             "/api/tools/toolsets/browser/post-setup",
             json={"key": "agent_browser"},

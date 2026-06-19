@@ -53,7 +53,7 @@ def test_code_scoped_stamp_wins_over_home_stamp(tmp_path):
 
     Models a host git install whose $CHIPER_HOME is shared with (and stamped
     'docker' by) a co-located container. The code-scoped stamp must win so the
-    host install is correctly identified as 'git' and 'hermes update' works.
+    host install is correctly identified as 'git' and 'chiper update' works.
     """
     code = tmp_path / "code"
     home = tmp_path / "home"
@@ -147,13 +147,13 @@ def test_container_without_stamp_is_not_docker(tmp_path):
     ``test_stamp_file_takes_precedence``; the published image -> ``docker``),
     so neither hits this path. An unsupported manual install dropped into a
     container has no stamp and was wrongly classified as the published Docker
-    image, so ``hermes update`` refused to run. With a ``.git`` checkout it
+    image, so ``chiper update`` refused to run. With a ``.git`` checkout it
     must resolve to ``git``.
     """
     (tmp_path / ".git").mkdir()
     with patch("chiper_cli.config.get_managed_system", return_value=None), \
          patch("chiper_cli.config.get_chiper_home", return_value=tmp_path), \
-         patch("hermes_constants.is_container", return_value=True):
+         patch("chiper_constants.is_container", return_value=True):
         from chiper_cli.config import detect_install_method
         assert detect_install_method(project_root=tmp_path) == "git"
 
@@ -162,7 +162,7 @@ def test_container_pip_install_without_stamp_is_pip(tmp_path):
     """Container + no .git + no stamp -> pip, not docker (issue #34397)."""
     with patch("chiper_cli.config.get_managed_system", return_value=None), \
          patch("chiper_cli.config.get_chiper_home", return_value=tmp_path), \
-         patch("hermes_constants.is_container", return_value=True):
+         patch("chiper_constants.is_container", return_value=True):
         from chiper_cli.config import detect_install_method
         assert detect_install_method(project_root=tmp_path) == "pip"
 
@@ -178,12 +178,12 @@ def test_banner_warns_on_pip_install(tmp_path):
     from rich.console import Console
     from chiper_cli import banner
 
-    hh = tmp_path / ".hermes"
+    hh = tmp_path / ".chiper"
     hh.mkdir()
     (hh / ".install_method").write_text("pip\n")
 
     with patch("chiper_cli.config.get_chiper_home", return_value=hh), \
-         patch("hermes_constants.get_chiper_home", return_value=hh):
+         patch("chiper_constants.get_chiper_home", return_value=hh):
         buf = io.StringIO()
         # Wide console so the warning isn't wrapped across lines in the panel.
         console = Console(file=buf, width=400, force_terminal=False, color_system=None)
@@ -204,12 +204,12 @@ def test_banner_no_pip_warning_on_git_install(tmp_path):
     from rich.console import Console
     from chiper_cli import banner
 
-    hh = tmp_path / ".hermes"
+    hh = tmp_path / ".chiper"
     hh.mkdir()
     (hh / ".install_method").write_text("git\n")
 
     with patch("chiper_cli.config.get_chiper_home", return_value=hh), \
-         patch("hermes_constants.get_chiper_home", return_value=hh):
+         patch("chiper_constants.get_chiper_home", return_value=hh):
         buf = io.StringIO()
         console = Console(file=buf, width=400, force_terminal=False, color_system=None)
         banner.build_welcome_banner(

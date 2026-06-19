@@ -1,4 +1,4 @@
-"""Tests for ``hermes gui`` desktop launcher wiring."""
+"""Tests for ``chiper gui`` desktop launcher wiring."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def _ns(**kw):
         source=False,
         fake_boot=False,
         ignore_existing=False,
-        hermes_root=None,
+        chiper_root=None,
         cwd=None,
     )
     defaults.update(kw)
@@ -40,11 +40,11 @@ def _make_packaged_executable(root: Path, monkeypatch, platform: str = "darwin")
     monkeypatch.setattr(cli_main.sys, "platform", platform)
     desktop_dir = root / "apps" / "desktop"
     if platform == "darwin":
-        exe = desktop_dir / "release" / "mac-arm64" / "Hermes.app" / "Contents" / "MacOS" / "Hermes"
+        exe = desktop_dir / "release" / "mac-arm64" / "Chiper.app" / "Contents" / "MacOS" / "Chiper"
     elif platform == "win32":
-        exe = desktop_dir / "release" / "win-unpacked" / "Hermes.exe"
+        exe = desktop_dir / "release" / "win-unpacked" / "Chiper.exe"
     else:
-        exe = desktop_dir / "release" / "linux-unpacked" / "hermes"
+        exe = desktop_dir / "release" / "linux-unpacked" / "chiper"
     exe.parent.mkdir(parents=True)
     exe.write_text("", encoding="utf-8")
     return exe
@@ -79,9 +79,9 @@ def test_gui_installs_packages_and_launches_desktop_app(tmp_path, monkeypatch):
 
 def test_gui_forwards_desktop_environment_overrides(tmp_path, monkeypatch):
     root = _make_desktop_tree(tmp_path)
-    hermes_root = tmp_path / "custom-hermes"
+    chiper_root = tmp_path / "custom-chiper"
     cwd = tmp_path / "project"
-    hermes_root.mkdir()
+    chiper_root.mkdir()
     cwd.mkdir()
     monkeypatch.setattr(cli_main, "PROJECT_ROOT", root)
     _make_packaged_executable(root, monkeypatch)
@@ -98,14 +98,14 @@ def test_gui_forwards_desktop_environment_overrides(tmp_path, monkeypatch):
         cli_main.cmd_gui(_ns(
             fake_boot=True,
             ignore_existing=True,
-            hermes_root=str(hermes_root),
+            chiper_root=str(chiper_root),
             cwd=str(cwd),
         ))
 
     launch_env = mock_run.call_args_list[1].kwargs["env"]
     assert launch_env["CHIPER_DESKTOP_BOOT_FAKE"] == "1"
     assert launch_env["CHIPER_DESKTOP_IGNORE_EXISTING"] == "1"
-    assert launch_env["CHIPER_DESKTOP_HERMES_ROOT"] == str(hermes_root)
+    assert launch_env["CHIPER_DESKTOP_CHIPER_ROOT"] == str(chiper_root)
     assert launch_env["CHIPER_DESKTOP_CWD"] == str(cwd)
 
 
@@ -249,8 +249,8 @@ def test_gui_source_mode_uses_renderer_build_and_electron(tmp_path, monkeypatch)
 @pytest.mark.parametrize(
     "argv",
     [
-        ["hermes", "gui"],
-        ["hermes", "-m", "gpt5", "gui"],
+        ["chiper", "gui"],
+        ["chiper", "-m", "gpt5", "gui"],
     ],
 )
 def test_gui_is_known_builtin_for_plugin_gating(argv):
@@ -313,7 +313,7 @@ def test_compute_desktop_content_hash_stable(tmp_path, monkeypatch):
     """_compute_desktop_content_hash returns the same digest for identical trees."""
     root = _make_desktop_tree(tmp_path)
     (root / "apps" / "desktop" / "main.js").write_text("console.log('hi')", encoding="utf-8")
-    (root / "package.json").write_text('{"name":"hermes"}', encoding="utf-8")
+    (root / "package.json").write_text('{"name":"chiper"}', encoding="utf-8")
     (root / "package-lock.json").write_text('{}', encoding="utf-8")
     monkeypatch.setattr(cli_main, "PROJECT_ROOT", root)
 
@@ -823,7 +823,7 @@ class _FakeProc:
 def test_stop_desktop_build_lock_noop_off_windows(tmp_path, monkeypatch):
     """POSIX can unlink a running binary, so the helper is a no-op there."""
     desktop_dir = tmp_path / "apps" / "desktop"
-    exe = desktop_dir / "release" / "linux-unpacked" / "hermes"
+    exe = desktop_dir / "release" / "linux-unpacked" / "chiper"
     exe.parent.mkdir(parents=True)
     exe.write_text("", encoding="utf-8")
     monkeypatch.setattr(cli_main.sys, "platform", "linux")
@@ -839,9 +839,9 @@ def test_stop_desktop_build_lock_terminates_only_release_procs(tmp_path, monkeyp
     desktop_dir = tmp_path / "apps" / "desktop"
     release = desktop_dir / "release" / "win-unpacked"
     release.mkdir(parents=True)
-    locker_exe = release / "Hermes.exe"
+    locker_exe = release / "Chiper.exe"
     locker_exe.write_text("", encoding="utf-8")
-    other_exe = tmp_path / "elsewhere" / "Hermes.exe"
+    other_exe = tmp_path / "elsewhere" / "Chiper.exe"
     other_exe.parent.mkdir(parents=True)
     other_exe.write_text("", encoding="utf-8")
 

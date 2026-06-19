@@ -30,8 +30,8 @@ load_dotenv()
 DEFAULT_DATASETS = [
     "NousResearch/swe-terminus-agent-glm-kimi-minimax",
     "NousResearch/chiper-agent-megascience-sft1",
-    "NousResearch/Hermes-Agent-Thinking-GLM-4.7-SFT2",
-    "NousResearch/Hermes-Agent-Thinking-GLM-4.7-SFT1",
+    "NousResearch/Chiper-Agent-Thinking-GLM-4.7-SFT2",
+    "NousResearch/Chiper-Agent-Thinking-GLM-4.7-SFT1",
     "NousResearch/terminal-tasks-glm-chiper-agent"
 ]
 

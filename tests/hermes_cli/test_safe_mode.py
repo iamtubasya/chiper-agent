@@ -1,8 +1,8 @@
-"""Tests for `hermes chat --safe-mode` — pristine troubleshooting runs.
+"""Tests for `chiper chat --safe-mode` — pristine troubleshooting runs.
 
 Inspired by Claude Code v2.1.169's ``--safe-mode`` flag (June 2026), which
 disables all customizations (CLAUDE.md, plugins, skills, hooks, MCP) for
-troubleshooting. The Hermes equivalent:
+troubleshooting. The Chiper equivalent:
 
 * implies ``--ignore-user-config`` (built-in config defaults)
 * implies ``--ignore-rules`` (no AGENTS.md/memory/preloaded-skill injection)
@@ -106,7 +106,7 @@ class TestSafeModeMCP:
 
 
 class TestSafeModeParser:
-    """--safe-mode must parse on both the root parser and `hermes chat`."""
+    """--safe-mode must parse on both the root parser and `chiper chat`."""
 
     def test_chat_subcommand_accepts_flag(self):
         from chiper_cli._parser import build_top_level_parser

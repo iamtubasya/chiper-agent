@@ -8,7 +8,7 @@ Hermetic-test invariants enforced here (see AGENTS.md for rationale):
 2. **Isolated CHIPER_HOME.** CHIPER_HOME points to a per-test tempdir so
    code reading ``~/.chiperflux/*`` via ``get_chiper_home()`` can't see the
    real one. (We do NOT also redirect HOME — that broke subprocesses in
-   CI. Code using ``Path.home() / ".hermes"`` instead of the canonical
+   CI. Code using ``Path.home() / ".chiper"`` instead of the canonical
    ``get_chiper_home()`` is a bug to fix at the callsite.)
 3. **Deterministic runtime.** TZ=UTC, LANG=C.UTF-8, PYTHONHASHSEED=0.
 4. **No CHIPER_SESSION_* inheritance** — the agent's current gateway
@@ -166,9 +166,9 @@ def _looks_like_credential(name: str) -> bool:
     return any(name.endswith(suf) for suf in _CREDENTIAL_SUFFIXES)
 
 
-# HERMES_* vars that change test behavior by being set. Unset all of these
+# CHIPER_* vars that change test behavior by being set. Unset all of these
 # unconditionally — individual tests that need them set do so explicitly.
-_HERMES_BEHAVIORAL_VARS = frozenset({
+_CHIPER_BEHAVIORAL_VARS = frozenset({
     "CHIPER_YOLO_MODE",
     "CHIPER_INTERACTIVE",
     "CHIPER_QUIET",
@@ -183,7 +183,7 @@ _HERMES_BEHAVIORAL_VARS = frozenset({
     "CHIPER_SESSION_KEY",
     "CHIPER_GATEWAY_SESSION",
     "CHIPER_CRON_SESSION",
-    "_HERMES_GATEWAY",
+    "_CHIPER_GATEWAY",
     "CHIPER_PLATFORM",
     "CHIPER_MODEL",
     "CHIPER_INFERENCE_MODEL",
@@ -337,8 +337,8 @@ def _hermetic_environment(tmp_path, monkeypatch):
         if _looks_like_credential(name):
             monkeypatch.delenv(name, raising=False)
 
-    # 2. Blank behavioral HERMES_* vars that could change test semantics.
-    for name in _HERMES_BEHAVIORAL_VARS:
+    # 2. Blank behavioral CHIPER_* vars that could change test semantics.
+    for name in _CHIPER_BEHAVIORAL_VARS:
         monkeypatch.delenv(name, raising=False)
 
     # 3. Redirect CHIPER_HOME to a per-test tempdir. Code that reads
@@ -349,9 +349,9 @@ def _hermetic_environment(tmp_path, monkeypatch):
     #    inherit HOME and expect it to be stable. If a test genuinely
     #    needs HOME isolated, it should set it explicitly in its own
     #    fixture. Any code in the codebase reading ``~/.chiperflux/*`` via
-    #    ``Path.home() / ".hermes"`` instead of ``get_chiper_home()``
+    #    ``Path.home() / ".chiper"`` instead of ``get_chiper_home()``
     #    is a bug to fix at the callsite.
-    fake_chiper_home = tmp_path / "hermes_test"
+    fake_chiper_home = tmp_path / "chiper_test"
     fake_chiper_home.mkdir()
     (fake_chiper_home / "sessions").mkdir()
     (fake_chiper_home / "cron").mkdir()
@@ -426,7 +426,7 @@ def tmp_dir(tmp_path):
 
 @pytest.fixture()
 def mock_config():
-    """Return a minimal hermes config dict suitable for unit tests."""
+    """Return a minimal chiper config dict suitable for unit tests."""
     return {
         "model": "test/mock-model",
         "toolsets": ["terminal", "file"],
@@ -555,7 +555,7 @@ def _live_system_guard(request, monkeypatch):
     tokens[0]), so ``bash -c "systemctl restart chiper-gateway"``,
     ``sudo systemctl ...``, ``env systemctl ...``, ``setsid systemctl ...``
     are all caught. ``pkill``/``killall``/``taskkill`` invocations
-    targeting hermes/python patterns are also blocked.
+    targeting chiper/python patterns are also blocked.
     """
     if request.node.get_closest_marker(_LIVE_SYSTEM_GUARD_BYPASS_MARK):
         yield
@@ -643,13 +643,13 @@ def _live_system_guard(request, monkeypatch):
         monkeypatch.setattr(_os, "killpg", _guarded_killpg)
 
     # ── Subprocess command-string inspection (whole-line) ──────────
-    _HERMES_TOKENS = (
+    _CHIPER_TOKENS = (
         "chiper-gateway",
-        "hermes.service",
+        "chiper.service",
         "chiper_cli.main gateway",
         "chiper_cli/main.py gateway",
         "gateway/run.py",
-        "hermes gateway",
+        "chiper gateway",
     )
     _MUTATING_VERBS = (
         "restart", "start", "stop", "kill", "reload",
@@ -675,15 +675,15 @@ def _live_system_guard(request, monkeypatch):
                 return ""
         return str(cmd)
 
-    def _matches_hermes_gateway(cmd_str: str) -> bool:
+    def _matches_chiper_gateway(cmd_str: str) -> bool:
         low = cmd_str.lower()
-        return any(tok in low for tok in _HERMES_TOKENS)
+        return any(tok in low for tok in _CHIPER_TOKENS)
 
     def _is_blocked_systemctl(cmd) -> bool:
         cmd_str = _cmd_to_string(cmd)
         if "systemctl" not in cmd_str:
             return False
-        if not _matches_hermes_gateway(cmd_str):
+        if not _matches_chiper_gateway(cmd_str):
             return False
         try:
             tokens = _shlex.split(cmd_str)
@@ -703,11 +703,11 @@ def _live_system_guard(request, monkeypatch):
             head = tok.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
             if head in _PROCESS_KILLERS:
                 low = cmd_str.lower()
-                # pkill -f pattern: catch hermes-themed patterns + a
+                # pkill -f pattern: catch chiper-themed patterns + a
                 # plain "python" -f which would catch the live gateway
                 # whose cmdline contains "python -m chiper_cli.main".
                 if (
-                    "hermes" in low
+                    "chiper" in low
                     or "gateway" in low
                     or ("python" in low and "-f" in tokens)
                 ):
@@ -727,11 +727,11 @@ def _live_system_guard(request, monkeypatch):
             raise RuntimeError(
                 f"tests/conftest.py live-system guard: blocked "
                 f"subprocess.{name}({cmd!r}) — process-killer command "
-                "targeting hermes/python could hit the live gateway. "
+                "targeting chiper/python could hit the live gateway. "
                 "Mark with @pytest.mark.live_system_guard_bypass if "
                 "intentional."
             )
-        # Block any subprocess that would run `hermes update` (or the
+        # Block any subprocess that would run `chiper update` (or the
         # equivalent `python -m chiper_cli.main update`).  These commands
         # run `git fetch origin + git pull` against the REAL checkout,
         # overwriting files like pyproject.toml mid-test-run and corrupting
@@ -744,19 +744,19 @@ def _live_system_guard(request, monkeypatch):
         cmd_str = _cmd_to_string(cmd)
         low = cmd_str.lower()
         if "update" in low and (
-            # hermes update / hermes update --gateway / setsid bash -c ... hermes update
-            ("hermes" in low and "update" in low.split())
+            # chiper update / chiper update --gateway / setsid bash -c ... chiper update
+            ("chiper" in low and "update" in low.split())
             or
             # python -m chiper_cli.main update --gateway
             ("chiper_cli" in low and "update" in low.split())
             or
-            # venv/bin/hermes update  (absolute path variant used in tests)
-            (".venv/bin/hermes" in low and "update" in low)
+            # venv/bin/chiper update  (absolute path variant used in tests)
+            (".venv/bin/chiper" in low and "update" in low)
         ):
             raise RuntimeError(
                 f"tests/conftest.py live-system guard: blocked "
                 f"subprocess.{name}({cmd!r}) — this command would run "
-                "`hermes update` against the real checkout, fetching "
+                "`chiper update` against the real checkout, fetching "
                 "from origin and overwriting repo files (e.g. "
                 "pyproject.toml) mid-test-run. This corrupts every "
                 "subsequent subprocess in the same runner. "

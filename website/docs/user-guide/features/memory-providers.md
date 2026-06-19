@@ -6,17 +6,17 @@ description: "External memory provider plugins — Honcho, OpenViking, Mem0, Hin
 
 # Memory Providers
 
-Hermes Agent ships with 8 external memory provider plugins that give the agent persistent, cross-session knowledge beyond the built-in MEMORY.md and USER.md. Only **one** external provider can be active at a time — the built-in memory is always active alongside it.
+Chiper Agent ships with 8 external memory provider plugins that give the agent persistent, cross-session knowledge beyond the built-in MEMORY.md and USER.md. Only **one** external provider can be active at a time — the built-in memory is always active alongside it.
 
 ## Quick Start
 
 ```bash
-hermes memory setup      # interactive picker + configuration
-hermes memory status     # check what's active
-hermes memory off        # disable external provider
+chiper memory setup      # interactive picker + configuration
+chiper memory status     # check what's active
+chiper memory off        # disable external provider
 ```
 
-You can also select the active memory provider via `hermes plugins` → Provider Plugins → Memory Provider.
+You can also select the active memory provider via `chiper plugins` → Provider Plugins → Memory Provider.
 
 Or set manually in `~/.chiperflux/config.yaml`:
 
@@ -27,7 +27,7 @@ memory:
 
 ## How It Works
 
-When a memory provider is active, Hermes automatically:
+When a memory provider is active, Chiper automatically:
 
 1. **Injects provider context** into the system prompt (what the provider knows)
 2. **Prefetches relevant memories** before each turn (background, non-blocking)
@@ -63,12 +63,12 @@ AI-native cross-session user modeling with dialectic reasoning, session-scoped c
 
 **Setup Wizard:**
 ```bash
-hermes memory setup        # select "honcho" — runs the Honcho-specific post-setup
+chiper memory setup        # select "honcho" — runs the Honcho-specific post-setup
 ```
 
-The legacy `hermes honcho setup` command still works (it now redirects to `hermes memory setup`), but is only registered after Honcho is selected as the active memory provider.
+The legacy `chiper honcho setup` command still works (it now redirects to `chiper memory setup`), but is only registered after Honcho is selected as the active memory provider.
 
-**Config:** `$CHIPER_HOME/honcho.json` (profile-local) or `~/.honcho/config.json` (global). Resolution order: `$CHIPER_HOME/honcho.json` > `~/.chiperflux/honcho.json` > `~/.honcho/config.json`. See the [config reference](https://github.com/NousResearch/chiper-agent/blob/main/plugins/memory/honcho/README.md) and the [Honcho integration guide](https://docs.honcho.dev/v3/guides/integrations/hermes).
+**Config:** `$CHIPER_HOME/honcho.json` (profile-local) or `~/.honcho/config.json` (global). Resolution order: `$CHIPER_HOME/honcho.json` > `~/.chiperflux/honcho.json` > `~/.honcho/config.json`. See the [config reference](https://github.com/NousResearch/chiper-agent/blob/main/plugins/memory/honcho/README.md) and the [Honcho integration guide](https://docs.honcho.dev/v3/guides/integrations/chiper).
 
 <details>
 <summary>Full config reference</summary>
@@ -108,11 +108,11 @@ The legacy `hermes honcho setup` command still works (it now redirects to `herme
 {
   "apiKey": "your-key-from-app.honcho.dev",
   "hosts": {
-    "hermes": {
+    "chiper": {
       "enabled": true,
-      "aiPeer": "hermes",
+      "aiPeer": "chiper",
       "peerName": "your-name",
-      "workspace": "hermes"
+      "workspace": "chiper"
     }
   }
 }
@@ -127,11 +127,11 @@ The legacy `hermes honcho setup` command still works (it now redirects to `herme
 {
   "baseUrl": "http://localhost:8000",
   "hosts": {
-    "hermes": {
+    "chiper": {
       "enabled": true,
-      "aiPeer": "hermes",
+      "aiPeer": "chiper",
       "peerName": "your-name",
-      "workspace": "hermes"
+      "workspace": "chiper"
     }
   }
 }
@@ -139,45 +139,45 @@ The legacy `hermes honcho setup` command still works (it now redirects to `herme
 
 </details>
 
-:::tip Migrating from `hermes honcho`
-If you previously used `hermes honcho setup`, your config and all server-side data are intact. Just re-enable through the setup wizard again or manually set `memory.provider: honcho` to reactivate via the new system.
+:::tip Migrating from `chiper honcho`
+If you previously used `chiper honcho setup`, your config and all server-side data are intact. Just re-enable through the setup wizard again or manually set `memory.provider: honcho` to reactivate via the new system.
 :::
 
 **Multi-peer setup:**
 
-Honcho models conversations as peers exchanging messages — one user peer plus one AI peer per Hermes profile, all sharing a workspace. The workspace is the shared environment: the user peer is global across profiles, each AI peer is its own identity. Every AI peer builds an independent representation / card from its own observations, so a `coder` profile stays code-oriented while a `writer` profile stays editorial against the same user.
+Honcho models conversations as peers exchanging messages — one user peer plus one AI peer per Chiper profile, all sharing a workspace. The workspace is the shared environment: the user peer is global across profiles, each AI peer is its own identity. Every AI peer builds an independent representation / card from its own observations, so a `coder` profile stays code-oriented while a `writer` profile stays editorial against the same user.
 
 The mapping:
 
 | Concept | What it is |
 |---------|-----------|
-| **Workspace** | Shared environment. All Hermes profiles under one workspace see the same user identity. |
+| **Workspace** | Shared environment. All Chiper profiles under one workspace see the same user identity. |
 | **User peer** (`peerName`) | The human. Shared across profiles in the workspace. |
-| **AI peer** (`aiPeer`) | One per Hermes profile. Host key `hermes` → default; `hermes.<profile>` for others. |
+| **AI peer** (`aiPeer`) | One per Chiper profile. Host key `chiper` → default; `chiper.<profile>` for others. |
 | **Observation** | Per-peer toggles controlling what Honcho models from whose messages. `directional` (default, all four on) or `unified` (single-observer pool). |
 
 ### New profile, fresh Honcho peer
 
 ```bash
-hermes profile create coder --clone
+chiper profile create coder --clone
 ```
 
-`--clone` creates a `hermes.coder` host block in `honcho.json` with `aiPeer: "coder"`, shared `workspace`, inherited `peerName`, `recallMode`, `writeFrequency`, `observation`, etc. The AI peer is eagerly created in Honcho so it exists before the first message.
+`--clone` creates a `chiper.coder` host block in `honcho.json` with `aiPeer: "coder"`, shared `workspace`, inherited `peerName`, `recallMode`, `writeFrequency`, `observation`, etc. The AI peer is eagerly created in Honcho so it exists before the first message.
 
 ### Existing profiles, backfill Honcho peers
 
 ```bash
-hermes honcho sync
+chiper honcho sync
 ```
 
-Scans every Hermes profile, creates host blocks for any profile without one, inherits settings from the default `hermes` block, and creates the new AI peers eagerly. Idempotent — skips profiles that already have a host block.
+Scans every Chiper profile, creates host blocks for any profile without one, inherits settings from the default `chiper` block, and creates the new AI peers eagerly. Idempotent — skips profiles that already have a host block.
 
 ### Per-profile observation
 
 Each host block can override the observation config independently. Example: a code-focused profile where the AI peer observes the user but doesn't self-model:
 
 ```json
-"hermes.coder": {
+"chiper.coder": {
   "aiPeer": "coder",
   "observation": {
     "user": { "observeMe": true, "observeOthers": true },
@@ -212,7 +212,7 @@ The peer model above covers CLI, TUI, and desktop sessions, where every conversa
 | `userPeerAliases` | Maps specific runtime IDs to peers (`{"7654321": "alice"}`). The home for routing distinct identities — including agents that each carry their own peer |
 | `runtimePeerPrefix` | Namespaces any unmapped runtime ID (`telegram_7654321`) so platforms with same-shaped IDs don't collide |
 
-Off-gateway these keys do nothing. `hermes memory setup` only prompts for them when it detects a connected gateway platform. See the [Honcho page](./honcho.md#gateway-identity-mapping) for the resolver ladder and the setup flow.
+Off-gateway these keys do nothing. `chiper memory setup` only prompts for them when it detects a connected gateway platform. See the [Honcho page](./honcho.md#gateway-identity-mapping) for the resolver ladder and the setup flow.
 
 <details>
 <summary>Full honcho.json example (multi-profile)</summary>
@@ -220,13 +220,13 @@ Off-gateway these keys do nothing. `hermes memory setup` only prompts for them w
 ```json
 {
   "apiKey": "your-key",
-  "workspace": "hermes",
+  "workspace": "chiper",
   "peerName": "eri",
   "hosts": {
-    "hermes": {
+    "chiper": {
       "enabled": true,
-      "aiPeer": "hermes",
-      "workspace": "hermes",
+      "aiPeer": "chiper",
+      "workspace": "chiper",
       "peerName": "eri",
       "recallMode": "hybrid",
       "writeFrequency": "async",
@@ -244,10 +244,10 @@ Off-gateway these keys do nothing. `hermes memory setup` only prompts for them w
       "messageMaxChars": 25000,
       "saveMessages": true
     },
-    "hermes.coder": {
+    "chiper.coder": {
       "enabled": true,
       "aiPeer": "coder",
-      "workspace": "hermes",
+      "workspace": "chiper",
       "peerName": "eri",
       "recallMode": "tools",
       "observation": {
@@ -255,10 +255,10 @@ Off-gateway these keys do nothing. `hermes memory setup` only prompts for them w
         "ai": { "observeMe": true, "observeOthers": true }
       }
     },
-    "hermes.writer": {
+    "chiper.writer": {
       "enabled": true,
       "aiPeer": "writer",
-      "workspace": "hermes",
+      "workspace": "chiper",
       "peerName": "eri"
     }
   },
@@ -270,7 +270,7 @@ Off-gateway these keys do nothing. `hermes memory setup` only prompts for them w
 
 </details>
 
-See the [config reference](https://github.com/NousResearch/chiper-agent/blob/main/plugins/memory/honcho/README.md) and [Honcho integration guide](https://docs.honcho.dev/v3/guides/integrations/hermes).
+See the [config reference](https://github.com/NousResearch/chiper-agent/blob/main/plugins/memory/honcho/README.md) and [Honcho integration guide](https://docs.honcho.dev/v3/guides/integrations/chiper).
 
 
 ---
@@ -294,10 +294,10 @@ Context database by Volcengine (ByteDance) with filesystem-style knowledge hiera
 pip install openviking
 openviking-server
 
-# Then configure Hermes
-hermes memory setup    # select "openviking"
+# Then configure Chiper
+chiper memory setup    # select "openviking"
 # Or manually:
-hermes config set memory.provider openviking
+chiper config set memory.provider openviking
 echo "OPENVIKING_ENDPOINT=http://localhost:1933" >> ~/.chiperflux/.env
 # Authenticated servers should use a user/admin API key:
 echo "OPENVIKING_API_KEY=..." >> ~/.chiperflux/.env
@@ -309,7 +309,7 @@ echo "OPENVIKING_API_KEY=..." >> ~/.chiperflux/.env
 - `viking://` URI scheme for hierarchical knowledge browsing
 
 `OPENVIKING_ACCOUNT` and `OPENVIKING_USER` are used for local/trusted mode.
-`OPENVIKING_AGENT` is Hermes' peer ID in OpenViking for peer-scoped memories.
+`OPENVIKING_AGENT` is Chiper' peer ID in OpenViking for peer-scoped memories.
 
 ---
 
@@ -328,9 +328,9 @@ Server-side LLM fact extraction with semantic search, reranking, and automatic d
 
 **Setup:**
 ```bash
-hermes memory setup    # select "mem0"
+chiper memory setup    # select "mem0"
 # Or manually:
-hermes config set memory.provider mem0
+chiper config set memory.provider mem0
 echo "MEM0_API_KEY=your-key" >> ~/.chiperflux/.env
 ```
 
@@ -338,8 +338,8 @@ echo "MEM0_API_KEY=your-key" >> ~/.chiperflux/.env
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `user_id` | `hermes-user` | User identifier |
-| `agent_id` | `hermes` | Agent identifier |
+| `user_id` | `chiper-user` | User identifier |
+| `agent_id` | `chiper` | Agent identifier |
 
 ---
 
@@ -358,28 +358,28 @@ Long-term memory with knowledge graph, entity resolution, and multi-strategy ret
 
 **Setup:**
 ```bash
-hermes memory setup    # select "hindsight"
+chiper memory setup    # select "hindsight"
 # Or manually:
-hermes config set memory.provider hindsight
+chiper config set memory.provider hindsight
 echo "HINDSIGHT_API_KEY=your-key" >> ~/.chiperflux/.env
 ```
 
 The setup wizard installs dependencies automatically and only installs what's needed for the selected mode (`hindsight-client` for cloud, `hindsight-all` for local). Requires `hindsight-client >= 0.4.22` (auto-upgraded on session start if outdated).
 
-**Local mode UI:** `hindsight-embed -p hermes ui start`
+**Local mode UI:** `hindsight-embed -p chiper ui start`
 
 **Config:** `$CHIPER_HOME/hindsight/config.json`
 
 | Key | Default | Description |
 |-----|---------|-------------|
 | `mode` | `cloud` | `cloud` or `local` |
-| `bank_id` | `hermes` | Memory bank identifier |
+| `bank_id` | `chiper` | Memory bank identifier |
 | `recall_budget` | `mid` | Recall thoroughness: `low` / `mid` / `high` |
 | `memory_mode` | `hybrid` | `hybrid` (context + tools), `context` (auto-inject only), `tools` (tools only) |
 | `auto_retain` | `true` | Automatically retain conversation turns |
 | `auto_recall` | `true` | Automatically recall memories before each turn |
 | `retain_async` | `true` | Process retain asynchronously on the server |
-| `retain_context` | `conversation between Hermes Agent and the User` | Context label for retained memories |
+| `retain_context` | `conversation between Chiper Agent and the User` | Context label for retained memories |
 | `retain_tags` | — | Default tags applied to retained memories; merged with per-call tool tags |
 | `retain_source` | — | Optional `metadata.source` attached to retained memories |
 | `retain_user_prefix` | `User` | Label used before user turns in auto-retained transcripts |
@@ -405,12 +405,12 @@ Local SQLite fact store with FTS5 full-text search, trust scoring, and HRR (Holo
 
 **Setup:**
 ```bash
-hermes memory setup    # select "holographic"
+chiper memory setup    # select "holographic"
 # Or manually:
-hermes config set memory.provider holographic
+chiper config set memory.provider holographic
 ```
 
-**Config:** `config.yaml` under `plugins.hermes-memory-store`
+**Config:** `config.yaml` under `plugins.chiper-memory-store`
 
 | Key | Default | Description |
 |-----|---------|-------------|
@@ -441,9 +441,9 @@ Cloud memory API with hybrid search (Vector + BM25 + Reranking), 7 memory types,
 
 **Setup:**
 ```bash
-hermes memory setup    # select "retaindb"
+chiper memory setup    # select "retaindb"
 # Or manually:
-hermes config set memory.provider retaindb
+chiper config set memory.provider retaindb
 echo "RETAINDB_API_KEY=your-key" >> ~/.chiperflux/.env
 ```
 
@@ -467,10 +467,10 @@ Persistent memory via the `brv` CLI — hierarchical knowledge tree with tiered 
 # Install the CLI first
 curl -fsSL https://byterover.dev/install.sh | sh
 
-# Then configure Hermes
-hermes memory setup    # select "byterover"
+# Then configure Chiper
+chiper memory setup    # select "byterover"
 # Or manually:
-hermes config set memory.provider byterover
+chiper config set memory.provider byterover
 ```
 
 **Key features:**
@@ -495,9 +495,9 @@ Semantic long-term memory with profile recall, semantic search, explicit memory 
 
 **Setup:**
 ```bash
-hermes memory setup    # select "supermemory"
+chiper memory setup    # select "supermemory"
 # Or manually:
-hermes config set memory.provider supermemory
+chiper config set memory.provider supermemory
 echo 'SUPERMEMORY_API_KEY=***' >> ~/.chiperflux/.env
 ```
 
@@ -505,7 +505,7 @@ echo 'SUPERMEMORY_API_KEY=***' >> ~/.chiperflux/.env
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `container_tag` | `hermes` | Container tag used for search and writes. Supports `{identity}` template for profile-scoped tags. |
+| `container_tag` | `chiper` | Container tag used for search and writes. Supports `{identity}` template for profile-scoped tags. |
 | `auto_recall` | `true` | Inject relevant memory context before turns |
 | `auto_capture` | `true` | Store cleaned user-assistant turns after each response |
 | `max_recall_results` | `10` | Max recalled items to format into context |
@@ -521,7 +521,7 @@ echo 'SUPERMEMORY_API_KEY=***' >> ~/.chiperflux/.env
 - Full-session ingest — the entire conversation is sent once at session boundaries
 - Session-end conversation ingest (to `/v4/conversations`) for richer profile + graph building in Supermemory
 - Profile facts injected on first turn and at configurable intervals
-- **Profile-scoped containers** — use `{identity}` in `container_tag` (e.g. `hermes-{identity}` → `hermes-coder`) to isolate memories per Hermes profile
+- **Profile-scoped containers** — use `{identity}` in `container_tag` (e.g. `chiper-{identity}` → `chiper-coder`) to isolate memories per Chiper profile
 - **Multi-container mode** — enable `enable_custom_container_tags` with a `custom_containers` list to let the agent read/write across named containers. Automatic operations stay on the primary container.
 
 <details>
@@ -529,7 +529,7 @@ echo 'SUPERMEMORY_API_KEY=***' >> ~/.chiperflux/.env
 
 ```json
 {
-  "container_tag": "hermes",
+  "container_tag": "chiper",
   "enable_custom_container_tags": true,
   "custom_containers": ["project-alpha", "shared-knowledge"],
   "custom_container_instructions": "Use project-alpha for coding context."
@@ -547,7 +547,7 @@ Structured long-term memory using Memori Cloud, with background completed-turn c
 | | |
 |---|---|
 | **Best for** | Agent-controlled recall with structured project and session attribution |
-| **Requires** | `pip install hermes-memori` + `hermes-memori install` + [Memori API key](https://app.memorilabs.ai/signup) |
+| **Requires** | `pip install chiper-memori` + `chiper-memori install` + [Memori API key](https://app.memorilabs.ai/signup) |
 | **Data storage** | Memori Cloud |
 | **Cost** | Memori pricing |
 
@@ -555,10 +555,10 @@ Structured long-term memory using Memori Cloud, with background completed-turn c
 
 **Setup:**
 ```bash
-pip install hermes-memori
-hermes-memori install
-hermes config set memory.provider memori
-hermes memory setup
+pip install chiper-memori
+chiper-memori install
+chiper config set memory.provider memori
+chiper memory setup
 ```
 
 ---
@@ -575,7 +575,7 @@ hermes memory setup
 | **RetainDB** | Cloud | $20/mo | 5 | `requests` | Delta compression |
 | **ByteRover** | Local/Cloud | Free/Paid | 3 | `brv` CLI | Pre-compression extraction |
 | **Supermemory** | Cloud | Paid | 4 | `supermemory` | Context fencing + session graph ingest + multi-container |
-| **Memori** | Cloud | Free/Paid | 5 | `hermes-memori` | Tool-aware memory + structured recall |
+| **Memori** | Cloud | Free/Paid | 5 | `chiper-memori` | Tool-aware memory + structured recall |
 
 ## Profile Isolation
 

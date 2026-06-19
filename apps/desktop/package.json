@@ -1,9 +1,9 @@
 {
-  "name": "hermes",
-  "productName": "Hermes",
+  "name": "chiper",
+  "productName": "Chiper",
   "private": true,
   "version": "0.15.1",
-  "description": "Native desktop shell for Hermes Agent.",
+  "description": "Native desktop shell for Chiper Agent.",
   "author": "Nous Research",
   "type": "module",
   "main": "electron/main.cjs",
@@ -54,7 +54,7 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@hermes/shared": "file:../shared",
+    "@chiper/shared": "file:../shared",
     "@icons-pack/react-simple-icons": "^13.13.0",
     "@nanostores/react": "^1.1.0",
     "@nous-research/ui": "^0.13.0",
@@ -135,18 +135,18 @@
   },
   "build": {
     "electronVersion": "40.10.2",
-    "appId": "com.nousresearch.hermes",
-    "productName": "Hermes",
-    "executableName": "Hermes",
+    "appId": "com.nousresearch.chiper",
+    "productName": "Chiper",
+    "executableName": "Chiper",
     "protocols": [
       {
-        "name": "Hermes Protocol",
+        "name": "Chiper Protocol",
         "schemes": [
-          "hermes"
+          "chiper"
         ]
       }
     ],
-    "artifactName": "Hermes-${version}-${os}-${arch}.${ext}",
+    "artifactName": "Chiper-${version}-${os}-${arch}.${ext}",
     "icon": "assets/icon",
     "directories": {
       "output": "release"
@@ -187,11 +187,11 @@
       "entitlements": "electron/entitlements.mac.plist",
       "entitlementsInherit": "electron/entitlements.mac.inherit.plist",
       "extendInfo": {
-        "CFBundleDisplayName": "Hermes",
-        "CFBundleExecutable": "Hermes",
-        "CFBundleName": "Hermes",
-        "NSAudioCaptureUsageDescription": "Hermes uses audio capture for voice conversations.",
-        "NSMicrophoneUsageDescription": "Hermes uses the microphone for voice input and voice conversations."
+        "CFBundleDisplayName": "Chiper",
+        "CFBundleExecutable": "Chiper",
+        "CFBundleName": "Chiper",
+        "NSAudioCaptureUsageDescription": "Chiper uses audio capture for voice conversations.",
+        "NSMicrophoneUsageDescription": "Chiper uses the microphone for voice input and voice conversations."
       },
       "gatekeeperAssess": false,
       "hardenedRuntime": true,
@@ -201,7 +201,7 @@
       ]
     },
     "dmg": {
-      "title": "Install Hermes",
+      "title": "Install Chiper",
       "backgroundColor": "#f5f5f7",
       "iconSize": 96,
       "window": {
@@ -223,7 +223,7 @@
       ]
     },
     "win": {
-      "legalTrademarks": "Hermes",
+      "legalTrademarks": "Chiper",
       "target": [
         "nsis",
         "msi"
@@ -233,7 +233,7 @@
     "linux": {
       "category": "Development",
       "maintainer": "Nous Research <support@nousresearch.com>",
-      "synopsis": "Native desktop shell for Hermes Agent.",
+      "synopsis": "Native desktop shell for Chiper Agent.",
       "target": [
         "AppImage",
         "deb",
@@ -244,8 +244,8 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "perMachine": false,
-      "shortcutName": "Hermes",
-      "uninstallDisplayName": "Hermes",
+      "shortcutName": "Chiper",
+      "uninstallDisplayName": "Chiper",
       "warningsAsErrors": false
     }
   }

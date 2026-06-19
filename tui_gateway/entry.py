@@ -2,7 +2,7 @@ import os
 import sys
 
 # Guard against a local utils/ (or other package) in CWD shadowing installed
-# hermes modules.  chiper_cli sets CHIPER_PYTHON_SRC_ROOT before spawning this
+# chiper modules.  chiper_cli sets CHIPER_PYTHON_SRC_ROOT before spawning this
 # subprocess; inserting it first ensures the installed packages win.
 _src_root = os.environ.get("CHIPER_PYTHON_SRC_ROOT", "")
 if _src_root and _src_root not in sys.path:
@@ -154,7 +154,7 @@ def _log_signal(signum: int, frame) -> None:
 #
 # SIGPIPE and SIGHUP don't exist on Windows; guard each installation
 # with hasattr so ``python -m tui_gateway.entry`` (spawned by
-# ``hermes --tui``) imports cleanly there.  SIGBREAK (Windows' Ctrl+Break)
+# ``chiper --tui``) imports cleanly there.  SIGBREAK (Windows' Ctrl+Break)
 # is installed when available as a weaker equivalent of SIGHUP.
 if hasattr(signal, "SIGPIPE"):
     signal.signal(signal.SIGPIPE, signal.SIG_IGN)
@@ -243,7 +243,7 @@ def main():
     # MCP tool discovery — runs in a background daemon thread so a slow or
     # unreachable MCP server can't freeze TUI startup.  Previously this ran
     # inline before ``gateway.ready``, which meant any configured-but-down
-    # server stalled the whole shell on "summoning hermes…" for the full
+    # server stalled the whole shell on "summoning chiper…" for the full
     # connect-retry backoff (e.g. a dead stdio/http server burns 1+2+4s of
     # retries → ~7s of dead air before the composer appears).  Discovery is
     # idempotent and registers tools into the shared registry as servers

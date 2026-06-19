@@ -242,7 +242,7 @@ def test_load_website_blocklist_wraps_shared_file_read_errors(tmp_path, monkeypa
 
 
 def test_check_website_access_uses_dynamic_chiper_home(monkeypatch, tmp_path):
-    chiper_home = tmp_path / "hermes-home"
+    chiper_home = tmp_path / "chiper-home"
     chiper_home.mkdir()
     (chiper_home / "config.yaml").write_text(
         yaml.safe_dump(

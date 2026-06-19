@@ -1,6 +1,6 @@
 """Tests for subprocess HOME handling in profile mode.
 
-Hermes state stays profile-scoped through CHIPER_HOME. Host subprocesses should
+Chiper state stays profile-scoped through CHIPER_HOME. Host subprocesses should
 keep the user's real HOME by default so external CLIs find existing credentials.
 Containers still use the profile home for persistence, and users can explicitly
 opt into profile HOME isolation on the host.
@@ -23,15 +23,15 @@ import chiper_constants
 # ---------------------------------------------------------------------------
 
 class TestGetSubprocessHome:
-    """Unit tests for hermes_constants.get_subprocess_home()."""
+    """Unit tests for chiper_constants.get_subprocess_home()."""
 
     def _host_mode(self, monkeypatch):
-        monkeypatch.setattr(hermes_constants, "is_container", lambda: False)
+        monkeypatch.setattr(chiper_constants, "is_container", lambda: False)
         monkeypatch.delenv("TERMINAL_HOME_MODE", raising=False)
         monkeypatch.delenv("CHIPER_REAL_HOME", raising=False)
 
     def _container_mode(self, monkeypatch):
-        monkeypatch.setattr(hermes_constants, "is_container", lambda: True)
+        monkeypatch.setattr(chiper_constants, "is_container", lambda: True)
         monkeypatch.delenv("TERMINAL_HOME_MODE", raising=False)
         monkeypatch.delenv("CHIPER_REAL_HOME", raising=False)
 
@@ -41,7 +41,7 @@ class TestGetSubprocessHome:
         assert get_subprocess_home() is None
 
     def test_returns_none_when_home_dir_missing(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         # No home/ subdirectory created
@@ -52,7 +52,7 @@ class TestGetSubprocessHome:
         """Host installs should not hide real ~/.ssh, ~/.gitconfig, ~/.azure, etc."""
         self._host_mode(monkeypatch)
         real_home = tmp_path / "real-home"
-        chiper_home = real_home / ".hermes" / "profiles" / "coder"
+        chiper_home = real_home / ".chiper" / "profiles" / "coder"
         profile_home = chiper_home / "home"
         profile_home.mkdir(parents=True)
         monkeypatch.setenv("HOME", str(real_home))
@@ -62,7 +62,7 @@ class TestGetSubprocessHome:
 
     def test_container_auto_uses_profile_home_when_home_dir_exists(self, tmp_path, monkeypatch):
         self._container_mode(monkeypatch)
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         profile_home = chiper_home / "home"
         profile_home.mkdir(parents=True)
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
@@ -72,7 +72,7 @@ class TestGetSubprocessHome:
     def test_returns_profile_specific_path(self, tmp_path, monkeypatch):
         """Explicit profile mode keeps the old per-profile HOME behavior."""
         self._host_mode(monkeypatch)
-        profile_dir = tmp_path / ".hermes" / "profiles" / "coder"
+        profile_dir = tmp_path / ".chiper" / "profiles" / "coder"
         profile_dir.mkdir(parents=True)
         profile_home = profile_dir / "home"
         profile_home.mkdir()
@@ -83,7 +83,7 @@ class TestGetSubprocessHome:
 
     def test_real_mode_repairs_parent_home_already_pointing_at_profile(self, tmp_path, monkeypatch):
         self._host_mode(monkeypatch)
-        profile_dir = tmp_path / ".hermes" / "profiles" / "coder"
+        profile_dir = tmp_path / ".chiper" / "profiles" / "coder"
         profile_home = profile_dir / "home"
         profile_home.mkdir(parents=True)
         real_home = tmp_path / "real-home"
@@ -100,7 +100,7 @@ class TestGetSubprocessHome:
 
     def test_real_home_falls_back_to_os_account_when_home_is_profile(self, tmp_path, monkeypatch):
         self._host_mode(monkeypatch)
-        profile_dir = tmp_path / ".hermes" / "profiles" / "coder"
+        profile_dir = tmp_path / ".chiper" / "profiles" / "coder"
         profile_home = profile_dir / "home"
         profile_home.mkdir(parents=True)
         monkeypatch.setenv("CHIPER_HOME", str(profile_dir))
@@ -112,7 +112,7 @@ class TestGetSubprocessHome:
 
     def test_two_profiles_get_different_homes(self, tmp_path, monkeypatch):
         self._container_mode(monkeypatch)
-        base = tmp_path / ".hermes" / "profiles"
+        base = tmp_path / ".chiper" / "profiles"
         for name in ("alpha", "beta"):
             p = base / name
             p.mkdir(parents=True)
@@ -179,12 +179,12 @@ class TestMakeRunEnvHomeInjection:
     """Verify _make_run_env() applies the subprocess HOME policy."""
 
     def test_host_auto_preserves_real_home_when_profile_home_exists(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
         (chiper_home / "home").mkdir()
         real_home = tmp_path / "real-home"
         real_home.mkdir()
-        monkeypatch.setattr(hermes_constants, "is_container", lambda: False)
+        monkeypatch.setattr(chiper_constants, "is_container", lambda: False)
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setenv("HOME", str(real_home))
         monkeypatch.setenv("PATH", "/usr/bin:/bin")
@@ -196,12 +196,12 @@ class TestMakeRunEnvHomeInjection:
         assert result["CHIPER_REAL_HOME"] == str(real_home)
 
     def test_profile_mode_injects_profile_home_when_profile_home_exists(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
         (chiper_home / "home").mkdir()
         real_home = tmp_path / "real-home"
         real_home.mkdir()
-        monkeypatch.setattr(hermes_constants, "is_container", lambda: False)
+        monkeypatch.setattr(chiper_constants, "is_container", lambda: False)
         monkeypatch.setenv("TERMINAL_HOME_MODE", "profile")
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setenv("HOME", str(real_home))
@@ -214,7 +214,7 @@ class TestMakeRunEnvHomeInjection:
         assert result["CHIPER_REAL_HOME"] == str(real_home)
 
     def test_no_injection_when_home_dir_missing(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
         # No home/ subdirectory
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
@@ -237,7 +237,7 @@ class TestMakeRunEnvHomeInjection:
         assert result["HOME"] == "/home/user"
 
     def test_context_override_bridges_to_subprocess_env(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(hermes_constants, "is_container", lambda: True)
+        monkeypatch.setattr(chiper_constants, "is_container", lambda: True)
         root = tmp_path / "root"
         profile = tmp_path / "profile"
         root.mkdir()
@@ -268,12 +268,12 @@ class TestSanitizeSubprocessEnvHomeInjection:
     """Verify _sanitize_subprocess_env() applies the subprocess HOME policy."""
 
     def test_host_auto_preserves_real_home_when_profile_home_exists(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
         (chiper_home / "home").mkdir()
         real_home = tmp_path / "real-home"
         real_home.mkdir()
-        monkeypatch.setattr(hermes_constants, "is_container", lambda: False)
+        monkeypatch.setattr(chiper_constants, "is_container", lambda: False)
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
         base_env = {"HOME": str(real_home), "PATH": "/usr/bin", "USER": "root"}
@@ -284,12 +284,12 @@ class TestSanitizeSubprocessEnvHomeInjection:
         assert result["CHIPER_REAL_HOME"] == str(real_home)
 
     def test_profile_mode_injects_profile_home_when_profile_home_exists(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
         (chiper_home / "home").mkdir()
         real_home = tmp_path / "real-home"
         real_home.mkdir()
-        monkeypatch.setattr(hermes_constants, "is_container", lambda: False)
+        monkeypatch.setattr(chiper_constants, "is_container", lambda: False)
         monkeypatch.setenv("TERMINAL_HOME_MODE", "profile")
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -301,7 +301,7 @@ class TestSanitizeSubprocessEnvHomeInjection:
         assert result["CHIPER_REAL_HOME"] == str(real_home)
 
     def test_no_injection_when_home_dir_missing(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -312,7 +312,7 @@ class TestSanitizeSubprocessEnvHomeInjection:
         assert result["HOME"] == "/root"
 
     def test_context_override_bridges_to_background_env(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(hermes_constants, "is_container", lambda: True)
+        monkeypatch.setattr(chiper_constants, "is_container", lambda: True)
         root = tmp_path / "root"
         profile = tmp_path / "profile"
         root.mkdir()
@@ -347,7 +347,7 @@ class TestProfileBootstrap:
 
     def test_create_profile_bootstraps_home_dir(self, tmp_path, monkeypatch):
         """create_profile() should create home/ inside the profile dir."""
-        home = tmp_path / ".hermes"
+        home = tmp_path / ".chiper"
         home.mkdir()
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
         monkeypatch.setenv("CHIPER_HOME", str(home))
@@ -367,7 +367,7 @@ class TestPythonProcessUnchanged:
     def test_path_home_unchanged_after_subprocess_home_resolved(
         self, tmp_path, monkeypatch
     ):
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
         (chiper_home / "home").mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))

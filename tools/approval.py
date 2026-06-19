@@ -153,16 +153,16 @@ def _is_gateway_approval_context() -> bool:
 
 # Sensitive write targets that should trigger approval even when referenced
 # via shell expansions like $HOME or $CHIPER_HOME, or by the resolved absolute
-# active profile home path such as /home/hermes/.chiperflux/config.yaml. The
+# active profile home path such as /home/chiper/.chiperflux/config.yaml. The
 # resolved-absolute form is folded into the ~/.chiperflux/ patterns at detection
 # time by _normalize_command_for_detection() — see the rewrite step there — so
 # these static patterns stay free of any import-time path snapshot (which would
 # go stale when CHIPER_HOME is set after this module is imported, e.g. under the
 # hermetic test conftest or any deferred-profile-resolution path).
 _SSH_SENSITIVE_PATH = r'(?:~|\$home|\$\{home\})/\.ssh(?:/|$)'
-_HERMES_ENV_PATH = (
-    r'(?:~/\\.hermes/|~/\\.chiperflux/|'
-    r'(?:\\$home|\\$\{home\})/\\.hermes/|'
+_CHIPER_ENV_PATH = (
+    r'(?:~/\\.chiper/|~/\\.chiperflux/|'
+    r'(?:\\$home|\\$\{home\})/\\.chiper/|'
     r'(?:\\$home|\\$\{home\})/\\.chiperflux/|'
     r'(?:\\$chiper_home|\\$\{chiper_home\})/)'
     r'\\.env\\b'
@@ -173,11 +173,11 @@ _HERMES_ENV_PATH = (
 # and immediately bypass the gate). Pair the write_file/patch deny (file_tools
 # _check_sensitive_path) with terminal-side coverage so `sed -i`, `tee`, `>`,
 # `cp`, etc. targeting it are gated too — otherwise the deny is unpaired
-# theater. Mirrors _HERMES_ENV_PATH; matches the CHIPER_HOME override form as
+# theater. Mirrors _CHIPER_ENV_PATH; matches the CHIPER_HOME override form as
 # well as ~/.chiperflux/.
-_HERMES_CONFIG_PATH = (
-    r'(?:~/\\.hermes/|~/\\.chiperflux/|'
-    r'(?:\\$home|\\$\{home\})/\\.hermes/|'
+_CHIPER_CONFIG_PATH = (
+    r'(?:~/\\.chiper/|~/\\.chiperflux/|'
+    r'(?:\\$home|\\$\{home\})/\\.chiper/|'
     r'(?:\\$home|\\$\{home\})/\\.chiperflux/|'
     r'(?:\\$chiper_home|\\$\{chiper_home\})/)'
     r'config\\.yaml\\b'
@@ -206,8 +206,8 @@ _SYSTEM_CONFIG_PATH = (
 _SENSITIVE_WRITE_TARGET = (
     rf'(?:{_SYSTEM_CONFIG_PATH}|/dev/sd|'
     rf'{_SSH_SENSITIVE_PATH}|'
-    rf'{_HERMES_ENV_PATH}|'
-    rf'{_HERMES_CONFIG_PATH}|'
+    rf'{_CHIPER_ENV_PATH}|'
+    rf'{_CHIPER_CONFIG_PATH}|'
     rf'{_SHELL_RC_FILES}|'
     rf'{_CREDENTIAL_FILES})'
 )
@@ -425,8 +425,8 @@ DANGEROUS_PATTERNS = [
     # Gateway lifecycle protection: prevent the agent from killing its own
     # gateway process.  These commands trigger a gateway restart/stop that
     # terminates all running agents mid-work.
-    (r'\bhermes\s+gateway\s+(stop|restart)\b', "stop/restart chiper gateway (kills running agents)"),
-    (r'\bhermes\s+update\b', "chiper update (restarts gateway, kills running agents)"),
+    (r'\bchiper\s+gateway\s+(stop|restart)\b', "stop/restart chiper gateway (kills running agents)"),
+    (r'\bchiper\s+update\b', "chiper update (restarts gateway, kills running agents)"),
     # Docker container lifecycle — any user with docker.sock mounted (a common
     # Docker Compose pattern) gives the agent the ability to restart/stop/kill
     # containers without approval.  These are agent-initiated lifecycle operations
@@ -438,10 +438,10 @@ DANGEROUS_PATTERNS = [
     (r'gateway\s+run\b.*(&\s*$|&\s*;|\bdisown\b|\bsetsid\b)', "start gateway outside systemd (use 'systemctl --user restart chiper-gateway')"),
     (r'\bnohup\b.*gateway\s+run\b', "start gateway outside systemd (use 'systemctl --user restart chiper-gateway')"),
     # Self-termination protection: prevent agent from killing its own process
-    (r'\b(pkill|killall)\b.*\b(hermes|gateway|cli\.py)\b', "kill hermes/gateway process (self-termination)"),
+    (r'\b(pkill|killall)\b.*\b(chiper|gateway|cli\.py)\b', "kill chiper/gateway process (self-termination)"),
     # Self-termination via kill + command substitution (pgrep/pidof).
-    # The name-based pattern above catches `pkill hermes` but not
-    # `kill -9 $(pgrep -f hermes)` because the substitution is opaque
+    # The name-based pattern above catches `pkill chiper` but not
+    # `kill -9 $(pgrep -f chiper)` because the substitution is opaque
     # to regex at detection time. Catch the structural pattern instead.
     (r'\bkill\b.*\$\(\s*pgrep\b', "kill process via pgrep expansion (self-termination)"),
     (r'\bkill\b.*`\s*pgrep\b', "kill process via backtick pgrep expansion (self-termination)"),
@@ -449,7 +449,7 @@ DANGEROUS_PATTERNS = [
     # /private/etc/ mirror).
     (rf'\b(cp|mv|install)\b.*\s{_SYSTEM_CONFIG_PATH}', "copy/move file into system config path"),
     (rf'\b(cp|mv|install)\b.*\s["\']?{_PROJECT_SENSITIVE_WRITE_TARGET}["\']?{_COMMAND_TAIL}', "overwrite project env/config file"),
-    # cp/mv/install OVERWRITING a sensitive credential/SSH/shell-rc/Hermes file.
+    # cp/mv/install OVERWRITING a sensitive credential/SSH/shell-rc/Chiper file.
     # The tee/redirection patterns above already gate _SENSITIVE_WRITE_TARGET
     # (~/.ssh/*, ~/.netrc/.pgpass/.npmrc/.pypirc, shell rc files,
     # ~/.chiperflux/config.yaml/.env), but cp/mv/install was only paired for /etc and
@@ -476,8 +476,8 @@ DANGEROUS_PATTERNS = [
     # .env). sed -i bypasses the redirection/tee patterns above because it
     # mutates the file directly. Pairs the file_tools write_file/patch deny so
     # the terminal side is not an open door. See #14639.
-    (rf'\bsed\s+-[^\s]*i.*(?:{_HERMES_CONFIG_PATH}|{_HERMES_ENV_PATH})', "in-place edit of Chiper config/env"),
-    (rf'\bsed\s+--in-place\b.*(?:{_HERMES_CONFIG_PATH}|{_HERMES_ENV_PATH})', "in-place edit of Chiper config/env (long flag)"),
+    (rf'\bsed\s+-[^\s]*i.*(?:{_CHIPER_CONFIG_PATH}|{_CHIPER_ENV_PATH})', "in-place edit of Chiper config/env"),
+    (rf'\bsed\s+--in-place\b.*(?:{_CHIPER_CONFIG_PATH}|{_CHIPER_ENV_PATH})', "in-place edit of Chiper config/env (long flag)"),
     # perl -i and ruby -i perform the same in-place mutation as sed -i but are
     # not caught by the -e/-c script-execution pattern above (which targets code
     # evaluation, not file mutation). Pairs the sed -i coverage from #14639.
@@ -486,7 +486,7 @@ DANGEROUS_PATTERNS = [
     # backup suffix (`perl -i.bak`). Match any flag token containing `i`
     # anywhere in the args, not just the first token — `perl -e '...'` (code
     # eval, no -i) does not trip because it has no `-...i` flag token.
-    (rf'\b(?:perl|ruby)\b.*(?:^|\s)-[^\s]*i\b.*(?:{_HERMES_CONFIG_PATH}|{_HERMES_ENV_PATH})', "in-place edit of Chiper config/env (perl/ruby)"),
+    (rf'\b(?:perl|ruby)\b.*(?:^|\s)-[^\s]*i\b.*(?:{_CHIPER_CONFIG_PATH}|{_CHIPER_ENV_PATH})', "in-place edit of Chiper config/env (perl/ruby)"),
     # Script execution via heredoc — bypasses the -e/-c flag patterns above.
     # `python3 << 'EOF'` feeds arbitrary code via stdin without -c/-e flags.
     (r'\b(python[23]?|perl|ruby|node)\s+<<', "script execution via heredoc"),
@@ -584,7 +584,7 @@ def _normalize_command_for_detection(command: str) -> str:
     # Fold the resolved absolute active-profile home path into the canonical
     # ~/.chiperflux/ form so the Chiper config/env patterns catch it. In Docker and
     # gateway deployments the agent often references the resolved absolute path
-    # directly (e.g. `sed -i ... /home/hermes/.chiperflux/config.yaml`) rather than
+    # directly (e.g. `sed -i ... /home/chiper/.chiperflux/config.yaml`) rather than
     # ~, $HOME, or $CHIPER_HOME. Done at detection time (not via an import-time
     # pattern snapshot) so it tracks the live CHIPER_HOME even when that is set
     # after this module is imported — as the hermetic test conftest does.
@@ -627,7 +627,7 @@ def _rewrite_resolved_chiper_home(command: str) -> str:
 
     Resolves the active ``CHIPER_HOME`` at call time (and its symlink-resolved
     form) and replaces an occurrence of ``<home>/`` in *command* with
-    ``~/.chiperflux/`` so the static ``_HERMES_CONFIG_PATH`` / ``_HERMES_ENV_PATH``
+    ``~/.chiperflux/`` so the static ``_CHIPER_CONFIG_PATH`` / ``_CHIPER_ENV_PATH``
     patterns match. No-op when the path can't be resolved or doesn't appear.
     """
     try:
@@ -647,7 +647,7 @@ def _rewrite_resolved_chiper_home(command: str) -> str:
         # Guard against a degenerate CHIPER_HOME (e.g. "/" or "") rewriting
         # unrelated paths: require an absolute path with at least one non-root
         # component. The active profile home is always a real directory like
-        # /home/hermes/.hermes or a per-test tempdir, never a bare root.
+        # /home/chiper/.chiper or a per-test tempdir, never a bare root.
         normalized = path.rstrip("/")
         if not normalized.startswith("/") or normalized.count("/") < 2:
             continue

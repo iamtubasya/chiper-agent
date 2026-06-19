@@ -1,4 +1,4 @@
-Homebrew packaging notes for Hermes Agent.
+Homebrew packaging notes for Chiper Agent.
 
 Use `packaging/homebrew/chiper-agent.rb` as a tap or `homebrew-core` starting point.
 

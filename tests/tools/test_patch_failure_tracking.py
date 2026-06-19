@@ -19,7 +19,7 @@ def chiper_home(monkeypatch, tmp_path):
     """Isolate CHIPER_HOME and clear module-level caches afterward so the
     real shell-out side effects from _handle_patch don't leak into
     subsequent tests (see test_line_ending_preservation.py for details)."""
-    home = tmp_path / "hermes"
+    home = tmp_path / "chiper"
     home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(home))
     yield home

@@ -694,7 +694,7 @@ class TestHasAnyProviderConfigured:
     def test_glm_key_counts(self, monkeypatch, tmp_path):
         from chiper_cli import config as config_module
         monkeypatch.setenv("GLM_API_KEY", "test-key")
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setattr(config_module, "get_env_path", lambda: chiper_home / ".env")
         monkeypatch.setattr(config_module, "get_chiper_home", lambda: chiper_home)
@@ -704,7 +704,7 @@ class TestHasAnyProviderConfigured:
     def test_minimax_key_counts(self, monkeypatch, tmp_path):
         from chiper_cli import config as config_module
         monkeypatch.setenv("MINIMAX_API_KEY", "test-key")
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setattr(config_module, "get_env_path", lambda: chiper_home / ".env")
         monkeypatch.setattr(config_module, "get_chiper_home", lambda: chiper_home)
@@ -714,7 +714,7 @@ class TestHasAnyProviderConfigured:
     def test_gh_cli_token_counts(self, monkeypatch, tmp_path):
         from chiper_cli import config as config_module
         monkeypatch.setattr("chiper_cli.copilot_auth._try_gh_cli_token", lambda: "gho_cli_secret")
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setattr(config_module, "get_env_path", lambda: chiper_home / ".env")
         monkeypatch.setattr(config_module, "get_chiper_home", lambda: chiper_home)
@@ -722,10 +722,10 @@ class TestHasAnyProviderConfigured:
         assert _has_any_provider_configured() is True
 
     def test_claude_code_creds_ignored_on_fresh_install(self, monkeypatch, tmp_path):
-        """Claude Code credentials should NOT skip the wizard when Hermes is unconfigured."""
+        """Claude Code credentials should NOT skip the wizard when Chiper is unconfigured."""
         from chiper_cli import config as config_module
         from chiper_cli.auth import PROVIDER_REGISTRY
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setattr(config_module, "get_env_path", lambda: chiper_home / ".env")
         monkeypatch.setattr(config_module, "get_chiper_home", lambda: chiper_home)
@@ -756,7 +756,7 @@ class TestHasAnyProviderConfigured:
         """config.yaml with model.provider set should count as configured."""
         import yaml
         from chiper_cli import config as config_module
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_file = chiper_home / "config.yaml"
         config_file.write_text(yaml.dump({
@@ -776,7 +776,7 @@ class TestHasAnyProviderConfigured:
         """config.yaml with model.base_url set (custom endpoint) should count."""
         import yaml
         from chiper_cli import config as config_module
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_file = chiper_home / "config.yaml"
         config_file.write_text(yaml.dump({
@@ -795,7 +795,7 @@ class TestHasAnyProviderConfigured:
         """config.yaml with model.api_key set should count."""
         import yaml
         from chiper_cli import config as config_module
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_file = chiper_home / "config.yaml"
         config_file.write_text(yaml.dump({
@@ -815,7 +815,7 @@ class TestHasAnyProviderConfigured:
         import yaml
         from chiper_cli import config as config_module
         from chiper_cli.auth import PROVIDER_REGISTRY
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_file = chiper_home / "config.yaml"
         config_file.write_text(yaml.dump({
@@ -837,11 +837,11 @@ class TestHasAnyProviderConfigured:
         from chiper_cli.main import _has_any_provider_configured
         assert _has_any_provider_configured() is False
 
-    def test_claude_code_creds_counted_when_hermes_configured(self, monkeypatch, tmp_path):
-        """Claude Code credentials should count when Hermes has been explicitly configured."""
+    def test_claude_code_creds_counted_when_chiper_configured(self, monkeypatch, tmp_path):
+        """Claude Code credentials should count when Chiper has been explicitly configured."""
         import yaml
         from chiper_cli import config as config_module
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         # Write a config with a non-default model to simulate explicit configuration
         config_file = chiper_home / "config.yaml"

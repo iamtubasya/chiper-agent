@@ -171,7 +171,7 @@ def test_check_for_updates_docker_returns_none(tmp_path, monkeypatch):
     falls through to check_via_pypi(), whose version-mismatch flag (1) gets
     rendered by both the Rich banner and the Ink TUI badge as a phantom
     "1 commit behind" — despite there being no git repo or commit math in the
-    container, and `hermes update` correctly refusing to run there. The guard
+    container, and `chiper update` correctly refusing to run there. The guard
     must return None (so the > 0 render guards stay false) AND not reach the
     git/pypi probes or write a cache entry.
     """
@@ -245,7 +245,7 @@ def test_invalidate_update_cache_clears_all_profiles(tmp_path):
     from chiper_cli.main import _invalidate_update_cache
 
     # Build a fake ~/.chiperflux with default + two named profiles
-    default_home = tmp_path / ".hermes"
+    default_home = tmp_path / ".chiper"
     default_home.mkdir()
     (default_home / ".update_check").write_text('{"ts":1,"behind":50}')
 
@@ -269,7 +269,7 @@ def test_invalidate_update_cache_no_profiles_dir(tmp_path):
     """Works fine when no profiles directory exists (single-profile setup)."""
     from chiper_cli.main import _invalidate_update_cache
 
-    default_home = tmp_path / ".hermes"
+    default_home = tmp_path / ".chiper"
     default_home.mkdir()
     (default_home / ".update_check").write_text('{"ts":1,"behind":5}')
 

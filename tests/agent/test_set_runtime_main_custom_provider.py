@@ -159,7 +159,7 @@ class TestResolveAutoCustomEndToEnd:
         for var in ("OPENROUTER_API_KEY", "NOUS_API_KEY", "OPENAI_API_KEY",
                     "OPENAI_BASE_URL"):
             monkeypatch.delenv(var, raising=False)
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text(
             "model:\n"
@@ -198,7 +198,7 @@ class TestResolveAutoCustomEndToEnd:
         for var in ("OPENROUTER_API_KEY", "NOUS_API_KEY", "OPENAI_API_KEY",
                     "OPENAI_BASE_URL"):
             monkeypatch.delenv(var, raising=False)
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text(
             "model:\n"

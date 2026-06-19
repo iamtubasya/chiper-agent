@@ -77,7 +77,7 @@ logger = logging.getLogger("gateway.platforms.google_chat_user_oauth")
 try:
     from chiper_constants import display_chiper_home, get_chiper_home
 except (ModuleNotFoundError, ImportError):
-    # Fallback for environments where hermes_constants isn't importable
+    # Fallback for environments where chiper_constants isn't importable
     # (mirrors the same fallback used by the google-workspace skill's
     # _chiper_home.py shim).
     def get_chiper_home() -> Path:

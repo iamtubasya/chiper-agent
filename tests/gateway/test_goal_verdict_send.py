@@ -22,7 +22,7 @@ from gateway.session import SessionEntry, SessionSource, build_session_key
 
 @pytest.fixture()
 def chiper_home(tmp_path, monkeypatch):
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     monkeypatch.setenv("CHIPER_HOME", str(home))

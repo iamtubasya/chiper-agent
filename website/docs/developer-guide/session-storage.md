@@ -1,10 +1,10 @@
 # Session Storage
 
-Hermes Agent uses a SQLite database (`~/.chiperflux/state.db`) to persist session
+Chiper Agent uses a SQLite database (`~/.chiperflux/state.db`) to persist session
 metadata, full message history, and model configuration across CLI and gateway
 sessions. This replaces the earlier per-session JSONL file approach.
 
-Source file: `hermes_state.py`
+Source file: `chiper_state.py`
 
 
 ## Architecture Overview
@@ -156,7 +156,7 @@ Declarative column adds use `ALTER TABLE ADD COLUMN` wrapped in try/except to ha
 
 ## Write Contention Handling
 
-Multiple hermes processes (gateway + CLI sessions + worktree agents) share one
+Multiple chiper processes (gateway + CLI sessions + worktree agents) share one
 `state.db`. The `SessionDB` class handles write contention with:
 
 - **Short SQLite timeout** (1 second) instead of the default 30s
@@ -388,7 +388,7 @@ db.delete_session("sess_abc123")
 
 Default path: `~/.chiperflux/state.db`
 
-This is derived from `hermes_constants.get_chiper_home()` which resolves to
+This is derived from `chiper_constants.get_chiper_home()` which resolves to
 `~/.chiperflux/` by default, or the value of `CHIPER_HOME` environment variable.
 
 The database file, WAL file (`state.db-wal`), and shared-memory file

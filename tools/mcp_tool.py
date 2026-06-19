@@ -484,7 +484,7 @@ def _resolve_stdio_command(command: str, env: dict) -> tuple[str, dict]:
 
 
 # ---------------------------------------------------------------------------
-# MCP ImageContent block → Hermes MEDIA tag
+# MCP ImageContent block → Chiper MEDIA tag
 # ---------------------------------------------------------------------------
 
 
@@ -499,7 +499,7 @@ def _mcp_image_extension_for_mime_type(mime_type: str) -> str:
 
 def _cache_mcp_image_block(block) -> str:
     """Cache an MCP ``ImageContent`` block to the shared image cache and
-    return a ``MEDIA:<path>`` tag that Hermes gateways know how to render.
+    return a ``MEDIA:<path>`` tag that Chiper gateways know how to render.
 
     Returns an empty string when *block* is not an image, when the base64
     payload is malformed, or when the cache helper rejects the bytes (e.g.
@@ -1944,7 +1944,7 @@ class MCPServerTask:
                 # CancelledError inherits from BaseException (not Exception)
                 # in Python 3.11+, so the broad ``except Exception`` below
                 # would NOT catch it; we'd silently exit the reconnect loop
-                # and the MCP server would stay dead until Hermes is fully
+                # and the MCP server would stay dead until Chiper is fully
                 # restarted. Re-raise so the task's cancellation propagates
                 # correctly to asyncio's task machinery and ``shutdown()``'s
                 # ``await self._task`` completes. See #9930.
@@ -2824,13 +2824,13 @@ def _make_tool_handler(server_name: str, tool_name: str, tool_timeout: float):
             # Collect text from content blocks. MCP tool results can also
             # include ImageContent blocks (screenshot / Blockbench / Playwright
             # etc.); cache those via the gateway's image-cache helper so they
-            # flow through Hermes' MEDIA: tag convention and out to messaging
+            # flow through Chiper' MEDIA: tag convention and out to messaging
             # adapters that render images natively. Without this, image blocks
             # were silently dropped and the agent got an empty response.
             #
             # Distilled from #17915 (c3115644151) and #10848 (gnanirahulnutakki),
             # both too stale to cherry-pick. #10848's approach (integrate with
-            # Hermes' MEDIA tag + cache_image_from_bytes) was the cleaner of
+            # Chiper' MEDIA tag + cache_image_from_bytes) was the cleaner of
             # the two — plugs into existing infrastructure.
             parts: List[str] = []
             for block in (result.content or []):
@@ -3286,7 +3286,7 @@ def _normalize_mcp_input_schema(schema: dict | None) -> dict:
 def sanitize_mcp_name_component(value: str) -> str:
     """Return an MCP name component safe for tool and prefix generation.
 
-    Preserves Hermes's historical behavior of converting hyphens to
+    Preserves Chiper's historical behavior of converting hyphens to
     underscores, and also replaces any other character outside
     ``[A-Za-z0-9_]`` with ``_`` so generated tool names are compatible with
     provider validation rules.
@@ -4041,7 +4041,7 @@ def _kill_orphaned_mcp_children(include_active: bool = False) -> None:
     sessions are not disrupted.
 
     Sends SIGTERM, waits 2 seconds, then escalates to SIGKILL for any
-    survivors, avoiding shared-resource collisions when multiple hermes
+    survivors, avoiding shared-resource collisions when multiple chiper
     processes run on the same host (each has its own ``_stdio_pids`` dict).
 
     On POSIX, signals are sent via ``os.killpg`` to the spawn-time pgid when

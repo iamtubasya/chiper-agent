@@ -32,7 +32,7 @@ def _load_plugin_router():
     assert plugin_file.exists(), f"plugin file missing: {plugin_file}"
 
     spec = importlib.util.spec_from_file_location(
-        "hermes_dashboard_plugin_kanban_test", plugin_file,
+        "chiper_dashboard_plugin_kanban_test", plugin_file,
     )
     assert spec is not None and spec.loader is not None
     mod = importlib.util.module_from_spec(spec)
@@ -44,7 +44,7 @@ def _load_plugin_router():
 @pytest.fixture
 def kanban_home(tmp_path, monkeypatch):
     """Isolated CHIPER_HOME with an empty kanban DB."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -158,7 +158,7 @@ def test_board_query_param_default_overrides_current_board_pointer(client):
     pointer targets a non-default board.
 
     Regression: selecting the Default board in the dashboard must not fall
-    through to whichever board ``hermes kanban boards switch`` last pinned.
+    through to whichever board ``chiper kanban boards switch`` last pinned.
     """
     default_task = client.post(
         "/api/plugins/kanban/tasks",
@@ -712,7 +712,7 @@ def test_board_progress_rollup(client):
 
 def test_board_auto_initializes_missing_db(tmp_path, monkeypatch):
     """If kanban.db doesn't exist yet, GET /board must create it, not 500."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(home))
     monkeypatch.delenv("CHIPER_KANBAN_BOARD", raising=False)
@@ -740,7 +740,7 @@ def test_ws_events_rejects_when_token_required(tmp_path, monkeypatch):
     delegates to web_server._ws_auth_ok, so we stub that with the real
     loopback-token semantics (auth_required False → constant-time token
     compare)."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -791,7 +791,7 @@ def test_ws_events_accepts_gated_ticket(tmp_path, monkeypatch):
     for the hosted-dashboard bug where the kanban live-events WS 1008'd on
     every gated deployment because its bespoke check only knew _SESSION_TOKEN.
     We stub _ws_auth_ok with the real gated semantics (ticket-only)."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -838,7 +838,7 @@ def test_ws_events_board_query_param_default_overrides_current_board_pointer(tmp
     selects Default, the websocket must not subscribe to the CLI's current
     non-default board.
     """
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -895,7 +895,7 @@ def test_ws_events_swallows_cancellation_on_shutdown(tmp_path, monkeypatch):
     """
     import asyncio
 
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(home))
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -1405,7 +1405,7 @@ def test_create_task_includes_warning_when_no_dispatcher(client, monkeypatch):
     # Force the dispatcher probe to report "not running".
     monkeypatch.setattr(
         "chiper_cli.kanban._check_dispatcher_presence",
-        lambda: (False, "No gateway is running — start `hermes gateway start`."),
+        lambda: (False, "No gateway is running — start `chiper gateway start`."),
     )
     r = client.post(
         "/api/plugins/kanban/tasks",
@@ -2217,7 +2217,7 @@ def test_dashboard_bulk_actions_include_reclaim_first():
     dist = (repo_root / "plugins" / "kanban" / "dashboard" / "dist" / "index.js").read_text()
 
     assert "reclaim_first: reclaimFirst" in dist
-    assert "hermes-kanban-bulk-reclaim-first" in dist
+    assert "chiper-kanban-bulk-reclaim-first" in dist
     assert '"→ todo"' in dist
     assert '"Block"' in dist
     assert '"Unblock"' in dist
@@ -2249,6 +2249,6 @@ def test_dashboard_failed_card_highlight_class_exists():
     js = (repo_root / "plugins" / "kanban" / "dashboard" / "dist" / "index.js").read_text()
     css = (repo_root / "plugins" / "kanban" / "dashboard" / "dist" / "style.css").read_text()
 
-    assert "hermes-kanban-card--failed" in js
-    assert "hermes-kanban-card--failed" in css
+    assert "chiper-kanban-card--failed" in js
+    assert "chiper-kanban-card--failed" in css
     assert "failedIds" in js

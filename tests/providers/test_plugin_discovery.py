@@ -26,7 +26,7 @@ def _clear_provider_caches():
     for mod in list(sys.modules.keys()):
         if (
             mod.startswith("plugins.model_providers")
-            or mod.startswith("_hermes_user_provider")
+            or mod.startswith("_chiper_user_provider")
         ):
             del sys.modules[mod]
 
@@ -76,7 +76,7 @@ def test_all_profiles_register():
 def test_user_plugin_overrides_bundled(tmp_path, monkeypatch):
     """A user plugin with the same name must override the bundled profile."""
     # Point CHIPER_HOME at a fresh temp dir
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     # get_chiper_home() may be module-cached depending on codebase; ensure the
@@ -124,7 +124,7 @@ def test_general_plugin_manager_skips_model_provider_kind(tmp_path, monkeypatch)
     (providers/__init__.py handles them). It records the manifest only."""
     from chiper_cli import plugins as plugin_mod
 
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 

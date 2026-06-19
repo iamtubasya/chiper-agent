@@ -1,6 +1,6 @@
 # Langfuse Observability Plugin
 
-This plugin ships bundled with Hermes but is **opt-in** — it only loads when
+This plugin ships bundled with Chiper but is **opt-in** — it only loads when
 you explicitly enable it.
 
 ## Enable
@@ -9,16 +9,16 @@ Pick one:
 
 ```bash
 # Interactive: walks you through credentials + SDK install + enable
-hermes tools  # → Langfuse Observability
+chiper tools  # → Langfuse Observability
 
 # Manual
 pip install langfuse
-hermes plugins enable observability/langfuse
+chiper plugins enable observability/langfuse
 ```
 
 ## Required credentials
 
-Set these in `~/.chiperflux/.env` (or via `hermes tools`):
+Set these in `~/.chiperflux/.env` (or via `chiper tools`):
 
 ```bash
 CHIPER_LANGFUSE_PUBLIC_KEY=pk-lf-...
@@ -32,8 +32,8 @@ open.
 ## Verify
 
 ```bash
-hermes plugins list                 # observability/langfuse should show "enabled"
-hermes chat -q "hello"              # then check Langfuse for a "Hermes turn" trace
+chiper plugins list                 # observability/langfuse should show "enabled"
+chiper chat -q "hello"              # then check Langfuse for a "Chiper turn" trace
 ```
 
 ## Optional tuning
@@ -49,5 +49,5 @@ CHIPER_LANGFUSE_DEBUG=true           # verbose plugin logging
 ## Disable
 
 ```bash
-hermes plugins disable observability/langfuse
+chiper plugins disable observability/langfuse
 ```

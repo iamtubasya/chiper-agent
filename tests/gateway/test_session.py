@@ -322,7 +322,7 @@ class TestBuildSessionContextPrompt:
         )
         ctx = build_session_context(source, config)
 
-        with patch("hermes_constants.display_chiper_home", return_value="~/.chiperflux/profiles/coder"):
+        with patch("chiper_constants.display_chiper_home", return_value="~/.chiperflux/profiles/coder"):
             prompt = build_session_context_prompt(ctx)
 
         assert "~/.chiperflux/profiles/coder/cron/output/" in prompt
@@ -506,7 +506,7 @@ class TestSessionStoreRewriteTranscript:
     @pytest.fixture()
     def store(self, tmp_path, monkeypatch):
         import chiper_state
-        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", tmp_path / "state.db")
+        monkeypatch.setattr(chiper_state, "DEFAULT_DB_PATH", tmp_path / "state.db")
         config = GatewayConfig()
         s = SessionStore(sessions_dir=tmp_path, config=config)
         return s
@@ -550,7 +550,7 @@ class TestLoadTranscriptDBOnly:
 
     def test_db_only_returns_empty_for_nonexistent(self, tmp_path, monkeypatch):
         import chiper_state
-        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", tmp_path / "state.db")
+        monkeypatch.setattr(chiper_state, "DEFAULT_DB_PATH", tmp_path / "state.db")
         config = GatewayConfig()
         store = SessionStore(sessions_dir=tmp_path, config=config)
         result = store.load_transcript("nonexistent")
@@ -558,7 +558,7 @@ class TestLoadTranscriptDBOnly:
 
     def test_db_only_returns_messages(self, tmp_path, monkeypatch):
         import chiper_state
-        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", tmp_path / "state.db")
+        monkeypatch.setattr(chiper_state, "DEFAULT_DB_PATH", tmp_path / "state.db")
         config = GatewayConfig()
         store = SessionStore(sessions_dir=tmp_path, config=config)
         sid = "db_only_session"
@@ -659,7 +659,7 @@ class TestWhatsAppSessionKeyConsistency:
         assert key == "agent:main:whatsapp:dm:15551234567"
 
     def test_whatsapp_dm_aliases_share_one_session_key(self, tmp_path, monkeypatch):
-        tmp_home = tmp_path / "hermes-home"
+        tmp_home = tmp_path / "chiper-home"
         mapping_dir = tmp_home / "whatsapp" / "session"
         mapping_dir.mkdir(parents=True, exist_ok=True)
         (mapping_dir / "lid-mapping-999999999999999.json").write_text(
@@ -688,7 +688,7 @@ class TestWhatsAppSessionKeyConsistency:
         """With group_sessions_per_user, the same human flipping between
         phone-JID and LID inside a group must not produce two isolated
         per-user sessions."""
-        tmp_home = tmp_path / "hermes-home"
+        tmp_home = tmp_path / "chiper-home"
         mapping_dir = tmp_home / "whatsapp" / "session"
         mapping_dir.mkdir(parents=True, exist_ok=True)
         (mapping_dir / "lid-mapping-999999999999999.json").write_text(

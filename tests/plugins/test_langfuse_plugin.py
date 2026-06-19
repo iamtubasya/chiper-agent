@@ -35,7 +35,7 @@ class TestManifest:
             "pre_llm_call", "post_llm_call",
             "pre_tool_call", "post_tool_call",
         }
-        # Required env vars are the user-facing HERMES_ prefixed keys.
+        # Required env vars are the user-facing CHIPER_ prefixed keys.
         assert "CHIPER_LANGFUSE_PUBLIC_KEY" in data["requires_env"]
         assert "CHIPER_LANGFUSE_SECRET_KEY" in data["requires_env"]
 
@@ -52,7 +52,7 @@ class TestDiscovery:
         from chiper_cli import plugins as plugins_mod
 
         # Isolated CHIPER_HOME so we don't read the developer's config.yaml.
-        home = tmp_path / ".hermes"
+        home = tmp_path / ".chiper"
         home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -125,7 +125,7 @@ class TestRuntimeGate:
             "it should short-circuit via _INIT_FAILED"
         )
 
-    def test_get_langfuse_does_not_import_hermes_config(self, monkeypatch):
+    def test_get_langfuse_does_not_import_chiper_config(self, monkeypatch):
         """The plugin must not re-read config.yaml per hook."""
         for k in (
             "CHIPER_LANGFUSE_PUBLIC_KEY", "CHIPER_LANGFUSE_SECRET_KEY",
@@ -423,7 +423,7 @@ class TestTurnTraceIsolation:
 # "placeholder", "test-key", or "your-langfuse-key", the SDK accepts the
 # credentials at construction time (it does no server-side validation
 # eagerly) but drops every trace at flush time, with no signal in the
-# Hermes logs.  The fix in `_get_langfuse()` validates the documented
+# Chiper logs.  The fix in `_get_langfuse()` validates the documented
 # `pk-lf-` / `sk-lf-` prefix Langfuse always issues, surfaces a one-shot
 # warning naming the offending env var(s), and short-circuits via the
 # same `_INIT_FAILED` path used for missing credentials so subsequent
@@ -618,7 +618,7 @@ class TestPlaceholderKeyDetection:
         assert "CHIPER_LANGFUSE_PUBLIC_KEY" in caplog.text
 
     def test_legacy_LANGFUSE_PUBLIC_KEY_also_validated(self, monkeypatch, caplog):
-        """The plugin reads both the canonical HERMES_-prefixed env var and
+        """The plugin reads both the canonical CHIPER_-prefixed env var and
         the legacy bare ``LANGFUSE_PUBLIC_KEY``.  The validator must run on
         whichever value ``_get_langfuse()`` actually consumed."""
         self._clear_env(monkeypatch)
@@ -629,7 +629,7 @@ class TestPlaceholderKeyDetection:
             assert plugin._get_langfuse() is None
         # Warning names the canonical user-facing env var (the bare
         # LANGFUSE_PUBLIC_KEY is a backwards-compat alias for the
-        # HERMES_-prefixed one — operators set the HERMES_-prefixed one).
+        # CHIPER_-prefixed one — operators set the CHIPER_-prefixed one).
         assert "CHIPER_LANGFUSE_PUBLIC_KEY" in caplog.text
         assert "'placeholder'" in caplog.text
 

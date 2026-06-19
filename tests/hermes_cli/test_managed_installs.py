@@ -20,13 +20,13 @@ def test_get_managed_system_homebrew(monkeypatch):
 def test_format_managed_message_homebrew(monkeypatch):
     monkeypatch.setenv("CHIPER_MANAGED", "homebrew")
 
-    message = format_managed_message("update Hermes Agent")
+    message = format_managed_message("update Chiper Agent")
 
     assert "managed by Homebrew" in message
     assert "brew upgrade chiper-agent" in message
 
 
-def test_recommended_update_command_defaults_to_hermes_update(monkeypatch):
+def test_recommended_update_command_defaults_to_chiper_update(monkeypatch):
     monkeypatch.delenv("CHIPER_MANAGED", raising=False)
 
     # Also short-circuit the .managed marker path — CI runners may have an
@@ -36,7 +36,7 @@ def test_recommended_update_command_defaults_to_hermes_update(monkeypatch):
     # detect_install_method().
     with patch("chiper_cli.config.get_managed_update_command", return_value=None), \
          patch("chiper_cli.config.detect_install_method", return_value="git"):
-        assert recommended_update_command() == "hermes update"
+        assert recommended_update_command() == "chiper update"
 
 
 def test_cmd_update_blocks_managed_homebrew(monkeypatch, capsys):

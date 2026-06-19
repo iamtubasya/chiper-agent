@@ -12,7 +12,7 @@ import pytest
 import asyncio
 
 from tools.mcp_oauth import (
-    HermesTokenStorage,
+    ChiperTokenStorage,
     OAuthNonInteractiveError,
     build_oauth_auth,
     remove_oauth_tokens,
@@ -33,13 +33,13 @@ def _set_interactive_stdin(monkeypatch, *, is_tty: bool = True) -> None:
 
 
 # ---------------------------------------------------------------------------
-# HermesTokenStorage
+# ChiperTokenStorage
 # ---------------------------------------------------------------------------
 
-class TestHermesTokenStorage:
+class TestChiperTokenStorage:
     def test_roundtrip_tokens(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-        storage = HermesTokenStorage("test-server")
+        storage = ChiperTokenStorage("test-server")
 
         import asyncio
 
@@ -71,7 +71,7 @@ class TestHermesTokenStorage:
         the fix shipped for ``agent/google_oauth.py`` in #19673.
         """
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-        storage = HermesTokenStorage("perm-test-server")
+        storage = ChiperTokenStorage("perm-test-server")
 
         import asyncio
         mock_token = MagicMock()
@@ -94,14 +94,14 @@ class TestHermesTokenStorage:
 
     def test_roundtrip_client_info(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-        storage = HermesTokenStorage("test-server")
+        storage = ChiperTokenStorage("test-server")
         import asyncio
 
         assert asyncio.run(storage.get_client_info()) is None
 
         mock_client = MagicMock()
         mock_client.model_dump.return_value = {
-            "client_id": "hermes-123",
+            "client_id": "chiper-123",
             "client_secret": "secret",
         }
         asyncio.run(storage.set_client_info(mock_client))
@@ -111,7 +111,7 @@ class TestHermesTokenStorage:
 
     def test_remove_cleans_up(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-        storage = HermesTokenStorage("test-server")
+        storage = ChiperTokenStorage("test-server")
 
         # Create files
         d = tmp_path / "mcp-tokens"
@@ -125,7 +125,7 @@ class TestHermesTokenStorage:
 
     def test_has_cached_tokens(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-        storage = HermesTokenStorage("my-server")
+        storage = ChiperTokenStorage("my-server")
 
         assert not storage.has_cached_tokens()
 
@@ -137,7 +137,7 @@ class TestHermesTokenStorage:
 
     def test_corrupt_tokens_returns_none(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-        storage = HermesTokenStorage("bad-server")
+        storage = ChiperTokenStorage("bad-server")
 
         d = tmp_path / "mcp-tokens"
         d.mkdir(parents=True)
@@ -148,7 +148,7 @@ class TestHermesTokenStorage:
 
     def test_corrupt_client_info_returns_none(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-        storage = HermesTokenStorage("bad-server")
+        storage = ChiperTokenStorage("bad-server")
 
         d = tmp_path / "mcp-tokens"
         d.mkdir(parents=True)
@@ -320,7 +320,7 @@ class TestPathTraversal:
 
     def test_path_traversal_blocked(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-        storage = HermesTokenStorage("../../.ssh/config")
+        storage = ChiperTokenStorage("../../.ssh/config")
         path = storage._tokens_path()
         # Should stay within mcp-tokens directory
         assert "mcp-tokens" in str(path)
@@ -328,19 +328,19 @@ class TestPathTraversal:
 
     def test_dots_and_slashes_sanitized(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-        storage = HermesTokenStorage("../../../etc/passwd")
+        storage = ChiperTokenStorage("../../../etc/passwd")
         path = storage._tokens_path()
         resolved = path.resolve()
         assert resolved.is_relative_to((tmp_path / "mcp-tokens").resolve())
 
     def test_normal_name_unchanged(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-        storage = HermesTokenStorage("my-mcp-server")
+        storage = ChiperTokenStorage("my-mcp-server")
         assert "my-mcp-server.json" in str(storage._tokens_path())
 
     def test_special_chars_sanitized(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-        storage = HermesTokenStorage("server@host:8080/path")
+        storage = ChiperTokenStorage("server@host:8080/path")
         path = storage._tokens_path()
         assert "@" not in path.name
         assert ":" not in path.name
@@ -595,7 +595,7 @@ def test_build_oauth_auth_preserves_server_url_path():
     breaking RFC 9728 protected-resource validation against servers whose PRM
     advertises a path-scoped resource (Notion). The MCP SDK strips the path
     itself for authorization-server discovery via
-    ``OAuthContext.get_authorization_base_url``; Hermes must not pre-strip.
+    ``OAuthContext.get_authorization_base_url``; Chiper must not pre-strip.
     """
     from tools import mcp_oauth
 
@@ -609,7 +609,7 @@ def test_build_oauth_auth_preserves_server_url_path():
          patch.object(mcp_oauth, "OAuthClientProvider", _FakeProvider), \
          patch.object(mcp_oauth, "_is_interactive", return_value=True), \
          patch.object(mcp_oauth, "_maybe_preregister_client"), \
-         patch.object(mcp_oauth, "HermesTokenStorage") as mock_storage_cls:
+         patch.object(mcp_oauth, "ChiperTokenStorage") as mock_storage_cls:
         mock_storage_cls.return_value = MagicMock(has_cached_tokens=lambda: True)
         build_oauth_auth(
             server_name="notion",
@@ -775,7 +775,7 @@ class TestPasteCallbackSkipToken:
         _paste_callback_reader(result)
         err = capsys.readouterr().err
         assert "OAuth skipped" in err
-        assert "hermes mcp login" in err
+        assert "chiper mcp login" in err
 
     def test_skip_does_not_overwrite_http_winner(self, monkeypatch):
         """If HTTP listener already wrote a code, `skip` must not stomp it."""

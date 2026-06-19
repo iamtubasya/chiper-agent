@@ -364,7 +364,7 @@ class TestTeePattern:
         assert dangerous is True
         assert key is not None
 
-    def test_tee_hermes_env(self):
+    def test_tee_chiper_env(self):
         dangerous, key, desc = detect_dangerous_command("echo x | tee ~/.chiperflux/.env")
         assert dangerous is True
         assert key is not None
@@ -396,7 +396,7 @@ class TestTeePattern:
         assert key is None
 
 
-class TestHermesConfigWriteProtection:
+class TestChiperConfigWriteProtection:
     """Terminal-side pairing for the file_tools write_file/patch deny on
     ~/.chiperflux/config.yaml (#14639). config.yaml IS the security policy
     (approvals.mode/yolo live there, mtime-keyed cache reloads mid-session),
@@ -425,7 +425,7 @@ class TestHermesConfigWriteProtection:
         # bypassing the redirection/tee patterns.
         dangerous, key, desc = detect_dangerous_command("sed -i 's/manual/off/' ~/.chiperflux/config.yaml")
         assert dangerous is True
-        assert "hermes config" in desc.lower() or "in-place" in desc.lower()
+        assert "chiper config" in desc.lower() or "in-place" in desc.lower()
 
     def test_sed_in_place_long_flag(self):
         dangerous, key, desc = detect_dangerous_command("sed --in-place 's/manual/off/' ~/.chiperflux/config.yaml")
@@ -437,7 +437,7 @@ class TestHermesConfigWriteProtection:
             f"sed -i 's/manual/off/' {config_path}"
         )
         assert dangerous is True
-        assert "hermes config" in desc.lower() or "in-place" in desc.lower()
+        assert "chiper config" in desc.lower() or "in-place" in desc.lower()
 
     def test_sed_in_place_absolute_chiper_home_env(self):
         env_path = get_chiper_home() / ".env"
@@ -445,7 +445,7 @@ class TestHermesConfigWriteProtection:
             f"sed -i 's/API_KEY=.*/API_KEY=x/' {env_path}"
         )
         assert dangerous is True
-        assert "hermes config" in desc.lower() or "in-place" in desc.lower()
+        assert "chiper config" in desc.lower() or "in-place" in desc.lower()
 
     def test_custom_chiper_home(self):
         dangerous, key, desc = detect_dangerous_command("echo x | tee $CHIPER_HOME/config.yaml")
@@ -523,7 +523,7 @@ class TestHermesConfigWriteProtection:
         assert dangerous is False
 
     def test_normal_yaml_write_safe(self):
-        # A non-Hermes config.yaml in a project dir is handled by the project
+        # A non-Chiper config.yaml in a project dir is handled by the project
         # patterns, but a plain temp write must not false-positive.
         dangerous, key, desc = detect_dangerous_command("echo data > /tmp/scratch.txt")
         assert dangerous is False
@@ -689,7 +689,7 @@ class TestSensitiveCopyMovePattern:
         dangerous, key, desc = detect_dangerous_command("cp /tmp/e ~/.bashrc")
         assert dangerous is True
 
-    def test_cp_to_hermes_config(self):
+    def test_cp_to_chiper_config(self):
         dangerous, key, desc = detect_dangerous_command("cp /tmp/evil.yaml ~/.chiperflux/config.yaml")
         assert dangerous is True
 
@@ -885,15 +885,15 @@ class TestGatewayProtection:
         assert dangerous is True
         assert "stop/restart" in desc
 
-    def test_pkill_hermes_detected(self):
-        """pkill targeting hermes/gateway processes must be caught."""
+    def test_pkill_chiper_detected(self):
+        """pkill targeting chiper/gateway processes must be caught."""
         cmd = 'pkill -f "cli.py --gateway"'
         dangerous, key, desc = detect_dangerous_command(cmd)
         assert dangerous is True
         assert "self-termination" in desc
 
-    def test_killall_hermes_detected(self):
-        cmd = "killall hermes"
+    def test_killall_chiper_detected(self):
+        cmd = "killall chiper"
         dangerous, key, desc = detect_dangerous_command(cmd)
         assert dangerous is True
         assert "self-termination" in desc
@@ -1029,20 +1029,20 @@ class TestHeredocScriptExecution:
 
 
 class TestPgrepKillExpansion:
-    """kill -9 $(pgrep hermes) bypasses the pkill/killall name-matching
+    """kill -9 $(pgrep chiper) bypasses the pkill/killall name-matching
     pattern because the command substitution is opaque to regex.
 
     See security audit Test 7.
     """
 
     def test_kill_dollar_pgrep_detected(self):
-        cmd = 'kill -9 $(pgrep -f "hermes.*gateway")'
+        cmd = 'kill -9 $(pgrep -f "chiper.*gateway")'
         dangerous, _, desc = detect_dangerous_command(cmd)
         assert dangerous is True
         assert "pgrep" in desc.lower()
 
     def test_kill_backtick_pgrep_detected(self):
-        cmd = "kill -9 `pgrep hermes`"
+        cmd = "kill -9 `pgrep chiper`"
         dangerous, _, desc = detect_dangerous_command(cmd)
         assert dangerous is True
 
@@ -1051,9 +1051,9 @@ class TestPgrepKillExpansion:
         dangerous, _, _ = detect_dangerous_command(cmd)
         assert dangerous is True
 
-    def test_pkill_hermes_still_detected(self):
+    def test_pkill_chiper_still_detected(self):
         """Existing pkill pattern must not regress."""
-        cmd = "pkill -9 hermes"
+        cmd = "pkill -9 chiper"
         dangerous, _, _ = detect_dangerous_command(cmd)
         assert dangerous is True
 

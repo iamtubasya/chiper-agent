@@ -175,7 +175,7 @@ def test_build_models_payload_does_not_call_provider_model_ids():
     caching). ``build_models_payload`` itself must not call the live fetcher
     directly; the test pins that boundary.
     """
-    rows = [{"slug": "nous", "name": "Nous", "models": ["hermes-4-405b"],
+    rows = [{"slug": "nous", "name": "Nous", "models": ["chiper-4-405b"],
              "total_models": 1, "is_current": False, "is_user_defined": False,
              "source": "built-in"}]
     ctx = _empty_ctx()
@@ -351,10 +351,10 @@ def test_picker_hints_adds_warning_to_skeleton_rows():
         assert "auth_type" in row
         assert "warning" in row
         # api_key providers get "paste X to activate" / others get the
-        # hermes model fallback.
+        # chiper model fallback.
         assert (
             row["warning"].startswith("paste ")
-            or row["warning"].startswith("run `hermes model`")
+            or row["warning"].startswith("run `chiper model`")
         )
 
 

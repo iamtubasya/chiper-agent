@@ -83,8 +83,8 @@ class DaytonaEnvironment(BaseEnvironment):
             disk_gib = 10
         resources = Resources(cpu=cpu, memory=memory_gib, disk=disk_gib)
 
-        labels = {"hermes_task_id": task_id}
-        sandbox_name = f"hermes-{task_id}"
+        labels = {"chiper_task_id": task_id}
+        sandbox_name = f"chiper-{task_id}"
 
         if self._persistent:
             try:
@@ -180,7 +180,7 @@ class DaytonaEnvironment(BaseEnvironment):
         self._sandbox.fs.upload_files(uploads)
 
     def _daytona_bulk_download(self, dest: Path) -> None:
-        """Download remote .hermes/ as a tar archive."""
+        """Download remote .chiper/ as a tar archive."""
         rel_base = f"{self._remote_home}/.chiperflux".lstrip("/")
         # PID-suffixed remote temp path avoids collisions if sync_back fires
         # concurrently for the same sandbox (e.g. retry after partial failure).

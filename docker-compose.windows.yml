@@ -12,7 +12,7 @@
 services:
   gateway:
     image: nousresearch/chiper-agent:latest
-    container_name: hermes
+    container_name: chiper
     restart: unless-stopped
     volumes:
       - ${USERPROFILE}//.chiperflux:/opt/data
@@ -23,7 +23,7 @@ services:
 
   dashboard:
     image: nousresearch/chiper-agent:latest
-    container_name: hermes-dashboard
+    container_name: chiper-dashboard
     restart: unless-stopped
     depends_on:
       - gateway

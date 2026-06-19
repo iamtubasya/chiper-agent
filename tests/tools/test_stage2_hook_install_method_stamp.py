@@ -8,11 +8,11 @@ $CHIPER_HOME (/opt/data) is a DATA volume that users commonly bind-mount from
 the host (``~/.chiperflux:/opt/data``) and sometimes share with a host-side
 Desktop/CLI install. Older images wrote ``printf 'docker' > $CHIPER_HOME/.install_method``
 at boot, which clobbered the host install's own marker — so the host's in-app
-updater read 'docker' and refused to run ``hermes update`` ("doesn't apply
+updater read 'docker' and refused to run ``chiper update`` ("doesn't apply
 inside the Docker container").
 
 The fix scopes the stamp to the install tree (baked at
-``/opt/hermes/.install_method`` in the Dockerfile, read first by
+``/opt/chiper/.install_method`` in the Dockerfile, read first by
 ``detect_install_method``). stage2 must therefore:
 
   * NOT write the 'docker' stamp into $CHIPER_HOME any more, and

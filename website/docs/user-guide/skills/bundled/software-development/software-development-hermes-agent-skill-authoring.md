@@ -1,12 +1,12 @@
 ---
-title: "Hermes Agent Skill Authoring — Author in-repo SKILL"
-sidebar_label: "Hermes Agent Skill Authoring"
+title: "Chiper Agent Skill Authoring — Author in-repo SKILL"
+sidebar_label: "Chiper Agent Skill Authoring"
 description: "Author in-repo SKILL"
 ---
 
 {/* This page is auto-generated from the skill's SKILL.md by website/scripts/generate-skill-docs.py. Edit the source SKILL.md, not this page. */}
 
-# Hermes Agent Skill Authoring
+# Chiper Agent Skill Authoring
 
 Author in-repo SKILL.md: frontmatter, validator, structure.
 
@@ -17,7 +17,7 @@ Author in-repo SKILL.md: frontmatter, validator, structure.
 | Source | Bundled (installed by default) |
 | Path | `skills/software-development/chiper-agent-skill-authoring` |
 | Version | `1.0.0` |
-| Author | Hermes Agent |
+| Author | Chiper Agent |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `skills`, `authoring`, `chiper-agent`, `conventions`, `skill-md` |
@@ -26,10 +26,10 @@ Author in-repo SKILL.md: frontmatter, validator, structure.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Chiper loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
-# Authoring Hermes-Agent Skills (in-repo)
+# Authoring Chiper-Agent Skills (in-repo)
 
 ## Overview
 
@@ -62,10 +62,10 @@ Peer-matched shape used by every skill under `skills/software-development/`:
 name: my-skill-name               # lowercase, hyphens, ≤64 chars (MAX_NAME_LENGTH)
 description: Use when <trigger>. <one-line behavior>.
 version: 1.0.0
-author: Hermes Agent
+author: Chiper Agent
 license: MIT
 metadata:
-  hermes:
+  chiper:
     tags: [short, descriptive, tags]
     related_skills: [other-skill, another-skill]
 ---
@@ -96,7 +96,7 @@ One or two paragraphs: what and why.
 ## <Topic sections specific to the skill>
 - Quick-reference tables are common
 - Code blocks with exact commands
-- Hermes-specific recipes (tests via scripts/run_tests.sh, ui-tui paths, etc.)
+- Chiper-specific recipes (tests via scripts/run_tests.sh, ui-tui paths, etc.)
 
 ## Common Pitfalls
 Numbered list of mistakes and their fixes.
@@ -145,7 +145,7 @@ Pick the closest existing category. Don't invent new top-level categories casual
 
 ## Cross-Referencing Other Skills
 
-`metadata.hermes.related_skills` unions both trees (`skills/` in-repo and `~/.chiperflux/skills/`) at load time. You CAN reference a user-local skill from an in-repo skill, but it won't resolve for other users who clone the repo fresh. Prefer referencing only in-repo skills from in-repo skills. If a frequently-referenced skill lives only in `~/.chiperflux/skills/`, consider promoting it to the repo.
+`metadata.chiper.related_skills` unions both trees (`skills/` in-repo and `~/.chiperflux/skills/`) at load time. You CAN reference a user-local skill from an in-repo skill, but it won't resolve for other users who clone the repo fresh. Prefer referencing only in-repo skills from in-repo skills. If a frequently-referenced skill lives only in `~/.chiperflux/skills/`, consider promoting it to the repo.
 
 ## Editing Existing In-Repo Skills
 
@@ -174,7 +174,7 @@ Pick the closest existing category. Don't invent new top-level categories casual
 
 - [ ] File is at `skills/<category>/<name>/SKILL.md` (not in `~/.chiperflux/skills/`)
 - [ ] Frontmatter starts at byte 0 with `---`, closes with `\n---\n`
-- [ ] `name`, `description`, `version`, `author`, `license`, `metadata.hermes.{tags, related_skills}` all present
+- [ ] `name`, `description`, `version`, `author`, `license`, `metadata.chiper.{tags, related_skills}` all present
 - [ ] Name ≤ 64 chars, lowercase + hyphens
 - [ ] Description ≤ 1024 chars and starts with "Use when ..."
 - [ ] Total file ≤ 100,000 chars (aim for 8-15k)

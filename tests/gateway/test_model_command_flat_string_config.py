@@ -58,7 +58,7 @@ def _setup_isolated_home(tmp_path, monkeypatch, model_yaml_value):
     """Write a config.yaml with the given ``model:`` value and stub the heavy bits."""
     import gateway.run as gateway_run
 
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     cfg_path = chiper_home / "config.yaml"
     cfg_path.write_text(
@@ -73,7 +73,7 @@ def _setup_isolated_home(tmp_path, monkeypatch, model_yaml_value):
         lambda **kw: _fake_switch_result(),
     )
     # save_config writes to ``get_chiper_home() / config.yaml`` — point it here.
-    monkeypatch.setattr("hermes_constants.get_chiper_home", lambda: chiper_home)
+    monkeypatch.setattr("chiper_constants.get_chiper_home", lambda: chiper_home)
     monkeypatch.setattr("chiper_cli.config.get_chiper_home", lambda: chiper_home)
     return cfg_path
 
@@ -112,7 +112,7 @@ async def test_model_global_persists_when_config_has_missing_model(tmp_path, mon
     """
     import gateway.run as gateway_run
 
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     cfg_path = chiper_home / "config.yaml"
     cfg_path.write_text(yaml.safe_dump({"providers": {}}), encoding="utf-8")
@@ -123,7 +123,7 @@ async def test_model_global_persists_when_config_has_missing_model(tmp_path, mon
         "chiper_cli.model_switch.switch_model",
         lambda **kw: _fake_switch_result(),
     )
-    monkeypatch.setattr("hermes_constants.get_chiper_home", lambda: chiper_home)
+    monkeypatch.setattr("chiper_constants.get_chiper_home", lambda: chiper_home)
     monkeypatch.setattr("chiper_cli.config.get_chiper_home", lambda: chiper_home)
 
     result = await _make_runner()._handle_model_command(

@@ -258,8 +258,8 @@ class TestExchangeAuthCode:
         assert not setup_module.PENDING_AUTH_PATH.exists()
 
 
-class TestHermesConstantsFallback:
-    """Tests for _chiper_home.py fallback when hermes_constants is unavailable."""
+class TestChiperConstantsFallback:
+    """Tests for _chiper_home.py fallback when chiper_constants is unavailable."""
 
     HELPER_PATH = (
         Path(__file__).resolve().parents[2]
@@ -267,8 +267,8 @@ class TestHermesConstantsFallback:
     )
 
     def _load_helper(self, monkeypatch):
-        """Load _chiper_home.py with hermes_constants blocked."""
-        monkeypatch.setitem(sys.modules, "hermes_constants", None)
+        """Load _chiper_home.py with chiper_constants blocked."""
+        monkeypatch.setitem(sys.modules, "chiper_constants", None)
         spec = importlib.util.spec_from_file_location("_chiper_home_test", self.HELPER_PATH)
         module = importlib.util.module_from_spec(spec)
         assert spec.loader is not None
@@ -276,22 +276,22 @@ class TestHermesConstantsFallback:
         return module
 
     def test_fallback_uses_chiper_home_env_var(self, monkeypatch, tmp_path):
-        """When hermes_constants is missing, CHIPER_HOME comes from env var."""
-        monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "custom-hermes"))
+        """When chiper_constants is missing, CHIPER_HOME comes from env var."""
+        monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "custom-chiper"))
         module = self._load_helper(monkeypatch)
-        assert module.get_chiper_home() == tmp_path / "custom-hermes"
+        assert module.get_chiper_home() == tmp_path / "custom-chiper"
 
-    def test_fallback_defaults_to_dot_hermes(self, monkeypatch):
-        """When hermes_constants is missing and CHIPER_HOME unset, default to ~/.chiperflux."""
+    def test_fallback_defaults_to_dot_chiper(self, monkeypatch):
+        """When chiper_constants is missing and CHIPER_HOME unset, default to ~/.chiperflux."""
         monkeypatch.delenv("CHIPER_HOME", raising=False)
         module = self._load_helper(monkeypatch)
-        assert module.get_chiper_home() == Path.home() / ".hermes"
+        assert module.get_chiper_home() == Path.home() / ".chiper"
 
     def test_fallback_ignores_empty_chiper_home(self, monkeypatch):
         """Empty/whitespace CHIPER_HOME is treated as unset."""
         monkeypatch.setenv("CHIPER_HOME", "  ")
         module = self._load_helper(monkeypatch)
-        assert module.get_chiper_home() == Path.home() / ".hermes"
+        assert module.get_chiper_home() == Path.home() / ".chiper"
 
     def test_fallback_display_chiper_home_shortens_path(self, monkeypatch):
         """Fallback display_chiper_home() uses ~/ shorthand like the real one."""
@@ -301,18 +301,18 @@ class TestHermesConstantsFallback:
 
     def test_fallback_display_chiper_home_profile_path(self, monkeypatch):
         """Fallback display_chiper_home() handles profile paths under ~/."""
-        monkeypatch.setenv("CHIPER_HOME", str(Path.home() / ".hermes/profiles/coder"))
+        monkeypatch.setenv("CHIPER_HOME", str(Path.home() / ".chiper/profiles/coder"))
         module = self._load_helper(monkeypatch)
         assert module.display_chiper_home() == "~/.chiperflux/profiles/coder"
 
     def test_fallback_display_chiper_home_custom_path(self, monkeypatch):
         """Fallback display_chiper_home() returns full path for non-home locations."""
-        monkeypatch.setenv("CHIPER_HOME", "/opt/hermes-custom")
+        monkeypatch.setenv("CHIPER_HOME", "/opt/chiper-custom")
         module = self._load_helper(monkeypatch)
-        assert module.display_chiper_home() == "/opt/hermes-custom"
+        assert module.display_chiper_home() == "/opt/chiper-custom"
 
-    def test_delegates_to_hermes_constants_when_available(self):
-        """When hermes_constants IS importable, _chiper_home delegates to it."""
+    def test_delegates_to_chiper_constants_when_available(self):
+        """When chiper_constants IS importable, _chiper_home delegates to it."""
         spec = importlib.util.spec_from_file_location(
             "_chiper_home_happy", self.HELPER_PATH
         )
@@ -320,8 +320,8 @@ class TestHermesConstantsFallback:
         assert spec.loader is not None
         spec.loader.exec_module(module)
         import chiper_constants
-        assert module.get_chiper_home is hermes_constants.get_chiper_home
-        assert module.display_chiper_home is hermes_constants.display_chiper_home
+        assert module.get_chiper_home is chiper_constants.get_chiper_home
+        assert module.display_chiper_home is chiper_constants.display_chiper_home
 
 
 def _load_setup_module(monkeypatch):
@@ -345,7 +345,7 @@ def _force_deps_missing(monkeypatch):
 class TestInstallDeps:
     """Tests for install_deps() interpreter/installer selection.
 
-    Regression coverage for the Hermes Docker image, whose venv is built with
+    Regression coverage for the Chiper Docker image, whose venv is built with
     `uv sync` and ships without pip — `sys.executable -m pip install` fails
     with `No module named pip`, so install_deps() must fall back to uv.
     """

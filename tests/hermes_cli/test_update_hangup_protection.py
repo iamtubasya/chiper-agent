@@ -1,8 +1,8 @@
-"""Tests for SIGHUP protection and stdout mirroring in ``hermes update``.
+"""Tests for SIGHUP protection and stdout mirroring in ``chiper update``.
 
 Covers ``_UpdateOutputStream``, ``_install_hangup_protection``, and
 ``_finalize_update_output`` in ``chiper_cli/main.py``.  These exist so
-that ``hermes update`` survives a terminal disconnect mid-install
+that ``chiper update`` survives a terminal disconnect mid-install
 (SSH drop, shell close) without leaving the venv half-installed.
 """
 
@@ -184,8 +184,8 @@ class TestInstallHangupProtection:
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
         # Clear cached get_chiper_home if present
         import chiper_cli.config as _cfg
-        if hasattr(_cfg, "_HERMES_HOME_CACHE"):
-            _cfg._HERMES_HOME_CACHE = None  # type: ignore[attr-defined]
+        if hasattr(_cfg, "_CHIPER_HOME_CACHE"):
+            _cfg._CHIPER_HOME_CACHE = None  # type: ignore[attr-defined]
 
         original_handler = signal.getsignal(signal.SIGHUP)
         state = _install_hangup_protection(gateway_mode=False)
@@ -201,8 +201,8 @@ class TestInstallHangupProtection:
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
         # Nuke any cached home path
         import chiper_cli.config as _cfg
-        if hasattr(_cfg, "_HERMES_HOME_CACHE"):
-            _cfg._HERMES_HOME_CACHE = None  # type: ignore[attr-defined]
+        if hasattr(_cfg, "_CHIPER_HOME_CACHE"):
+            _cfg._CHIPER_HOME_CACHE = None  # type: ignore[attr-defined]
 
         prev_out, prev_err = sys.stdout, sys.stderr
         state = _install_hangup_protection(gateway_mode=False)
@@ -221,7 +221,7 @@ class TestInstallHangupProtection:
             assert log_path.exists()
             contents = log_path.read_text(encoding="utf-8")
             assert "checking mirror" in contents
-            assert "hermes update started" in contents
+            assert "chiper update started" in contents
         finally:
             _finalize_update_output(state)
             # Sanity-check restoration
@@ -231,8 +231,8 @@ class TestInstallHangupProtection:
     def test_logs_dir_created_if_missing(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
         import chiper_cli.config as _cfg
-        if hasattr(_cfg, "_HERMES_HOME_CACHE"):
-            _cfg._HERMES_HOME_CACHE = None  # type: ignore[attr-defined]
+        if hasattr(_cfg, "_CHIPER_HOME_CACHE"):
+            _cfg._CHIPER_HOME_CACHE = None  # type: ignore[attr-defined]
 
         # No logs/ dir yet.
         assert not (tmp_path / "logs").exists()
@@ -287,8 +287,8 @@ class TestFinalizeUpdateOutput:
     def test_restores_streams_and_closes_log(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
         import chiper_cli.config as _cfg
-        if hasattr(_cfg, "_HERMES_HOME_CACHE"):
-            _cfg._HERMES_HOME_CACHE = None  # type: ignore[attr-defined]
+        if hasattr(_cfg, "_CHIPER_HOME_CACHE"):
+            _cfg._CHIPER_HOME_CACHE = None  # type: ignore[attr-defined]
 
         prev_out = sys.stdout
         state = _install_hangup_protection(gateway_mode=False)

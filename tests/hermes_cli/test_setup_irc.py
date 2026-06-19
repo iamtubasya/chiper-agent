@@ -1,7 +1,7 @@
-"""Tests for IRC gateway configuration via `hermes setup gateway` UI.
+"""Tests for IRC gateway configuration via `chiper setup gateway` UI.
 
 Covers the full plugin-platform discovery → status → configure flow so that
-a fresh Hermes install (no state, no env vars) can set up IRC through the
+a fresh Chiper install (no state, no env vars) can set up IRC through the
 interactive setup menus.
 """
 
@@ -56,7 +56,7 @@ def _unregister_irc_platform():
 
 
 class TestIRCFreshInstallDiscovery:
-    """IRC appears in the setup menu on a brand-new Hermes install."""
+    """IRC appears in the setup menu on a brand-new Chiper install."""
 
     def test_irc_appears_in_all_platforms(self, monkeypatch):
         """When the IRC plugin is registered, _all_platforms() surfaces it."""
@@ -99,8 +99,8 @@ class TestIRCFreshInstallDiscovery:
         plat = _register_irc_platform()
         try:
             monkeypatch.setenv("IRC_SERVER", "irc.libera.chat")
-            monkeypatch.setenv("IRC_CHANNEL", "#hermes")
-            monkeypatch.setenv("IRC_NICKNAME", "hermes-bot")
+            monkeypatch.setenv("IRC_CHANNEL", "#chiper")
+            monkeypatch.setenv("IRC_NICKNAME", "chiper-bot")
 
             status = gateway_mod._platform_status(plat)
             assert status == "configured"
@@ -169,7 +169,7 @@ class TestIRCInteractiveSetup:
 
 
 class TestIRCGatewaySetupFreshInstall:
-    """Simulate the full `hermes setup gateway` experience with IRC present."""
+    """Simulate the full `chiper setup gateway` experience with IRC present."""
 
     def test_setup_gateway_shows_irc_in_platform_menu(self, monkeypatch, capsys, tmp_path):
         """The gateway setup menu lists IRC among the available platforms."""
@@ -226,8 +226,8 @@ class TestIRCGatewaySetupFreshInstall:
         _register_irc_platform()
         try:
             monkeypatch.setenv("IRC_SERVER", "irc.libera.chat")
-            monkeypatch.setenv("IRC_CHANNEL", "#hermes")
-            monkeypatch.setenv("IRC_NICKNAME", "hermes-bot")
+            monkeypatch.setenv("IRC_CHANNEL", "#chiper")
+            monkeypatch.setenv("IRC_NICKNAME", "chiper-bot")
 
             monkeypatch.setattr(setup_mod, "prompt_yes_no", lambda *a, **kw: False)
             monkeypatch.setattr(setup_mod, "prompt_choice", lambda *a, **kw: 0)

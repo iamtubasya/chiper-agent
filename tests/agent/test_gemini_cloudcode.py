@@ -28,7 +28,7 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def _isolate_env(monkeypatch, tmp_path):
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir(parents=True)
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     monkeypatch.setenv("CHIPER_HOME", str(home))
@@ -366,7 +366,7 @@ class TestHeadlessDetection:
         monkeypatch.setenv("SSH_CONNECTION", "1.2.3.4 22 5.6.7.8 9876")
         assert _is_headless() is True
 
-    def test_detects_hermes_headless(self, monkeypatch):
+    def test_detects_chiper_headless(self, monkeypatch):
         from agent.google_oauth import _is_headless
 
         monkeypatch.setenv("CHIPER_HEADLESS", "1")

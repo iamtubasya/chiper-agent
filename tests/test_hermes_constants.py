@@ -1,4 +1,4 @@
-"""Tests for hermes_constants module."""
+"""Tests for chiper_constants module."""
 
 import os
 from pathlib import Path
@@ -16,7 +16,7 @@ from chiper_constants import (
 )
 
 
-class TestGetDefaultHermesRoot:
+class TestGetDefaultChiperRoot:
     """Tests for get_default_chiper_root() — Docker/custom deployment awareness."""
 
     def test_no_chiper_home_returns_native(self, tmp_path, monkeypatch):
@@ -24,11 +24,11 @@ class TestGetDefaultHermesRoot:
         monkeypatch.delenv("CHIPER_HOME", raising=False)
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
-        assert get_default_chiper_root() == tmp_path / ".hermes"
+        assert get_default_chiper_root() == tmp_path / ".chiper"
 
     def test_chiper_home_is_native(self, tmp_path, monkeypatch):
         """When CHIPER_HOME = ~/.chiperflux, returns ~/.chiperflux."""
-        native = tmp_path / ".hermes"
+        native = tmp_path / ".chiper"
         native.mkdir()
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
         monkeypatch.setenv("CHIPER_HOME", str(native))
@@ -36,7 +36,7 @@ class TestGetDefaultHermesRoot:
 
     def test_chiper_home_is_profile(self, tmp_path, monkeypatch):
         """When CHIPER_HOME is a profile under ~/.chiperflux, returns ~/.chiperflux."""
-        native = tmp_path / ".hermes"
+        native = tmp_path / ".chiper"
         profile = native / "profiles" / "coder"
         profile.mkdir(parents=True)
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -53,7 +53,7 @@ class TestGetDefaultHermesRoot:
 
     def test_chiper_home_is_custom_path(self, tmp_path, monkeypatch):
         """Any CHIPER_HOME outside ~/.chiperflux is treated as the root."""
-        custom = tmp_path / "my-hermes-data"
+        custom = tmp_path / "my-chiper-data"
         custom.mkdir()
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
         monkeypatch.setenv("CHIPER_HOME", str(custom))
@@ -70,39 +70,39 @@ class TestGetDefaultHermesRoot:
         assert get_default_chiper_root() == docker_root
 
     def test_no_chiper_home_returns_localappdata_root_on_windows(self, tmp_path, monkeypatch):
-        """Native Windows falls back to %LOCALAPPDATA%\\hermes, not ~/.chiperflux."""
+        """Native Windows falls back to %LOCALAPPDATA%\\chiper, not ~/.chiperflux."""
         local_appdata = tmp_path / "LocalAppData"
         monkeypatch.delenv("CHIPER_HOME", raising=False)
         monkeypatch.setenv("LOCALAPPDATA", str(local_appdata))
         monkeypatch.setattr(Path, "home", lambda: tmp_path / "Home")
-        monkeypatch.setattr(hermes_constants.sys, "platform", "win32")
+        monkeypatch.setattr(chiper_constants.sys, "platform", "win32")
 
-        assert get_default_chiper_root() == local_appdata / "hermes"
+        assert get_default_chiper_root() == local_appdata / "chiper"
 
     def test_no_chiper_home_uses_windows_path_when_localappdata_missing(self, tmp_path, monkeypatch):
-        """Windows fallback still uses AppData/Local/hermes without LOCALAPPDATA."""
+        """Windows fallback still uses AppData/Local/chiper without LOCALAPPDATA."""
         home = tmp_path / "Home"
         monkeypatch.delenv("CHIPER_HOME", raising=False)
         monkeypatch.delenv("LOCALAPPDATA", raising=False)
         monkeypatch.setattr(Path, "home", lambda: home)
-        monkeypatch.setattr(hermes_constants.sys, "platform", "win32")
+        monkeypatch.setattr(chiper_constants.sys, "platform", "win32")
 
-        assert get_default_chiper_root() == home / "AppData" / "Local" / "hermes"
+        assert get_default_chiper_root() == home / "AppData" / "Local" / "chiper"
 
 
-class TestGetHermesHome:
+class TestGetChiperHome:
     """Tests for get_chiper_home() platform-aware fallback."""
 
     def test_windows_fallback_uses_localappdata(self, tmp_path, monkeypatch):
-        """When CHIPER_HOME is unset on Windows, use %LOCALAPPDATA%\\hermes."""
+        """When CHIPER_HOME is unset on Windows, use %LOCALAPPDATA%\\chiper."""
         local_appdata = tmp_path / "LocalAppData"
         monkeypatch.delenv("CHIPER_HOME", raising=False)
         monkeypatch.setenv("LOCALAPPDATA", str(local_appdata))
         monkeypatch.setattr(Path, "home", lambda: tmp_path / "Home")
-        monkeypatch.setattr(hermes_constants.sys, "platform", "win32")
-        monkeypatch.setattr(hermes_constants, "_profile_fallback_warned", False)
+        monkeypatch.setattr(chiper_constants.sys, "platform", "win32")
+        monkeypatch.setattr(chiper_constants, "_profile_fallback_warned", False)
 
-        assert get_chiper_home() == local_appdata / "hermes"
+        assert get_chiper_home() == local_appdata / "chiper"
 
 
 class TestIsContainer:
@@ -110,7 +110,7 @@ class TestIsContainer:
 
     def _reset_cache(self, monkeypatch):
         """Reset the cached detection result before each test."""
-        monkeypatch.setattr(hermes_constants, "_container_detected", None)
+        monkeypatch.setattr(chiper_constants, "_container_detected", None)
 
     def test_detects_dockerenv(self, monkeypatch, tmp_path):
         """/.dockerenv triggers container detection."""
@@ -202,7 +202,7 @@ class TestIsContainer:
 
     def test_caches_result(self, monkeypatch):
         """Second call uses cached value without re-probing."""
-        monkeypatch.setattr(hermes_constants, "_container_detected", True)
+        monkeypatch.setattr(chiper_constants, "_container_detected", True)
         assert is_container() is True
         # Even if we make os.path.exists return False, cached value wins
         monkeypatch.setattr(os.path, "exists", lambda p: False)
@@ -268,7 +268,7 @@ class TestSecureParentDir:
 
     def test_safe_path_calls_chmod(self, tmp_path, monkeypatch):
         """Normal nested path (depth >= 3) should call os.chmod."""
-        safe_dir = tmp_path / "home" / "user" / ".hermes"
+        safe_dir = tmp_path / "home" / "user" / ".chiper"
         safe_dir.mkdir(parents=True)
         target = safe_dir / "auth.json"
         target.touch()

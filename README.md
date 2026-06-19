@@ -12,7 +12,7 @@
   <a href="https://github.com/iamtubasya/chiper-agent"><img src="https://img.shields.io/badge/Built%20by-ChiperFlux-blueviolet?style=for-the-badge" alt="Built by ChiperFlux"></a>
 </p>
 
-**ChiperFlux Agent** — AI agent yang bisa belajar dari pengalaman, bikin skill otomatis, dan makin pintar seiring waktu. Fork dari [Hermes Agent](https://github.com/NousResearch/hermes-agent) oleh Nous Research.
+**ChiperFlux Agent** — AI agent yang bisa belajar dari pengalaman, bikin skill otomatis, dan makin pintar seiring waktu. Fork dari [Chiper Agent](https://github.com/NousResearch/chiper-agent) oleh Nous Research.
 
 ---
 
@@ -100,20 +100,20 @@ chiper-agent/
 
 ---
 
-## Perbedaan dengan Hermes Agent
+## Perbedaan dengan Chiper Agent
 
-| Aspek | Hermes Agent | ChiperFlux Agent |
+| Aspek | Chiper Agent | ChiperFlux Agent |
 |-------|-------------|------------------|
-| Command | `hermes` | `chiper` |
-| Data Dir | `~/.hermes` | `~/.chiperflux` |
-| Code Dir | `/usr/local/lib/hermes-agent` | `/usr/local/lib/chiper-agent` |
+| Command | `chiper` | `chiper` |
+| Data Dir | `~/.chiper` | `~/.chiperflux` |
+| Code Dir | `/usr/local/lib/chiper-agent` | `/usr/local/lib/chiper-agent` |
 | Developer | Nous Research | ChiperFlux / Tubasya |
 
 ---
 
 ## Credits
 
-- Original: [Hermes Agent](https://github.com/NousResearch/hermes-agent) oleh [Nous Research](https://nousresearch.com)
+- Original: [Chiper Agent](https://github.com/NousResearch/chiper-agent) oleh [Nous Research](https://nousresearch.com)
 - Fork & Customization: [ChiperFlux](https://github.com/iamtubasya)
 
 ---

@@ -22,7 +22,7 @@ def isolated_kanban_home_with_profiles(monkeypatch):
         os.makedirs(os.path.join(test_home, "profiles", prof), exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", test_home)
     for mod in list(sys.modules.keys()):
-        if mod.startswith("chiper_cli") or mod.startswith("hermes_state") or mod == "hermes_constants":
+        if mod.startswith("chiper_cli") or mod.startswith("chiper_state") or mod == "chiper_constants":
             del sys.modules[mod]
     from chiper_cli import kanban_db
     yield kanban_db

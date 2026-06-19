@@ -49,7 +49,7 @@ def _install_example_plugin(_isolate_chiper_home):
     The user-plugin source is preferred over a transient
     ``CHIPER_BUNDLED_PLUGINS`` override because the bundled dir is
     resolved per-call (other tests in the suite implicitly rely on the
-    real bundled plugins — kanban, hermes-achievements, model providers
+    real bundled plugins — kanban, chiper-achievements, model providers
     — being available, and globally swapping that root would yank them
     all). User plugins are first in the discovery search order, so
     laying down the fixture here is enough.
@@ -142,7 +142,7 @@ class TestReloadEnv:
         os.environ.pop("TEST_RELOAD_VAR", None)
 
     def test_removes_deleted_known_vars(self, tmp_path):
-        """reload_env() removes known Hermes vars not present in .env."""
+        """reload_env() removes known Chiper vars not present in .env."""
         env_file = tmp_path / ".env"
         env_file.write_text("")  # empty .env
         # Pick a known key from OPTIONAL_ENV_VARS
@@ -154,7 +154,7 @@ class TestReloadEnv:
             assert count >= 1
 
     def test_does_not_remove_unknown_vars(self, tmp_path):
-        """reload_env() preserves non-Hermes env vars even when absent from .env."""
+        """reload_env() preserves non-Chiper env vars even when absent from .env."""
         env_file = tmp_path / ".env"
         env_file.write_text("")
         with patch.dict(reload_env.__globals__, {"get_env_path": lambda: env_file}):
@@ -233,7 +233,7 @@ class TestWebServerEndpoints:
         from chiper_constants import get_chiper_home
         from chiper_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
-        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db")
+        monkeypatch.setattr(chiper_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db")
 
         self.client = TestClient(app)
         self.client.headers[_SESSION_HEADER_NAME] = _SESSION_TOKEN
@@ -245,7 +245,7 @@ class TestWebServerEndpoints:
         assert "version" in data
         assert "chiper_home" in data
         assert "active_sessions" in data
-        assert data["can_update_hermes"] is True
+        assert data["can_update_chiper"] is True
 
     def test_get_status_hides_update_capability_in_managed_runtime(self, monkeypatch):
         import chiper_cli.web_server as web_server
@@ -254,13 +254,13 @@ class TestWebServerEndpoints:
 
         resp = self.client.get("/api/status")
         assert resp.status_code == 200
-        assert resp.json()["can_update_hermes"] is False
+        assert resp.json()["can_update_chiper"] is False
 
     def test_dashboard_update_capability_detects_generic_container(self, monkeypatch):
         import chiper_constants
         import chiper_cli.web_server as web_server
 
-        monkeypatch.setattr(hermes_constants, "is_container", lambda: True)
+        monkeypatch.setattr(chiper_constants, "is_container", lambda: True)
 
         assert web_server._dashboard_local_update_managed_externally() is True
 
@@ -425,7 +425,7 @@ class TestWebServerEndpoints:
             def close(self):
                 pass
 
-        monkeypatch.setattr("hermes_state.SessionDB", _FakeDB)
+        monkeypatch.setattr("chiper_state.SessionDB", _FakeDB)
 
         resp = self.client.get("/api/sessions?limit=5&offset=0&min_messages=3")
         assert resp.status_code == 200
@@ -896,7 +896,7 @@ class TestWebServerEndpoints:
         resp = self.client.post("/api/audio/speak", json={"text": "   "})
         assert resp.status_code == 400
 
-    def test_update_hermes_returns_docker_guidance_without_spawning(self, monkeypatch):
+    def test_update_chiper_returns_docker_guidance_without_spawning(self, monkeypatch):
         import chiper_cli.web_server as web_server
 
         spawned = False
@@ -904,25 +904,25 @@ class TestWebServerEndpoints:
         def fail_spawn(*_args, **_kwargs):
             nonlocal spawned
             spawned = True
-            raise AssertionError("docker update guard should not spawn hermes update")
+            raise AssertionError("docker update guard should not spawn chiper update")
 
         monkeypatch.setattr(web_server, "detect_install_method", lambda _root: "docker")
-        monkeypatch.setattr(web_server, "_spawn_hermes_action", fail_spawn)
-        web_server._ACTION_PROCS.pop("hermes-update", None)
-        web_server._ACTION_RESULTS.pop("hermes-update", None)
+        monkeypatch.setattr(web_server, "_spawn_chiper_action", fail_spawn)
+        web_server._ACTION_PROCS.pop("chiper-update", None)
+        web_server._ACTION_RESULTS.pop("chiper-update", None)
 
-        resp = self.client.post("/api/hermes/update")
+        resp = self.client.post("/api/chiper/update")
 
         assert resp.status_code == 200
         data = resp.json()
         assert data["ok"] is False
-        assert data["name"] == "hermes-update"
+        assert data["name"] == "chiper-update"
         assert data["pid"] is None
         assert data["error"] == "docker_update_unsupported"
         assert "docker pull nousresearch/chiper-agent:latest" in data["message"]
         assert spawned is False
 
-        status = self.client.get("/api/actions/hermes-update/status")
+        status = self.client.get("/api/actions/chiper-update/status")
         assert status.status_code == 200
         status_data = status.json()
         assert status_data["running"] is False
@@ -930,7 +930,7 @@ class TestWebServerEndpoints:
         assert status_data["pid"] is None
         assert any("docker pull nousresearch/chiper-agent:latest" in line for line in status_data["lines"])
 
-    def test_update_hermes_returns_managed_runtime_guidance_without_spawning(self, monkeypatch):
+    def test_update_chiper_returns_managed_runtime_guidance_without_spawning(self, monkeypatch):
         import chiper_cli.web_server as web_server
 
         spawned = False
@@ -939,7 +939,7 @@ class TestWebServerEndpoints:
         def fail_spawn(*_args, **_kwargs):
             nonlocal spawned
             spawned = True
-            raise AssertionError("managed runtime update guard should not spawn hermes update")
+            raise AssertionError("managed runtime update guard should not spawn chiper update")
 
         def fail_detect(*_args, **_kwargs):
             nonlocal detected
@@ -948,23 +948,23 @@ class TestWebServerEndpoints:
 
         monkeypatch.setattr(web_server, "_dashboard_local_update_managed_externally", lambda: True)
         monkeypatch.setattr(web_server, "detect_install_method", fail_detect)
-        monkeypatch.setattr(web_server, "_spawn_hermes_action", fail_spawn)
-        web_server._ACTION_PROCS.pop("hermes-update", None)
-        web_server._ACTION_RESULTS.pop("hermes-update", None)
+        monkeypatch.setattr(web_server, "_spawn_chiper_action", fail_spawn)
+        web_server._ACTION_PROCS.pop("chiper-update", None)
+        web_server._ACTION_RESULTS.pop("chiper-update", None)
 
-        resp = self.client.post("/api/hermes/update")
+        resp = self.client.post("/api/chiper/update")
 
         assert resp.status_code == 200
         data = resp.json()
         assert data["ok"] is False
-        assert data["name"] == "hermes-update"
+        assert data["name"] == "chiper-update"
         assert data["pid"] is None
         assert data["error"] == "dashboard_update_managed_externally"
         assert "managed outside this dashboard" in data["message"]
         assert spawned is False
         assert detected is False
 
-        status = self.client.get("/api/actions/hermes-update/status")
+        status = self.client.get("/api/actions/chiper-update/status")
         assert status.status_code == 200
         status_data = status.json()
         assert status_data["running"] is False
@@ -972,7 +972,7 @@ class TestWebServerEndpoints:
         assert status_data["pid"] is None
         assert any("managed outside this dashboard" in line for line in status_data["lines"])
 
-    def test_update_hermes_spawns_on_non_docker_install(self, monkeypatch):
+    def test_update_chiper_spawns_on_non_docker_install(self, monkeypatch):
         import chiper_cli.web_server as web_server
 
         class Proc:
@@ -988,15 +988,15 @@ class TestWebServerEndpoints:
             return Proc()
 
         monkeypatch.setattr(web_server, "detect_install_method", lambda _root: "git")
-        monkeypatch.setattr(web_server, "_spawn_hermes_action", fake_spawn)
-        web_server._ACTION_PROCS.pop("hermes-update", None)
-        web_server._ACTION_RESULTS.pop("hermes-update", None)
+        monkeypatch.setattr(web_server, "_spawn_chiper_action", fake_spawn)
+        web_server._ACTION_PROCS.pop("chiper-update", None)
+        web_server._ACTION_RESULTS.pop("chiper-update", None)
 
-        resp = self.client.post("/api/hermes/update")
+        resp = self.client.post("/api/chiper/update")
 
         assert resp.status_code == 200
-        assert resp.json() == {"ok": True, "pid": 12345, "name": "hermes-update"}
-        assert calls == [(["update"], "hermes-update")]
+        assert resp.json() == {"ok": True, "pid": 12345, "name": "chiper-update"}
+        assert calls == [(["update"], "chiper-update")]
 
     def test_action_status_reaps_completed_process(self, monkeypatch):
         import chiper_cli.web_server as web_server
@@ -1013,11 +1013,11 @@ class TestWebServerEndpoints:
                 waited["done"] = True
 
         proc = _Proc()
-        web_server._ACTION_PROCS.pop("hermes-update", None)
-        web_server._ACTION_RESULTS.pop("hermes-update", None)
-        web_server._ACTION_PROCS["hermes-update"] = proc
+        web_server._ACTION_PROCS.pop("chiper-update", None)
+        web_server._ACTION_RESULTS.pop("chiper-update", None)
+        web_server._ACTION_PROCS["chiper-update"] = proc
 
-        resp = self.client.get("/api/actions/hermes-update/status")
+        resp = self.client.get("/api/actions/chiper-update/status")
         assert resp.status_code == 200
         data = resp.json()
         assert data["running"] is False
@@ -1026,8 +1026,8 @@ class TestWebServerEndpoints:
 
         # Process should have been reaped and moved to results.
         assert waited["done"] is True
-        assert "hermes-update" not in web_server._ACTION_PROCS
-        assert web_server._ACTION_RESULTS["hermes-update"] == {
+        assert "chiper-update" not in web_server._ACTION_PROCS
+        assert web_server._ACTION_RESULTS["chiper-update"] == {
             "exit_code": 0,
             "pid": 42424,
         }
@@ -1045,17 +1045,17 @@ class TestWebServerEndpoints:
                 raise OSError("already reaped")
 
         proc = _Proc()
-        web_server._ACTION_PROCS.pop("hermes-update", None)
-        web_server._ACTION_RESULTS.pop("hermes-update", None)
-        web_server._ACTION_PROCS["hermes-update"] = proc
+        web_server._ACTION_PROCS.pop("chiper-update", None)
+        web_server._ACTION_RESULTS.pop("chiper-update", None)
+        web_server._ACTION_PROCS["chiper-update"] = proc
 
-        resp = self.client.get("/api/actions/hermes-update/status")
+        resp = self.client.get("/api/actions/chiper-update/status")
         assert resp.status_code == 200
         data = resp.json()
         assert data["exit_code"] == 1
         # Still reaped despite wait() raising.
-        assert "hermes-update" not in web_server._ACTION_PROCS
-        assert web_server._ACTION_RESULTS["hermes-update"] == {
+        assert "chiper-update" not in web_server._ACTION_PROCS
+        assert web_server._ACTION_RESULTS["chiper-update"] == {
             "exit_code": 1,
             "pid": 99,
         }
@@ -1277,7 +1277,7 @@ class TestWebServerEndpoints:
 
     def test_model_set_maps_unknown_vendor_to_aggregator(self, monkeypatch):
         """A bare vendor name from analytics rows (no billing_provider) is not
-        a Hermes provider — keep the user's aggregator instead of writing a
+        a Chiper provider — keep the user's aggregator instead of writing a
         provider that can never resolve credentials."""
         monkeypatch.setattr(
             "chiper_cli.model_cost_guard.expensive_model_warning",
@@ -1324,7 +1324,7 @@ class TestWebServerEndpoints:
 
     def test_ops_import_passes_force_flag(self, tmp_path, monkeypatch):
         """force=True must append --force so the spawned non-interactive
-        `hermes import` doesn't auto-abort at the overwrite prompt."""
+        `chiper import` doesn't auto-abort at the overwrite prompt."""
         import chiper_cli.web_server as ws
 
         archive = tmp_path / "backup.zip"
@@ -1340,7 +1340,7 @@ class TestWebServerEndpoints:
             from types import SimpleNamespace as NS
             return NS(pid=12345)
 
-        monkeypatch.setattr(ws, "_spawn_hermes_action", fake_spawn)
+        monkeypatch.setattr(ws, "_spawn_chiper_action", fake_spawn)
 
         resp = self.client.post(
             "/api/ops/import", json={"archive": str(archive), "force": True},
@@ -1570,7 +1570,7 @@ class TestWebServerEndpoints:
         payload = ws._telegram_onboarding_request_sync(
             "POST",
             "/v1/telegram/pairings",
-            body={"bot_name": "Hermes Agent"},
+            body={"bot_name": "Chiper Agent"},
             bearer_token="poll-secret",
         )
 
@@ -1578,11 +1578,11 @@ class TestWebServerEndpoints:
         method, url, kwargs = calls["request"]
         assert method == "POST"
         assert url == "https://worker.example/v1/telegram/pairings"
-        assert kwargs["json"] == {"bot_name": "Hermes Agent"}
+        assert kwargs["json"] == {"bot_name": "Chiper Agent"}
         assert kwargs["headers"]["Accept"] == "application/json"
         assert kwargs["headers"]["Authorization"] == "Bearer poll-secret"
         assert kwargs["headers"]["Content-Type"] == "application/json"
-        assert kwargs["headers"]["User-Agent"].startswith("HermesDashboard/")
+        assert kwargs["headers"]["User-Agent"].startswith("ChiperDashboard/")
 
     def test_telegram_onboarding_worker_request_maps_unexpected_errors(
         self, monkeypatch
@@ -1595,7 +1595,7 @@ class TestWebServerEndpoints:
             ws._telegram_onboarding_request_sync(
                 "POST",
                 "/v1/telegram/pairings",
-                body={"bot_name": "Hermes Agent"},
+                body={"bot_name": "Chiper Agent"},
             )
 
         assert exc.value.status_code == 502
@@ -1617,9 +1617,9 @@ class TestWebServerEndpoints:
             return {
                 "pairing_id": "pair123",
                 "poll_token": "poll-secret",
-                "suggested_username": "hermes_pair123_bot",
-                "deep_link": "https://t.me/newbot/HermesSetupBot/hermes_pair123_bot",
-                "qr_payload": "https://t.me/newbot/HermesSetupBot/hermes_pair123_bot",
+                "suggested_username": "chiper_pair123_bot",
+                "deep_link": "https://t.me/newbot/ChiperSetupBot/chiper_pair123_bot",
+                "qr_payload": "https://t.me/newbot/ChiperSetupBot/chiper_pair123_bot",
                 "expires_at": "2027-05-18T00:00:00.000Z",
             }
 
@@ -1627,7 +1627,7 @@ class TestWebServerEndpoints:
 
         resp = self.client.post(
             "/api/messaging/telegram/onboarding/start",
-            json={"bot_name": "Hosted Hermes"},
+            json={"bot_name": "Hosted Chiper"},
         )
 
         assert resp.status_code == 200
@@ -1638,7 +1638,7 @@ class TestWebServerEndpoints:
             (
                 "POST",
                 "/v1/telegram/pairings",
-                {"bot_name": "Hosted Hermes"},
+                {"bot_name": "Hosted Chiper"},
                 None,
             )
         ]
@@ -1655,9 +1655,9 @@ class TestWebServerEndpoints:
                 return {
                     "pairing_id": "pair-ready",
                     "poll_token": "poll-secret",
-                    "suggested_username": "hermes_pair_ready_bot",
-                    "deep_link": "https://t.me/newbot/HermesSetupBot/hermes_pair_ready_bot",
-                    "qr_payload": "https://t.me/newbot/HermesSetupBot/hermes_pair_ready_bot",
+                    "suggested_username": "chiper_pair_ready_bot",
+                    "deep_link": "https://t.me/newbot/ChiperSetupBot/chiper_pair_ready_bot",
+                    "qr_payload": "https://t.me/newbot/ChiperSetupBot/chiper_pair_ready_bot",
                     "expires_at": "2027-05-18T00:00:00.000Z",
                 }
             assert method == "GET"
@@ -1665,7 +1665,7 @@ class TestWebServerEndpoints:
             assert bearer_token == "poll-secret"
             return {
                 "status": "ready",
-                "bot_username": "hermes_pair_ready_bot",
+                "bot_username": "chiper_pair_ready_bot",
                 "owner_user_id": 123456789,
                 "token": "123456:SECRET",
             }
@@ -1681,7 +1681,7 @@ class TestWebServerEndpoints:
             restart_calls.append((subcommand, name))
             return FakeRestartProc()
 
-        monkeypatch.setattr(ws, "_spawn_hermes_action", fake_spawn_action)
+        monkeypatch.setattr(ws, "_spawn_chiper_action", fake_spawn_action)
 
         start = self.client.post("/api/messaging/telegram/onboarding/start", json={})
         assert start.status_code == 200
@@ -1702,7 +1702,7 @@ class TestWebServerEndpoints:
         assert applied_data == {
             "ok": True,
             "platform": "telegram",
-            "bot_username": "hermes_pair_ready_bot",
+            "bot_username": "chiper_pair_ready_bot",
             "needs_restart": False,
             "restart_started": True,
             "restart_action": "gateway-restart",
@@ -1728,9 +1728,9 @@ class TestWebServerEndpoints:
                 return {
                     "pairing_id": "pair-restart-fails",
                     "poll_token": "poll-secret",
-                    "suggested_username": "hermes_pair_restart_fails_bot",
-                    "deep_link": "https://t.me/newbot/HermesSetupBot/hermes_pair_restart_fails_bot",
-                    "qr_payload": "https://t.me/newbot/HermesSetupBot/hermes_pair_restart_fails_bot",
+                    "suggested_username": "chiper_pair_restart_fails_bot",
+                    "deep_link": "https://t.me/newbot/ChiperSetupBot/chiper_pair_restart_fails_bot",
+                    "qr_payload": "https://t.me/newbot/ChiperSetupBot/chiper_pair_restart_fails_bot",
                     "expires_at": "2027-05-18T00:00:00.000Z",
                 }
             assert method == "GET"
@@ -1738,7 +1738,7 @@ class TestWebServerEndpoints:
             assert bearer_token == "poll-secret"
             return {
                 "status": "ready",
-                "bot_username": "hermes_pair_restart_fails_bot",
+                "bot_username": "chiper_pair_restart_fails_bot",
                 "owner_user_id": 123456789,
                 "token": "123456:SECRET",
             }
@@ -1751,7 +1751,7 @@ class TestWebServerEndpoints:
             assert name == "gateway-restart"
             raise RuntimeError("supervisor unavailable")
 
-        monkeypatch.setattr(ws, "_spawn_hermes_action", fail_spawn_action)
+        monkeypatch.setattr(ws, "_spawn_chiper_action", fail_spawn_action)
 
         start = self.client.post("/api/messaging/telegram/onboarding/start", json={})
         assert start.status_code == 200
@@ -1780,7 +1780,7 @@ class TestWebServerEndpoints:
         self, monkeypatch
     ):
         """A live in-flight gateway restart is reused instead of spawning a
-        second racing ``hermes gateway restart`` child (e.g. when a stale
+        second racing ``chiper gateway restart`` child (e.g. when a stale
         cached frontend also fires its own restart call)."""
         import chiper_cli.web_server as ws
 
@@ -1792,14 +1792,14 @@ class TestWebServerEndpoints:
                 return {
                     "pairing_id": "pair-reuse",
                     "poll_token": "poll-secret",
-                    "suggested_username": "hermes_pair_reuse_bot",
-                    "deep_link": "https://t.me/newbot/HermesSetupBot/hermes_pair_reuse_bot",
-                    "qr_payload": "https://t.me/newbot/HermesSetupBot/hermes_pair_reuse_bot",
+                    "suggested_username": "chiper_pair_reuse_bot",
+                    "deep_link": "https://t.me/newbot/ChiperSetupBot/chiper_pair_reuse_bot",
+                    "qr_payload": "https://t.me/newbot/ChiperSetupBot/chiper_pair_reuse_bot",
                     "expires_at": "2027-05-18T00:00:00.000Z",
                 }
             return {
                 "status": "ready",
-                "bot_username": "hermes_pair_reuse_bot",
+                "bot_username": "chiper_pair_reuse_bot",
                 "owner_user_id": 123456789,
                 "token": "123456:SECRET",
             }
@@ -1817,7 +1817,7 @@ class TestWebServerEndpoints:
         def fail_spawn_action(subcommand, name):
             raise AssertionError("must not spawn a second concurrent restart")
 
-        monkeypatch.setattr(ws, "_spawn_hermes_action", fail_spawn_action)
+        monkeypatch.setattr(ws, "_spawn_chiper_action", fail_spawn_action)
 
         start = self.client.post("/api/messaging/telegram/onboarding/start", json={})
         assert start.status_code == 200
@@ -1845,9 +1845,9 @@ class TestWebServerEndpoints:
             return {
                 "pairing_id": "pair-waiting",
                 "poll_token": "poll-secret",
-                "suggested_username": "hermes_pair_waiting_bot",
-                "deep_link": "https://t.me/newbot/HermesSetupBot/hermes_pair_waiting_bot",
-                "qr_payload": "https://t.me/newbot/HermesSetupBot/hermes_pair_waiting_bot",
+                "suggested_username": "chiper_pair_waiting_bot",
+                "deep_link": "https://t.me/newbot/ChiperSetupBot/chiper_pair_waiting_bot",
+                "qr_payload": "https://t.me/newbot/ChiperSetupBot/chiper_pair_waiting_bot",
                 "expires_at": "2027-05-18T00:00:00.000Z",
             }
 
@@ -1874,9 +1874,9 @@ class TestWebServerEndpoints:
             return {
                 "pairing_id": "pair-cancel",
                 "poll_token": "poll-secret",
-                "suggested_username": "hermes_pair_cancel_bot",
-                "deep_link": "https://t.me/newbot/HermesSetupBot/hermes_pair_cancel_bot",
-                "qr_payload": "https://t.me/newbot/HermesSetupBot/hermes_pair_cancel_bot",
+                "suggested_username": "chiper_pair_cancel_bot",
+                "deep_link": "https://t.me/newbot/ChiperSetupBot/chiper_pair_cancel_bot",
+                "qr_payload": "https://t.me/newbot/ChiperSetupBot/chiper_pair_cancel_bot",
                 "expires_at": "2027-05-18T00:00:00.000Z",
             }
 
@@ -1974,7 +1974,7 @@ class TestWebServerEndpoints:
         assert index_resp.status_code == 200
         assert "cafe cafe" in index_resp.text
 
-        css_resp = spa_client.get("/assets/app.css", headers={"x-forwarded-prefix": "/hermes"})
+        css_resp = spa_client.get("/assets/app.css", headers={"x-forwarded-prefix": "/chiper"})
         assert css_resp.status_code == 200
         assert "content: 'cafe';" in css_resp.text
 
@@ -2000,7 +2000,7 @@ class TestWebServerEndpoints:
 
         resp = self.client.post(
             "/api/model/set",
-            json={"scope": "main", "provider": "nous", "model": "hermes-4"},
+            json={"scope": "main", "provider": "nous", "model": "chiper-4"},
         )
         assert resp.status_code == 200
         data = resp.json()
@@ -2166,7 +2166,7 @@ class TestWebServerEndpoints:
         """A custom endpoint that requires auth must persist model.api_key (where
         the runtime reads it) AND register a named custom_providers entry so the
         endpoint reappears as a ready row in the picker — matching the
-        ``hermes model`` custom flow. Regression for the desktop loop where a
+        ``chiper model`` custom flow. Regression for the desktop loop where a
         keyed custom endpoint could never be configured from the GUI."""
         from chiper_cli.config import load_config
 
@@ -2256,7 +2256,7 @@ class TestWebServerEndpoints:
         from chiper_cli.config import load_config, save_config
 
         cfg = load_config()
-        cfg["model"] = {"provider": "nous", "default": "hermes-4"}
+        cfg["model"] = {"provider": "nous", "default": "chiper-4"}
         cfg["auxiliary"] = {
             # Pinned to nous — same as the OLD main, becomes stale after switch.
             "compression": {"provider": "nous", "model": "anthropic/claude-sonnet-4.6"},
@@ -2287,7 +2287,7 @@ class TestWebServerEndpoints:
         from chiper_cli.config import load_config, save_config
 
         cfg = load_config()
-        cfg["model"] = {"provider": "nous", "default": "hermes-4"}
+        cfg["model"] = {"provider": "nous", "default": "chiper-4"}
         cfg["auxiliary"] = {
             "compression": {"provider": "openrouter", "model": "google/gemini-2.5-flash"},
             "vision": {"provider": "auto", "model": ""},
@@ -2316,7 +2316,7 @@ class TestWebServerEndpoints:
 
         resp = self.client.post(
             "/api/model/set",
-            json={"scope": "main", "provider": "nous", "model": "hermes-4"},
+            json={"scope": "main", "provider": "nous", "model": "chiper-4"},
         )
         assert resp.status_code == 200
         data = resp.json()
@@ -2325,7 +2325,7 @@ class TestWebServerEndpoints:
 
     def test_recommended_default_nous_honors_free_tier(self, monkeypatch):
         """For a free-tier Nous user, the recommended default must be a free
-        model (mirroring `hermes model`), not the first curated paid entry."""
+        model (mirroring `chiper model`), not the first curated paid entry."""
         import chiper_cli.models as models_mod
 
         monkeypatch.setattr(models_mod, "get_curated_nous_model_ids", lambda: ["paid/expensive", "free/cheap"])
@@ -2599,7 +2599,7 @@ class TestNewEndpoints:
         from chiper_constants import get_chiper_home
         from chiper_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
-        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db")
+        monkeypatch.setattr(chiper_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db")
 
         self.client = TestClient(app)
         self.client.headers[_SESSION_HEADER_NAME] = _SESSION_TOKEN
@@ -2635,7 +2635,7 @@ class TestNewEndpoints:
         first = blueprints[0]
         assert "fields" in first
         assert first["command"].startswith("/blueprint")
-        assert first["appUrl"].startswith("hermes://")
+        assert first["appUrl"].startswith("chiper://")
 
     def test_blueprint_instantiate_creates_job(self):
         resp = self.client.post(
@@ -2737,7 +2737,7 @@ class TestNewEndpoints:
         assert resp.status_code == 200
         assert resp.json()["command"] == "coder setup"
 
-    def test_profile_setup_command_uses_hermes_for_default_profile(self):
+    def test_profile_setup_command_uses_chiper_for_default_profile(self):
         from chiper_constants import get_chiper_home
 
         get_chiper_home().mkdir(parents=True, exist_ok=True)
@@ -2745,7 +2745,7 @@ class TestNewEndpoints:
         resp = self.client.get("/api/profiles/default/setup-command")
 
         assert resp.status_code == 200
-        assert resp.json()["command"] == "hermes setup"
+        assert resp.json()["command"] == "chiper setup"
 
     def test_profiles_create_creates_wrapper_alias_when_safe(self, monkeypatch, tmp_path):
         import chiper_cli.profiles as profiles_mod
@@ -2753,7 +2753,7 @@ class TestNewEndpoints:
         wrapper_dir = tmp_path / "bin"
         wrapper_dir.mkdir()
         monkeypatch.setattr(profiles_mod, "_get_wrapper_dir", lambda: wrapper_dir)
-        monkeypatch.setattr(profiles_mod.shutil, "which", lambda name: "/opt/hermes/bin/hermes")
+        monkeypatch.setattr(profiles_mod.shutil, "which", lambda name: "/opt/chiper/bin/chiper")
 
         resp = self.client.post(
             "/api/profiles",
@@ -2763,7 +2763,7 @@ class TestNewEndpoints:
         assert resp.status_code == 200
         wrapper_path = wrapper_dir / "writer"
         assert wrapper_path.exists()
-        assert wrapper_path.read_text() == '#!/bin/sh\nexec /opt/hermes/bin/hermes -p writer "$@"\n'
+        assert wrapper_path.read_text() == '#!/bin/sh\nexec /opt/chiper/bin/chiper -p writer "$@"\n'
 
     def test_profiles_create_with_clone_from_copies_source_skills(self, monkeypatch):
         from chiper_constants import get_chiper_home
@@ -2899,7 +2899,7 @@ class TestNewEndpoints:
             spawned.append((list(subcommand), name))
             return _FakeProc()
 
-        monkeypatch.setattr(web_server, "_spawn_hermes_action", fake_spawn)
+        monkeypatch.setattr(web_server, "_spawn_chiper_action", fake_spawn)
 
         resp = self.client.post(
             "/api/profiles",
@@ -4362,7 +4362,7 @@ class TestBulkDeleteSessionsEndpoint:
         from chiper_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
         monkeypatch.setattr(
-            hermes_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db"
+            chiper_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db"
         )
 
         self.client = TestClient(app)
@@ -4488,7 +4488,7 @@ class TestDeleteEmptySessionsEndpoint:
         # Pin the SessionDB to the isolated CHIPER_HOME so each test
         # starts with a clean state.db.
         monkeypatch.setattr(
-            hermes_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db"
+            chiper_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db"
         )
 
         self.client = TestClient(app)
@@ -4621,7 +4621,7 @@ class TestPluginAPIAuth:
         from chiper_constants import get_chiper_home
         from chiper_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
-        monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db")
+        monkeypatch.setattr(chiper_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db")
 
         self.client = TestClient(app)
         self.auth_client = TestClient(app)
@@ -4678,12 +4678,12 @@ class TestPluginAPIAuth:
         """Auth must be plugin-agnostic, not kanban-specific.
 
         The middleware fix is at the gate level (no per-plugin allowlist),
-        so any plugin's API surface — kanban, hermes-achievements, future
+        so any plugin's API surface — kanban, chiper-achievements, future
         plugins — must require the session token. Hit a non-kanban plugin
         path to lock that in.
         """
-        # Real plugin path (hermes-achievements is loaded by default).
-        resp = self.client.get("/api/plugins/hermes-achievements/overview")
+        # Real plugin path (chiper-achievements is loaded by default).
+        resp = self.client.get("/api/plugins/chiper-achievements/overview")
         assert resp.status_code == 401
         # Same for an arbitrary plugin namespace that doesn't even exist —
         # the middleware should 401 before routing decides 404, so an
@@ -4836,7 +4836,7 @@ class TestDashboardPluginManifestExtensions:
 # /api/pty WebSocket — terminal bridge for the dashboard "Chat" tab.
 #
 # These tests drive the endpoint with a tiny fake command (typically ``cat``
-# or ``sh -c 'printf …'``) instead of the real ``hermes --tui`` binary.  The
+# or ``sh -c 'printf …'``) instead of the real ``chiper --tui`` binary.  The
 # endpoint resolves its argv through ``_resolve_chat_argv``, so tests
 # monkeypatch that hook.
 # ---------------------------------------------------------------------------
@@ -4899,7 +4899,7 @@ class TestPtyWebSocket:
                 [
                     "terminal:",
                     "  backend: docker",
-                    "  docker_image: example/hermes-tools:latest",
+                    "  docker_image: example/chiper-tools:latest",
                     "  docker_extra_args:",
                     "    - --network=host",
                 ]
@@ -4918,7 +4918,7 @@ class TestPtyWebSocket:
         _argv, _cwd, env = self.ws_module._resolve_chat_argv()
 
         assert env["TERMINAL_ENV"] == "docker"
-        assert env["TERMINAL_DOCKER_IMAGE"] == "example/hermes-tools:latest"
+        assert env["TERMINAL_DOCKER_IMAGE"] == "example/chiper-tools:latest"
         assert env["TERMINAL_DOCKER_EXTRA_ARGS"] == '["--network=host"]'
 
     def test_rejects_when_embedded_chat_disabled(self, monkeypatch):
@@ -4961,7 +4961,7 @@ class TestPtyWebSocket:
             self.ws_module,
             "_resolve_chat_argv",
             lambda resume=None, sidecar_url=None, profile=None: (
-                ["/bin/sh", "-c", "printf hermes-ws-ok"],
+                ["/bin/sh", "-c", "printf chiper-ws-ok"],
                 None,
                 None,
             ),
@@ -4980,9 +4980,9 @@ class TestPtyWebSocket:
                     break
                 if frame:
                     buf += frame
-                if b"hermes-ws-ok" in buf:
+                if b"chiper-ws-ok" in buf:
                     break
-            assert b"hermes-ws-ok" in buf
+            assert b"chiper-ws-ok" in buf
 
     def test_client_input_reaches_child_stdin(self, monkeypatch):
         # ``cat`` echoes stdin back, so a write → read round-trip proves

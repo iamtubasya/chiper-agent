@@ -16,7 +16,7 @@ def _chiper_home_path() -> Path:
         return Path(os.path.expanduser("~/.chiperflux"))
 
 
-def _hermes_root_path() -> Path:
+def _chiper_root_path() -> Path:
     """Resolve the Chiper root dir (always the parent of any profile, never per-profile)."""
     try:
         from chiper_constants import get_default_chiper_root  # local import to avoid cycles
@@ -28,7 +28,7 @@ def _hermes_root_path() -> Path:
 def build_write_denied_paths(home: str) -> set[str]:
     """Return exact sensitive paths that must never be written."""
     chiper_home = _chiper_home_path()
-    hermes_root = _hermes_root_path()
+    chiper_root = _chiper_root_path()
     return {
         os.path.realpath(p)
         for p in [
@@ -40,12 +40,12 @@ def build_write_denied_paths(home: str) -> set[str]:
             str(chiper_home / ".env"),
             # Top-level .env, even when running under a profile — overwriting it
             # leaks credentials across every profile that inherits from root (#15981).
-            str(hermes_root / ".env"),
+            str(chiper_root / ".env"),
             # Active profile Anthropic PKCE credential store.
             str(chiper_home / ".anthropic_oauth.json"),
             # Top-level Anthropic PKCE credential store remains sensitive even
             # when a profile is active; default/non-profile sessions still read it.
-            str(hermes_root / ".anthropic_oauth.json"),
+            str(chiper_root / ".anthropic_oauth.json"),
             os.path.join(home, ".netrc"),
             os.path.join(home, ".pgpass"),
             os.path.join(home, ".npmrc"),
@@ -102,7 +102,7 @@ def is_write_denied(path: str) -> bool:
     mcp_tokens_dir_name = "mcp-tokens"
 
     chiper_dirs = []
-    for base in (_chiper_home_path(), _hermes_root_path()):
+    for base in (_chiper_home_path(), _chiper_root_path()):
         try:
             real = os.path.realpath(base)
             if real not in chiper_dirs:
@@ -146,14 +146,14 @@ _BLOCKED_PROJECT_ENV_BASENAMES: set[str] = {
 
 
 def get_read_block_error(path: str) -> Optional[str]:
-    """Return an error message when a read targets a denied Hermes path.
+    """Return an error message when a read targets a denied Chiper path.
 
     Three categories are blocked:
 
-      * Internal Hermes cache files under ``CHIPER_HOME/skills/.hub`` —
+      * Internal Chiper cache files under ``CHIPER_HOME/skills/.hub`` —
         readable metadata that an attacker could use as a prompt-injection
         carrier.
-      * Credential / secret stores under CHIPER_HOME and the global Hermes
+      * Credential / secret stores under CHIPER_HOME and the global Chiper
         root: ``auth.json``, ``auth.lock``, ``.anthropic_oauth.json``,
         ``.env``, ``webhook_subscriptions.json``, ``auth/google_oauth.json``,
         and anything under ``mcp-tokens/``. These hold plaintext provider keys,
@@ -193,12 +193,12 @@ def get_read_block_error(path: str) -> Optional[str]:
     resolved = Path(path).expanduser().resolve()
 
     # Resolve BOTH the active CHIPER_HOME (profile-aware) AND the global
-    # Hermes root so credential stores at <root>/auth.json etc. are also
+    # Chiper root so credential stores at <root>/auth.json etc. are also
     # blocked when running under a profile (CHIPER_HOME points at
     # <root>/profiles/<name> in profile mode). Same shape as the write
     # deny widening (#15981, #14157).
     chiper_dirs: list[Path] = []
-    for base in (_chiper_home_path(), _hermes_root_path()):
+    for base in (_chiper_home_path(), _chiper_root_path()):
         try:
             real = base.resolve()
             if real not in chiper_dirs:
@@ -218,7 +218,7 @@ def get_read_block_error(path: str) -> Optional[str]:
             except ValueError:
                 continue
             return (
-                f"Access denied: {path} is an internal Hermes cache file "
+                f"Access denied: {path} is an internal Chiper cache file "
                 "and cannot be read directly to prevent prompt injection. "
                 "Use the skills_list or skill_view tools instead."
             )
@@ -294,7 +294,7 @@ def get_read_block_error(path: str) -> Optional[str]:
 # ---------------------------------------------------------------------------
 # Cross-profile write guard (#TBD)
 #
-# Hermes profiles are separate CHIPER_HOME dirs under
+# Chiper profiles are separate CHIPER_HOME dirs under
 # ``<root>/profiles/<name>/``. Each profile has its own skills/, plugins/,
 # cron/, memories/. When an agent runs under one profile, writing into
 # ANOTHER profile's directories is almost always wrong — those skills /
@@ -307,8 +307,8 @@ def get_read_block_error(path: str) -> Optional[str]:
 # as the dangerous-command approval flow — the agent is told the boundary
 # exists, and explicit user direction is required to cross it.
 #
-# Reference: May 2026 incident where a hermes-security profile session
-# edited skills under both ``~/.chiperflux/profiles/hermes-security/skills/``
+# Reference: May 2026 incident where a chiper-security profile session
+# edited skills under both ``~/.chiperflux/profiles/chiper-security/skills/``
 # AND ``~/.chiperflux/skills/`` (the default profile's skills) without realizing
 # the second path belonged to a different profile.
 # ---------------------------------------------------------------------------
@@ -330,7 +330,7 @@ def _resolve_active_profile_name() -> str:
     """
     try:
         home_real = _chiper_home_path().resolve()
-        root_real = _hermes_root_path().resolve()
+        root_real = _chiper_root_path().resolve()
     except (OSError, RuntimeError):
         return "default"
     profiles_dir = root_real / "profiles"
@@ -348,7 +348,7 @@ def classify_cross_profile_target(path: str) -> Optional[dict]:
     """Classify a write target as cross-profile if it lands in another
     profile's scoped area (skills/plugins/cron/memories).
 
-    Returns ``None`` when the target is outside Hermes scope, or is inside
+    Returns ``None`` when the target is outside Chiper scope, or is inside
     the ACTIVE profile, or doesn't hit a profile-scoped area. Otherwise
     returns a dict with:
 
@@ -363,7 +363,7 @@ def classify_cross_profile_target(path: str) -> Optional[dict]:
     """
     try:
         target = Path(os.path.expanduser(str(path))).resolve()
-        root_real = _hermes_root_path().resolve()
+        root_real = _chiper_root_path().resolve()
     except (OSError, RuntimeError):
         return None
 
@@ -411,7 +411,7 @@ def get_cross_profile_warning(path: str) -> Optional[str]:
     """Return a model-facing warning string when ``path`` is cross-profile.
 
     Returns ``None`` when the write is in-scope (same profile) or outside
-    Hermes entirely. Caller is expected to surface the warning to the
+    Chiper entirely. Caller is expected to surface the warning to the
     agent as a tool-result error, NOT to silently allow the write — the
     agent must either get explicit user direction to proceed, or pass
     ``cross_profile=True`` to its write tool.
@@ -452,7 +452,7 @@ def get_cross_profile_warning(path: str) -> Optional[str]:
 #
 # This guard is path-shape-only: it detects the
 # ``…/sandboxes/<backend>/<task>/home/.chiperflux/…`` segment and warns
-# regardless of which Hermes profile is active. It does NOT cover the
+# regardless of which Chiper profile is active. It does NOT cover the
 # inner-container case where the bind mount strips the ``sandboxes/`` prefix
 # (the agent's view inside the container is plain ``/root/.chiperflux/...``);
 # that case needs a separate dispatch-layer or host-side ``profile_state``
@@ -461,16 +461,16 @@ def get_cross_profile_warning(path: str) -> Optional[str]:
 
 
 def _find_sandbox_mirror_segments(parts: tuple) -> Optional[int]:
-    """Return the index of the inner ``.hermes`` part in a sandbox-mirror path.
+    """Return the index of the inner ``.chiper`` part in a sandbox-mirror path.
 
     Matches ``…/sandboxes/<backend>/<task>/home/.chiperflux/…`` and returns the
-    index where the inner Hermes-state portion starts. Returns ``None`` for
+    index where the inner Chiper-state portion starts. Returns ``None`` for
     paths that do not contain the sandbox-mirror shape.
     """
     for i, part in enumerate(parts):
         if part != "sandboxes":
             continue
-        # Need at least: sandboxes / <backend> / <task> / home / .hermes / <thing>
+        # Need at least: sandboxes / <backend> / <task> / home / .chiper / <thing>
         if i + 5 >= len(parts):
             continue
         if parts[i + 3] == "home" and parts[i + 4] == ".chiperflux":
@@ -479,18 +479,18 @@ def _find_sandbox_mirror_segments(parts: tuple) -> Optional[int]:
 
 
 def classify_sandbox_mirror_target(path: str) -> Optional[dict]:
-    """Classify a write target as a sandbox-mirror of authoritative Hermes state.
+    """Classify a write target as a sandbox-mirror of authoritative Chiper state.
 
     Returns ``None`` when the path does not match the sandbox-mirror shape.
     Otherwise returns a dict with:
 
       * ``target_path``: the resolved path string
-      * ``mirror_root``: the ``…/sandboxes/<backend>/<task>/home/.hermes``
+      * ``mirror_root``: the ``…/sandboxes/<backend>/<task>/home/.chiper``
         prefix (so callers can show users which sandbox owns the mirror)
-      * ``inner_path``: the portion under the mirror's ``.hermes`` (what the
+      * ``inner_path``: the portion under the mirror's ``.chiper`` (what the
         agent likely meant to address on the host)
 
-    Detection is path-shape-only — does not require any Hermes resolver to
+    Detection is path-shape-only — does not require any Chiper resolver to
     succeed, so it works correctly even when called from contexts where
     CHIPER_HOME resolution would be ambiguous.
     """
@@ -535,7 +535,7 @@ def get_sandbox_mirror_warning(path: str) -> Optional[str]:
         f"Sandbox-mirror write blocked by soft guard: {info['target_path']} "
         f"sits under {info['mirror_root']!r}, which is a per-task mirror "
         f"created by a non-local terminal backend (docker/daytona/etc.). "
-        f"Writes here land on a copy that the host Hermes process never "
+        f"Writes here land on a copy that the host Chiper process never "
         f"reads — the authoritative file is likely {info['inner_path']!r} "
         f"under the real CHIPER_HOME. Use the host-side tool for "
         f"authoritative state (e.g. ``memory`` for memories), or address "
@@ -598,7 +598,7 @@ def get_container_mirror_warning(
     mirror_prefix: str | None = None,
 ) -> Optional[str]:
     """Return a model-facing warning when *path* lands in the container's
-    sandbox mirror of authoritative Hermes state.
+    sandbox mirror of authoritative Chiper state.
 
     The caller supplies ``mirror_prefix`` only when the current file-tool
     backend is known to execute inside a Docker sandbox. Same contract as
@@ -612,7 +612,7 @@ def get_container_mirror_warning(
     return (
         f"Sandbox-mirror write blocked by soft guard: {info['target_path']} "
         f"sits under {info['mirror_root']!r}, which is the container's "
-        f"bind-mounted home — a per-task mirror that the host Hermes "
+        f"bind-mounted home — a per-task mirror that the host Chiper "
         f"process never reads. The authoritative file is "
         f"{info['inner_path']!r} under the real CHIPER_HOME. Use the "
         f"host-side tool for authoritative state (e.g. ``memory`` for "

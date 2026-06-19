@@ -17,8 +17,8 @@ import pytest
 
 @pytest.fixture
 def chiper_home(monkeypatch):
-    d = tempfile.mkdtemp(prefix="hermes_wa_test_")
-    home = os.path.join(d, ".hermes")
+    d = tempfile.mkdtemp(prefix="chiper_wa_test_")
+    home = os.path.join(d, ".chiper")
     os.makedirs(home)
     monkeypatch.setenv("CHIPER_HOME", home)
     yield home

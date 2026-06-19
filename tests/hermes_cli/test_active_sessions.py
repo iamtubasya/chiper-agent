@@ -37,7 +37,7 @@ def test_resolve_max_concurrent_sessions_values(caplog):
 
 
 def test_active_session_lease_blocks_until_release(tmp_path, monkeypatch):
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     monkeypatch.setenv("CHIPER_HOME", str(home))
     cfg = {"max_concurrent_sessions": 1}
 
@@ -58,7 +58,7 @@ def test_active_session_lease_blocks_until_release(tmp_path, monkeypatch):
 
     assert blocked_lease is None
     assert blocked_message == (
-        "Hermes is at the active session limit (1/1). "
+        "Chiper is at the active session limit (1/1). "
         "Try again when another session finishes."
     )
 
@@ -77,7 +77,7 @@ def test_active_session_lease_blocks_until_release(tmp_path, monkeypatch):
 
 
 def test_active_session_registry_prunes_dead_pids(tmp_path, monkeypatch):
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     monkeypatch.setenv("CHIPER_HOME", str(home))
     monkeypatch.setattr(
         "gateway.status._pid_exists",
@@ -131,7 +131,7 @@ def test_pid_alive_uses_safe_pid_exists_without_signalling(monkeypatch):
 
 
 def test_active_session_hard_exit_is_reclaimed(tmp_path, monkeypatch):
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     monkeypatch.setenv("CHIPER_HOME", str(home))
     repo_root = Path(__file__).resolve().parents[2]
     env = os.environ.copy()
@@ -176,7 +176,7 @@ def test_active_session_hard_exit_is_reclaimed(tmp_path, monkeypatch):
 
 
 def test_concurrent_acquire_claims_only_one_last_slot(tmp_path, monkeypatch):
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     monkeypatch.setenv("CHIPER_HOME", str(home))
     cfg = {"max_concurrent_sessions": 1}
 
@@ -203,7 +203,7 @@ def test_concurrent_acquire_claims_only_one_last_slot(tmp_path, monkeypatch):
 
 
 def test_cross_process_acquire_claims_only_one_last_slot(tmp_path, monkeypatch):
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     monkeypatch.setenv("CHIPER_HOME", str(home))
     repo_root = Path(__file__).resolve().parents[2]
     ready_dir = tmp_path / "ready"
@@ -278,7 +278,7 @@ def test_cross_process_acquire_claims_only_one_last_slot(tmp_path, monkeypatch):
 
 
 def test_pid_start_time_mismatch_prunes_reused_pid(tmp_path, monkeypatch):
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     monkeypatch.setenv("CHIPER_HOME", str(home))
     monkeypatch.setattr("gateway.status._pid_exists", lambda _pid: True)
     monkeypatch.setattr(active_sessions, "_process_start_time", lambda _pid: 200.0)

@@ -24,7 +24,7 @@ API_PATH = (
 
 @pytest.fixture
 def bridge_module(monkeypatch, tmp_path):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -37,7 +37,7 @@ def bridge_module(monkeypatch, tmp_path):
 
 @pytest.fixture
 def api_module(monkeypatch, tmp_path):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 

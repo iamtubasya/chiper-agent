@@ -22,10 +22,10 @@ def _restore_stdout():
 @pytest.fixture()
 def server():
     with patch.dict("sys.modules", {
-        "hermes_constants": MagicMock(get_chiper_home=MagicMock(return_value="/tmp/hermes_test")),
+        "chiper_constants": MagicMock(get_chiper_home=MagicMock(return_value="/tmp/chiper_test")),
         "chiper_cli.env_loader": MagicMock(),
         "chiper_cli.banner": MagicMock(),
-        "hermes_state": MagicMock(),
+        "chiper_state": MagicMock(),
     }):
         import importlib
         mod = importlib.import_module("tui_gateway.server")

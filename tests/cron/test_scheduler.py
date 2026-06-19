@@ -879,7 +879,7 @@ class TestRunJobSessionPersistence:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -926,7 +926,7 @@ class TestRunJobSessionPersistence:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -963,7 +963,7 @@ class TestRunJobSessionPersistence:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -1000,7 +1000,7 @@ class TestRunJobSessionPersistence:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -1028,7 +1028,7 @@ class TestRunJobSessionPersistence:
             patch("cron.scheduler._chiper_home", tmp_path),
             patch("cron.scheduler._resolve_origin", return_value=None),
             patch("dotenv.load_dotenv"),
-            patch("hermes_state.SessionDB", return_value=fake_db),
+            patch("chiper_state.SessionDB", return_value=fake_db),
             patch(
                 "chiper_cli.runtime_provider.resolve_runtime_provider",
                 return_value={
@@ -1096,7 +1096,7 @@ class TestRunJobSessionPersistence:
 
     def test_run_job_enabled_toolsets_resolves_from_platform_config_when_not_set(self, tmp_path):
         """When a job has no explicit enabled_toolsets, the scheduler now
-        resolves them from ``hermes tools`` platform config for ``cron``
+        resolves them from ``chiper tools`` platform config for ``cron``
         (PR #14xxx — blanket fix for Norbert's surprise ``moa`` run).
 
         The legacy "pass None → AIAgent loads full default" path is still
@@ -1119,7 +1119,7 @@ class TestRunJobSessionPersistence:
         kwargs = mock_agent_cls.call_args.kwargs
         # Resolution happened — not None, is a list.
         assert isinstance(kwargs["enabled_toolsets"], list)
-        # The cron default is _HERMES_CORE_TOOLS with _DEFAULT_OFF_TOOLSETS
+        # The cron default is _CHIPER_CORE_TOOLS with _DEFAULT_OFF_TOOLSETS
         # (``moa``, ``homeassistant``, ``rl``) removed. The most important
         # invariant: ``moa`` is NOT in the default cron toolset, so a cron
         # run cannot accidentally spin up frontier models.
@@ -1127,7 +1127,7 @@ class TestRunJobSessionPersistence:
 
     def test_run_job_per_job_toolsets_win_over_platform_config(self, tmp_path):
         """Per-job enabled_toolsets (via cronjob tool) always take precedence
-        over the platform-level ``hermes tools`` config."""
+        over the platform-level ``chiper tools`` config."""
         job = {
             "id": "override-job",
             "name": "test",
@@ -1135,7 +1135,7 @@ class TestRunJobSessionPersistence:
             "enabled_toolsets": ["terminal"],
         }
         fake_db, patches = self._make_run_job_patches(tmp_path)
-        # Even if the user has ``hermes tools`` configured to enable web+file
+        # Even if the user has ``chiper tools`` configured to enable web+file
         # for cron, the per-job override wins.
         with patches[0], patches[1], patches[2], patches[3], patches[4], \
              patch("run_agent.AIAgent") as mock_agent_cls, \
@@ -1167,7 +1167,7 @@ class TestRunJobSessionPersistence:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -1243,7 +1243,7 @@ class TestRunJobSessionPersistence:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -1282,7 +1282,7 @@ class TestRunJobSessionPersistence:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -1370,7 +1370,7 @@ class TestRunJobSessionPersistence:
                 return {"final_response": "ok"}
 
         with patch("cron.scheduler._chiper_home", tmp_path), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -1436,7 +1436,7 @@ class TestRunJobSessionPersistence:
                 return {"final_response": "ok"}
 
         with patch("cron.scheduler._chiper_home", tmp_path), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -1557,8 +1557,8 @@ class TestRunJobConfigEnvVarExpansion:
 
     def test_model_env_ref_in_config_yaml_is_expanded(self, tmp_path, monkeypatch):
         """${VAR} in config.yaml model: is expanded using env after .env is loaded."""
-        (tmp_path / "config.yaml").write_text("model: ${_HERMES_TEST_CRON_MODEL}\n")
-        monkeypatch.setenv("_HERMES_TEST_CRON_MODEL", "gpt-4o-mini-cron-test")
+        (tmp_path / "config.yaml").write_text("model: ${_CHIPER_TEST_CRON_MODEL}\n")
+        monkeypatch.setenv("_CHIPER_TEST_CRON_MODEL", "gpt-4o-mini-cron-test")
 
         job = {"id": "env-job", "name": "env test", "prompt": "hi"}
         fake_db = MagicMock()
@@ -1566,7 +1566,7 @@ class TestRunJobConfigEnvVarExpansion:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch("chiper_cli.runtime_provider.resolve_runtime_provider",
                    return_value=self._RUNTIME), \
              patch("run_agent.AIAgent") as mock_agent_cls:
@@ -1599,7 +1599,7 @@ class TestRunJobConfigEnvVarExpansion:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch("chiper_cli.runtime_provider.resolve_runtime_provider",
                    return_value=self._RUNTIME), \
              patch("tools.mcp_tool.discover_mcp_tools", return_value=[]), \
@@ -1618,9 +1618,9 @@ class TestRunJobConfigEnvVarExpansion:
         (tmp_path / "config.yaml").write_text(
             "fallback_providers:\n"
             "  - provider: openrouter\n"
-            "    model: ${_HERMES_TEST_CRON_FALLBACK}\n"
+            "    model: ${_CHIPER_TEST_CRON_FALLBACK}\n"
         )
-        monkeypatch.setenv("_HERMES_TEST_CRON_FALLBACK", "gpt-4o-fallback-test")
+        monkeypatch.setenv("_CHIPER_TEST_CRON_FALLBACK", "gpt-4o-fallback-test")
 
         job = {"id": "fb-job", "name": "fallback test", "prompt": "hi"}
         fake_db = MagicMock()
@@ -1628,7 +1628,7 @@ class TestRunJobConfigEnvVarExpansion:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch("chiper_cli.runtime_provider.resolve_runtime_provider",
                    return_value=self._RUNTIME), \
              patch("run_agent.AIAgent") as mock_agent_cls:
@@ -1648,8 +1648,8 @@ class TestRunJobConfigEnvVarExpansion:
 
     def test_unexpanded_ref_passthrough_when_var_unset(self, tmp_path, monkeypatch):
         """When the env var is not set, the literal ${VAR} is kept verbatim (not crashed)."""
-        (tmp_path / "config.yaml").write_text("model: ${_HERMES_TEST_CRON_UNSET_VAR}\n")
-        monkeypatch.delenv("_HERMES_TEST_CRON_UNSET_VAR", raising=False)
+        (tmp_path / "config.yaml").write_text("model: ${_CHIPER_TEST_CRON_UNSET_VAR}\n")
+        monkeypatch.delenv("_CHIPER_TEST_CRON_UNSET_VAR", raising=False)
 
         job = {"id": "unset-job", "name": "unset var test", "prompt": "hi"}
         fake_db = MagicMock()
@@ -1657,7 +1657,7 @@ class TestRunJobConfigEnvVarExpansion:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch("chiper_cli.runtime_provider.resolve_runtime_provider",
                    return_value=self._RUNTIME), \
              patch("run_agent.AIAgent") as mock_agent_cls:
@@ -1669,7 +1669,7 @@ class TestRunJobConfigEnvVarExpansion:
         assert success is True
         kwargs = mock_agent_cls.call_args.kwargs
         # Unresolved refs are kept verbatim — _expand_env_vars contract
-        assert kwargs["model"] == "${_HERMES_TEST_CRON_UNSET_VAR}"
+        assert kwargs["model"] == "${_CHIPER_TEST_CRON_UNSET_VAR}"
 
 
 class TestRunJobSkillBacked:
@@ -1699,7 +1699,7 @@ class TestRunJobSkillBacked:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -1759,7 +1759,7 @@ class TestRunJobSkillBacked:
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("tools.credential_files._resolve_chiper_home", return_value=tmp_path), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -1797,7 +1797,7 @@ class TestRunJobSkillBacked:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -1843,7 +1843,7 @@ class TestRunJobSkillBacked:
         with patch("cron.scheduler._chiper_home", tmp_path), \
              patch("cron.scheduler._resolve_origin", return_value=None), \
              patch("dotenv.load_dotenv"), \
-             patch("hermes_state.SessionDB", return_value=fake_db), \
+             patch("chiper_state.SessionDB", return_value=fake_db), \
              patch(
                  "chiper_cli.runtime_provider.resolve_runtime_provider",
                  return_value={
@@ -2741,7 +2741,7 @@ class TestCronDeliveryTargets:
 class TestHomeTargetEnvVarRegistry:
     """Regression: ``_HOME_TARGET_ENV_VARS`` must include every gateway
     platform that supports cron-driven outbound delivery. Missing an
-    entry means ``hermes cron create --deliver=<platform>`` silently
+    entry means ``chiper cron create --deliver=<platform>`` silently
     fails to route through the platform's home channel."""
 
     def test_whatsapp_cloud_registered(self):

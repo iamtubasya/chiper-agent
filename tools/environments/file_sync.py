@@ -52,7 +52,7 @@ def iter_sync_files(container_base: str = "/root/.chiperflux") -> list[tuple[str
 
     Combines credentials, skills, and cache into a single flat list of
     (host_path, remote_path) pairs.  Credential paths are remapped from
-    the hardcoded /root/.hermes to *container_base* because the remote
+    the hardcoded /root/.chiper to *container_base* because the remote
     user's home may differ (e.g. /home/daytona, /home/user).
     """
     # Late import: credential_files imports agent modules that create
@@ -217,7 +217,7 @@ class FileSyncManager:
     def sync_back(self, chiper_home: Path | None = None) -> None:
         """Pull remote changes back to the host filesystem.
 
-        Downloads the remote ``.hermes/`` directory as a tar archive,
+        Downloads the remote ``.chiper/`` directory as a tar archive,
         unpacks it, and applies only files that differ from what was
         originally pushed (based on SHA-256 content hashes).
 
@@ -229,7 +229,7 @@ class FileSyncManager:
 
         # Nothing was ever committed through this manager — the initial
         # push failed or never ran. Skip sync_back to avoid retry storms
-        # against an uninitialized remote .hermes/ directory.
+        # against an uninitialized remote .chiper/ directory.
         if not self._pushed_hashes and not self._synced_files:
             logger.debug("sync_back: no prior push state — skipping")
             return
@@ -323,7 +323,7 @@ class FileSyncManager:
                 )
                 return
 
-            with tempfile.TemporaryDirectory(prefix="hermes-sync-back-") as staging:
+            with tempfile.TemporaryDirectory(prefix="chiper-sync-back-") as staging:
                 with tarfile.open(tf.name) as tar:
                     tar.extractall(staging, filter="data")
 

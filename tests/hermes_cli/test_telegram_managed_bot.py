@@ -28,20 +28,20 @@ SECOND_VALID_TOKEN = "987654321:abcdefghijklmnopqrstuvwxyzABCDEF"
 class TestGenerateBotUsername:
     def test_secure_default_format(self):
         name = generate_bot_username()
-        assert name.startswith("hermes_")
+        assert name.startswith("chiper_")
         assert name.endswith("_bot")
-        assert len(name) == len("hermes_") + 16 + len("_bot")
+        assert len(name) == len("chiper_") + 16 + len("_bot")
         assert len(name) <= 32
 
     def test_profile_name_not_embedded(self):
         name = generate_bot_username("work")
         assert "work" not in name
-        assert name.startswith("hermes_")
+        assert name.startswith("chiper_")
         assert name.endswith("_bot")
 
     def test_slug_uses_telegram_safe_base32_chars(self):
         name = generate_bot_username()
-        slug = name.removeprefix("hermes_").removesuffix("_bot")
+        slug = name.removeprefix("chiper_").removesuffix("_bot")
         assert len(slug) == 16
         assert set(slug) <= set("abcdefghijklmnopqrstuvwxyz234567")
 
@@ -70,15 +70,15 @@ class TestGenerateDeepLink:
     def test_defaults(self):
         link = generate_deep_link()
         assert f"https://t.me/newbot/{DEFAULT_MANAGER_BOT}/" in link
-        assert "hermes_" in link
+        assert "chiper_" in link
 
     def test_name_url_encoded(self):
         link = generate_deep_link(
             manager_bot="Bot",
             suggested_username="test_bot",
-            suggested_name="Hermes & Friends",
+            suggested_name="Chiper & Friends",
         )
-        assert "Hermes+%26+Friends" in link
+        assert "Chiper+%26+Friends" in link
 
 
 class TestPairingNonce:
@@ -119,28 +119,28 @@ class TestCreatePairing:
         mock_resp.json.return_value = {
             "pairing_id": "abcdefghijklmnop",
             "poll_token": "secret-token",
-            "suggested_username": "hermes_abcdefghijklmnop_bot",
-            "deep_link": "https://t.me/newbot/HermesSetupBot/hermes_abcdefghijklmnop_bot?name=Hermes+Agent",
-            "qr_payload": "https://t.me/newbot/HermesSetupBot/hermes_abcdefghijklmnop_bot?name=Hermes+Agent",
+            "suggested_username": "chiper_abcdefghijklmnop_bot",
+            "deep_link": "https://t.me/newbot/ChiperSetupBot/chiper_abcdefghijklmnop_bot?name=Chiper+Agent",
+            "qr_payload": "https://t.me/newbot/ChiperSetupBot/chiper_abcdefghijklmnop_bot?name=Chiper+Agent",
             "expires_at": "2026-05-18T00:00:00.000Z",
         }
 
         with patch(
             "chiper_cli.telegram_managed_bot.httpx.post", return_value=mock_resp
         ) as post:
-            pairing = create_pairing("https://api.example.com", bot_name="Hermes Agent")
+            pairing = create_pairing("https://api.example.com", bot_name="Chiper Agent")
 
         assert pairing == TelegramPairing(
             pairing_id="abcdefghijklmnop",
             poll_token="secret-token",
-            suggested_username="hermes_abcdefghijklmnop_bot",
-            deep_link="https://t.me/newbot/HermesSetupBot/hermes_abcdefghijklmnop_bot?name=Hermes+Agent",
-            qr_payload="https://t.me/newbot/HermesSetupBot/hermes_abcdefghijklmnop_bot?name=Hermes+Agent",
+            suggested_username="chiper_abcdefghijklmnop_bot",
+            deep_link="https://t.me/newbot/ChiperSetupBot/chiper_abcdefghijklmnop_bot?name=Chiper+Agent",
+            qr_payload="https://t.me/newbot/ChiperSetupBot/chiper_abcdefghijklmnop_bot?name=Chiper+Agent",
             expires_at="2026-05-18T00:00:00.000Z",
         )
         post.assert_called_once_with(
             "https://api.example.com/v1/telegram/pairings",
-            json={"bot_name": "Hermes Agent"},
+            json={"bot_name": "Chiper Agent"},
             timeout=10.0,
         )
 
@@ -177,16 +177,16 @@ class TestPollForToken:
         return TelegramPairing(
             pairing_id="abcdefghijklmnop",
             poll_token="secret-token",
-            suggested_username="hermes_abcdefghijklmnop_bot",
-            deep_link="https://t.me/newbot/HermesSetupBot/hermes_abcdefghijklmnop_bot",
-            qr_payload="https://t.me/newbot/HermesSetupBot/hermes_abcdefghijklmnop_bot",
+            suggested_username="chiper_abcdefghijklmnop_bot",
+            deep_link="https://t.me/newbot/ChiperSetupBot/chiper_abcdefghijklmnop_bot",
+            qr_payload="https://t.me/newbot/ChiperSetupBot/chiper_abcdefghijklmnop_bot",
         )
 
     def test_immediate_success(self):
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.json.return_value = {
-            "bot_username": "hermes_abcdefghijklmnop_bot",
+            "bot_username": "chiper_abcdefghijklmnop_bot",
             "owner_user_id": 42,
             "status": "ready",
             "token": VALID_TOKEN,
@@ -213,7 +213,7 @@ class TestPollForToken:
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.json.return_value = {
-            "bot_username": "hermes_abcdefghijklmnop_bot",
+            "bot_username": "chiper_abcdefghijklmnop_bot",
             "owner_user_id": 42,
             "status": "ready",
             "token": VALID_TOKEN,
@@ -227,7 +227,7 @@ class TestPollForToken:
 
         assert result == TelegramBotSetupResult(
             token=VALID_TOKEN,
-            bot_username="hermes_abcdefghijklmnop_bot",
+            bot_username="chiper_abcdefghijklmnop_bot",
             owner_user_id=42,
         )
 
@@ -235,7 +235,7 @@ class TestPollForToken:
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.json.return_value = {
-            "bot_username": "hermes_abcdefghijklmnop_bot",
+            "bot_username": "chiper_abcdefghijklmnop_bot",
             "owner_user_id": "42",
             "status": "ready",
             "token": VALID_TOKEN,
@@ -248,7 +248,7 @@ class TestPollForToken:
 
         assert result == TelegramBotSetupResult(
             token=VALID_TOKEN,
-            bot_username="hermes_abcdefghijklmnop_bot",
+            bot_username="chiper_abcdefghijklmnop_bot",
             owner_user_id=42,
         )
 
@@ -256,7 +256,7 @@ class TestPollForToken:
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.json.return_value = {
-            "bot_username": "hermes_abcdefghijklmnop_bot",
+            "bot_username": "chiper_abcdefghijklmnop_bot",
             "owner_user_id": 42,
             "status": "ready",
             "token": "not-a-real-token",
@@ -327,7 +327,7 @@ class TestSetupTelegramAuto:
         from chiper_cli import setup
 
         seen = {}
-        profile_home = tmp_path / ".hermes" / "profiles" / "oracle"
+        profile_home = tmp_path / ".chiper" / "profiles" / "oracle"
         profile_home.mkdir(parents=True)
 
         monkeypatch.setattr(setup, "get_chiper_home", lambda: profile_home)
@@ -349,7 +349,7 @@ class TestSetupTelegramAuto:
 
         assert (
             _profile_name_from_chiper_home(
-                PureWindowsPath(r"C:\Users\test\AppData\Local\hermes\profiles\oracle")
+                PureWindowsPath(r"C:\Users\test\AppData\Local\chiper\profiles\oracle")
             )
             == "oracle"
         )

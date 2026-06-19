@@ -300,7 +300,7 @@ def self_provision_if_managed() -> bool:
         host = socket.gethostname().strip()
     except Exception:  # noqa: BLE001
         host = ""
-    gateway_id = os.environ.get("GATEWAY_RELAY_ID", "").strip() or f"gw-{host or 'hermes'}"
+    gateway_id = os.environ.get("GATEWAY_RELAY_ID", "").strip() or f"gw-{host or 'chiper'}"
     endpoint = relay_endpoint()
     route_keys = relay_route_keys()
 

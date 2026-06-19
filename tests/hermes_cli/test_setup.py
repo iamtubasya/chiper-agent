@@ -176,7 +176,7 @@ def test_setup_gateway_skips_service_install_when_systemctl_missing(monkeypatch,
     out = capsys.readouterr().out
     assert "Messaging platforms configured!" in out
     assert "Start the gateway to bring your bots online:" in out
-    assert "hermes gateway" in out
+    assert "chiper gateway" in out
 
 
 def test_setup_gateway_in_container_shows_docker_guidance(monkeypatch, capsys):
@@ -212,7 +212,7 @@ def test_setup_gateway_in_container_shows_docker_guidance(monkeypatch, capsys):
 
     # Patch is_container at the import location in setup.py
     import chiper_constants
-    monkeypatch.setattr(hermes_constants, "is_container", lambda: True)
+    monkeypatch.setattr(chiper_constants, "is_container", lambda: True)
 
     setup_mod.setup_gateway({})
 

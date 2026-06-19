@@ -105,7 +105,7 @@ class TestConfigFilePermissions(unittest.TestCase):
             self.assertEqual(file_mode, 0o600)
 
     def test_ensure_chiper_home_sets_0700(self):
-        home = Path(self.tmpdir) / ".hermes"
+        home = Path(self.tmpdir) / ".chiper"
         with patch("chiper_cli.config.get_chiper_home", return_value=home):
             from chiper_cli.config import ensure_chiper_home
             ensure_chiper_home()

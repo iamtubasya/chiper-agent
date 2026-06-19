@@ -20,47 +20,47 @@ import pytest
 
 @pytest.fixture
 def fresh_constants(monkeypatch, tmp_path):
-    """Import hermes_constants fresh and reset the one-shot warn flag."""
+    """Import chiper_constants fresh and reset the one-shot warn flag."""
     import importlib
     import chiper_constants
-    importlib.reload(hermes_constants)
+    importlib.reload(chiper_constants)
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     monkeypatch.delenv("CHIPER_HOME", raising=False)
-    return hermes_constants
+    return chiper_constants
 
 
-class TestGetHermesHomeProfileWarning:
+class TestGetChiperHomeProfileWarning:
     def test_classic_mode_no_active_profile_no_warning(
         self, fresh_constants, tmp_path, capsys
     ):
         """Classic mode: no active_profile file → silent, returns ~/.chiperflux."""
         result = fresh_constants.get_chiper_home()
-        assert result == tmp_path / ".hermes"
+        assert result == tmp_path / ".chiper"
         assert "CHIPER_HOME fallback" not in capsys.readouterr().err
 
     def test_default_active_profile_no_warning(
         self, fresh_constants, tmp_path, capsys
     ):
         """active_profile=default → still no warning, returns ~/.chiperflux."""
-        hermes_dir = tmp_path / ".hermes"
-        hermes_dir.mkdir()
-        (hermes_dir / "active_profile").write_text("default\n")
+        chiper_dir = tmp_path / ".chiper"
+        chiper_dir.mkdir()
+        (chiper_dir / "active_profile").write_text("default\n")
         result = fresh_constants.get_chiper_home()
-        assert result == tmp_path / ".hermes"
+        assert result == tmp_path / ".chiper"
         assert "CHIPER_HOME fallback" not in capsys.readouterr().err
 
     def test_named_profile_unset_home_warns_once(
         self, fresh_constants, tmp_path, capsys
     ):
         """active_profile=coder + CHIPER_HOME unset → warn loudly, still return fallback."""
-        hermes_dir = tmp_path / ".hermes"
-        hermes_dir.mkdir()
-        (hermes_dir / "active_profile").write_text("coder\n")
+        chiper_dir = tmp_path / ".chiper"
+        chiper_dir.mkdir()
+        (chiper_dir / "active_profile").write_text("coder\n")
 
         result = fresh_constants.get_chiper_home()
 
         # 1. Still returns the fallback — no import-time crash
-        assert result == tmp_path / ".hermes"
+        assert result == tmp_path / ".chiper"
         # 2. Stderr got the warning exactly once
         err = capsys.readouterr().err
         assert err.count("CHIPER_HOME fallback") == 1
@@ -77,9 +77,9 @@ class TestGetHermesHomeProfileWarning:
         self, fresh_constants, tmp_path, capsys, monkeypatch
     ):
         """Even if active_profile is 'coder', setting CHIPER_HOME suppresses warning."""
-        profile_dir = tmp_path / ".hermes" / "profiles" / "coder"
+        profile_dir = tmp_path / ".chiper" / "profiles" / "coder"
         profile_dir.mkdir(parents=True)
-        (tmp_path / ".hermes" / "active_profile").write_text("coder\n")
+        (tmp_path / ".chiper" / "active_profile").write_text("coder\n")
         monkeypatch.setenv("CHIPER_HOME", str(profile_dir))
 
         result = fresh_constants.get_chiper_home()
@@ -91,14 +91,14 @@ class TestGetHermesHomeProfileWarning:
         self, fresh_constants, tmp_path, capsys
     ):
         """active_profile that can't be decoded → fall through silently."""
-        hermes_dir = tmp_path / ".hermes"
-        hermes_dir.mkdir()
+        chiper_dir = tmp_path / ".chiper"
+        chiper_dir.mkdir()
         # Write bytes that aren't valid utf-8
-        (hermes_dir / "active_profile").write_bytes(b"\xff\xfe\x00\x00")
+        (chiper_dir / "active_profile").write_bytes(b"\xff\xfe\x00\x00")
 
         result = fresh_constants.get_chiper_home()
 
-        assert result == tmp_path / ".hermes"
+        assert result == tmp_path / ".chiper"
         # Shouldn't crash; shouldn't warn either (can't tell what profile was intended)
         assert "CHIPER_HOME fallback" not in capsys.readouterr().err
 
@@ -106,11 +106,11 @@ class TestGetHermesHomeProfileWarning:
         self, fresh_constants, tmp_path, capsys
     ):
         """Empty active_profile file → treated as default, no warning."""
-        hermes_dir = tmp_path / ".hermes"
-        hermes_dir.mkdir()
-        (hermes_dir / "active_profile").write_text("")
+        chiper_dir = tmp_path / ".chiper"
+        chiper_dir.mkdir()
+        (chiper_dir / "active_profile").write_text("")
 
         result = fresh_constants.get_chiper_home()
 
-        assert result == tmp_path / ".hermes"
+        assert result == tmp_path / ".chiper"
         assert "CHIPER_HOME fallback" not in capsys.readouterr().err

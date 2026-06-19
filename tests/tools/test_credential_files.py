@@ -32,7 +32,7 @@ def _clean_state():
 
 class TestRegisterCredentialFiles:
     def test_dict_with_path_key(self, tmp_path):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "token.json").write_text("{}")
 
@@ -47,7 +47,7 @@ class TestRegisterCredentialFiles:
 
     def test_dict_with_name_key_fallback(self, tmp_path):
         """Skills use 'name' instead of 'path' — both should work."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "google_token.json").write_text("{}")
 
@@ -62,7 +62,7 @@ class TestRegisterCredentialFiles:
         assert "google_token.json" in mounts[0]["container_path"]
 
     def test_string_entry(self, tmp_path):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "secret.key").write_text("key")
 
@@ -74,7 +74,7 @@ class TestRegisterCredentialFiles:
         assert len(mounts) == 1
 
     def test_missing_file_reported(self, tmp_path):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
 
         with patch.dict(os.environ, {"CHIPER_HOME": str(chiper_home)}):
@@ -87,7 +87,7 @@ class TestRegisterCredentialFiles:
 
     def test_path_takes_precedence_over_name(self, tmp_path):
         """When both path and name are present, path wins."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "real.json").write_text("{}")
 
@@ -103,7 +103,7 @@ class TestRegisterCredentialFiles:
 
 class TestSkillsDirectoryMount:
     def test_returns_mount_when_skills_dir_exists(self, tmp_path):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         skills_dir = chiper_home / "skills"
         skills_dir.mkdir(parents=True)
         (skills_dir / "test-skill").mkdir()
@@ -117,7 +117,7 @@ class TestSkillsDirectoryMount:
         assert mounts[0]["container_path"] == "/root/.chiperflux/skills"
 
     def test_returns_none_when_no_skills_dir(self, tmp_path):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
 
         with patch.dict(os.environ, {"CHIPER_HOME": str(chiper_home)}):
@@ -128,17 +128,17 @@ class TestSkillsDirectoryMount:
         assert local_mounts == []
 
     def test_custom_container_base(self, tmp_path):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         (chiper_home / "skills").mkdir(parents=True)
 
         with patch.dict(os.environ, {"CHIPER_HOME": str(chiper_home)}):
-            mounts = get_skills_directory_mount(container_base="/home/user/.hermes")
+            mounts = get_skills_directory_mount(container_base="/home/user/.chiper")
 
         assert mounts[0]["container_path"] == "/home/user/.chiperflux/skills"
 
     def test_symlinks_are_sanitized(self, tmp_path):
         """Symlinks in skills dir should be excluded from the mount."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         skills_dir = chiper_home / "skills"
         skills_dir.mkdir(parents=True)
         (skills_dir / "legit.md").write_text("# real skill")
@@ -163,7 +163,7 @@ class TestSkillsDirectoryMount:
 
     def test_no_symlinks_returns_original_dir(self, tmp_path):
         """When no symlinks exist, the original dir is returned (no copy)."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         skills_dir = chiper_home / "skills"
         skills_dir.mkdir(parents=True)
         (skills_dir / "skill.md").write_text("ok")
@@ -176,7 +176,7 @@ class TestSkillsDirectoryMount:
 
 class TestIterSkillsFiles:
     def test_returns_files_skipping_symlinks(self, tmp_path):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         skills_dir = chiper_home / "skills"
         (skills_dir / "cat" / "myskill").mkdir(parents=True)
         (skills_dir / "cat" / "myskill" / "SKILL.md").write_text("# skill")
@@ -197,7 +197,7 @@ class TestIterSkillsFiles:
         assert not any("evil" in f["container_path"] for f in files)
 
     def test_empty_when_no_skills_dir(self, tmp_path):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
 
         with patch.dict(os.environ, {"CHIPER_HOME": str(chiper_home)}):
@@ -217,8 +217,8 @@ class TestPathTraversalSecurity:
 
     def test_dotdot_traversal_rejected(self, tmp_path, monkeypatch):
         """'../sensitive' must not escape CHIPER_HOME."""
-        monkeypatch.setenv("CHIPER_HOME", str(tmp_path / ".hermes"))
-        (tmp_path / ".hermes").mkdir()
+        monkeypatch.setenv("CHIPER_HOME", str(tmp_path / ".chiper"))
+        (tmp_path / ".chiper").mkdir()
 
         # Create a sensitive file one level above chiper_home
         sensitive = tmp_path / "sensitive.json"
@@ -231,7 +231,7 @@ class TestPathTraversalSecurity:
 
     def test_deep_traversal_rejected(self, tmp_path, monkeypatch):
         """'../../etc/passwd' style traversal must be rejected."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -247,7 +247,7 @@ class TestPathTraversalSecurity:
 
     def test_absolute_path_rejected(self, tmp_path, monkeypatch):
         """Absolute paths must be rejected regardless of whether they exist."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -262,7 +262,7 @@ class TestPathTraversalSecurity:
 
     def test_legitimate_file_still_works(self, tmp_path, monkeypatch):
         """Normal files inside CHIPER_HOME must still be registered."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         (chiper_home / "token.json").write_text('{"token": "abc"}')
@@ -276,7 +276,7 @@ class TestPathTraversalSecurity:
 
     def test_nested_subdir_inside_chiper_home_allowed(self, tmp_path, monkeypatch):
         """Files in subdirectories of CHIPER_HOME must be allowed."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         subdir = chiper_home / "creds"
         subdir.mkdir()
@@ -289,7 +289,7 @@ class TestPathTraversalSecurity:
 
     def test_symlink_traversal_rejected(self, tmp_path, monkeypatch):
         """A symlink inside CHIPER_HOME pointing outside must be rejected."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -325,7 +325,7 @@ class TestConfigPathTraversal:
 
     def test_config_traversal_rejected(self, tmp_path, monkeypatch):
         """'../secret' in config.yaml must not escape CHIPER_HOME."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -340,7 +340,7 @@ class TestConfigPathTraversal:
 
     def test_config_absolute_path_rejected(self, tmp_path, monkeypatch):
         """Absolute paths in config.yaml must be rejected."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -353,7 +353,7 @@ class TestConfigPathTraversal:
 
     def test_config_legitimate_file_works(self, tmp_path, monkeypatch):
         """Normal files inside CHIPER_HOME via config must still mount."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -374,7 +374,7 @@ class TestCacheDirectoryMounts:
 
     def test_returns_existing_cache_dirs(self, tmp_path, monkeypatch):
         """Existing cache dirs are returned with correct container paths."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "cache" / "documents").mkdir(parents=True)
         (chiper_home / "cache" / "audio").mkdir(parents=True)
@@ -389,7 +389,7 @@ class TestCacheDirectoryMounts:
 
     def test_skips_nonexistent_dirs(self, tmp_path, monkeypatch):
         """Dirs that don't exist on disk are not returned."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         # Create only one cache dir
         (chiper_home / "cache" / "documents").mkdir(parents=True)
@@ -401,7 +401,7 @@ class TestCacheDirectoryMounts:
 
     def test_legacy_dir_names_resolved(self, tmp_path, monkeypatch):
         """Old-style dir names (e.g. document_cache) are resolved correctly."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         # Use legacy dir name — get_chiper_dir prefers old if it exists
         (chiper_home / "document_cache").mkdir()
@@ -419,7 +419,7 @@ class TestCacheDirectoryMounts:
 
     def test_empty_chiper_home(self, tmp_path, monkeypatch):
         """No cache dirs → empty list."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -430,7 +430,7 @@ class TestMapCachePathToContainer:
     """Tests for map_cache_path_to_container() — the backend-agnostic mapper."""
 
     def test_maps_path_under_cache_dir(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         img_dir = chiper_home / "cache" / "images"
         img_dir.mkdir(parents=True)
         host_path = str(img_dir / "generated.png")
@@ -442,26 +442,26 @@ class TestMapCachePathToContainer:
         )
 
     def test_custom_container_base_for_remote_home(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         img_dir = chiper_home / "cache" / "images"
         img_dir.mkdir(parents=True)
         host_path = str(img_dir / "remote.png")
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
         assert (
-            map_cache_path_to_container(host_path, container_base="/home/agent/.hermes")
+            map_cache_path_to_container(host_path, container_base="/home/agent/.chiper")
             == "/home/agent/.chiperflux/cache/images/remote.png"
         )
 
     def test_returns_none_when_outside_cache_dirs(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         (chiper_home / "cache" / "images").mkdir(parents=True)
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
         assert map_cache_path_to_container(str(tmp_path / "elsewhere.png")) is None
 
     def test_returns_none_when_no_cache_dirs_exist(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -473,7 +473,7 @@ class TestIterCacheFiles:
 
     def test_enumerates_files(self, tmp_path, monkeypatch):
         """Regular files in cache dirs are returned."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         doc_dir = chiper_home / "cache" / "documents"
         doc_dir.mkdir(parents=True)
         (doc_dir / "upload.zip").write_bytes(b"PK\x03\x04")
@@ -487,7 +487,7 @@ class TestIterCacheFiles:
 
     def test_skips_symlinks(self, tmp_path, monkeypatch):
         """Symlinks inside cache dirs are skipped."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         doc_dir = chiper_home / "cache" / "documents"
         doc_dir.mkdir(parents=True)
         real_file = doc_dir / "real.txt"
@@ -502,7 +502,7 @@ class TestIterCacheFiles:
 
     def test_nested_files(self, tmp_path, monkeypatch):
         """Files in subdirectories are included with correct relative paths."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         ss_dir = chiper_home / "cache" / "screenshots"
         sub = ss_dir / "session_abc"
         sub.mkdir(parents=True)
@@ -515,7 +515,7 @@ class TestIterCacheFiles:
 
     def test_empty_cache(self, tmp_path, monkeypatch):
         """No cache dirs → empty list."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 

@@ -14,10 +14,10 @@ Poll RSS, JSON APIs, and GitHub with watermark dedup.
 
 | | |
 |---|---|
-| Source | Optional — install with `hermes skills install official/devops/watchers` |
+| Source | Optional — install with `chiper skills install official/devops/watchers` |
 | Path | `optional-skills/devops/watchers` |
 | Version | `1.0.0` |
-| Author | Hermes Agent |
+| Author | Chiper Agent |
 | License | MIT |
 | Platforms | linux, macos |
 | Tags | `cron`, `polling`, `rss`, `github`, `http`, `automation`, `monitoring` |
@@ -25,7 +25,7 @@ Poll RSS, JSON APIs, and GitHub with watermark dedup.
 ## Reference: full SKILL.md
 
 :::info
-The following is the complete skill definition that Hermes loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
+The following is the complete skill definition that Chiper loads when this skill is triggered. This is what the agent sees as instructions when the skill is active.
 :::
 
 # Watchers
@@ -81,7 +81,7 @@ Watch a GitHub repo (set `GITHUB_TOKEN` in `~/.chiperflux/.env` to avoid the 60 
 
 ```bash
 python $CHIPER_HOME/skills/devops/watchers/scripts/watch_github.py \
-  --name hermes-issues --repo NousResearch/chiper-agent --scope issues
+  --name chiper-issues --repo NousResearch/chiper-agent --scope issues
 ```
 
 Poll an arbitrary JSON API:

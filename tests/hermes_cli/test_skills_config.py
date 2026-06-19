@@ -210,7 +210,7 @@ class TestGetDisabledSkillNames:
         result = get_disabled_skill_names()
         assert result == {"discord-skill", "global-skill"}
 
-    def test_hermes_platform_takes_precedence(self, tmp_path, monkeypatch):
+    def test_chiper_platform_takes_precedence(self, tmp_path, monkeypatch):
         """CHIPER_PLATFORM should win over CHIPER_SESSION_PLATFORM."""
         config = tmp_path / "config.yaml"
         config.write_text(

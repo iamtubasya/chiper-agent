@@ -114,7 +114,7 @@ class TestGatewayRunnerRegistration:
             "dotenv",
             "chiper_cli.env_loader",
             "chiper_cli.config",
-            "hermes_constants",
+            "chiper_constants",
         ]
         _orig = {}
         for mod in stubs:
@@ -285,12 +285,12 @@ class TestMediaModule:
 
 class TestToolset:
     def test_yuanbao_toolset_registered(self):
-        """toolsets.py 中存在 hermes-yuanbao 键"""
+        """toolsets.py 中存在 chiper-yuanbao 键"""
         import importlib
         ts = importlib.import_module("toolsets")
         assert hasattr(ts, "TOOLSETS") or hasattr(ts, "toolsets")
         toolsets_dict = getattr(ts, "TOOLSETS", getattr(ts, "toolsets", {}))
-        assert "hermes-yuanbao" in toolsets_dict
+        assert "chiper-yuanbao" in toolsets_dict
 
     def test_tools_import(self):
         from tools.yuanbao_tools import (

@@ -14,11 +14,11 @@ from agent.skill_utils import (
 )
 
 
-def test_metadata_as_dict_with_hermes():
-    """Normal case: metadata is a dict containing hermes keys."""
+def test_metadata_as_dict_with_chiper():
+    """Normal case: metadata is a dict containing chiper keys."""
     frontmatter = {
         "metadata": {
-            "hermes": {
+            "chiper": {
                 "fallback_for_toolsets": ["toolset_a"],
                 "requires_toolsets": ["toolset_b"],
                 "fallback_for_tools": ["tool_x"],
@@ -111,7 +111,7 @@ def test_skill_config_helpers_share_raw_config_parse_cache(tmp_path, monkeypatch
     """Repeated skill config helpers should parse config.yaml only once."""
     from agent import skill_utils
 
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     external = tmp_path / "external-skills"
     external.mkdir()
@@ -154,7 +154,7 @@ def test_skill_config_raw_cache_invalidates_on_config_edit(tmp_path, monkeypatch
     """Editing config.yaml should invalidate the shared raw config cache."""
     from agent import skill_utils
 
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     config_path = chiper_home / "config.yaml"
     config_path.write_text("skills:\n  disabled: [old-skill]\n", encoding="utf-8")

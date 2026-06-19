@@ -1658,7 +1658,7 @@ class TestDefaultInteractionDispatch:
         chiper_home = tmp_path / "chiper_home"
         chiper_home.mkdir()
         monkeypatch.setattr(
-            "hermes_constants.get_chiper_home",
+            "chiper_constants.get_chiper_home",
             lambda: chiper_home,
         )
 
@@ -1679,7 +1679,7 @@ class TestDefaultInteractionDispatch:
         chiper_home = tmp_path / "chiper_home"
         chiper_home.mkdir()
         monkeypatch.setattr(
-            "hermes_constants.get_chiper_home",
+            "chiper_constants.get_chiper_home",
             lambda: chiper_home,
         )
         from gateway.platforms.qqbot.keyboards import parse_interaction_event

@@ -1,4 +1,4 @@
-"""Tests for chiper_cli.plugins_cmd — the ``hermes plugins`` CLI subcommand."""
+"""Tests for chiper_cli.plugins_cmd — the ``chiper plugins`` CLI subcommand."""
 
 from __future__ import annotations
 

@@ -41,8 +41,8 @@ import pytest
 @pytest.fixture
 def isolated_home(monkeypatch):
     """Temp CHIPER_HOME with config + clean credential env vars."""
-    test_home = tempfile.mkdtemp(prefix="hermes_test_31179_")
-    chiper_home = os.path.join(test_home, ".hermes")
+    test_home = tempfile.mkdtemp(prefix="chiper_test_31179_")
+    chiper_home = os.path.join(test_home, ".chiper")
     os.makedirs(chiper_home)
     monkeypatch.setenv("CHIPER_HOME", chiper_home)
 
@@ -61,7 +61,7 @@ def _write_config(home: str, text: str) -> None:
 
 
 def _fresh_modules():
-    """Drop cached hermes modules so each test reloads against current env."""
+    """Drop cached chiper modules so each test reloads against current env."""
     for mod in list(sys.modules.keys()):
         if mod.startswith(("agent.auxiliary_client", "agent.image_routing",
                            "tools.vision_tools", "tools.browser_tool",

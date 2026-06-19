@@ -34,7 +34,7 @@ def cron_env(tmp_path, monkeypatch):
     after that reload and defeat ``pytest.raises(...)`` checks. Each test
     re-imports via this fixture's return value instead.
     """
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     skills_dir = chiper_home / "skills"
     skills_dir.mkdir()
@@ -334,7 +334,7 @@ class TestScriptOutputNotStrictScanned:
     code — same trust class as install-vetted skill markdown — and must be
     scanned with the looser assembled-content tier instead.
 
-    Live incident: the ``hermes-triage`` cron was blocked every 5 minutes
+    Live incident: the ``chiper-triage`` cron was blocked every 5 minutes
     once an open security issue containing the root-delete pattern entered
     its ingest queue (112 such rows in the triage corpus — dangerous-command
     quotes are *normal* for triage data).

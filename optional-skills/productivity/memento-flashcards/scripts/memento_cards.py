@@ -15,8 +15,8 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-_HERMES_HOME = Path(os.environ.get("CHIPER_HOME", Path.home() / ".chiperflux"))
-DATA_DIR = _HERMES_HOME / "skills" / "productivity" / "memento-flashcards" / "data"
+_CHIPER_HOME = Path(os.environ.get("CHIPER_HOME", Path.home() / ".chiperflux"))
+DATA_DIR = _CHIPER_HOME / "skills" / "productivity" / "memento-flashcards" / "data"
 CARDS_FILE = DATA_DIR / "cards.json"
 
 RETIRED_SENTINEL = "9999-12-31T23:59:59+00:00"

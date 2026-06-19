@@ -402,7 +402,7 @@ class TestYamlConfigLoading:
     """Tests for reply_to_mode loaded from config.yaml discord section."""
 
     def _write_config(self, tmp_path, content: str):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text(content, encoding="utf-8")
         return chiper_home

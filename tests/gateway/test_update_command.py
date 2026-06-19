@@ -52,7 +52,7 @@ class TestHandleUpdateCommand:
         monkeypatch.setenv("CHIPER_MANAGED", "homebrew")
 
         # Guard: prevent any accidental fall-through from spawning a real
-        # `hermes update --gateway` against the CI checkout. The managed-install
+        # `chiper update --gateway` against the CI checkout. The managed-install
         # guard should return before Popen is ever reached, but mock it as
         # belt-and-suspenders so a premature return doesn't corrupt the repo.
         with patch("subprocess.Popen") as mock_popen:
@@ -106,8 +106,8 @@ class TestHandleUpdateCommand:
         assert "Not a git repository" in result
 
     @pytest.mark.asyncio
-    async def test_no_hermes_binary(self, tmp_path):
-        """Returns error when hermes is not on PATH and chiper_cli is not importable."""
+    async def test_no_chiper_binary(self, tmp_path):
+        """Returns error when chiper is not on PATH and chiper_cli is not importable."""
         runner = _make_runner()
         event = _make_event()
 
@@ -126,11 +126,11 @@ class TestHandleUpdateCommand:
             result = await runner._handle_update_command(event)
 
         assert "Could not locate" in result
-        assert "hermes update" in result
+        assert "chiper update" in result
 
     @pytest.mark.asyncio
     async def test_fallback_to_sys_executable(self, tmp_path):
-        """Falls back to sys.executable -m chiper_cli.main when hermes not on PATH."""
+        """Falls back to sys.executable -m chiper_cli.main when chiper not on PATH."""
         runner = _make_runner()
         event = _make_event()
 
@@ -140,7 +140,7 @@ class TestHandleUpdateCommand:
         (fake_root / "gateway").mkdir()
         (fake_root / "gateway" / "run.py").touch()
         fake_file = str(fake_root / "gateway" / "run.py")
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         mock_popen = MagicMock()
@@ -153,43 +153,43 @@ class TestHandleUpdateCommand:
              patch("subprocess.Popen", mock_popen):
             result = await runner._handle_update_command(event)
 
-        assert "Starting Hermes update" in result
+        assert "Starting Chiper update" in result
         call_args = mock_popen.call_args[0][0]
         # The update_cmd uses sys.executable -m chiper_cli.main
         joined = " ".join(call_args) if isinstance(call_args, list) else call_args
         assert "chiper_cli.main" in joined or "bash" in call_args[0]
 
     @pytest.mark.asyncio
-    async def test_resolve_hermes_bin_prefers_which(self, tmp_path):
-        """_resolve_hermes_bin returns argv parts from shutil.which when available."""
-        from gateway.run import _resolve_hermes_bin
+    async def test_resolve_chiper_bin_prefers_which(self, tmp_path):
+        """_resolve_chiper_bin returns argv parts from shutil.which when available."""
+        from gateway.run import _resolve_chiper_bin
 
-        with patch("shutil.which", return_value="/custom/path/hermes"):
-            result = _resolve_hermes_bin()
+        with patch("shutil.which", return_value="/custom/path/chiper"):
+            result = _resolve_chiper_bin()
 
-        assert result == ["/custom/path/hermes"]
+        assert result == ["/custom/path/chiper"]
 
     @pytest.mark.asyncio
-    async def test_resolve_hermes_bin_fallback(self):
-        """_resolve_hermes_bin falls back to sys.executable argv when which fails."""
+    async def test_resolve_chiper_bin_fallback(self):
+        """_resolve_chiper_bin falls back to sys.executable argv when which fails."""
         import sys
-        from gateway.run import _resolve_hermes_bin
+        from gateway.run import _resolve_chiper_bin
 
         fake_spec = MagicMock()
         with patch("shutil.which", return_value=None), \
              patch("importlib.util.find_spec", return_value=fake_spec):
-            result = _resolve_hermes_bin()
+            result = _resolve_chiper_bin()
 
         assert result == [sys.executable, "-m", "chiper_cli.main"]
 
     @pytest.mark.asyncio
-    async def test_resolve_hermes_bin_returns_none_when_both_fail(self):
-        """_resolve_hermes_bin returns None when both strategies fail."""
-        from gateway.run import _resolve_hermes_bin
+    async def test_resolve_chiper_bin_returns_none_when_both_fail(self):
+        """_resolve_chiper_bin returns None when both strategies fail."""
+        from gateway.run import _resolve_chiper_bin
 
         with patch("shutil.which", return_value=None), \
              patch("importlib.util.find_spec", return_value=None):
-            result = _resolve_hermes_bin()
+            result = _resolve_chiper_bin()
 
         assert result is None
 
@@ -206,12 +206,12 @@ class TestHandleUpdateCommand:
         (fake_root / "gateway").mkdir()
         (fake_root / "gateway" / "run.py").touch()
         fake_file = str(fake_root / "gateway" / "run.py")
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         with patch("gateway.run._chiper_home", chiper_home), \
              patch("gateway.run.__file__", fake_file), \
-             patch("shutil.which", side_effect=lambda x: "/usr/bin/hermes" if x == "hermes" else "/usr/bin/setsid"), \
+             patch("shutil.which", side_effect=lambda x: "/usr/bin/chiper" if x == "chiper" else "/usr/bin/setsid"), \
              patch("subprocess.Popen"):
             result = await runner._handle_update_command(event)
 
@@ -242,12 +242,12 @@ class TestHandleUpdateCommand:
         (fake_root / "gateway").mkdir()
         (fake_root / "gateway" / "run.py").touch()
         fake_file = str(fake_root / "gateway" / "run.py")
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         with patch("gateway.run._chiper_home", chiper_home), \
              patch("gateway.run.__file__", fake_file), \
-             patch("shutil.which", side_effect=lambda x: "/usr/bin/hermes" if x == "hermes" else "/usr/bin/setsid"), \
+             patch("shutil.which", side_effect=lambda x: "/usr/bin/chiper" if x == "chiper" else "/usr/bin/setsid"), \
              patch("subprocess.Popen"):
             await runner._handle_update_command(event)
 
@@ -267,7 +267,7 @@ class TestHandleUpdateCommand:
         (fake_root / "gateway").mkdir()
         (fake_root / "gateway" / "run.py").touch()
         fake_file = str(fake_root / "gateway" / "run.py")
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         mock_popen = MagicMock()
@@ -282,7 +282,7 @@ class TestHandleUpdateCommand:
         assert call_args[0] == "/usr/bin/setsid"
         assert call_args[1] == "bash"
         assert ".update_exit_code" in call_args[-1]
-        assert "Starting Hermes update" in result
+        assert "Starting Chiper update" in result
 
     @pytest.mark.asyncio
     async def test_fallback_when_no_setsid(self, tmp_path):
@@ -296,14 +296,14 @@ class TestHandleUpdateCommand:
         (fake_root / "gateway").mkdir()
         (fake_root / "gateway" / "run.py").touch()
         fake_file = str(fake_root / "gateway" / "run.py")
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         mock_popen = MagicMock()
 
         def which_no_setsid(x):
-            if x == "hermes":
-                return "/usr/bin/hermes"
+            if x == "chiper":
+                return "/usr/bin/chiper"
             if x == "setsid":
                 return None
             return None
@@ -322,7 +322,7 @@ class TestHandleUpdateCommand:
         # start_new_session=True should be in kwargs
         call_kwargs = mock_popen.call_args[1]
         assert call_kwargs.get("start_new_session") is True
-        assert "Starting Hermes update" in result
+        assert "Starting Chiper update" in result
 
     @pytest.mark.asyncio
     async def test_popen_failure_cleans_up(self, tmp_path):
@@ -336,7 +336,7 @@ class TestHandleUpdateCommand:
         (fake_root / "gateway").mkdir()
         (fake_root / "gateway" / "run.py").touch()
         fake_file = str(fake_root / "gateway" / "run.py")
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         with patch("gateway.run._chiper_home", chiper_home), \
@@ -362,7 +362,7 @@ class TestHandleUpdateCommand:
         (fake_root / "gateway").mkdir()
         (fake_root / "gateway" / "run.py").touch()
         fake_file = str(fake_root / "gateway" / "run.py")
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         with patch("gateway.run._chiper_home", chiper_home), \
@@ -452,7 +452,7 @@ class TestUpdateCommandPlatformGate:
 
         # The gate must NOT have rejected us — anything other than the
         # ``platform_not_messaging`` rejection string is acceptable here.
-        # Later steps may legitimately return success ("Starting Hermes
+        # Later steps may legitimately return success ("Starting Chiper
         # update…") or fail for environment reasons.
         assert "only available from messaging platforms" not in result
 
@@ -538,7 +538,7 @@ class TestSendUpdateNotification:
     async def test_no_pending_file_is_noop(self, tmp_path):
         """Does nothing when no pending file exists."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         with patch("gateway.run._chiper_home", chiper_home):
@@ -549,7 +549,7 @@ class TestSendUpdateNotification:
     async def test_defers_notification_while_update_still_running(self, tmp_path):
         """Returns False and keeps marker files when the update has not exited yet."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         pending_path = chiper_home / ".update_pending.json"
@@ -572,7 +572,7 @@ class TestSendUpdateNotification:
     async def test_recovers_from_claimed_pending_file(self, tmp_path):
         """A claimed pending file from a crashed notifier is still deliverable."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         claimed_path = chiper_home / ".update_pending.claimed.json"
@@ -596,7 +596,7 @@ class TestSendUpdateNotification:
     async def test_sends_notification_with_output(self, tmp_path):
         """Sends update output to the correct platform and chat."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         # Write pending marker
@@ -629,7 +629,7 @@ class TestSendUpdateNotification:
     async def test_sends_notification_with_thread_metadata(self, tmp_path):
         """Final update notification preserves thread metadata when present."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         pending = {
@@ -661,7 +661,7 @@ class TestSendUpdateNotification:
     async def test_strips_ansi_codes(self, tmp_path):
         """ANSI escape codes are removed from output."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         pending = {"platform": "telegram", "chat_id": "111", "user_id": "222"}
@@ -685,7 +685,7 @@ class TestSendUpdateNotification:
     async def test_truncates_long_output(self, tmp_path):
         """Output longer than 3500 chars is truncated."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         pending = {"platform": "telegram", "chat_id": "111", "user_id": "222"}
@@ -709,7 +709,7 @@ class TestSendUpdateNotification:
     async def test_sends_failure_message_when_update_fails(self, tmp_path):
         """Non-zero exit codes produce a failure notification with captured output."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         pending = {"platform": "telegram", "chat_id": "111", "user_id": "222"}
@@ -732,7 +732,7 @@ class TestSendUpdateNotification:
     async def test_sends_generic_message_when_no_output(self, tmp_path):
         """Sends a success message even if the output file is missing."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         pending = {"platform": "telegram", "chat_id": "111", "user_id": "222"}
@@ -753,7 +753,7 @@ class TestSendUpdateNotification:
     async def test_cleans_up_files_after_notification(self, tmp_path):
         """Both marker and output files are deleted after notification."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         pending_path = chiper_home / ".update_pending.json"
@@ -779,7 +779,7 @@ class TestSendUpdateNotification:
     async def test_cleans_up_on_error(self, tmp_path):
         """Files are cleaned up even if notification fails."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         pending_path = chiper_home / ".update_pending.json"
@@ -808,7 +808,7 @@ class TestSendUpdateNotification:
     async def test_handles_corrupt_pending_file(self, tmp_path):
         """Gracefully handles a malformed pending JSON file."""
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         pending_path = chiper_home / ".update_pending.json"
@@ -831,7 +831,7 @@ class TestSendUpdateNotification:
         retry can deliver once the platform is back.
         """
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         pending = {"platform": "discord", "chat_id": "111", "user_id": "222"}
@@ -869,7 +869,7 @@ class TestSendUpdateNotification:
         cleans up — exactly once.
         """
         runner = _make_runner()
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir()
 
         pending = {"platform": "discord", "chat_id": "111", "user_id": "222"}

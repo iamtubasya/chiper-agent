@@ -19,11 +19,11 @@ def test_sessions_delete_accepts_unique_id_prefix(monkeypatch, capsys):
         def close(self):
             captured["closed"] = True
 
-    monkeypatch.setattr(hermes_state, "SessionDB", lambda: FakeDB())
+    monkeypatch.setattr(chiper_state, "SessionDB", lambda: FakeDB())
     monkeypatch.setattr(
         sys,
         "argv",
-        ["hermes", "sessions", "delete", "20260315_092437_c9a6", "--yes"],
+        ["chiper", "sessions", "delete", "20260315_092437_c9a6", "--yes"],
     )
 
     main_mod.main()
@@ -51,11 +51,11 @@ def test_sessions_delete_reports_not_found_when_prefix_is_unknown(monkeypatch, c
         def close(self):
             pass
 
-    monkeypatch.setattr(hermes_state, "SessionDB", lambda: FakeDB())
+    monkeypatch.setattr(chiper_state, "SessionDB", lambda: FakeDB())
     monkeypatch.setattr(
         sys,
         "argv",
-        ["hermes", "sessions", "delete", "missing-prefix", "--yes"],
+        ["chiper", "sessions", "delete", "missing-prefix", "--yes"],
     )
 
     main_mod.main()
@@ -79,10 +79,10 @@ def test_sessions_delete_handles_eoferror_on_confirm(monkeypatch, capsys):
         def close(self):
             pass
 
-    monkeypatch.setattr(hermes_state, "SessionDB", lambda: FakeDB())
+    monkeypatch.setattr(chiper_state, "SessionDB", lambda: FakeDB())
     monkeypatch.setattr(
         sys, "argv",
-        ["hermes", "sessions", "delete", "20260315_092437_c9a6"],
+        ["chiper", "sessions", "delete", "20260315_092437_c9a6"],
     )
     monkeypatch.setattr("builtins.input", lambda _prompt="": (_ for _ in ()).throw(EOFError))
 
@@ -104,10 +104,10 @@ def test_sessions_prune_handles_eoferror_on_confirm(monkeypatch, capsys):
         def close(self):
             pass
 
-    monkeypatch.setattr(hermes_state, "SessionDB", lambda: FakeDB())
+    monkeypatch.setattr(chiper_state, "SessionDB", lambda: FakeDB())
     monkeypatch.setattr(
         sys, "argv",
-        ["hermes", "sessions", "prune"],
+        ["chiper", "sessions", "prune"],
     )
     monkeypatch.setattr("builtins.input", lambda _prompt="": (_ for _ in ()).throw(EOFError))
 

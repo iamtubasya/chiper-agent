@@ -66,10 +66,10 @@ class TestEnvFileReadBlocking:
             error = get_read_block_error(path)
             assert error is None, f"{path} should be allowed"
 
-    def test_allowed_hermes_env(self):
-        """Hermes' own .env inside CHIPER_HOME is NOT blocked by this rule
+    def test_allowed_chiper_env(self):
+        """Chiper' own .env inside CHIPER_HOME is NOT blocked by this rule
         (it's handled by other mechanisms). Only project-local .env is blocked."""
-        # Note: hermes internal .env is in ~/.chiperflux/.env which is NOT a project-local
+        # Note: chiper internal .env is in ~/.chiperflux/.env which is NOT a project-local
         # path, but the basename check applies to ANY .env. This is intentional —
         # even ~/.chiperflux/.env should not be readable via read_file.
         error = get_read_block_error(os.path.expanduser("~/.chiperflux/.env"))
@@ -87,11 +87,11 @@ class TestEnvFileReadBlocking:
 
 
 class TestCacheFileReadBlocking:
-    """Internal Hermes cache files must remain blocked."""
+    """Internal Chiper cache files must remain blocked."""
 
     def test_hub_index_cache_blocked(self, tmp_path):
         """Hub index-cache reads are blocked."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         cache = chiper_home / "skills" / ".hub" / "index-cache" / "data.json"
         cache.parent.mkdir(parents=True)
         cache.write_text("{}")
@@ -99,11 +99,11 @@ class TestCacheFileReadBlocking:
         with patch("agent.file_safety._chiper_home_path", return_value=chiper_home):
             error = get_read_block_error(str(cache))
             assert error is not None
-            assert "internal Hermes cache" in error
+            assert "internal Chiper cache" in error
 
     def test_hub_directory_blocked(self, tmp_path):
         """Hub directory reads are blocked."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         hub = chiper_home / "skills" / ".hub" / "metadata.json"
         hub.parent.mkdir(parents=True)
         hub.write_text("{}")
@@ -123,7 +123,7 @@ class TestCombinedGuards:
 
     def test_env_guard_works_regardless_of_chiper_home(self, tmp_path):
         """The env basename guard does not depend on CHIPER_HOME resolution."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
 
         with patch("agent.file_safety._chiper_home_path", return_value=chiper_home):
@@ -137,7 +137,7 @@ class TestCombinedGuards:
 
     def test_cache_guard_still_works_with_env_guard(self, tmp_path):
         """Cache file blocking still works when env guard is active."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         cache = chiper_home / "skills" / ".hub" / "index-cache" / "x"
         cache.parent.mkdir(parents=True)
         cache.write_text("")
@@ -145,4 +145,4 @@ class TestCombinedGuards:
         with patch("agent.file_safety._chiper_home_path", return_value=chiper_home):
             error = get_read_block_error(str(cache))
             assert error is not None
-            assert "internal Hermes cache" in error
+            assert "internal Chiper cache" in error

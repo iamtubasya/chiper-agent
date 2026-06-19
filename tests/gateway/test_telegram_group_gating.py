@@ -21,7 +21,7 @@ def _make_adapter(
     group_allowed_chats=None,
     guest_mode=None,
     observe_unmentioned_group_messages=None,
-    bot_username="hermes_bot",
+    bot_username="chiper_bot",
 ):
     from gateway.platforms.telegram import TelegramAdapter
 
@@ -130,7 +130,7 @@ def _dm_message(text="hello", *, from_user_id=111):
     )
 
 
-def _mention_entity(text, mention="@hermes_bot"):
+def _mention_entity(text, mention="@chiper_bot"):
     offset = text.index(mention)
     return SimpleNamespace(type="mention", offset=offset, length=len(mention))
 
@@ -200,7 +200,7 @@ def test_observed_group_context_uses_shared_source_and_prompt_for_later_mentions
             observe_unmentioned_group_messages=True,
         )
         adapter._session_store = _FakeSessionStore()
-        text = "@hermes_bot what did Alice say?"
+        text = "@chiper_bot what did Alice say?"
         msg = _group_message(
             text,
             from_user_id=222,
@@ -323,7 +323,7 @@ def test_observed_group_context_preserves_slash_command_text_for_dispatch():
         observe_unmentioned_group_messages=True,
     )
     event = MessageEvent(
-        text="/new@hermes_bot",
+        text="/new@chiper_bot",
         message_type=MessageType.COMMAND,
         source=SessionSource(
             platform=Platform.TELEGRAM,
@@ -334,14 +334,14 @@ def test_observed_group_context_preserves_slash_command_text_for_dispatch():
             thread_id="7",
         ),
         raw_message=_group_message(
-            "/new@hermes_bot",
-            entities=[_bot_command_entity("/new@hermes_bot", "/new@hermes_bot")],
+            "/new@chiper_bot",
+            entities=[_bot_command_entity("/new@chiper_bot", "/new@chiper_bot")],
         ),
     )
 
     attributed = adapter._apply_telegram_group_observe_attribution(event)
 
-    assert attributed.text == "/new@hermes_bot"
+    assert attributed.text == "/new@chiper_bot"
     assert attributed.get_command() == "new"
     assert attributed.source.user_id is None
     assert "observed Telegram group context" in attributed.channel_prompt
@@ -433,7 +433,7 @@ def test_group_messages_can_require_direct_trigger_via_config():
     adapter = _make_adapter(require_mention=True)
 
     assert adapter._should_process_message(_group_message("hello everyone")) is False
-    assert adapter._should_process_message(_group_message("hi @hermes_bot", entities=[_mention_entity("hi @hermes_bot")])) is True
+    assert adapter._should_process_message(_group_message("hi @chiper_bot", entities=[_mention_entity("hi @chiper_bot")])) is True
     assert adapter._should_process_message(_group_message("replying", reply_to_bot=True)) is True
     # Commands must also respect require_mention when it is enabled
     assert adapter._should_process_message(_group_message("/status"), is_command=True) is False
@@ -442,8 +442,8 @@ def test_group_messages_can_require_direct_trigger_via_config():
     # entity). We must accept it so the menu works when require_mention is on.
     assert adapter._should_process_message(
         _group_message(
-            "/status@hermes_bot",
-            entities=[_bot_command_entity("/status@hermes_bot", "/status@hermes_bot")],
+            "/status@chiper_bot",
+            entities=[_bot_command_entity("/status@chiper_bot", "/status@chiper_bot")],
         ),
         is_command=True,
     ) is True
@@ -517,11 +517,11 @@ def test_bot_command_addressed_to_other_bot_is_exclusive_even_when_mentions_not_
 
 
 def test_raw_bot_mention_fallback_does_not_match_email_or_substring():
-    adapter = _make_adapter(require_mention=True, bot_username="hermes_bot")
+    adapter = _make_adapter(require_mention=True, bot_username="chiper_bot")
 
-    assert adapter._should_process_message(_group_message("email ops@hermes_bot.example")) is False
-    assert adapter._should_process_message(_group_message("prefix@hermes_bot hi")) is False
-    assert adapter._should_process_message(_group_message("hi @hermes_bot")) is True
+    assert adapter._should_process_message(_group_message("email ops@chiper_bot.example")) is False
+    assert adapter._should_process_message(_group_message("prefix@chiper_bot hi")) is False
+    assert adapter._should_process_message(_group_message("hi @chiper_bot")) is True
 
 
 def test_exclusive_bot_mentions_can_be_disabled_for_legacy_groups():
@@ -552,9 +552,9 @@ def test_guest_mode_allows_only_direct_mentions_outside_allowed_chats():
     )
 
     mentioned = _group_message(
-        "hi @hermes_bot",
+        "hi @chiper_bot",
         chat_id=-201,
-        entities=[_mention_entity("hi @hermes_bot")],
+        entities=[_mention_entity("hi @chiper_bot")],
     )
     assert adapter._should_process_message(mentioned) is True
     assert adapter._should_process_message(_group_message("reply", chat_id=-201, reply_to_bot=True)) is False
@@ -566,9 +566,9 @@ def test_guest_mode_defaults_to_false_for_allowed_chat_bypass():
     adapter = _make_adapter(require_mention=True, allowed_chats=["-200"], guest_mode=False)
 
     mentioned = _group_message(
-        "hi @hermes_bot",
+        "hi @chiper_bot",
         chat_id=-201,
-        entities=[_mention_entity("hi @hermes_bot")],
+        entities=[_mention_entity("hi @chiper_bot")],
     )
     assert adapter._should_process_message(mentioned) is False
 
@@ -582,9 +582,9 @@ def test_guest_mode_mention_dropped_in_ignored_thread():
         ignored_threads=[42],
     )
     mentioned = _group_message(
-        "hi @hermes_bot",
+        "hi @chiper_bot",
         chat_id=-201,
-        entities=[_mention_entity("hi @hermes_bot")],
+        entities=[_mention_entity("hi @chiper_bot")],
         thread_id=42,
     )
     assert adapter._should_process_message(mentioned) is False
@@ -604,7 +604,7 @@ def test_allowed_topics_drop_other_forum_topics_before_other_gates():
     assert adapter._should_process_message(_group_message("hello", chat_id=-100, thread_id=8)) is True
     assert adapter._should_process_message(_group_message("hello", chat_id=-100, thread_id=11)) is False
     assert adapter._should_process_message(
-        _group_message("hi @hermes_bot", chat_id=-100, thread_id=11, entities=[_mention_entity("hi @hermes_bot")])
+        _group_message("hi @chiper_bot", chat_id=-100, thread_id=11, entities=[_mention_entity("hi @chiper_bot")])
     ) is False
 
 
@@ -637,7 +637,7 @@ def test_invalid_regex_patterns_are_ignored():
 
 
 def test_config_bridges_telegram_group_settings(monkeypatch, tmp_path):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     (chiper_home / "config.yaml").write_text(
         "telegram:\n"
@@ -692,7 +692,7 @@ def test_config_bridges_telegram_group_settings(monkeypatch, tmp_path):
 
 
 def test_config_bridges_telegram_user_allowlists(monkeypatch, tmp_path):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     (chiper_home / "config.yaml").write_text(
         "telegram:\n"
@@ -720,7 +720,7 @@ def test_config_bridges_telegram_user_allowlists(monkeypatch, tmp_path):
 
 
 def test_config_env_overrides_telegram_user_allowlists(monkeypatch, tmp_path):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     (chiper_home / "config.yaml").write_text(
         "telegram:\n"
@@ -757,7 +757,7 @@ def test_top_level_require_mention_bridges_to_telegram(monkeypatch, tmp_path):
     """require_mention at the config.yaml top level (alongside group_sessions_per_user)
     must behave identically to telegram.require_mention: true (#3979).
     """
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     # Intentionally no "telegram:" section — keys are at the top level.
     (chiper_home / "config.yaml").write_text(
@@ -785,7 +785,7 @@ def test_top_level_require_mention_does_not_override_telegram_section(monkeypatc
     """When telegram.require_mention is explicitly set, top-level require_mention
     must not override it (platform-specific config takes precedence).
     """
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     (chiper_home / "config.yaml").write_text(
         "require_mention: true\n"
@@ -805,7 +805,7 @@ def test_top_level_require_mention_does_not_override_telegram_section(monkeypatc
 
 
 def test_config_bridges_telegram_ignored_threads(monkeypatch, tmp_path):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     (chiper_home / "config.yaml").write_text(
         "telegram:\n"

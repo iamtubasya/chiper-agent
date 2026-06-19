@@ -47,11 +47,11 @@ def _record_codex_app_server_usage(agent, turn) -> dict[str, Any]:
     inputTokens, cachedInputTokens, outputTokens, reasoningOutputTokens,
     totalTokens.
 
-    Hermes' canonical prompt bucket includes uncached input + cached input.
+    Chiper' canonical prompt bucket includes uncached input + cached input.
     The Codex app-server protocol does not currently expose cache-write tokens,
     so that bucket remains zero on this runtime.
 
-    Even when Codex omits usage for a turn, Hermes should still count that turn
+    Even when Codex omits usage for a turn, Chiper should still count that turn
     as one API call for session/status accounting.
     """
     agent.session_api_calls += 1

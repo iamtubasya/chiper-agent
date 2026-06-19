@@ -1,4 +1,4 @@
-"""Tests for chiper_cli/bundles.py — the `hermes bundles` CLI subcommand."""
+"""Tests for chiper_cli/bundles.py — the `chiper bundles` CLI subcommand."""
 
 import argparse
 

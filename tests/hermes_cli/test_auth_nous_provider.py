@@ -61,10 +61,10 @@ class TestResolveVerifyFallback:
         result = _resolve_verify(auth_state={"tls": {}})
         assert result is True
 
-    def test_missing_hermes_ca_bundle_env_falls_back(self, monkeypatch):
+    def test_missing_chiper_ca_bundle_env_falls_back(self, monkeypatch):
         from chiper_cli.auth import _resolve_verify
 
-        monkeypatch.setenv("CHIPER_CA_BUNDLE", "/nonexistent/hermes-ca.pem")
+        monkeypatch.setenv("CHIPER_CA_BUNDLE", "/nonexistent/chiper-ca.pem")
         monkeypatch.delenv("SSL_CERT_FILE", raising=False)
         result = _resolve_verify(auth_state={"tls": {}})
         assert result is True
@@ -143,7 +143,7 @@ def _setup_nous_auth(
             "nous": {
                 "portal_base_url": "https://portal.example.com",
                 "inference_base_url": "https://inference.example.com/v1",
-                "client_id": "hermes-cli",
+                "client_id": "chiper-cli",
                 "token_type": "Bearer",
                 "scope": scope,
                 "access_token": access_token,
@@ -189,7 +189,7 @@ def test_resolve_nous_runtime_credentials_prefers_invoke_jwt_and_mirrors(
 ):
     import chiper_cli.auth as auth_mod
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     token = _invoke_jwt(seconds=3600)
     _setup_nous_auth(
         chiper_home,
@@ -223,7 +223,7 @@ def test_resolve_nous_runtime_credentials_invoke_jwt_is_idempotent(
 ):
     import chiper_cli.auth as auth_mod
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     exp = int(time.time() + 3600)
     expires_at = datetime.fromtimestamp(exp, tz=timezone.utc).isoformat()
@@ -240,7 +240,7 @@ def test_resolve_nous_runtime_credentials_invoke_jwt_is_idempotent(
             "nous": {
                 "portal_base_url": "https://portal.example.com",
                 "inference_base_url": "https://inference.example.com/v1",
-                "client_id": "hermes-cli",
+                "client_id": "chiper-cli",
                 "token_type": "Bearer",
                 "scope": auth_mod.DEFAULT_NOUS_SCOPE,
                 "access_token": token,
@@ -296,7 +296,7 @@ def test_resolve_nous_runtime_credentials_trusts_invoke_jwt_exp_over_stale_metad
 ):
     import chiper_cli.auth as auth_mod
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     token = _invoke_jwt(seconds=3600)
     _setup_nous_auth(
         chiper_home,
@@ -331,7 +331,7 @@ def test_resolve_nous_runtime_credentials_does_not_apply_agent_key_ttl_to_invoke
 ):
     import chiper_cli.auth as auth_mod
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     token = _invoke_jwt(seconds=900)
     _setup_nous_auth(
         chiper_home,
@@ -357,7 +357,7 @@ def test_resolve_nous_runtime_credentials_refreshes_legacy_agent_key_to_invoke_j
 ):
     import chiper_cli.auth as auth_mod
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     refreshed_token = _invoke_jwt(seconds=3600)
     _setup_nous_auth(
         chiper_home,
@@ -406,7 +406,7 @@ def test_resolve_nous_runtime_credentials_reauths_when_invoke_scope_missing(
 ):
     import chiper_cli.auth as auth_mod
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     token = _jwt_with_claims({
         "sub": "test-user",
         "scope": "inference:mint_agent_key",
@@ -467,7 +467,7 @@ def test_nous_device_code_login_does_not_retry_legacy_scope_when_invoke_refused(
 def test_removed_legacy_session_env_var_does_not_change_jwt_auth(tmp_path, monkeypatch):
     import chiper_cli.auth as auth_mod
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     token = _invoke_jwt(seconds=3600)
     _setup_nous_auth(
         chiper_home,
@@ -530,7 +530,7 @@ def test_nous_inference_auth_logs_do_not_include_secret_values(
 ):
     import chiper_cli.auth as auth_mod
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     token = _invoke_jwt(seconds=3600)
     refreshed_token = _invoke_jwt(seconds=7200)
     refresh_token = "refresh-secret-token"
@@ -576,7 +576,7 @@ def test_get_nous_auth_status_checks_credential_pool(tmp_path, monkeypatch):
     """
     from chiper_cli.auth import get_nous_auth_status
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     # Empty auth store — no Nous provider entry
     (chiper_home / "auth.json").write_text(json.dumps({
@@ -612,7 +612,7 @@ def test_get_nous_auth_status_checks_credential_pool(tmp_path, monkeypatch):
 def test_get_nous_auth_status_pool_opaque_key_is_not_inference_credential(tmp_path, monkeypatch):
     from chiper_cli.auth import get_nous_auth_status, invalidate_nous_auth_status_cache
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
@@ -651,7 +651,7 @@ def test_get_nous_auth_status_auth_store_fallback(tmp_path, monkeypatch):
     """
     from chiper_cli.auth import get_nous_auth_status
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     _setup_nous_auth(chiper_home, access_token="at-123")
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     monkeypatch.setattr(
@@ -673,7 +673,7 @@ def test_get_nous_auth_status_prefers_runtime_auth_store_over_stale_pool(tmp_pat
     from chiper_cli.auth import get_nous_auth_status
     from agent.credential_pool import PooledCredential, load_pool
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     _setup_nous_auth(chiper_home, access_token="at-fresh")
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -714,7 +714,7 @@ def test_get_nous_auth_status_prefers_runtime_auth_store_over_stale_pool(tmp_pat
 def test_get_nous_auth_status_reports_revoked_refresh_session(tmp_path, monkeypatch):
     from chiper_cli.auth import get_nous_auth_status
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     _setup_nous_auth(chiper_home, access_token="at-123")
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -736,7 +736,7 @@ def test_get_nous_auth_status_empty_returns_not_logged_in(tmp_path, monkeypatch)
     """
     from chiper_cli.auth import get_nous_auth_status
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
@@ -748,7 +748,7 @@ def test_get_nous_auth_status_empty_returns_not_logged_in(tmp_path, monkeypatch)
 
 
 def test_refresh_token_persisted_when_refreshed_jwt_lacks_invoke_scope(tmp_path, monkeypatch):
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     _setup_nous_auth(
         chiper_home,
         access_token="access-old",
@@ -795,7 +795,7 @@ def test_refresh_token_persisted_when_refreshed_jwt_lacks_invoke_scope(tmp_path,
 
 
 def test_refresh_token_persisted_when_refreshed_token_is_not_jwt(tmp_path, monkeypatch):
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     _setup_nous_auth(
         chiper_home,
         access_token="access-old",
@@ -829,7 +829,7 @@ def test_terminal_refresh_failure_quarantines_tokens(
     """A revoked/invalid Nous refresh token must not be replayed forever."""
     from chiper_cli import auth as auth_mod
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     _setup_nous_auth(
         chiper_home,
         access_token="access-old",
@@ -883,7 +883,7 @@ def test_managed_access_token_refresh_failure_quarantines_tokens(
 ):
     from chiper_cli import auth as auth_mod
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     _setup_nous_auth(chiper_home, refresh_token="refresh-old")
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     from agent.credential_pool import load_pool
@@ -921,7 +921,7 @@ def test_managed_access_token_refresh_failure_quarantines_tokens(
 
 
 def test_unusable_access_token_refresh_uses_latest_rotated_refresh_token(tmp_path, monkeypatch):
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     _setup_nous_auth(
         chiper_home,
         access_token="access-old",
@@ -959,7 +959,7 @@ def test_unusable_access_token_refresh_uses_latest_rotated_refresh_token(tmp_pat
 
 
 class TestLoginNousSkipKeepsCurrent:
-    """When a user runs `hermes model` → Nous Portal → Skip (keep current) after
+    """When a user runs `chiper model` → Nous Portal → Skip (keep current) after
     a successful OAuth login, the prior provider and model MUST be preserved.
 
     Regression: previously, _update_config_for_provider was called
@@ -970,7 +970,7 @@ class TestLoginNousSkipKeepsCurrent:
 
     def _setup_home_with_openrouter(self, tmp_path, monkeypatch):
         import yaml
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1092,7 +1092,7 @@ class TestLoginNousSkipKeepsCurrent:
         import yaml
         from chiper_cli.auth import PROVIDER_REGISTRY, _login_nous
 
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1129,7 +1129,7 @@ def _full_state_fixture() -> dict:
     return {
         "portal_base_url": "https://portal.example.com",
         "inference_base_url": "https://inference.example.com/v1",
-        "client_id": "hermes-cli",
+        "client_id": "chiper-cli",
         "scope": "inference:invoke",
         "token_type": "Bearer",
         "access_token": token,
@@ -1150,7 +1150,7 @@ def _full_state_fixture() -> dict:
 def test_persist_nous_credentials_writes_both_pool_and_providers(tmp_path, monkeypatch):
     """Helper must populate BOTH credential_pool.nous AND providers.nous.
 
-    Regression guard: before this helper existed, `hermes auth add nous`
+    Regression guard: before this helper existed, `chiper auth add nous`
     wrote only the pool. After the Nous agent_key's 24h TTL expired, the
     401-recovery path in run_agent.py called resolve_nous_runtime_credentials
     which reads providers.nous, found it empty, raised AuthError, and the
@@ -1159,7 +1159,7 @@ def test_persist_nous_credentials_writes_both_pool_and_providers(tmp_path, monke
     """
     from chiper_cli.auth import persist_nous_credentials, NOUS_DEVICE_CODE_SOURCE
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
@@ -1193,7 +1193,7 @@ def test_persist_nous_credentials_writes_both_pool_and_providers(tmp_path, monke
 
 def test_persist_nous_credentials_allows_recovery_from_401(tmp_path, monkeypatch):
     """End-to-end: after persisting via the helper, resolve_nous_runtime_credentials
-    must succeed (not raise "Hermes is not logged into Nous Portal").
+    must succeed (not raise "Chiper is not logged into Nous Portal").
 
     This is the exact path that run_agent.py's `_try_refresh_nous_client_credentials`
     calls after a Nous 401 — before the fix it would raise AuthError because
@@ -1204,7 +1204,7 @@ def test_persist_nous_credentials_allows_recovery_from_401(tmp_path, monkeypatch
         resolve_nous_runtime_credentials,
     )
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
@@ -1216,7 +1216,7 @@ def test_persist_nous_credentials_allows_recovery_from_401(tmp_path, monkeypatch
 
     # Stub the network-touching steps so we don't actually contact the
     # portal — the point of this test is that state lookup succeeds and
-    # doesn't raise "Hermes is not logged into Nous Portal".
+    # doesn't raise "Chiper is not logged into Nous Portal".
     def _fake_refresh_access_token(*, client, portal_base_url, client_id, refresh_token):
         return {
             "access_token": new_jwt,
@@ -1246,7 +1246,7 @@ def test_persist_nous_credentials_idempotent_no_duplicate_pool_entries(tmp_path,
     """
     from chiper_cli.auth import persist_nous_credentials, NOUS_DEVICE_CODE_SOURCE
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
@@ -1287,7 +1287,7 @@ def test_persist_nous_credentials_reloads_pool_after_singleton_write(tmp_path, m
     """
     from chiper_cli.auth import persist_nous_credentials, NOUS_DEVICE_CODE_SOURCE
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
@@ -1307,14 +1307,14 @@ def test_persist_nous_credentials_reloads_pool_after_singleton_write(tmp_path, m
 def test_persist_nous_credentials_embeds_custom_label(tmp_path, monkeypatch):
     """User-supplied ``--label`` round-trips through providers.nous and the pool.
 
-    Previously `hermes auth add nous --type oauth --label <name>` silently
+    Previously `chiper auth add nous --type oauth --label <name>` silently
     dropped the label because persist_nous_credentials() ignored it and
     _seed_from_singletons always auto-derived via label_from_token().  The
     fix stashes the label inside providers.nous so seeding prefers it.
     """
     from chiper_cli.auth import persist_nous_credentials, NOUS_DEVICE_CODE_SOURCE
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
@@ -1339,7 +1339,7 @@ def test_persist_nous_credentials_custom_label_survives_reseed(tmp_path, monkeyp
     from chiper_cli.auth import persist_nous_credentials
     from agent.credential_pool import load_pool
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
@@ -1362,7 +1362,7 @@ def test_persist_nous_credentials_no_label_uses_auto_derived(tmp_path, monkeypat
     """
     from chiper_cli.auth import persist_nous_credentials
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
@@ -1386,10 +1386,10 @@ def test_refresh_token_reuse_detection_surfaces_actionable_message():
     """Regression for #15099.
 
     When the Nous Portal server returns ``invalid_grant`` with
-    ``error_description`` containing "reuse detected", Hermes must surface an
+    ``error_description`` containing "reuse detected", Chiper must surface an
     actionable message explaining that an external process consumed the
     refresh token.  The default opaque "Refresh token reuse detected; please
-    re-authenticate" string led users to report this as a Hermes persistence
+    re-authenticate" string led users to report this as a Chiper persistence
     bug when the true cause is external RT consumption (monitoring scripts,
     custom self-heal hooks).
     """
@@ -1412,7 +1412,7 @@ def test_refresh_token_reuse_detection_surfaces_actionable_message():
         _refresh_access_token(
             client=_FakeClient(),
             portal_base_url="https://portal.nousresearch.com",
-            client_id="hermes-cli",
+            client_id="chiper-cli",
             refresh_token="rt_consumed_elsewhere",
         )
 
@@ -1420,7 +1420,7 @@ def test_refresh_token_reuse_detection_surfaces_actionable_message():
     assert "refresh-token reuse" in message.lower() or "refresh token reuse" in message.lower()
     # The message must mention the external-process cause and give next steps.
     assert "external process" in message.lower() or "monitoring script" in message.lower()
-    assert "hermes auth add nous" in message.lower()
+    assert "chiper auth add nous" in message.lower()
     # Must still be classified as invalid_grant + relogin_required.
     assert exc_info.value.code == "invalid_grant"
     assert exc_info.value.relogin_required is True
@@ -1447,7 +1447,7 @@ def test_refresh_token_reuse_error_code_is_terminal():
         auth_mod._refresh_access_token(
             client=_FakeClient(),
             portal_base_url="https://portal.nousresearch.com",
-            client_id="hermes-cli",
+            client_id="chiper-cli",
             refresh_token="rt_consumed_elsewhere",
         )
 
@@ -1482,7 +1482,7 @@ def test_refresh_token_exchange_sends_refresh_token_header():
     payload = _refresh_access_token(
         client=client,
         portal_base_url="https://portal.nousresearch.com",
-        client_id="hermes-cli",
+        client_id="chiper-cli",
         refresh_token="refresh-1",
     )
 
@@ -1492,7 +1492,7 @@ def test_refresh_token_exchange_sends_refresh_token_header():
     assert client.kwargs["headers"]["x-nous-refresh-token"] == "refresh-1"
     assert client.kwargs["data"] == {
         "grant_type": "refresh_token",
-        "client_id": "hermes-cli",
+        "client_id": "chiper-cli",
     }
 
 
@@ -1523,7 +1523,7 @@ def test_refresh_non_reuse_error_keeps_original_description():
         _refresh_access_token(
             client=_FakeClient(),
             portal_base_url="https://portal.nousresearch.com",
-            client_id="hermes-cli",
+            client_id="chiper-cli",
             refresh_token="rt_anything",
         )
 
@@ -1652,7 +1652,7 @@ def test_persist_nous_credentials_mirrors_to_shared_store(
     tmp_path, monkeypatch, shared_store_env,
 ):
     """persist_nous_credentials must populate BOTH per-profile auth.json
-    AND the shared store, so a future profile's `hermes auth add nous
+    AND the shared store, so a future profile's `chiper auth add nous
     --type oauth` can one-tap import instead of redoing device-code.
     """
     from chiper_cli.auth import (
@@ -1661,7 +1661,7 @@ def test_persist_nous_credentials_mirrors_to_shared_store(
         persist_nous_credentials,
     )
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(
         json.dumps({"version": 1, "providers": {}})
@@ -1783,7 +1783,7 @@ def test_try_import_shared_rehydrates_on_success(shared_store_env, monkeypatch):
     assert result["agent_key"] == fresh_jwt
     # Preserved from shared state
     assert result["portal_base_url"] == "https://portal.example.com"
-    assert result["client_id"] == "hermes-cli"
+    assert result["client_id"] == "chiper-cli"
 
 
 def test_shared_store_survives_across_profile_switch(

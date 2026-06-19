@@ -63,7 +63,7 @@ def client(monkeypatch, isolated_profiles):
     from chiper_constants import get_chiper_home
     from chiper_cli.web_server import app, _SESSION_HEADER_NAME, _SESSION_TOKEN
 
-    monkeypatch.setattr(hermes_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db")
+    monkeypatch.setattr(chiper_state, "DEFAULT_DB_PATH", get_chiper_home() / "state.db")
     c = TestClient(app)
     c.headers[_SESSION_HEADER_NAME] = _SESSION_TOKEN
     return c

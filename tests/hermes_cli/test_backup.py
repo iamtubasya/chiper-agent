@@ -1,4 +1,4 @@
-"""Tests for hermes backup and import commands."""
+"""Tests for chiper backup and import commands."""
 
 import json
 import os
@@ -15,12 +15,12 @@ import pytest
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _make_hermes_tree(root: Path) -> None:
+def _make_chiper_tree(root: Path) -> None:
     """Create a realistic ~/.chiperflux directory structure for testing."""
     (root / "config.yaml").write_text("model:\n  provider: openrouter\n")
     (root / ".env").write_text("OPENROUTER_API_KEY=sk-test-123\n")
     (root / "memory_store.db").write_bytes(b"fake-sqlite")
-    (root / "hermes_state.db").write_bytes(b"fake-state")
+    (root / "chiper_state.db").write_bytes(b"fake-state")
 
     # Sessions
     (root / "sessions").mkdir(exist_ok=True)
@@ -80,7 +80,7 @@ def _symlink_file_or_skip(link: Path, target: Path) -> None:
 # ---------------------------------------------------------------------------
 
 class TestShouldExclude:
-    def test_excludes_hermes_agent(self):
+    def test_excludes_chiper_agent(self):
         from chiper_cli.backup import _should_exclude
         assert _should_exclude(Path("chiper-agent/run_agent.py"))
         assert _should_exclude(Path("chiper-agent/.git/HEAD"))
@@ -146,7 +146,7 @@ class TestShouldExclude:
         from chiper_cli.backup import _should_exclude
         assert not _should_exclude(Path("logs/agent.log"))
 
-    def test_includes_nested_hermes_agent_in_skills(self):
+    def test_includes_nested_chiper_agent_in_skills(self):
         """skills/autonomous-ai-agents/chiper-agent/ must NOT be excluded —
         only the root-level chiper-agent/ repo is skipped."""
         from chiper_cli.backup import _should_exclude
@@ -160,9 +160,9 @@ class TestShouldExclude:
 class TestBackup:
     def test_creates_zip(self, tmp_path, monkeypatch):
         """Backup creates a valid zip containing expected files."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
-        _make_hermes_tree(chiper_home)
+        _make_chiper_tree(chiper_home)
 
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         # get_default_chiper_root needs this
@@ -196,9 +196,9 @@ class TestBackup:
         """SQLite staging temp files must be created on the output zip's
         filesystem (dir=out_path.parent), NOT the system /tmp default — a
         small tmpfs there silently drops large DBs from the backup (#35376)."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
-        _make_hermes_tree(chiper_home)
+        _make_chiper_tree(chiper_home)
 
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -227,9 +227,9 @@ class TestBackup:
     def test_pre_update_db_snapshots_staged_beside_output_zip(self, tmp_path, monkeypatch):
         """The pre-update/pre-migration zip path (_write_full_zip_backup) must
         also stage SQLite snapshots beside its output zip, not in /tmp."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
-        _make_hermes_tree(chiper_home)
+        _make_chiper_tree(chiper_home)
 
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -252,11 +252,11 @@ class TestBackup:
         assert staged_dirs, "no SQLite snapshot was staged"
         assert all(d == str(out_zip.parent) for d in staged_dirs), staged_dirs
 
-    def test_excludes_hermes_agent(self, tmp_path, monkeypatch):
+    def test_excludes_chiper_agent(self, tmp_path, monkeypatch):
         """Backup does NOT include chiper-agent/ directory."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
-        _make_hermes_tree(chiper_home)
+        _make_chiper_tree(chiper_home)
 
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -272,16 +272,16 @@ class TestBackup:
             agent_files = [n for n in names if "chiper-agent" in n]
             assert agent_files == [], f"chiper-agent files leaked into backup: {agent_files}"
 
-    def test_includes_nested_hermes_agent_in_skills(self, tmp_path, monkeypatch):
+    def test_includes_nested_chiper_agent_in_skills(self, tmp_path, monkeypatch):
         """Backup includes skills/.../chiper-agent/ but NOT root chiper-agent/."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
-        _make_hermes_tree(chiper_home)
+        _make_chiper_tree(chiper_home)
 
         # Add a nested chiper-agent directory inside skills (like the real layout)
         nested = chiper_home / "skills" / "autonomous-ai-agents" / "chiper-agent"
         nested.mkdir(parents=True)
-        (nested / "SKILL.md").write_text("# Hermes Agent Skill\n")
+        (nested / "SKILL.md").write_text("# Chiper Agent Skill\n")
         (nested / "sub").mkdir()
         (nested / "sub" / "item.txt").write_text("nested content\n")
 
@@ -305,9 +305,9 @@ class TestBackup:
 
     def test_excludes_pycache(self, tmp_path, monkeypatch):
         """Backup does NOT include __pycache__ dirs."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
-        _make_hermes_tree(chiper_home)
+        _make_chiper_tree(chiper_home)
 
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -325,9 +325,9 @@ class TestBackup:
 
     def test_excludes_pid_files(self, tmp_path, monkeypatch):
         """Backup does NOT include PID files."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
-        _make_hermes_tree(chiper_home)
+        _make_chiper_tree(chiper_home)
 
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -344,8 +344,8 @@ class TestBackup:
             assert pid_files == []
 
     def test_default_output_path(self, tmp_path, monkeypatch):
-        """When no output path given, zip goes to ~/hermes-backup-*.zip."""
-        chiper_home = tmp_path / ".hermes"
+        """When no output path given, zip goes to ~/chiper-backup-*.zip."""
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text("model: test\n")
 
@@ -358,14 +358,14 @@ class TestBackup:
         run_backup(args)
 
         # Should exist in home dir
-        zips = list(tmp_path.glob("hermes-backup-*.zip"))
+        zips = list(tmp_path.glob("chiper-backup-*.zip"))
         assert len(zips) == 1
 
     def test_skips_symlinked_files(self, tmp_path, monkeypatch):
         """Backup must not dereference symlinks and leak files outside CHIPER_HOME."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
-        _make_hermes_tree(chiper_home)
+        _make_chiper_tree(chiper_home)
         outside = tmp_path / "outside-secret.txt"
         outside.write_text("outside secret\n")
         _symlink_file_or_skip(chiper_home / "skills" / "outside-link.txt", outside)
@@ -396,7 +396,7 @@ class TestValidateBackupZip:
                 zf.writestr(name, "dummy")
 
     def test_state_db_passes(self, tmp_path):
-        """A zip containing state.db is accepted as a valid Hermes backup."""
+        """A zip containing state.db is accepted as a valid Chiper backup."""
         from chiper_cli.backup import _validate_backup_zip
         zip_path = tmp_path / "backup.zip"
         self._make_zip(zip_path, ["state.db", "sessions/abc.json"])
@@ -405,10 +405,10 @@ class TestValidateBackupZip:
         assert ok, reason
 
     def test_old_wrong_db_name_fails(self, tmp_path):
-        """A zip with only hermes_state.db (old wrong name) is rejected."""
+        """A zip with only chiper_state.db (old wrong name) is rejected."""
         from chiper_cli.backup import _validate_backup_zip
         zip_path = tmp_path / "old.zip"
-        self._make_zip(zip_path, ["hermes_state.db", "memory_store.db"])
+        self._make_zip(zip_path, ["chiper_state.db", "memory_store.db"])
         with zipfile.ZipFile(zip_path, "r") as zf:
             ok, reason = _validate_backup_zip(zf)
         assert not ok
@@ -438,8 +438,8 @@ class TestImport:
                     zf.writestr(name, content)
 
     def test_restores_files(self, tmp_path, monkeypatch):
-        """Import extracts files into hermes home."""
-        chiper_home = tmp_path / ".hermes"
+        """Import extracts files into chiper home."""
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -462,17 +462,17 @@ class TestImport:
         assert (chiper_home / "skills" / "my-skill" / "SKILL.md").read_text() == "# My Skill\n"
         assert (chiper_home / "profiles" / "coder" / "config.yaml").exists()
 
-    def test_strips_hermes_prefix(self, tmp_path, monkeypatch):
-        """Import strips .hermes/ prefix if all entries share it."""
-        chiper_home = tmp_path / ".hermes"
+    def test_strips_chiper_prefix(self, tmp_path, monkeypatch):
+        """Import strips .chiper/ prefix if all entries share it."""
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
         zip_path = tmp_path / "backup.zip"
         self._make_backup_zip(zip_path, {
-            ".hermes/config.yaml": "model: test\n",
-            ".hermes/skills/a/SKILL.md": "# A\n",
+            ".chiper/config.yaml": "model: test\n",
+            ".chiper/skills/a/SKILL.md": "# A\n",
         })
 
         args = Namespace(zipfile=str(zip_path), force=True)
@@ -485,7 +485,7 @@ class TestImport:
 
     def test_rejects_empty_zip(self, tmp_path, monkeypatch):
         """Import rejects an empty zip."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -500,9 +500,9 @@ class TestImport:
         with pytest.raises(SystemExit):
             run_import(args)
 
-    def test_rejects_non_hermes_zip(self, tmp_path, monkeypatch):
-        """Import rejects a zip that doesn't look like a hermes backup."""
-        chiper_home = tmp_path / ".hermes"
+    def test_rejects_non_chiper_zip(self, tmp_path, monkeypatch):
+        """Import rejects a zip that doesn't look like a chiper backup."""
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -521,7 +521,7 @@ class TestImport:
 
     def test_blocks_path_traversal(self, tmp_path, monkeypatch):
         """Import blocks zip entries with path traversal."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -540,7 +540,7 @@ class TestImport:
 
         # config.yaml should be restored
         assert (chiper_home / "config.yaml").exists()
-        # traversal file should NOT exist outside hermes home
+        # traversal file should NOT exist outside chiper home
         assert not (tmp_path / "etc" / "passwd").exists()
 
     def test_preserves_live_gateway_state(self, tmp_path, monkeypatch):
@@ -551,7 +551,7 @@ class TestImport:
         stale/foreign state and leaves the gateway stuck "starting",
         disconnecting it from the Nous portal (NS-508). The live file wins.
         """
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -580,7 +580,7 @@ class TestImport:
     def test_does_not_seed_gateway_state_when_absent(self, tmp_path, monkeypatch):
         """A backup's gateway_state.json is dropped, not written, when the
         target has none — a foreign state must never seed the reconciler."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -603,7 +603,7 @@ class TestImport:
         """The skip is matched by basename, so a named profile's
         gateway_state.json (profiles/<name>/gateway_state.json) is preserved
         the same way the root profile's is."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         (chiper_home / "profiles" / "coder").mkdir(parents=True)
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -633,7 +633,7 @@ class TestImport:
         """gateway.pid / cron.pid / gateway.lock / processes.json from a backup
         reference the source machine's process namespace and must never be
         written over the target's."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -665,7 +665,7 @@ class TestImport:
 
     def test_confirmation_prompt_abort(self, tmp_path, monkeypatch):
         """Import aborts when user says no to confirmation."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         # Pre-existing config triggers the confirmation
         (chiper_home / "config.yaml").write_text("existing: true\n")
@@ -688,7 +688,7 @@ class TestImport:
 
     def test_force_skips_confirmation(self, tmp_path, monkeypatch):
         """Import with --force skips confirmation and overwrites."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text("existing: true\n")
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
@@ -708,7 +708,7 @@ class TestImport:
 
     def test_missing_file_exits(self, tmp_path, monkeypatch):
         """Import exits with error for nonexistent file."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -721,7 +721,7 @@ class TestImport:
     @pytest.mark.skipif(os.name != "posix", reason="POSIX file permissions only")
     def test_restores_secret_files_with_0600_perms(self, tmp_path, monkeypatch):
         """Secret files must end up at 0600 after restore (zipfile drops mode bits)."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -753,9 +753,9 @@ class TestRoundTrip:
     def test_backup_then_import(self, tmp_path, monkeypatch):
         """Full round-trip: backup -> import to a new location -> verify."""
         # Source
-        src_home = tmp_path / "source" / ".hermes"
+        src_home = tmp_path / "source" / ".chiper"
         src_home.mkdir(parents=True)
-        _make_hermes_tree(src_home)
+        _make_chiper_tree(src_home)
 
         monkeypatch.setenv("CHIPER_HOME", str(src_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path / "source")
@@ -768,7 +768,7 @@ class TestRoundTrip:
         assert out_zip.exists()
 
         # Import into a different location
-        dst_home = tmp_path / "dest" / ".hermes"
+        dst_home = tmp_path / "dest" / ".chiper"
         dst_home.mkdir(parents=True)
         monkeypatch.setenv("CHIPER_HOME", str(dst_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path / "dest")
@@ -845,7 +845,7 @@ class TestValidation:
         assert ok
 
     def test_validate_rejects_random(self):
-        """Zip without hermes markers fails validation."""
+        """Zip without chiper markers fails validation."""
         import io
         from chiper_cli.backup import _validate_backup_zip
 
@@ -857,18 +857,18 @@ class TestValidation:
             ok, reason = _validate_backup_zip(zf)
         assert not ok
 
-    def test_detect_prefix_hermes(self):
-        """Detects .hermes/ prefix wrapping all entries."""
+    def test_detect_prefix_chiper(self):
+        """Detects .chiper/ prefix wrapping all entries."""
         import io
         from chiper_cli.backup import _detect_prefix
 
         buf = io.BytesIO()
         with zipfile.ZipFile(buf, "w") as zf:
-            zf.writestr(".hermes/config.yaml", "test")
-            zf.writestr(".hermes/skills/a/SKILL.md", "skill")
+            zf.writestr(".chiper/config.yaml", "test")
+            zf.writestr(".chiper/skills/a/SKILL.md", "skill")
         buf.seek(0)
         with zipfile.ZipFile(buf, "r") as zf:
-            assert _detect_prefix(zf) == ".hermes/"
+            assert _detect_prefix(zf) == ".chiper/"
 
     def test_detect_prefix_none(self):
         """No prefix when entries are at root."""
@@ -891,8 +891,8 @@ class TestValidation:
         buf = io.BytesIO()
         with zipfile.ZipFile(buf, "w") as zf:
             # Only directory entries (trailing slash)
-            zf.writestr(".hermes/", "")
-            zf.writestr(".hermes/skills/", "")
+            zf.writestr(".chiper/", "")
+            zf.writestr(".chiper/skills/", "")
         buf.seek(0)
         with zipfile.ZipFile(buf, "r") as zf:
             assert _detect_prefix(zf) == ""
@@ -904,8 +904,8 @@ class TestValidation:
 
 class TestBackupEdgeCases:
     def test_nonexistent_chiper_home(self, tmp_path, monkeypatch):
-        """Backup exits when hermes home doesn't exist."""
-        fake_home = tmp_path / "nonexistent" / ".hermes"
+        """Backup exits when chiper home doesn't exist."""
+        fake_home = tmp_path / "nonexistent" / ".chiper"
         monkeypatch.setenv("CHIPER_HOME", str(fake_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path / "nonexistent")
 
@@ -917,7 +917,7 @@ class TestBackupEdgeCases:
 
     def test_output_is_directory(self, tmp_path, monkeypatch):
         """When output path is a directory, zip is created inside it."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text("model: test\n")
 
@@ -932,12 +932,12 @@ class TestBackupEdgeCases:
         from chiper_cli.backup import run_backup
         run_backup(args)
 
-        zips = list(out_dir.glob("hermes-backup-*.zip"))
+        zips = list(out_dir.glob("chiper-backup-*.zip"))
         assert len(zips) == 1
 
     def test_output_without_zip_suffix(self, tmp_path, monkeypatch):
         """Output path without .zip gets suffix appended."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text("model: test\n")
 
@@ -954,8 +954,8 @@ class TestBackupEdgeCases:
         assert (tmp_path / "mybackup.tar.zip").exists()
 
     def test_empty_chiper_home(self, tmp_path, monkeypatch):
-        """Backup handles empty hermes home (no files to back up)."""
-        chiper_home = tmp_path / ".hermes"
+        """Backup handles empty chiper home (no files to back up)."""
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         # Only excluded dirs, no actual files
         (chiper_home / "__pycache__").mkdir()
@@ -974,7 +974,7 @@ class TestBackupEdgeCases:
 
     def test_permission_error_during_backup(self, tmp_path, monkeypatch):
         """Backup handles permission errors gracefully."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text("model: test\n")
 
@@ -1001,7 +1001,7 @@ class TestBackupEdgeCases:
 
     def test_pre1980_timestamp_skipped(self, tmp_path, monkeypatch):
         """Backup skips files with pre-1980 timestamps (ZIP limitation)."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text("model: test\n")
 
@@ -1027,16 +1027,16 @@ class TestBackupEdgeCases:
             # The pre-1980 file should be skipped, not crash the backup
             assert "ancient.txt" not in names
 
-    def test_skips_output_zip_inside_hermes(self, tmp_path, monkeypatch):
-        """Backup skips its own output zip if it's inside hermes root."""
-        chiper_home = tmp_path / ".hermes"
+    def test_skips_output_zip_inside_chiper(self, tmp_path, monkeypatch):
+        """Backup skips its own output zip if it's inside chiper root."""
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text("model: test\n")
 
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
-        # Output inside hermes home
+        # Output inside chiper home
         out_zip = chiper_home / "backup.zip"
         args = Namespace(output=str(out_zip))
 
@@ -1057,7 +1057,7 @@ class TestImportEdgeCases:
 
     def test_not_a_zip(self, tmp_path, monkeypatch):
         """Import rejects a non-zip file."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1072,7 +1072,7 @@ class TestImportEdgeCases:
 
     def test_eof_during_confirmation(self, tmp_path, monkeypatch):
         """Import handles EOFError during confirmation prompt."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text("existing\n")
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
@@ -1090,7 +1090,7 @@ class TestImportEdgeCases:
 
     def test_keyboard_interrupt_during_confirmation(self, tmp_path, monkeypatch):
         """Import handles KeyboardInterrupt during confirmation prompt."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / ".env").write_text("KEY=val\n")
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
@@ -1108,7 +1108,7 @@ class TestImportEdgeCases:
 
     def test_permission_error_during_import(self, tmp_path, monkeypatch):
         """Import handles permission errors during extraction."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -1137,7 +1137,7 @@ class TestImportEdgeCases:
 
     def test_progress_with_many_files(self, tmp_path, monkeypatch):
         """Import shows progress with 500+ files."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -1170,7 +1170,7 @@ class TestProfileRestoration:
 
     def test_import_creates_profile_wrappers(self, tmp_path, monkeypatch):
         """Import auto-creates wrapper scripts for restored profiles."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -1202,11 +1202,11 @@ class TestProfileRestoration:
 
         # Wrappers should contain the right content
         coder_wrapper = (wrapper_dir / "coder").read_text()
-        assert "hermes -p coder" in coder_wrapper
+        assert "chiper -p coder" in coder_wrapper
 
     def test_import_skips_profile_dirs_without_config(self, tmp_path, monkeypatch):
         """Import doesn't create wrappers for profile dirs without config."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -1232,7 +1232,7 @@ class TestProfileRestoration:
 
     def test_import_without_profiles_module(self, tmp_path, monkeypatch):
         """Import gracefully handles missing profiles module (fresh install)."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -1314,7 +1314,7 @@ class TestQuickSnapshot:
     @pytest.fixture
     def chiper_home(self, tmp_path):
         """Create a fake CHIPER_HOME with critical state files."""
-        home = tmp_path / ".hermes"
+        home = tmp_path / ".chiper"
         home.mkdir()
         (home / "config.yaml").write_text("model:\n  provider: openrouter\n")
         (home / ".env").write_text("OPENROUTER_API_KEY=test-key-123\n")
@@ -1526,18 +1526,18 @@ class TestQuickSnapshot:
         assert snap_id is not None
 
 # ---------------------------------------------------------------------------
-# Pre-update backup (hermes update safety net)
+# Pre-update backup (chiper update safety net)
 # ---------------------------------------------------------------------------
 
 class TestPreUpdateBackup:
-    """Tests for create_pre_update_backup — the auto-backup ``hermes update``
+    """Tests for create_pre_update_backup — the auto-backup ``chiper update``
     runs before touching anything."""
 
     @pytest.fixture
     def chiper_home(self, tmp_path):
-        root = tmp_path / ".hermes"
+        root = tmp_path / ".chiper"
         root.mkdir()
-        _make_hermes_tree(root)
+        _make_chiper_tree(root)
         return root
 
     def test_creates_backup_under_backups_dir(self, chiper_home):
@@ -1551,7 +1551,7 @@ class TestPreUpdateBackup:
 
     def test_backup_contents_match_full_backup(self, chiper_home):
         """Pre-update backup should include the same user data that
-        ``hermes backup`` would, and should exclude the same directories."""
+        ``chiper backup`` would, and should exclude the same directories."""
         from chiper_cli.backup import create_pre_update_backup
         out = create_pre_update_backup(chiper_home=chiper_home)
         assert out is not None
@@ -1699,16 +1699,16 @@ class TestRunPreUpdateBackup:
 
     @pytest.fixture
     def chiper_home(self, tmp_path, monkeypatch):
-        root = tmp_path / ".hermes"
+        root = tmp_path / ".chiper"
         root.mkdir()
-        _make_hermes_tree(root)
+        _make_chiper_tree(root)
         # Point CHIPER_HOME at the temp dir so config + backup paths resolve here
         monkeypatch.setenv("CHIPER_HOME", str(root))
         # Make Path.home() point at tmp_path for anything that uses it
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
-        # Bust caches for chiper_cli.config + hermes_constants so they pick up CHIPER_HOME
+        # Bust caches for chiper_cli.config + chiper_constants so they pick up CHIPER_HOME
         for mod in list(__import__("sys").modules.keys()):
-            if mod.startswith("chiper_cli.config") or mod == "hermes_constants":
+            if mod.startswith("chiper_cli.config") or mod == "chiper_constants":
                 del __import__("sys").modules[mod]
         return root
 
@@ -1720,7 +1720,7 @@ class TestRunPreUpdateBackup:
         assert "Creating pre-update backup" in out
         assert "Saved:" in out
         assert "Restore:" in out
-        assert "hermes import" in out
+        assert "chiper import" in out
         assert "Disable:" in out
         # Actual backup was created
         backups = list((chiper_home / "backups").glob("pre-update-*.zip"))
@@ -1728,7 +1728,7 @@ class TestRunPreUpdateBackup:
 
     def test_default_enabled_creates_backup(self, chiper_home, capsys):
         """With the new safe default (``pre_update_backup: true``), every
-        ``hermes update`` creates a backup before any destructive step
+        ``chiper update`` creates a backup before any destructive step
         runs — the cost is a few minutes of zip time vs. the alternative
         of silent total data loss of ``~/.chiperflux/`` observed in #48200
         when an update step computes a wrong path and the user had no
@@ -1814,18 +1814,18 @@ class TestRunPreUpdateBackup:
 
 
 # ---------------------------------------------------------------------------
-# Pre-migration backup (hermes claw migrate safety net)
+# Pre-migration backup (chiper claw migrate safety net)
 # ---------------------------------------------------------------------------
 
 class TestPreMigrationBackup:
     """Tests for create_pre_migration_backup — the auto-backup
-    ``hermes claw migrate`` runs before mutating ~/.chiperflux/."""
+    ``chiper claw migrate`` runs before mutating ~/.chiperflux/."""
 
     @pytest.fixture
     def chiper_home(self, tmp_path):
-        root = tmp_path / ".hermes"
+        root = tmp_path / ".chiper"
         root.mkdir()
-        _make_hermes_tree(root)
+        _make_chiper_tree(root)
         return root
 
     def test_creates_backup_under_backups_dir(self, chiper_home):
@@ -1833,7 +1833,7 @@ class TestPreMigrationBackup:
         out = create_pre_migration_backup(chiper_home=chiper_home)
         assert out is not None
         assert out.exists()
-        # Shares the backups/ directory with pre-update backups so `hermes
+        # Shares the backups/ directory with pre-update backups so `chiper
         # import` and the update-backup listing both pick them up.
         assert out.parent == chiper_home / "backups"
         assert out.name.startswith("pre-migration-")
@@ -1841,7 +1841,7 @@ class TestPreMigrationBackup:
 
     def test_backup_uses_shared_exclusion_rules(self, chiper_home):
         """Pre-migration backup reuses the same exclusion rules as
-        ``hermes backup`` / ``create_pre_update_backup`` — no drift."""
+        ``chiper backup`` / ``create_pre_update_backup`` — no drift."""
         from chiper_cli.backup import create_pre_migration_backup
         out = create_pre_migration_backup(chiper_home=chiper_home)
         assert out is not None
@@ -1856,9 +1856,9 @@ class TestPreMigrationBackup:
         assert not any("__pycache__" in n for n in names)
         assert "gateway.pid" not in names
 
-    def test_restorable_with_hermes_import(self, chiper_home, tmp_path):
-        """The zip produced by pre-migration backup must be a valid Hermes
-        backup — `hermes import` should accept it."""
+    def test_restorable_with_chiper_import(self, chiper_home, tmp_path):
+        """The zip produced by pre-migration backup must be a valid Chiper
+        backup — `chiper import` should accept it."""
         from chiper_cli.backup import create_pre_migration_backup, _validate_backup_zip
         out = create_pre_migration_backup(chiper_home=chiper_home)
         assert out is not None
@@ -1918,7 +1918,7 @@ class TestPreMigrationBackup:
 # ---------------------------------------------------------------------------
 
 class TestRestoreCronJobsIfEmptied:
-    """`hermes update` config migration can leave cron/jobs.json valid-but-empty,
+    """`chiper update` config migration can leave cron/jobs.json valid-but-empty,
     silently dropping every scheduled job. `restore_cron_jobs_if_emptied` is the
     post-migration safety net that restores from the pre-update snapshot."""
 
@@ -1933,7 +1933,7 @@ class TestRestoreCronJobsIfEmptied:
 
     def test_restores_when_emptied_after_migration(self, tmp_path):
         from chiper_cli.backup import restore_cron_jobs_if_emptied
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         jobs_path = chiper_home / "cron" / "jobs.json"
         # Pre-update: 3 real jobs.
         self._seed_jobs(jobs_path, [{"id": "a"}, {"id": "b"}, {"id": "c"}])
@@ -1955,7 +1955,7 @@ class TestRestoreCronJobsIfEmptied:
 
     def test_noop_when_live_file_still_has_jobs(self, tmp_path):
         from chiper_cli.backup import restore_cron_jobs_if_emptied
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         jobs_path = chiper_home / "cron" / "jobs.json"
         self._seed_jobs(jobs_path, [{"id": "a"}, {"id": "b"}])
         snap_id = self._make_snapshot(chiper_home)
@@ -1966,7 +1966,7 @@ class TestRestoreCronJobsIfEmptied:
 
     def test_noop_when_snapshot_had_no_jobs(self, tmp_path):
         from chiper_cli.backup import restore_cron_jobs_if_emptied
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         jobs_path = chiper_home / "cron" / "jobs.json"
         # Pre-update genuinely had zero jobs; current is also empty.
         self._seed_jobs(jobs_path, [])
@@ -1980,7 +1980,7 @@ class TestRestoreCronJobsIfEmptied:
         """An unparseable live file is left alone — that's a different failure
         mode the user should see, not silently overwrite."""
         from chiper_cli.backup import restore_cron_jobs_if_emptied
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         jobs_path = chiper_home / "cron" / "jobs.json"
         self._seed_jobs(jobs_path, [{"id": "a"}])
         snap_id = self._make_snapshot(chiper_home)
@@ -1993,7 +1993,7 @@ class TestRestoreCronJobsIfEmptied:
 
     def test_noop_when_snapshot_id_missing(self, tmp_path):
         from chiper_cli.backup import restore_cron_jobs_if_emptied
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         jobs_path = chiper_home / "cron" / "jobs.json"
         self._seed_jobs(jobs_path, [])
         assert restore_cron_jobs_if_emptied(None, chiper_home=chiper_home) is None
@@ -2003,7 +2003,7 @@ class TestRestoreCronJobsIfEmptied:
         """A legacy snapshot storing a bare JSON list (not {"jobs": [...]}) is
         still counted and restored."""
         from chiper_cli.backup import restore_cron_jobs_if_emptied
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         jobs_path = chiper_home / "cron" / "jobs.json"
         jobs_path.parent.mkdir(parents=True, exist_ok=True)
         jobs_path.write_text(json.dumps([{"id": "a"}, {"id": "b"}]))

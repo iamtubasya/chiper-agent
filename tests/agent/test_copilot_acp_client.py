@@ -50,16 +50,16 @@ class CopilotACPClientSafetyTests(unittest.TestCase):
         outcome = (((response.get("result") or {}).get("outcome") or {}).get("outcome"))
         self.assertEqual(outcome, "cancelled")
 
-    def test_read_text_file_blocks_internal_hermes_hub_files(self) -> None:
+    def test_read_text_file_blocks_internal_chiper_hub_files(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             home = Path(tmpdir) / "home"
-            blocked = home / ".hermes" / "skills" / ".hub" / "index-cache" / "entry.json"
+            blocked = home / ".chiper" / "skills" / ".hub" / "index-cache" / "entry.json"
             blocked.parent.mkdir(parents=True, exist_ok=True)
             blocked.write_text('{"token":"sk-test-secret-1234567890"}')
 
             with patch.dict(
                 os.environ,
-                {"HOME": str(home), "CHIPER_HOME": str(home / ".hermes")},
+                {"HOME": str(home), "CHIPER_HOME": str(home / ".chiper")},
                 clear=False,
             ):
                 response = self._dispatch(
@@ -175,7 +175,7 @@ def _fake_popen_capture(captured):
 
 
 def test_run_prompt_preserves_real_home_when_profile_home_available(monkeypatch, tmp_path):
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     (chiper_home / "home").mkdir(parents=True)
     real_home = tmp_path / "real-home"
     real_home.mkdir()

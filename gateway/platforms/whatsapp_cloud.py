@@ -160,7 +160,7 @@ def _ext_for_mime(mime: str) -> Optional[str]:
     return mimetypes.guess_extension(primary) or None
 
 
-# Inbound media cache lives under the user's hermes dir so it survives
+# Inbound media cache lives under the user's chiper dir so it survives
 # restarts and gateway reloads — same convention the Baileys bridge uses.
 _INBOUND_MEDIA_CACHE = Path(get_chiper_dir("platforms/whatsapp_cloud/media", "whatsapp_cloud/media"))
 
@@ -1099,7 +1099,7 @@ class WhatsAppCloudAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
 
         WhatsApp renders ``audio/ogg; codecs=opus`` as the green
         voice-note bubble; other audio types (MP3, AAC, etc.) appear as
-        a generic audio attachment. Hermes TTS produces MP3, so we try
+        a generic audio attachment. Chiper TTS produces MP3, so we try
         ffmpeg conversion to opus first and fall back to sending the
         MP3 as-is when ffmpeg is unavailable.
         """

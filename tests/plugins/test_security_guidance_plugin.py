@@ -26,7 +26,7 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def _isolate_env(tmp_path, monkeypatch):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     monkeypatch.delenv("SECURITY_GUIDANCE_BLOCK", raising=False)
@@ -56,19 +56,19 @@ def _load_patterns():
 def _load_plugin_init():
     """Import the plugin __init__.py with patterns.py as a sibling."""
     plugin_dir = _repo_root() / "plugins" / "security-guidance"
-    if "hermes_plugins" not in sys.modules:
-        ns = types.ModuleType("hermes_plugins")
+    if "chiper_plugins" not in sys.modules:
+        ns = types.ModuleType("chiper_plugins")
         ns.__path__ = []
-        sys.modules["hermes_plugins"] = ns
+        sys.modules["chiper_plugins"] = ns
     spec = importlib.util.spec_from_file_location(
-        "hermes_plugins.security_guidance",
+        "chiper_plugins.security_guidance",
         plugin_dir / "__init__.py",
         submodule_search_locations=[str(plugin_dir)],
     )
     mod = importlib.util.module_from_spec(spec)
-    mod.__package__ = "hermes_plugins.security_guidance"
+    mod.__package__ = "chiper_plugins.security_guidance"
     mod.__path__ = [str(plugin_dir)]
-    sys.modules["hermes_plugins.security_guidance"] = mod
+    sys.modules["chiper_plugins.security_guidance"] = mod
     spec.loader.exec_module(mod)
     return mod
 
@@ -320,7 +320,7 @@ class TestPluginDiscovery:
 
         # Wipe any cached plugin state from earlier tests in this worker.
         for k in list(sys.modules):
-            if k.startswith(("hermes_plugins", "chiper_cli.plugins")):
+            if k.startswith(("chiper_plugins", "chiper_cli.plugins")):
                 del sys.modules[k]
 
         from chiper_cli.plugins import _ensure_plugins_discovered

@@ -1,4 +1,4 @@
-"""Shared constants for Hermes Agent.
+"""Shared constants for Chiper Agent.
 
 Import-safe module with no dependencies — can be imported from anywhere
 without risk of circular imports.
@@ -13,45 +13,45 @@ from pathlib import Path
 
 _profile_fallback_warned: bool = False
 _UNSET = object()
-_HERMES_HOME_OVERRIDE: ContextVar[str | object] = ContextVar(
-    "_HERMES_HOME_OVERRIDE", default=_UNSET
+_CHIPER_HOME_OVERRIDE: ContextVar[str | object] = ContextVar(
+    "_CHIPER_HOME_OVERRIDE", default=_UNSET
 )
 
 
 def set_chiper_home_override(path: str | Path | None) -> Token:
-    """Set a context-local Hermes home override and return its reset token.
+    """Set a context-local Chiper home override and return its reset token.
 
     This is for in-process, per-task scoping.  It deliberately does not mutate
     ``os.environ`` because that is shared by every thread in the process.
     """
     value: str | object = _UNSET if path is None else str(path)
-    return _HERMES_HOME_OVERRIDE.set(value)
+    return _CHIPER_HOME_OVERRIDE.set(value)
 
 
 def reset_chiper_home_override(token: Token) -> None:
-    """Restore the previous context-local Hermes home override."""
-    _HERMES_HOME_OVERRIDE.reset(token)
+    """Restore the previous context-local Chiper home override."""
+    _CHIPER_HOME_OVERRIDE.reset(token)
 
 
 def get_chiper_home_override() -> str | None:
-    """Return the active context-local Hermes home override, if any."""
-    override = _HERMES_HOME_OVERRIDE.get()
+    """Return the active context-local Chiper home override, if any."""
+    override = _CHIPER_HOME_OVERRIDE.get()
     if override is _UNSET or not override:
         return None
     return str(override)
 
 
 def _get_platform_default_chiper_home() -> Path:
-    """Return the platform-native default Hermes home path."""
+    """Return the platform-native default Chiper home path."""
     if sys.platform == "win32":
         local_appdata = os.environ.get("LOCALAPPDATA", "").strip()
         base = Path(local_appdata) if local_appdata else Path.home() / "AppData" / "Local"
-        return base / "hermes"
+        return base / "chiper"
     return Path.home() / ".chiperflux"
 
 
 def get_chiper_home() -> Path:
-    """Return the Hermes home directory (default: platform-native path).
+    """Return the Chiper home directory (default: platform-native path).
 
     Reads CHIPER_HOME env var, falls back to the platform-native default.
     This is the single source of truth — all other copies should import this.
@@ -109,10 +109,10 @@ def get_chiper_home() -> Path:
 
 
 def get_default_chiper_root() -> Path:
-    """Return the root Hermes directory for profile-level operations.
+    """Return the root Chiper directory for profile-level operations.
 
-    In standard deployments this is the platform-native Hermes home
-    (``~/.chiperflux`` on POSIX, ``%LOCALAPPDATA%\\hermes`` on native Windows).
+    In standard deployments this is the platform-native Chiper home
+    (``~/.chiperflux`` on POSIX, ``%LOCALAPPDATA%\\chiper`` on native Windows).
 
     In Docker or custom deployments where ``CHIPER_HOME`` points outside
     ``~/.chiperflux`` (e.g. ``/opt/data``), returns ``CHIPER_HOME`` directly
@@ -151,7 +151,7 @@ def get_default_chiper_root() -> Path:
 def _get_packaged_data_dir(name: str) -> Path | None:
     """Return an installed data-files directory if one exists.
 
-    Used to discover bundled skills/optional-skills when Hermes is installed
+    Used to discover bundled skills/optional-skills when Chiper is installed
     from a wheel that emitted them via setuptools data_files.
     """
     candidates = []
@@ -222,7 +222,7 @@ def get_bundled_skills_dir(default: Path | None = None) -> Path:
 
 
 def get_chiper_dir(new_subpath: str, old_name: str) -> Path:
-    """Resolve a Hermes subdirectory with backward compatibility.
+    """Resolve a Chiper subdirectory with backward compatibility.
 
     New installs get the consolidated layout (e.g. ``cache/images``).
     Existing installs that already have the old path (e.g. ``image_cache``)
@@ -249,7 +249,7 @@ def display_chiper_home() -> str:
 
         default:  ``~/.chiperflux``
         profile:  ``~/.chiperflux/profiles/coder``
-        custom:   ``/opt/hermes-custom``
+        custom:   ``/opt/chiper-custom``
 
     Use this in **user-facing** print/log messages instead of hardcoding
     ``~/.chiperflux``.  For code that needs a real ``Path``, use
@@ -340,9 +340,9 @@ def _iter_real_home_candidates(env: dict[str, str] | None = None) -> list[str]:
 
 
 def get_real_home(env: dict[str, str] | None = None) -> str:
-    """Return the OS user's real home directory, avoiding Hermes profile HOME.
+    """Return the OS user's real home directory, avoiding Chiper profile HOME.
 
-    ``CHIPER_HOME`` scopes Hermes state. ``HOME`` is reserved for the OS/user
+    ``CHIPER_HOME`` scopes Chiper state. ``HOME`` is reserved for the OS/user
     account and the many external CLIs that store credentials under ``~``.
     If a parent process is already running with ``HOME={CHIPER_HOME}/home``,
     this helper repairs back to the account home when possible.
@@ -396,7 +396,7 @@ def get_subprocess_home(env: dict[str, str] | None = None) -> str | None:
 
 
 def apply_subprocess_home_env(env: dict[str, str]) -> None:
-    """Apply Hermes' subprocess HOME contract to *env* in-place."""
+    """Apply Chiper' subprocess HOME contract to *env* in-place."""
     real_home = get_real_home(env)
     if real_home:
         env["CHIPER_REAL_HOME"] = real_home
@@ -521,7 +521,7 @@ def get_config_path() -> Path:
     """Return the path to ``config.yaml`` under CHIPER_HOME.
 
     Replaces the ``get_chiper_home() / "config.yaml"`` pattern repeated
-    in 7+ files (skill_utils.py, hermes_logging.py, hermes_time.py, etc.).
+    in 7+ files (skill_utils.py, chiper_logging.py, chiper_time.py, etc.).
     """
     return get_chiper_home() / "config.yaml"
 
@@ -562,7 +562,7 @@ def apply_ipv4_preference(force: bool = False) -> None:
     import socket
 
     # Guard against double-patching
-    if getattr(socket.getaddrinfo, "_hermes_ipv4_patched", False):
+    if getattr(socket.getaddrinfo, "_chiper_ipv4_patched", False):
         return
 
     _original_getaddrinfo = socket.getaddrinfo
@@ -578,7 +578,7 @@ def apply_ipv4_preference(force: bool = False) -> None:
                 return _original_getaddrinfo(host, port, family, type, proto, flags)
         return _original_getaddrinfo(host, port, family, type, proto, flags)
 
-    _ipv4_getaddrinfo._hermes_ipv4_patched = True  # type: ignore[attr-defined]
+    _ipv4_getaddrinfo._chiper_ipv4_patched = True  # type: ignore[attr-defined]
     socket.getaddrinfo = _ipv4_getaddrinfo  # type: ignore[assignment]
 
 

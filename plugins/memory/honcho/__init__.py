@@ -365,7 +365,7 @@ class HonchoMemoryProvider(MemoryProvider):
                 gateway_session_key=gateway_session_key,
             )
             or session_id
-            or "hermes-default"
+            or "chiper-default"
         )
 
     def _start_session_init_background(self, *, wait_timeout: float = 0.0) -> None:
@@ -392,7 +392,7 @@ class HonchoMemoryProvider(MemoryProvider):
 
             cfg = self._config
             init_kwargs = dict(self._lazy_init_kwargs)
-            init_session_id = self._lazy_init_session_id or "hermes-default"
+            init_session_id = self._lazy_init_session_id or "chiper-default"
 
             def _run() -> None:
                 try:
@@ -440,7 +440,7 @@ class HonchoMemoryProvider(MemoryProvider):
         session = self._manager.get_or_create(self._session_key)
 
         # ----- B6: Memory file migration (one-time, for new sessions) -----
-        # Skip under per-session strategy: every Hermes run creates a fresh
+        # Skip under per-session strategy: every Chiper run creates a fresh
         # Honcho session by design, so uploading MEMORY.md/USER.md/SOUL.md to
         # each one would flood the backend with short-lived duplicates instead
         # of performing a one-time migration.
@@ -518,7 +518,7 @@ class HonchoMemoryProvider(MemoryProvider):
         try:
             self._do_session_init(
                 self._config,
-                self._lazy_init_session_id or "hermes-default",
+                self._lazy_init_session_id or "chiper-default",
                 **self._lazy_init_kwargs,
             )
             # Clear lazy refs

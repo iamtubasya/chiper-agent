@@ -1,14 +1,14 @@
 ---
 sidebar_position: 1
 title: "消息网关"
-description: "通过 Telegram、Discord、Slack、WhatsApp、Signal、SMS、Email、Home Assistant、Mattermost、Matrix、DingTalk、Yuanbao、Microsoft Teams、LINE、Webhooks 或任何兼容 OpenAI 的前端与 Hermes 对话 — 架构与配置概览"
+description: "通过 Telegram、Discord、Slack、WhatsApp、Signal、SMS、Email、Home Assistant、Mattermost、Matrix、DingTalk、Yuanbao、Microsoft Teams、LINE、Webhooks 或任何兼容 OpenAI 的前端与 Chiper 对话 — 架构与配置概览"
 ---
 
 # 消息网关
 
-通过 Telegram、Discord、Slack、WhatsApp、Signal、SMS、Email、Home Assistant、Mattermost、Matrix、DingTalk、Feishu/Lark、WeCom、Weixin、BlueBubbles（iMessage）、QQ、Yuanbao、Microsoft Teams、LINE、ntfy 或浏览器与 Hermes 对话。网关是一个单一后台进程，连接所有已配置的平台，管理会话，运行 cron 任务，并传递语音消息。
+通过 Telegram、Discord、Slack、WhatsApp、Signal、SMS、Email、Home Assistant、Mattermost、Matrix、DingTalk、Feishu/Lark、WeCom、Weixin、BlueBubbles（iMessage）、QQ、Yuanbao、Microsoft Teams、LINE、ntfy 或浏览器与 Chiper 对话。网关是一个单一后台进程，连接所有已配置的平台，管理会话，运行 cron 任务，并传递语音消息。
 
-完整的语音功能集——包括 CLI 麦克风模式、消息中的语音回复以及 Discord 语音频道对话——请参阅 [Voice Mode](/user-guide/features/voice-mode) 和 [Use Voice Mode with Hermes](/guides/use-voice-mode-with-hermes)。
+完整的语音功能集——包括 CLI 麦克风模式、消息中的语音回复以及 Discord 语音频道对话——请参阅 [Voice Mode](/user-guide/features/voice-mode) 和 [Use Voice Mode with Chiper](/guides/use-voice-mode-with-chiper)。
 
 ## 平台对比
 
@@ -43,7 +43,7 @@ description: "通过 Telegram、Discord、Slack、WhatsApp、Signal、SMS、Emai
 
 ```mermaid
 flowchart TB
-    subgraph Gateway["Hermes Gateway"]
+    subgraph Gateway["Chiper Gateway"]
         subgraph Adapters["Platform adapters"]
             tg[Telegram]
             dc[Discord]
@@ -107,7 +107,7 @@ flowchart TB
 配置消息平台最简单的方式是使用交互式向导：
 
 ```bash
-hermes gateway setup        # 交互式配置所有消息平台
+chiper gateway setup        # 交互式配置所有消息平台
 ```
 
 该向导引导你通过方向键选择配置各平台，显示哪些平台已配置，并在完成后提示启动/重启网关。
@@ -115,14 +115,14 @@ hermes gateway setup        # 交互式配置所有消息平台
 ## 网关命令
 
 ```bash
-hermes gateway              # 在前台运行
-hermes gateway setup        # 交互式配置消息平台
-hermes gateway install      # 安装为用户服务（Linux）/ launchd 服务（macOS）
-sudo hermes gateway install --system   # 仅 Linux：安装开机启动的系统服务
-hermes gateway start        # 启动默认服务
-hermes gateway stop         # 停止默认服务
-hermes gateway status       # 检查默认服务状态
-hermes gateway status --system         # 仅 Linux：显式检查系统服务
+chiper gateway              # 在前台运行
+chiper gateway setup        # 交互式配置消息平台
+chiper gateway install      # 安装为用户服务（Linux）/ launchd 服务（macOS）
+sudo chiper gateway install --system   # 仅 Linux：安装开机启动的系统服务
+chiper gateway start        # 启动默认服务
+chiper gateway stop         # 停止默认服务
+chiper gateway status       # 检查默认服务状态
+chiper gateway status --system         # 仅 Linux：显式检查系统服务
 ```
 
 ## 聊天命令（在消息平台内使用）
@@ -150,7 +150,7 @@ hermes gateway status --system         # 仅 Linux：显式检查系统服务
 | `/rollback [number]` | 列出或恢复文件系统检查点 |
 | `/background <prompt>` | 在独立后台会话中运行 prompt（提示词） |
 | `/reload-mcp` | 从配置重新加载 MCP 服务器 |
-| `/update` | 将 Hermes Agent 更新至最新版本 |
+| `/update` | 将 Chiper Agent 更新至最新版本 |
 | `/help` | 显示可用命令 |
 | `/<skill-name>` | 调用任意已安装的技能 |
 
@@ -214,11 +214,11 @@ GATEWAY_ALLOW_ALL_USERS=true
 ```bash
 # 用户看到："Pairing code: XKGH5N7P"
 # 你通过以下命令批准：
-hermes pairing approve telegram XKGH5N7P
+chiper pairing approve telegram XKGH5N7P
 
 # 其他配对命令：
-hermes pairing list          # 查看待审核和已批准的用户
-hermes pairing revoke telegram 123456789  # 撤销访问权限
+chiper pairing list          # 查看待审核和已批准的用户
+chiper pairing revoke telegram 123456789  # 撤销访问权限
 ```
 
 配对码 1 小时后过期，有频率限制，并使用密码学随机数生成。
@@ -281,7 +281,7 @@ display:
   busy_ack_enabled: true   # 设为 false 可完全抑制 ⚡/⏳/⏩ 聊天回复
 ```
 
-第一次在任意平台向繁忙的 agent 发送消息时，Hermes 会在繁忙确认中附加一行提示，说明该配置项（`"💡 First-time tip — …"`）。该提示每次安装只触发一次——由 `onboarding.seen.busy_input_prompt` 下的标志锁定。删除该键可再次看到提示。
+第一次在任意平台向繁忙的 agent 发送消息时，Chiper 会在繁忙确认中附加一行提示，说明该配置项（`"💡 First-time tip — …"`）。该提示每次安装只触发一次——由 `onboarding.seen.busy_input_prompt` 下的标志锁定。删除该键可再次看到提示。
 
 如果你觉得繁忙确认消息过多——尤其是使用语音输入或快速连续发送消息时——可设置 `display.busy_ack_enabled: false`。你的输入仍会正常排队/引导/中断，只是聊天回复被静默。
 
@@ -312,7 +312,7 @@ display:
 /background Check all servers in the cluster and report any that are down
 ```
 
-Hermes 立即确认：
+Chiper 立即确认：
 
 ```
 🔄 Background task started: "Check all servers in the cluster..."
@@ -366,52 +366,52 @@ CHIPER_BACKGROUND_NOTIFICATIONS=result
 ### Linux（systemd）
 
 ```bash
-hermes gateway install               # 安装为用户服务
-hermes gateway start                 # 启动服务
-hermes gateway stop                  # 停止服务
-hermes gateway status                # 检查状态
+chiper gateway install               # 安装为用户服务
+chiper gateway start                 # 启动服务
+chiper gateway stop                  # 停止服务
+chiper gateway status                # 检查状态
 journalctl --user -u chiper-gateway -f  # 查看日志
 
 # 启用 lingering（注销后保持运行）
 sudo loginctl enable-linger $USER
 
 # 或安装开机启动的系统服务，仍以你的用户身份运行
-sudo hermes gateway install --system
-sudo hermes gateway start --system
-sudo hermes gateway status --system
+sudo chiper gateway install --system
+sudo chiper gateway start --system
+sudo chiper gateway status --system
 journalctl -u chiper-gateway -f
 ```
 
 笔记本和开发机使用用户服务。VPS 或无头主机（需要开机自动启动而不依赖 systemd linger）使用系统服务。
 
-除非你确实有此需要，否则避免同时安装用户和系统网关单元。Hermes 检测到两者同时存在时会发出警告，因为 start/stop/status 行为会变得不明确。
+除非你确实有此需要，否则避免同时安装用户和系统网关单元。Chiper 检测到两者同时存在时会发出警告，因为 start/stop/status 行为会变得不明确。
 
 :::info 多个安装
-如果你在同一台机器上运行多个 Hermes 安装（使用不同的 `CHIPER_HOME` 目录），每个安装都有自己的 systemd 服务名称。默认的 `~/.chiperflux` 使用 `chiper-gateway`；其他安装使用 `chiper-gateway-<hash>`。`hermes gateway` 命令会自动针对当前 `CHIPER_HOME` 对应的正确服务。
+如果你在同一台机器上运行多个 Chiper 安装（使用不同的 `CHIPER_HOME` 目录），每个安装都有自己的 systemd 服务名称。默认的 `~/.chiperflux` 使用 `chiper-gateway`；其他安装使用 `chiper-gateway-<hash>`。`chiper gateway` 命令会自动针对当前 `CHIPER_HOME` 对应的正确服务。
 :::
 
 ### macOS（launchd）
 
 ```bash
-hermes gateway install               # 安装为 launchd agent
-hermes gateway start                 # 启动服务
-hermes gateway stop                  # 停止服务
-hermes gateway status                # 检查状态
+chiper gateway install               # 安装为 launchd agent
+chiper gateway start                 # 启动服务
+chiper gateway stop                  # 停止服务
+chiper gateway status                # 检查状态
 tail -f ~/.chiperflux/logs/gateway.log   # 查看日志
 ```
 
-生成的 plist 文件位于 `~/Library/LaunchAgents/ai.hermes.gateway.plist`。它包含三个环境变量：
+生成的 plist 文件位于 `~/Library/LaunchAgents/ai.chiper.gateway.plist`。它包含三个环境变量：
 
 - **PATH** — 安装时你的完整 shell PATH，并在前面添加了 venv `bin/` 和 `node_modules/.bin`。这确保用户安装的工具（Node.js、ffmpeg 等）可供网关子进程（如 WhatsApp 桥接）使用。
 - **VIRTUAL_ENV** — 指向 Python 虚拟环境，使工具能正确解析包。
-- **CHIPER_HOME** — 将网关限定到你的 Hermes 安装。
+- **CHIPER_HOME** — 将网关限定到你的 Chiper 安装。
 
 :::tip 安装后 PATH 变更
-launchd plist 是静态的——如果你在配置网关后安装了新工具（例如通过 nvm 安装新版 Node.js，或通过 Homebrew 安装 ffmpeg），请重新运行 `hermes gateway install` 以捕获更新后的 PATH。网关会检测到过时的 plist 并自动重新加载。
+launchd plist 是静态的——如果你在配置网关后安装了新工具（例如通过 nvm 安装新版 Node.js，或通过 Homebrew 安装 ffmpeg），请重新运行 `chiper gateway install` 以捕获更新后的 PATH。网关会检测到过时的 plist 并自动重新加载。
 :::
 
 :::info 多个安装
-与 Linux systemd 服务类似，每个 `CHIPER_HOME` 目录都有自己的 launchd 标签。默认的 `~/.chiperflux` 使用 `ai.hermes.gateway`；其他安装使用 `ai.hermes.gateway-<suffix>`。
+与 Linux systemd 服务类似，每个 `CHIPER_HOME` 目录都有自己的 launchd 标签。默认的 `~/.chiperflux` 使用 `ai.chiper.gateway`；其他安装使用 `ai.chiper.gateway-<suffix>`。
 :::
 
 ## 平台专属工具集
@@ -420,29 +420,29 @@ launchd plist 是静态的——如果你在配置网关后安装了新工具（
 
 | 平台 | 工具集 | 功能 |
 |----------|---------|--------------|
-| CLI | `hermes-cli` | 完全访问 |
-| Telegram | `hermes-telegram` | 完整工具，包括终端 |
-| Discord | `hermes-discord` | 完整工具，包括终端 |
-| WhatsApp | `hermes-whatsapp` | 完整工具，包括终端 |
-| Slack | `hermes-slack` | 完整工具，包括终端 |
-| Google Chat | `hermes-google_chat` | 完整工具，包括终端 |
-| Signal | `hermes-signal` | 完整工具，包括终端 |
-| SMS | `hermes-sms` | 完整工具，包括终端 |
-| Email | `hermes-email` | 完整工具，包括终端 |
-| Home Assistant | `hermes-homeassistant` | 完整工具 + HA 设备控制（ha_list_entities、ha_get_state、ha_call_service、ha_list_services） |
-| Mattermost | `hermes-mattermost` | 完整工具，包括终端 |
-| Matrix | `hermes-matrix` | 完整工具，包括终端 |
-| DingTalk | `hermes-dingtalk` | 完整工具，包括终端 |
-| Feishu/Lark | `hermes-feishu` | 完整工具，包括终端 |
-| WeCom | `hermes-wecom` | 完整工具，包括终端 |
-| WeCom Callback | `hermes-wecom-callback` | 完整工具，包括终端 |
-| Weixin | `hermes-weixin` | 完整工具，包括终端 |
-| BlueBubbles | `hermes-bluebubbles` | 完整工具，包括终端 |
-| QQBot | `hermes-qqbot` | 完整工具，包括终端 |
-| Yuanbao | `hermes-yuanbao` | 完整工具，包括终端 |
-| Microsoft Teams | `hermes-teams` | 完整工具，包括终端 |
-| API Server | `hermes-api-server` | 完整工具（去除 `clarify`、`send_message`、`text_to_speech`——程序化访问没有交互用户） |
-| Webhooks | `hermes-webhook` | 完整工具，包括终端 |
+| CLI | `chiper-cli` | 完全访问 |
+| Telegram | `chiper-telegram` | 完整工具，包括终端 |
+| Discord | `chiper-discord` | 完整工具，包括终端 |
+| WhatsApp | `chiper-whatsapp` | 完整工具，包括终端 |
+| Slack | `chiper-slack` | 完整工具，包括终端 |
+| Google Chat | `chiper-google_chat` | 完整工具，包括终端 |
+| Signal | `chiper-signal` | 完整工具，包括终端 |
+| SMS | `chiper-sms` | 完整工具，包括终端 |
+| Email | `chiper-email` | 完整工具，包括终端 |
+| Home Assistant | `chiper-homeassistant` | 完整工具 + HA 设备控制（ha_list_entities、ha_get_state、ha_call_service、ha_list_services） |
+| Mattermost | `chiper-mattermost` | 完整工具，包括终端 |
+| Matrix | `chiper-matrix` | 完整工具，包括终端 |
+| DingTalk | `chiper-dingtalk` | 完整工具，包括终端 |
+| Feishu/Lark | `chiper-feishu` | 完整工具，包括终端 |
+| WeCom | `chiper-wecom` | 完整工具，包括终端 |
+| WeCom Callback | `chiper-wecom-callback` | 完整工具，包括终端 |
+| Weixin | `chiper-weixin` | 完整工具，包括终端 |
+| BlueBubbles | `chiper-bluebubbles` | 完整工具，包括终端 |
+| QQBot | `chiper-qqbot` | 完整工具，包括终端 |
+| Yuanbao | `chiper-yuanbao` | 完整工具，包括终端 |
+| Microsoft Teams | `chiper-teams` | 完整工具，包括终端 |
+| API Server | `chiper-api-server` | 完整工具（去除 `clarify`、`send_message`、`text_to_speech`——程序化访问没有交互用户） |
+| Webhooks | `chiper-webhook` | 完整工具，包括终端 |
 
 ## 运营多平台网关
 

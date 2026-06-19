@@ -1,1 +1,1 @@
-# Hermes plugins package
+# Chiper plugins package

@@ -140,9 +140,9 @@ class TestFirecrawlClientConfig:
     def test_nous_auth_token_respects_chiper_home_override(self, tmp_path):
         """Auth lookup should read from CHIPER_HOME/auth.json, not ~/.chiperflux/auth.json."""
         real_home = tmp_path / "real-home"
-        (real_home / ".hermes").mkdir(parents=True)
+        (real_home / ".chiper").mkdir(parents=True)
 
-        chiper_home = tmp_path / "hermes-home"
+        chiper_home = tmp_path / "chiper-home"
         chiper_home.mkdir()
         (chiper_home / "auth.json").write_text(json.dumps({
             "providers": {
@@ -245,7 +245,7 @@ class TestBackendSelection:
     """Test suite for _get_backend() backend selection logic.
 
     The backend is configured via config.yaml (web.backend), set by
-    ``hermes tools``.  Falls back to key-based detection for legacy/manual
+    ``chiper tools``.  Falls back to key-based detection for legacy/manual
     setups.
     """
 

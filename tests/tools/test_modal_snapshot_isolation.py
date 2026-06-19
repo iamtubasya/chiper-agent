@@ -62,7 +62,7 @@ def _install_modal_test_modules(
     chiper_cli = types.ModuleType("chiper_cli")
     chiper_cli.__path__ = []  # type: ignore[attr-defined]
     sys.modules["chiper_cli"] = chiper_cli
-    chiper_home = tmp_path / "hermes-home"
+    chiper_home = tmp_path / "chiper-home"
     os.environ["CHIPER_HOME"] = str(chiper_home)
     sys.modules["chiper_cli.config"] = types.SimpleNamespace(
         get_chiper_home=lambda: chiper_home,

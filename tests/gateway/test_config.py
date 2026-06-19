@@ -294,7 +294,7 @@ class TestGatewayConfigRoundtrip:
 
 class TestLoadGatewayConfig:
     def test_bridges_quick_commands_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -312,7 +312,7 @@ class TestLoadGatewayConfig:
         assert config.quick_commands == {"limits": {"type": "exec", "command": "echo ok"}}
 
     def test_bridges_group_sessions_per_user_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text("group_sessions_per_user: false\n", encoding="utf-8")
@@ -324,7 +324,7 @@ class TestLoadGatewayConfig:
         assert config.group_sessions_per_user is False
 
     def test_bridges_thread_sessions_per_user_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text("thread_sessions_per_user: true\n", encoding="utf-8")
@@ -336,7 +336,7 @@ class TestLoadGatewayConfig:
         assert config.thread_sessions_per_user is True
 
     def test_thread_sessions_per_user_defaults_to_false(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text("{}\n", encoding="utf-8")
@@ -348,7 +348,7 @@ class TestLoadGatewayConfig:
         assert config.thread_sessions_per_user is False
 
     def test_bridges_top_level_max_concurrent_sessions_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text("max_concurrent_sessions: 2\n", encoding="utf-8")
@@ -360,7 +360,7 @@ class TestLoadGatewayConfig:
         assert config.max_concurrent_sessions == 2
 
     def test_bridges_nested_max_concurrent_sessions_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -376,7 +376,7 @@ class TestLoadGatewayConfig:
         assert config.max_concurrent_sessions == 3
 
     def test_top_level_max_concurrent_sessions_overrides_nested_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -394,7 +394,7 @@ class TestLoadGatewayConfig:
 
     def test_bridges_discord_thread_require_mention_from_config_yaml(self, tmp_path, monkeypatch):
         """discord.thread_require_mention in config.yaml should reach the runtime env var."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -412,7 +412,7 @@ class TestLoadGatewayConfig:
 
     def test_thread_require_mention_yaml_does_not_overwrite_env(self, tmp_path, monkeypatch):
         """Explicit env var should win over config.yaml (env > yaml precedence)."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -431,7 +431,7 @@ class TestLoadGatewayConfig:
 
     def test_bridges_discord_allow_from_from_config_yaml(self, tmp_path, monkeypatch):
         """discord.allow_from should populate DISCORD_ALLOWED_USERS for auth."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -457,7 +457,7 @@ class TestLoadGatewayConfig:
 
     def test_bridges_discord_platform_extra_allow_from_to_env(self, tmp_path, monkeypatch):
         """platforms.discord.extra.allow_from should reach DISCORD_ALLOWED_USERS too."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -480,7 +480,7 @@ class TestLoadGatewayConfig:
         assert os.environ.get("DISCORD_ALLOWED_USERS") == "123456789012345678"
 
     def test_bridges_quoted_false_platform_enabled_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -498,7 +498,7 @@ class TestLoadGatewayConfig:
         assert Platform.API_SERVER not in config.get_connected_platforms()
 
     def test_bridges_nested_gateway_platforms_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -531,7 +531,7 @@ class TestLoadGatewayConfig:
         assert telegram.extra["reply_prefix"] == "nested"
 
     def test_top_level_platforms_override_nested_gateway_platforms(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -570,7 +570,7 @@ class TestLoadGatewayConfig:
         and allow_from was silently ignored.  The apply_yaml_config_fn dispatch
         received the same fix in #44f3e51; the shared-key loop now mirrors it.
         """
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -599,7 +599,7 @@ class TestLoadGatewayConfig:
 
     def test_shared_key_loop_bridges_allow_from_from_nested_gateway_platforms(self, tmp_path, monkeypatch):
         """Same regression check for ``gateway.platforms:`` path."""
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -624,7 +624,7 @@ class TestLoadGatewayConfig:
         assert telegram.extra.get("require_mention") is False
 
     def test_bridges_quoted_false_session_notify_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -640,7 +640,7 @@ class TestLoadGatewayConfig:
         assert config.default_reset_policy.notify is False
 
     def test_bridges_quoted_false_always_log_local_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -655,7 +655,7 @@ class TestLoadGatewayConfig:
         assert config.always_log_local is False
 
     def test_bridges_discord_channel_prompts_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -676,7 +676,7 @@ class TestLoadGatewayConfig:
         }
 
     def test_bridges_discord_history_backfill_settings_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -696,7 +696,7 @@ class TestLoadGatewayConfig:
         assert os.getenv("DISCORD_HISTORY_BACKFILL_LIMIT") == "17"
 
     def test_bridges_telegram_channel_prompts_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -717,7 +717,7 @@ class TestLoadGatewayConfig:
         }
 
     def test_bridges_slack_channel_prompts_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -736,7 +736,7 @@ class TestLoadGatewayConfig:
         }
 
     def test_bridges_feishu_allow_bots_from_config_yaml_to_env(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -752,7 +752,7 @@ class TestLoadGatewayConfig:
         assert os.environ.get("FEISHU_ALLOW_BOTS") == "mentions"
 
     def test_feishu_allow_bots_env_takes_precedence_over_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -768,7 +768,7 @@ class TestLoadGatewayConfig:
         assert os.environ.get("FEISHU_ALLOW_BOTS") == "none"
 
     def test_invalid_quick_commands_in_config_yaml_are_ignored(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text("quick_commands: not-a-mapping\n", encoding="utf-8")
@@ -780,7 +780,7 @@ class TestLoadGatewayConfig:
         assert config.quick_commands == {}
 
     def test_bridges_unauthorized_dm_behavior_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -798,7 +798,7 @@ class TestLoadGatewayConfig:
         assert config.platforms[Platform.WHATSAPP].extra["unauthorized_dm_behavior"] == "pair"
 
     def test_bridges_telegram_disable_link_previews_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -814,7 +814,7 @@ class TestLoadGatewayConfig:
         assert config.platforms[Platform.TELEGRAM].extra["disable_link_previews"] is True
 
     def test_loads_telegram_rich_messages_from_gateway_platform_extra(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -833,7 +833,7 @@ class TestLoadGatewayConfig:
         assert config.platforms[Platform.TELEGRAM].extra["rich_messages"] is False
 
     def test_load_config_default_enables_telegram_rich_messages(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
 
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
@@ -845,7 +845,7 @@ class TestLoadGatewayConfig:
         assert config["telegram"]["extra"]["rich_messages"] is True
 
     def test_bridges_telegram_extra_base_url_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -865,7 +865,7 @@ class TestLoadGatewayConfig:
         )
 
     def test_bridges_notice_delivery_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -881,7 +881,7 @@ class TestLoadGatewayConfig:
         assert config.get_notice_delivery(Platform.SLACK) == "private"
 
     def test_bridges_telegram_proxy_url_from_config_yaml(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -899,7 +899,7 @@ class TestLoadGatewayConfig:
         assert os.environ.get("TELEGRAM_PROXY") == "socks5://127.0.0.1:1080"
 
     def test_telegram_proxy_env_takes_precedence_over_config(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         config_path = chiper_home / "config.yaml"
         config_path.write_text(
@@ -972,7 +972,7 @@ class TestHomeChannelEnvOverrides:
                 PlatformConfig(
                     enabled=True,
                     extra={
-                        "address": "hermes@test.com",
+                        "address": "chiper@test.com",
                         "imap_host": "imap.test.com",
                         "smtp_host": "smtp.test.com",
                     },

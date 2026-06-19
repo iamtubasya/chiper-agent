@@ -51,7 +51,7 @@ def _install_fake_tools_package(*, credential_mounts=None):
     chiper_cli.__path__ = []  # type: ignore[attr-defined]
     sys.modules["chiper_cli"] = chiper_cli
     sys.modules["chiper_cli.config"] = types.SimpleNamespace(
-        get_chiper_home=lambda: Path(tempfile.gettempdir()) / "hermes-home",
+        get_chiper_home=lambda: Path(tempfile.gettempdir()) / "chiper-home",
     )
 
     tools_package = types.ModuleType("tools")

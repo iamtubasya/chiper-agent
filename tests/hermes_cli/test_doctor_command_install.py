@@ -1,4 +1,4 @@
-"""Tests for the Command Installation check in hermes doctor."""
+"""Tests for the Command Installation check in chiper doctor."""
 
 import sys
 import types
@@ -12,7 +12,7 @@ import chiper_cli.doctor as doctor_mod
 
 def _setup_doctor_env(monkeypatch, tmp_path, venv_name="venv"):
     """Create a minimal CHIPER_HOME + PROJECT_ROOT for doctor tests."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir(parents=True, exist_ok=True)
     (home / "config.yaml").write_text("memory: {}\n", encoding="utf-8")
 
@@ -22,9 +22,9 @@ def _setup_doctor_env(monkeypatch, tmp_path, venv_name="venv"):
     # Create a fake venv entry point
     venv_bin_dir = project / venv_name / "bin"
     venv_bin_dir.mkdir(parents=True, exist_ok=True)
-    hermes_bin = venv_bin_dir / "hermes"
-    hermes_bin.write_text("#!/usr/bin/env python\n# entry point\n")
-    hermes_bin.chmod(0o755)
+    chiper_bin = venv_bin_dir / "chiper"
+    chiper_bin.write_text("#!/usr/bin/env python\n# entry point\n")
+    chiper_bin.chmod(0o755)
 
     monkeypatch.setattr(doctor_mod, "CHIPER_HOME", home)
     monkeypatch.setattr(doctor_mod, "PROJECT_ROOT", project)
@@ -52,7 +52,7 @@ def _setup_doctor_env(monkeypatch, tmp_path, venv_name="venv"):
     except Exception:
         pass
 
-    return home, project, hermes_bin
+    return home, project, chiper_bin
 
 
 def _run_doctor(fix=False):
@@ -71,13 +71,13 @@ class TestDoctorCommandInstallation:
 
     @pytest.mark.skipif(sys.platform == "win32", reason="Symlink check is Unix-only")
     def test_correct_symlink_shows_ok(self, monkeypatch, tmp_path):
-        home, project, hermes_bin = _setup_doctor_env(monkeypatch, tmp_path)
+        home, project, chiper_bin = _setup_doctor_env(monkeypatch, tmp_path)
 
         # Create the command link dir with correct symlink
         cmd_link_dir = tmp_path / ".local" / "bin"
         cmd_link_dir.mkdir(parents=True)
-        cmd_link = cmd_link_dir / "hermes"
-        cmd_link.symlink_to(hermes_bin)
+        cmd_link = cmd_link_dir / "chiper"
+        cmd_link.symlink_to(chiper_bin)
 
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
@@ -88,7 +88,7 @@ class TestDoctorCommandInstallation:
 
     @pytest.mark.skipif(sys.platform == "win32", reason="Symlink check is Unix-only")
     def test_missing_symlink_shows_fail(self, monkeypatch, tmp_path):
-        home, project, hermes_bin = _setup_doctor_env(monkeypatch, tmp_path)
+        home, project, chiper_bin = _setup_doctor_env(monkeypatch, tmp_path)
 
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
         # Don't create the symlink — it should be missing
@@ -97,11 +97,11 @@ class TestDoctorCommandInstallation:
         assert "Command Installation" in out
         assert "Venv entry point exists" in out
         assert "not found" in out
-        assert "hermes doctor --fix" in out
+        assert "chiper doctor --fix" in out
 
     @pytest.mark.skipif(sys.platform == "win32", reason="Symlink check is Unix-only")
     def test_fix_creates_missing_symlink(self, monkeypatch, tmp_path):
-        home, project, hermes_bin = _setup_doctor_env(monkeypatch, tmp_path)
+        home, project, chiper_bin = _setup_doctor_env(monkeypatch, tmp_path)
 
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
@@ -110,19 +110,19 @@ class TestDoctorCommandInstallation:
         assert "Created symlink" in out
 
         # Verify the symlink was actually created
-        cmd_link = tmp_path / ".local" / "bin" / "hermes"
+        cmd_link = tmp_path / ".local" / "bin" / "chiper"
         assert cmd_link.is_symlink()
-        assert cmd_link.resolve() == hermes_bin.resolve()
+        assert cmd_link.resolve() == chiper_bin.resolve()
 
     @pytest.mark.skipif(sys.platform == "win32", reason="Symlink check is Unix-only")
     def test_wrong_target_symlink_shows_warn(self, monkeypatch, tmp_path):
-        home, project, hermes_bin = _setup_doctor_env(monkeypatch, tmp_path)
+        home, project, chiper_bin = _setup_doctor_env(monkeypatch, tmp_path)
 
         # Create a symlink pointing to the wrong target
         cmd_link_dir = tmp_path / ".local" / "bin"
         cmd_link_dir.mkdir(parents=True)
-        cmd_link = cmd_link_dir / "hermes"
-        wrong_target = tmp_path / "wrong_hermes"
+        cmd_link = cmd_link_dir / "chiper"
+        wrong_target = tmp_path / "wrong_chiper"
         wrong_target.write_text("#!/usr/bin/env python\n")
         cmd_link.symlink_to(wrong_target)
 
@@ -134,13 +134,13 @@ class TestDoctorCommandInstallation:
 
     @pytest.mark.skipif(sys.platform == "win32", reason="Symlink check is Unix-only")
     def test_fix_repairs_wrong_symlink(self, monkeypatch, tmp_path):
-        home, project, hermes_bin = _setup_doctor_env(monkeypatch, tmp_path)
+        home, project, chiper_bin = _setup_doctor_env(monkeypatch, tmp_path)
 
         # Create a symlink pointing to wrong target
         cmd_link_dir = tmp_path / ".local" / "bin"
         cmd_link_dir.mkdir(parents=True)
-        cmd_link = cmd_link_dir / "hermes"
-        wrong_target = tmp_path / "wrong_hermes"
+        cmd_link = cmd_link_dir / "chiper"
+        wrong_target = tmp_path / "wrong_chiper"
         wrong_target.write_text("#!/usr/bin/env python\n")
         cmd_link.symlink_to(wrong_target)
 
@@ -151,11 +151,11 @@ class TestDoctorCommandInstallation:
 
         # Verify the symlink now points to the correct target
         assert cmd_link.is_symlink()
-        assert cmd_link.resolve() == hermes_bin.resolve()
+        assert cmd_link.resolve() == chiper_bin.resolve()
 
     @pytest.mark.skipif(sys.platform == "win32", reason="Symlink check is Unix-only")
     def test_missing_venv_entry_point_shows_warn(self, monkeypatch, tmp_path):
-        home = tmp_path / ".hermes"
+        home = tmp_path / ".chiper"
         home.mkdir(parents=True, exist_ok=True)
         (home / "config.yaml").write_text("memory: {}\n", encoding="utf-8")
 
@@ -195,26 +195,26 @@ class TestDoctorCommandInstallation:
         home, project, _ = _setup_doctor_env(monkeypatch, tmp_path, venv_name=".venv")
 
         # Create the command link with correct symlink
-        hermes_bin = project / ".venv" / "bin" / "hermes"
+        chiper_bin = project / ".venv" / "bin" / "chiper"
         cmd_link_dir = tmp_path / ".local" / "bin"
         cmd_link_dir.mkdir(parents=True)
-        cmd_link = cmd_link_dir / "hermes"
-        cmd_link.symlink_to(hermes_bin)
+        cmd_link = cmd_link_dir / "chiper"
+        cmd_link.symlink_to(chiper_bin)
 
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
         out = _run_doctor(fix=False)
         assert "Venv entry point exists" in out
-        assert ".venv/bin/hermes" in out
+        assert ".venv/bin/chiper" in out
 
     @pytest.mark.skipif(sys.platform == "win32", reason="Symlink check is Unix-only")
     def test_non_symlink_regular_file_shows_ok(self, monkeypatch, tmp_path):
-        """If ~/.local/bin/hermes is a regular file (not symlink), accept it."""
-        home, project, hermes_bin = _setup_doctor_env(monkeypatch, tmp_path)
+        """If ~/.local/bin/chiper is a regular file (not symlink), accept it."""
+        home, project, chiper_bin = _setup_doctor_env(monkeypatch, tmp_path)
 
         cmd_link_dir = tmp_path / ".local" / "bin"
         cmd_link_dir.mkdir(parents=True)
-        cmd_link = cmd_link_dir / "hermes"
+        cmd_link = cmd_link_dir / "chiper"
         cmd_link.write_text("#!/bin/sh\nexec python -m chiper_cli.main \"$@\"\n")
 
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -229,7 +229,7 @@ class TestDoctorCommandInstallation:
         prefix_bin = prefix_dir / "bin"
         prefix_bin.mkdir(parents=True)
 
-        home, project, hermes_bin = _setup_doctor_env(monkeypatch, tmp_path)
+        home, project, chiper_bin = _setup_doctor_env(monkeypatch, tmp_path)
 
         monkeypatch.setenv("TERMUX_VERSION", "0.118.3")
         monkeypatch.setenv("PREFIX", str(prefix_dir))
@@ -241,7 +241,7 @@ class TestDoctorCommandInstallation:
 
     def test_windows_skips_check(self, monkeypatch, tmp_path):
         """On Windows, the Command Installation section is skipped."""
-        home = tmp_path / ".hermes"
+        home = tmp_path / ".chiper"
         home.mkdir(parents=True, exist_ok=True)
         (home / "config.yaml").write_text("memory: {}\n", encoding="utf-8")
 

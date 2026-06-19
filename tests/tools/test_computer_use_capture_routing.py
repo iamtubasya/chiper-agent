@@ -13,7 +13,7 @@ deterministic stubs for:
 * ``should_route_capture_to_aux_vision`` (the policy decision)
 * ``_run_async`` (sync->async bridge)
 * ``vision_analyze_tool`` (the aux LLM call)
-* ``hermes_constants.get_chiper_dir`` (cache path)
+* ``chiper_constants.get_chiper_dir`` (cache path)
 
 …so the full code path is covered without a live cua-driver, a real
 auxiliary client, or network access.
@@ -55,7 +55,7 @@ def tmp_cache_dir(tmp_path):
     def _fake_get(*_args, **_kw):
         return cache_dir
 
-    with patch("hermes_constants.get_chiper_dir", _fake_get):
+    with patch("chiper_constants.get_chiper_dir", _fake_get):
         yield cache_dir
 
 
@@ -263,7 +263,7 @@ class TestCaptureResponseRoutedToAuxVision:
 
         with patch.object(cu_tool, "_should_route_through_aux_vision",
                           return_value=True), \
-             patch("hermes_constants.get_chiper_dir", _fake_get), \
+             patch("chiper_constants.get_chiper_dir", _fake_get), \
              patch("model_tools._run_async", side_effect=_fake_run_async), \
              patch("tools.vision_tools.vision_analyze_tool",
                    new_callable=lambda: fake_vat):

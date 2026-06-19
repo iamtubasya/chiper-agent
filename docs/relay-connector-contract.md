@@ -5,7 +5,7 @@
 > validated it. Evolution during the experimental phase is **additive-only**,
 > gated by `contract_version`. A breaking change updates both repos in lockstep.
 
-This document is the formal interface between the **Hermes gateway** (Python,
+This document is the formal interface between the **Chiper gateway** (Python,
 `gateway/relay/`) and the **connector** (Node/TypeScript,
 `NousResearch/gateway-gateway`). The connector implementer's first action is to
 read this file.
@@ -232,7 +232,7 @@ only in transport. See `docs/capability-trust-boundary.md` (connector repo:
 A2 makes the connector the sole holder of platform secrets while the gateway may
 be **customer-managed and internet-exposed**, so the connector⇄gateway channel
 is itself authenticated. The gateway holds two enrollment-issued credentials
-(`hermes gateway enroll` → connector `/relay/enroll`): a **per-gateway secret**
+(`chiper gateway enroll` → connector `/relay/enroll`): a **per-gateway secret**
 and a **per-tenant delivery key**. Both are HMAC-SHA256 schemes with a
 multi-secret rotation verify list (gateway side: `gateway/relay/auth.py`;
 connector side: `src/core/relayAuthToken.ts` + `src/core/deliverySigning.ts`).

@@ -39,7 +39,7 @@ def _make_profile(
     p.mkdir(parents=True)
     if config:
         # SOUL.md is what the reconciler keys on — it's always seeded by
-        # `hermes profile create`. See container_boot._render_run_script.
+        # `chiper profile create`. See container_boot._render_run_script.
         (p / "SOUL.md").write_text("# fake profile\n")
     if state is not None or desired_state is not None:
         payload: dict[str, object] = {"timestamp": 1234567890}
@@ -374,7 +374,7 @@ def test_missing_profiles_root_still_registers_default_slot(
     reconciliation should still register a gateway-default slot for
     the root profile and return without raising. Previously this
     returned an empty list; the default slot is now always present
-    so `hermes gateway start` (no -p) has somewhere to land."""
+    so `chiper gateway start` (no -p) has somewhere to land."""
     scandir = tmp_path / "run-service"; scandir.mkdir()
     actions = reconcile_profile_gateways(
         chiper_home=tmp_path, scandir=scandir, dry_run=False,
@@ -499,7 +499,7 @@ def test_default_slot_always_registered_on_empty_home(tmp_path: Path) -> None:
 def test_default_slot_run_script_omits_profile_flag(tmp_path: Path) -> None:
     """The default slot's run script must NOT pass `-p default` —
     that would resolve to $CHIPER_HOME/profiles/default/ instead of
-    the root profile. It must call `hermes gateway run` directly."""
+    the root profile. It must call `chiper gateway run` directly."""
     scandir = tmp_path / "run-service"; scandir.mkdir()
 
     reconcile_profile_gateways(
@@ -507,7 +507,7 @@ def test_default_slot_run_script_omits_profile_flag(tmp_path: Path) -> None:
     )
 
     run = (scandir / "gateway-default" / "run").read_text()
-    assert "hermes gateway run" in run
+    assert "chiper gateway run" in run
     assert "-p default" not in run
     assert "-p 'default'" not in run
 
@@ -532,7 +532,7 @@ def test_default_slot_autostarts_when_root_state_running(tmp_path: Path) -> None
     "container_argv",
     [
         ("gateway", "run"),
-        ("/init", "/opt/hermes/docker/main-wrapper.sh", "gateway", "run"),
+        ("/init", "/opt/chiper/docker/main-wrapper.sh", "gateway", "run"),
     ],
 )
 def test_legacy_gateway_run_cmd_seeds_default_running_state(
@@ -565,7 +565,7 @@ def test_legacy_gateway_run_cmd_seeds_default_running_state(
     "container_argv",
     [
         ("gateway", "run", "--no-supervise"),
-        ("/init", "/opt/hermes/docker/main-wrapper.sh", "gateway", "run", "--no-supervise"),
+        ("/init", "/opt/chiper/docker/main-wrapper.sh", "gateway", "run", "--no-supervise"),
     ],
 )
 def test_legacy_gateway_run_no_supervise_does_not_seed_s6_state(
@@ -721,18 +721,18 @@ def test_profiles_default_subdir_is_skipped_with_warning(
         # Bare subcommand (docker run ... dashboard ...).
         ("dashboard",),
         ("dashboard", "--host", "127.0.0.1", "--no-open"),
-        # Through s6 /init + the main-wrapper that re-execs `hermes`.
-        ("/init", "/opt/hermes/docker/main-wrapper.sh", "dashboard"),
+        # Through s6 /init + the main-wrapper that re-execs `chiper`.
+        ("/init", "/opt/chiper/docker/main-wrapper.sh", "dashboard"),
         (
             "/init",
-            "/opt/hermes/docker/main-wrapper.sh",
+            "/opt/chiper/docker/main-wrapper.sh",
             "dashboard",
             "--host",
             "127.0.0.1",
             "--no-open",
         ),
-        # Wrapper that kept the explicit `hermes` argv0.
-        ("/init", "/opt/hermes/docker/main-wrapper.sh", "hermes", "dashboard"),
+        # Wrapper that kept the explicit `chiper` argv0.
+        ("/init", "/opt/chiper/docker/main-wrapper.sh", "chiper", "dashboard"),
     ],
 )
 def test_is_dashboard_container_true_for_dashboard_argv(
@@ -749,8 +749,8 @@ def test_is_dashboard_container_true_for_dashboard_argv(
     [
         (),  # empty (/proc/1/cmdline unreadable) — not the dashboard
         ("gateway", "run"),
-        ("/init", "/opt/hermes/docker/main-wrapper.sh", "gateway", "run"),
-        ("/init", "/opt/hermes/docker/main-wrapper.sh", "hermes", "gateway", "run"),
+        ("/init", "/opt/chiper/docker/main-wrapper.sh", "gateway", "run"),
+        ("/init", "/opt/chiper/docker/main-wrapper.sh", "chiper", "gateway", "run"),
         ("chat",),
         # A profile literally named "dashboard" must NOT match — the token
         # we key on is the SUBCOMMAND, and `gateway run -p dashboard` is a
@@ -787,7 +787,7 @@ def test_main_skips_reconcile_in_dashboard_container(
     monkeypatch.setattr(
         container_boot,
         "_read_container_argv",
-        lambda: ("/init", "/opt/hermes/docker/main-wrapper.sh", "dashboard"),
+        lambda: ("/init", "/opt/chiper/docker/main-wrapper.sh", "dashboard"),
     )
 
     rc = container_boot.main()
@@ -813,7 +813,7 @@ def test_main_reconciles_in_gateway_container(
     monkeypatch.setattr(
         container_boot,
         "_read_container_argv",
-        lambda: ("/init", "/opt/hermes/docker/main-wrapper.sh", "gateway", "run"),
+        lambda: ("/init", "/opt/chiper/docker/main-wrapper.sh", "gateway", "run"),
     )
 
     rc = container_boot.main()
@@ -841,7 +841,7 @@ def test_main_ignores_removed_skip_reconcile_env_var(
     monkeypatch.setattr(
         container_boot,
         "_read_container_argv",
-        lambda: ("/init", "/opt/hermes/docker/main-wrapper.sh", "gateway", "run"),
+        lambda: ("/init", "/opt/chiper/docker/main-wrapper.sh", "gateway", "run"),
     )
 
     rc = container_boot.main()

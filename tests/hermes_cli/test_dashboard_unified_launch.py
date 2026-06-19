@@ -92,8 +92,8 @@ class TestUnifiedDashboardRouting:
         /opt/data/profiles/<name>) the reroute must pin the child to the
         machine root /opt/data — NOT drop CHIPER_HOME.
 
-        Dropping it makes the child fall back to $HOME/.hermes
-        (= /opt/data/.hermes), an empty auto-seeded home, so the dashboard
+        Dropping it makes the child fall back to $HOME/.chiper
+        (= /opt/data/.chiper), an empty auto-seeded home, so the dashboard
         shows only the default profile and the .install_method stamp is
         missing (which also misfires the Docker update-button guard).
         Regression test for the support report.
@@ -205,7 +205,7 @@ class TestUnifiedDashboardRouting:
         monkeypatch.setitem(sys.modules, "uvicorn", types.SimpleNamespace())
         monkeypatch.setitem(
             sys.modules,
-            "hermes_logging",
+            "chiper_logging",
             types.SimpleNamespace(setup_logging=lambda **_k: None),
         )
         monkeypatch.setitem(

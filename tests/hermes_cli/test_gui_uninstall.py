@@ -24,7 +24,7 @@ def _make_agent(chiper_home: Path) -> Path:
 
 
 def _make_gui_build(chiper_home: Path) -> None:
-    """Create the source-built GUI artifacts a `hermes desktop` run produces."""
+    """Create the source-built GUI artifacts a `chiper desktop` run produces."""
     desktop = chiper_home / "chiper-agent" / "apps" / "desktop"
     (desktop / "dist").mkdir(parents=True)
     (desktop / "dist" / "index.html").write_text("<html>")
@@ -41,7 +41,7 @@ def _make_user_data(chiper_home: Path) -> None:
 
 
 def test_agent_is_installed_detects_source_and_venv(tmp_path):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     assert gu.agent_is_installed(chiper_home) is False
     _make_agent(chiper_home)
@@ -50,13 +50,13 @@ def test_agent_is_installed_detects_source_and_venv(tmp_path):
 
 def test_agent_is_installed_venv_only(tmp_path):
     """A checkout with only a venv (no package dir yet) still counts."""
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     (chiper_home / "chiper-agent" / "venv").mkdir(parents=True)
     assert gu.agent_is_installed(chiper_home) is True
 
 
 def test_source_built_artifacts_lists_known_paths(tmp_path):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     _make_gui_build(chiper_home)
     artifacts = gu.source_built_gui_artifacts(chiper_home)
     names = {p.name for p in artifacts}
@@ -67,7 +67,7 @@ def test_source_built_artifacts_lists_known_paths(tmp_path):
 
 
 def test_gui_is_installed_true_when_built(tmp_path, monkeypatch):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     _make_gui_build(chiper_home)
     # Make sure packaged-app + userdata probes don't false-positive on the box
     # running the test.
@@ -77,7 +77,7 @@ def test_gui_is_installed_true_when_built(tmp_path, monkeypatch):
 
 
 def test_gui_is_installed_false_when_nothing(tmp_path, monkeypatch):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     monkeypatch.setattr(gu, "packaged_gui_app_paths", lambda: [])
     monkeypatch.setattr(gu, "desktop_userdata_dir", lambda: tmp_path / "nope")
@@ -86,7 +86,7 @@ def test_gui_is_installed_false_when_nothing(tmp_path, monkeypatch):
 
 def test_uninstall_gui_removes_only_gui_artifacts(tmp_path, monkeypatch):
     """The core invariant: GUI gone, agent + user data untouched."""
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     agent_root = _make_agent(chiper_home)
     _make_gui_build(chiper_home)
     _make_user_data(chiper_home)
@@ -118,9 +118,9 @@ def test_uninstall_gui_removes_only_gui_artifacts(tmp_path, monkeypatch):
 
 
 def test_uninstall_gui_removes_userdata(tmp_path, monkeypatch):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     _make_agent(chiper_home)
-    userdata = tmp_path / "Hermes-userdata"
+    userdata = tmp_path / "Chiper-userdata"
     userdata.mkdir()
     (userdata / "connection.json").write_text("{}")
 
@@ -132,9 +132,9 @@ def test_uninstall_gui_removes_userdata(tmp_path, monkeypatch):
 
 
 def test_uninstall_gui_keeps_userdata_when_requested(tmp_path, monkeypatch):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     _make_agent(chiper_home)
-    userdata = tmp_path / "Hermes-userdata"
+    userdata = tmp_path / "Chiper-userdata"
     userdata.mkdir()
 
     monkeypatch.setattr(gu, "packaged_gui_app_paths", lambda: [])
@@ -145,9 +145,9 @@ def test_uninstall_gui_keeps_userdata_when_requested(tmp_path, monkeypatch):
 
 
 def test_uninstall_gui_removes_packaged_bundle(tmp_path, monkeypatch):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     _make_agent(chiper_home)
-    bundle = tmp_path / "Hermes.app"
+    bundle = tmp_path / "Chiper.app"
     (bundle / "Contents").mkdir(parents=True)
 
     monkeypatch.setattr(gu, "packaged_gui_app_paths", lambda: [bundle])
@@ -159,7 +159,7 @@ def test_uninstall_gui_removes_packaged_bundle(tmp_path, monkeypatch):
 
 
 def test_gui_install_summary_shape(tmp_path, monkeypatch):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     _make_agent(chiper_home)
     _make_gui_build(chiper_home)
     monkeypatch.setattr(gu, "packaged_gui_app_paths", lambda: [])
@@ -176,16 +176,16 @@ def test_gui_install_summary_shape(tmp_path, monkeypatch):
 
 
 def test_userdata_dir_per_platform(monkeypatch):
-    """userData path matches Electron's app.getPath('userData') for "Hermes"."""
+    """userData path matches Electron's app.getPath('userData') for "Chiper"."""
     home = Path("/home/tester")
     monkeypatch.setattr(Path, "home", classmethod(lambda cls: home))
 
     monkeypatch.setattr(gu.sys, "platform", "darwin")
-    assert gu.desktop_userdata_dir() == home / "Library" / "Application Support" / "Hermes"
+    assert gu.desktop_userdata_dir() == home / "Library" / "Application Support" / "Chiper"
 
     monkeypatch.setattr(gu.sys, "platform", "linux")
     monkeypatch.delenv("XDG_CONFIG_HOME", raising=False)
-    assert gu.desktop_userdata_dir() == home / ".config" / "Hermes"
+    assert gu.desktop_userdata_dir() == home / ".config" / "Chiper"
 
 
 def test_userdata_dir_windows(monkeypatch):
@@ -193,7 +193,7 @@ def test_userdata_dir_windows(monkeypatch):
     monkeypatch.setattr(Path, "home", classmethod(lambda cls: home))
     monkeypatch.setattr(gu.sys, "platform", "win32")
     monkeypatch.setenv("APPDATA", r"C:\Users\tester\AppData\Roaming")
-    assert gu.desktop_userdata_dir() == Path(r"C:\Users\tester\AppData\Roaming") / "Hermes"
+    assert gu.desktop_userdata_dir() == Path(r"C:\Users\tester\AppData\Roaming") / "Chiper"
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="POSIX symlink semantics")
@@ -227,7 +227,7 @@ def test_run_uninstall_yes_keep_data_is_non_interactive(tmp_path, monkeypatch):
     """
     import chiper_cli.uninstall as uninstall
 
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     agent_root = chiper_home / "chiper-agent"
     (agent_root / "chiper_cli").mkdir(parents=True)
     (chiper_home / "config.yaml").write_text("x: 1\n")
@@ -267,7 +267,7 @@ def test_run_uninstall_yes_full_wipes_home(tmp_path, monkeypatch):
     """``--yes --full`` removes the whole CHIPER_HOME non-interactively."""
     import chiper_cli.uninstall as uninstall
 
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     (chiper_home / "chiper-agent" / "chiper_cli").mkdir(parents=True)
     (chiper_home / "config.yaml").write_text("x: 1\n")
     fake_code = tmp_path / "checkout"
@@ -300,7 +300,7 @@ def test_uninstall_module_main_gui_mode(tmp_path, monkeypatch):
     """
     import chiper_cli.uninstall as uninstall
 
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     agent_root = chiper_home / "chiper-agent"
     (agent_root / "chiper_cli").mkdir(parents=True)
     desktop = agent_root / "apps" / "desktop"

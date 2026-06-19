@@ -18,7 +18,7 @@ def chiper_home(tmp_path, monkeypatch):
     """Isolated CHIPER_HOME so SessionDB.state_meta writes don't clobber the real one."""
     from pathlib import Path
 
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     monkeypatch.setenv("CHIPER_HOME", str(home))
@@ -329,10 +329,10 @@ class TestGoalManager:
         from chiper_cli.goals import GoalManager
 
         mgr = GoalManager(session_id="cont-sid")
-        mgr.set("port goal command to hermes")
+        mgr.set("port goal command to chiper")
         prompt = mgr.next_continuation_prompt()
         assert prompt is not None
-        assert "port goal command to hermes" in prompt
+        assert "port goal command to chiper" in prompt
         assert prompt.strip()  # non-empty
 
 

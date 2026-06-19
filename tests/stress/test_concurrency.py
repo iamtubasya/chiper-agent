@@ -117,7 +117,7 @@ def worker_loop(worker_id: int, chiper_home: str, result_file: str) -> None:
 
 
 def main():
-    home = tempfile.mkdtemp(prefix="hermes_concurrency_")
+    home = tempfile.mkdtemp(prefix="chiper_concurrency_")
     print(f"CHIPER_HOME = {home}")
 
     # Seed.

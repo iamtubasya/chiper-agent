@@ -60,7 +60,7 @@ def _fake_warning():
     return SimpleNamespace(
         message=(
             "!!! EXPENSIVE MODEL WARNING !!!\n"
-            "openai/gpt-5.5-pro has known pricing above Hermes' safety threshold.\n"
+            "openai/gpt-5.5-pro has known pricing above Chiper' safety threshold.\n"
             "did you mean to select openai/gpt-5.5?"
         ),
     )
@@ -69,7 +69,7 @@ def _fake_warning():
 def _setup_isolated_home(tmp_path, monkeypatch, *, warn):
     import gateway.run as gateway_run
 
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     cfg_path = chiper_home / "config.yaml"
     cfg_path.write_text(
@@ -83,7 +83,7 @@ def _setup_isolated_home(tmp_path, monkeypatch, *, warn):
         "chiper_cli.model_switch.switch_model",
         lambda **kw: _fake_switch_result(),
     )
-    monkeypatch.setattr("hermes_constants.get_chiper_home", lambda: chiper_home)
+    monkeypatch.setattr("chiper_constants.get_chiper_home", lambda: chiper_home)
     monkeypatch.setattr("chiper_cli.config.get_chiper_home", lambda: chiper_home)
     monkeypatch.setattr(
         "chiper_cli.model_cost_guard.expensive_model_warning",

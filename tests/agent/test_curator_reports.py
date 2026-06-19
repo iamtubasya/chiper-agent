@@ -16,7 +16,7 @@ import pytest
 @pytest.fixture
 def curator_env(tmp_path, monkeypatch):
     """Isolated CHIPER_HOME with a skills/ dir + reset curator module state."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     (home / "skills").mkdir()
     (home / "logs").mkdir()
@@ -25,7 +25,7 @@ def curator_env(tmp_path, monkeypatch):
 
     import importlib
     import chiper_constants
-    importlib.reload(hermes_constants)
+    importlib.reload(chiper_constants)
     from agent import curator
     importlib.reload(curator)
     from tools import skill_usage

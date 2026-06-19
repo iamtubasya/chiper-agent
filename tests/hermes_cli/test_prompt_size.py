@@ -1,4 +1,4 @@
-"""Tests for the ``hermes prompt-size`` diagnostic (issue #34667)."""
+"""Tests for the ``chiper prompt-size`` diagnostic (issue #34667)."""
 
 import json
 
@@ -31,7 +31,7 @@ def _seed_skill(chiper_home, name, description):
 
 @pytest.fixture
 def isolated_home(tmp_path, monkeypatch):
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     monkeypatch.chdir(tmp_path)  # avoid picking up the repo's AGENTS.md

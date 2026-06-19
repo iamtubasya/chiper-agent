@@ -117,17 +117,17 @@ export class GatewayClient {
     if (token) {
       authParamName = "token";
       authParamValue = token;
-    } else if (window.__HERMES_AUTH_REQUIRED__) {
+    } else if (window.__CHIPER_AUTH_REQUIRED__) {
       const { ticket } = await getWsTicket();
       authParamName = "ticket";
       authParamValue = ticket;
     } else {
       authParamName = "token";
-      authParamValue = window.__HERMES_SESSION_TOKEN__ ?? "";
+      authParamValue = window.__CHIPER_SESSION_TOKEN__ ?? "";
       if (!authParamValue) {
         this.setState("error");
         throw new Error(
-          "Session token not available — page must be served by the Hermes dashboard",
+          "Session token not available — page must be served by the Chiper dashboard",
         );
       }
     }
@@ -247,7 +247,7 @@ export class GatewayClient {
 
 declare global {
   interface Window {
-    __HERMES_SESSION_TOKEN__?: string;
-    __HERMES_AUTH_REQUIRED__?: boolean;
+    __CHIPER_SESSION_TOKEN__?: string;
+    __CHIPER_AUTH_REQUIRED__?: boolean;
   }
 }

@@ -435,7 +435,7 @@ class TestApplyYamlConfigFnDispatch:
     """
 
     def _write_config(self, tmp_path, content: str):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text(content, encoding="utf-8")
         return chiper_home
@@ -667,7 +667,7 @@ class TestPluginPlatformSharedKeyBridge:
     """
 
     def _write_config(self, tmp_path, content: str):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text(content, encoding="utf-8")
         return chiper_home
@@ -722,7 +722,7 @@ class TestPluginEnablementGate:
     """
 
     def _write_config(self, tmp_path, content: str = ""):
-        chiper_home = tmp_path / ".hermes"
+        chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         (chiper_home / "config.yaml").write_text(content, encoding="utf-8")
         return chiper_home

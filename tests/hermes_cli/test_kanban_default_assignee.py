@@ -21,7 +21,7 @@ def isolated_kanban_home(monkeypatch):
     monkeypatch.setenv("CHIPER_HOME", test_home)
     # Force-reimport so the fresh CHIPER_HOME is picked up.
     for mod in list(sys.modules.keys()):
-        if mod.startswith("chiper_cli") or mod.startswith("hermes_state") or mod == "hermes_constants":
+        if mod.startswith("chiper_cli") or mod.startswith("chiper_state") or mod == "chiper_constants":
             del sys.modules[mod]
     from chiper_cli import kanban_db
     yield kanban_db, test_home
@@ -91,7 +91,7 @@ def test_unassigned_task_auto_assigned_with_default_assignee(isolated_kanban_hom
 def test_dry_run_with_default_assignee_reports_without_mutating(isolated_kanban_home):
     """Dry-run mode: reports what WOULD happen (task in auto_assigned_default,
     spawn entry) but does NOT mutate the DB. Operators using
-    `hermes kanban dispatch --dry-run` see the routing decision before
+    `chiper kanban dispatch --dry-run` see the routing decision before
     committing."""
     kb, _home = isolated_kanban_home
     with kb.connect_closing() as conn:

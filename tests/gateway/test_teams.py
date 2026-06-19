@@ -378,7 +378,7 @@ class TestTeamsInteractiveSetup:
         from chiper_cli.cli_output (not chiper_cli.config) and persist
         credentials to .env without crashing.
         """
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
         import chiper_cli.cli_output as cli_output_mod
@@ -723,7 +723,7 @@ class TestTeamsMessageHandling:
         adapter.handle_message = AsyncMock()
 
         activity = self._make_activity(
-            text="<at>Hermes</at> what is the weather?",
+            text="<at>Chiper</at> what is the weather?",
             from_id="user-id",
         )
         await adapter._on_message(self._make_ctx(activity))

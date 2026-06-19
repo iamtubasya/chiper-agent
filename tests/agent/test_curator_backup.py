@@ -16,7 +16,7 @@ import pytest
 @pytest.fixture
 def backup_env(monkeypatch, tmp_path):
     """Isolate CHIPER_HOME + reload modules so every test starts clean."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     (home / "skills").mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(home))
@@ -24,7 +24,7 @@ def backup_env(monkeypatch, tmp_path):
 
     # Reload so get_chiper_home picks up the env var fresh.
     import chiper_constants
-    importlib.reload(hermes_constants)
+    importlib.reload(chiper_constants)
     from agent import curator_backup
     importlib.reload(curator_backup)
     return {"home": home, "skills": home / "skills", "cb": curator_backup}
@@ -270,7 +270,7 @@ def test_real_run_takes_pre_snapshot(backup_env, monkeypatch):
     skills = backup_env["skills"]
     _write_skill(skills, "alpha")
 
-    # Reload curator module against the freshly-env'd hermes_constants
+    # Reload curator module against the freshly-env'd chiper_constants
     from agent import curator
     importlib.reload(curator)
 
@@ -338,7 +338,7 @@ def _write_cron_jobs(home: Path, jobs: list) -> Path:
 def _reload_cron_jobs(home: Path):
     """Reload cron.jobs so its module-level CHIPER_DIR picks up the tmp HOME."""
     import chiper_constants
-    importlib.reload(hermes_constants)
+    importlib.reload(chiper_constants)
     if "cron.jobs" in sys.modules:
         import cron.jobs as _cj
         importlib.reload(_cj)

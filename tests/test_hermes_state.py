@@ -1,4 +1,4 @@
-"""Tests for hermes_state.py — SessionDB SQLite CRUD, FTS5 search, export."""
+"""Tests for chiper_state.py — SessionDB SQLite CRUD, FTS5 search, export."""
 
 import sqlite3
 import time
@@ -210,7 +210,7 @@ class TestSessionLifecycle:
             kwargs["factory"] = _NoFtsConnection
             return real_connect(*args, **kwargs)
 
-        monkeypatch.setattr("hermes_state.sqlite3.connect", connect_without_fts)
+        monkeypatch.setattr("chiper_state.sqlite3.connect", connect_without_fts)
 
         db = SessionDB(db_path=tmp_path / "state.db")
         try:
@@ -247,7 +247,7 @@ class TestSessionLifecycle:
             kwargs["factory"] = _NoFtsExistingTableConnection
             return real_connect(*args, **kwargs)
 
-        monkeypatch.setattr("hermes_state.sqlite3.connect", connect_without_fts)
+        monkeypatch.setattr("chiper_state.sqlite3.connect", connect_without_fts)
 
         db = SessionDB(db_path=db_path)
         try:
@@ -279,7 +279,7 @@ class TestSessionLifecycle:
             kwargs["factory"] = _NoFtsConnection
             return real_connect(*args, **kwargs)
 
-        monkeypatch.setattr("hermes_state.sqlite3.connect", connect_without_fts)
+        monkeypatch.setattr("chiper_state.sqlite3.connect", connect_without_fts)
 
         db = SessionDB(db_path=db_path)
         try:
@@ -313,14 +313,14 @@ class TestSessionLifecycle:
             kwargs["factory"] = _NoFtsExistingTableConnection
             return real_connect(*args, **kwargs)
 
-        monkeypatch.setattr("hermes_state.sqlite3.connect", connect_without_fts)
+        monkeypatch.setattr("chiper_state.sqlite3.connect", connect_without_fts)
         no_fts = SessionDB(db_path=db_path)
         try:
             no_fts.append_message("s1", role="assistant", content="not indexed yet")
         finally:
             no_fts.close()
 
-        monkeypatch.setattr("hermes_state.sqlite3.connect", real_connect)
+        monkeypatch.setattr("chiper_state.sqlite3.connect", real_connect)
         restored = SessionDB(db_path=db_path)
         try:
             assert restored._fts_enabled is True
@@ -2007,7 +2007,7 @@ class TestSchemaInit:
     def test_topic_mode_schema_is_not_auto_migrated_on_open(self, tmp_path):
         """Opening an old DB should not add topic-mode columns until /topic opts in.
 
-        The gateway must remain rollback-safe: simply upgrading Hermes and starting
+        The gateway must remain rollback-safe: simply upgrading Chiper and starting
         the old bot should not eagerly mutate the state DB for this feature.
         """
         old_db = tmp_path / "old.db"
@@ -2355,7 +2355,7 @@ class TestSchemaInit:
             conn.set_trace_callback(trace)
             return conn
 
-        monkeypatch.setattr("hermes_state.sqlite3.connect", connect_with_trace)
+        monkeypatch.setattr("chiper_state.sqlite3.connect", connect_with_trace)
         migrated_db = SessionDB(db_path=db_path)
         try:
             assert trigram_content_only_inserts == []

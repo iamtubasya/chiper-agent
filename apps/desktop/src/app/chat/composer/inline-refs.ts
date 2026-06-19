@@ -14,7 +14,7 @@ import {
 export type InlineRefInput = string | { kind: string; label?: string; value: string }
 
 /** MIME for an in-app session drag (sidebar row → composer). */
-export const CHIPER_SESSION_MIME = 'application/x-hermes-session'
+export const CHIPER_SESSION_MIME = 'application/x-chiper-session'
 
 export interface SessionDragPayload {
   id: string

@@ -47,7 +47,7 @@ def catalog_dir(tmp_path, monkeypatch):
 @pytest.fixture(autouse=True)
 def _isolate_chiper_home(tmp_path, monkeypatch):
     """Redirect all config I/O to a temp CHIPER_HOME."""
-    hh = tmp_path / "hermes-home"
+    hh = tmp_path / "chiper-home"
     hh.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(hh))
     monkeypatch.setattr(
@@ -59,9 +59,9 @@ def _isolate_chiper_home(tmp_path, monkeypatch):
     monkeypatch.setattr(
         "chiper_cli.config.get_env_path", lambda: hh / ".env"
     )
-    # mcp_catalog grabs get_chiper_home() lazily through hermes_constants
+    # mcp_catalog grabs get_chiper_home() lazily through chiper_constants
     monkeypatch.setattr(
-        "hermes_constants.get_chiper_home", lambda: hh
+        "chiper_constants.get_chiper_home", lambda: hh
     )
     return hh
 
@@ -579,7 +579,7 @@ class TestCatalogDiagnostics:
 
     def test_picker_surfaces_future_manifest_warning(self, catalog_dir, capsys, monkeypatch):
         """The text-dump path should print a warning line for future-manifest
-        entries so users running headless or after `hermes setup` know to update."""
+        entries so users running headless or after `chiper setup` know to update."""
         body = _basic_manifest()
         body["manifest_version"] = 999
         _write_manifest(catalog_dir, "futuristic", body)
@@ -592,7 +592,7 @@ class TestCatalogDiagnostics:
         show_catalog()
         out = capsys.readouterr().out
         assert "futuristic" in out
-        assert "requires a newer Hermes" in out
+        assert "requires a newer Chiper" in out
 
 
 # ---------------------------------------------------------------------------

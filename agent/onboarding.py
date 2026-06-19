@@ -97,7 +97,7 @@ def tool_progress_hint_cli() -> str:
 
 
 def openclaw_residue_hint_cli() -> str:
-    """Banner shown the first time Hermes starts and finds ``~/.openclaw/``.
+    """Banner shown the first time Chiper starts and finds ``~/.openclaw/``.
 
     Points users at ``chiper claw migrate`` (non-destructive port of config,
     memory, and skills) first. ``chiper claw cleanup`` is mentioned as the

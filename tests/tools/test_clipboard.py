@@ -206,18 +206,18 @@ class TestMacosOsascript:
 
 class TestIsWsl:
     def setup_method(self):
-        # _is_wsl is hermes_constants.is_wsl; reset the function's own module
-        # globals so this stays stable even if hermes_constants was imported
+        # _is_wsl is chiper_constants.is_wsl; reset the function's own module
+        # globals so this stays stable even if chiper_constants was imported
         # through a different module object earlier in a large xdist run.
         import chiper_constants
-        hermes_constants._wsl_detected = None
+        chiper_constants._wsl_detected = None
         _is_wsl.__globals__["_wsl_detected"] = None
 
     def teardown_method(self):
         # Reset again after the test so we don't leak a cached value
         # (True/False) into whichever test the xdist worker runs next.
         import chiper_constants
-        hermes_constants._wsl_detected = None
+        chiper_constants._wsl_detected = None
         _is_wsl.__globals__["_wsl_detected"] = None
 
     def test_wsl2_detected(self):
@@ -233,7 +233,7 @@ class TestIsWsl:
     def test_regular_linux(self):
         # GHA hosted runners are Azure VMs whose real /proc/version often
         # contains "microsoft". Patching builtins.open with mock_open is
-        # supposed to intercept hermes_constants.is_wsl's `open` call,
+        # supposed to intercept chiper_constants.is_wsl's `open` call,
         # but if another test on the same xdist worker already cached
         # _wsl_detected=True, the mock never runs because the function
         # short-circuits on the cache. setup_method resets, so we just
@@ -881,7 +881,7 @@ class TestPreprocessImagesWithVision:
 
     @pytest.fixture
     def cli(self):
-        """Minimal HermesCLI with mocked internals."""
+        """Minimal ChiperCLI with mocked internals."""
         with patch("cli.load_cli_config") as mock_cfg:
             mock_cfg.return_value = {
                 "model": {"default": "test/model", "base_url": "http://x", "provider": "auto"},
@@ -896,8 +896,8 @@ class TestPreprocessImagesWithVision:
             }
             with patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"}):
                 with patch("cli.CLI_CONFIG", mock_cfg.return_value):
-                    from cli import HermesCLI
-                    cli_obj = HermesCLI.__new__(HermesCLI)
+                    from cli import ChiperCLI
+                    cli_obj = ChiperCLI.__new__(ChiperCLI)
                     # Manually init just enough state
                     cli_obj._attached_images = []
                     cli_obj._image_counter = 0
@@ -994,8 +994,8 @@ class TestTryAttachClipboardImage:
 
     @pytest.fixture
     def cli(self):
-        from cli import HermesCLI
-        cli_obj = HermesCLI.__new__(HermesCLI)
+        from cli import ChiperCLI
+        cli_obj = ChiperCLI.__new__(ChiperCLI)
         cli_obj._attached_images = []
         cli_obj._image_counter = 0
         return cli_obj
@@ -1057,8 +1057,8 @@ class TestAutoAttachClipboardImageOnPaste:
 class TestVoiceSubmission:
     @pytest.fixture
     def cli(self):
-        from cli import HermesCLI
-        cli_obj = HermesCLI.__new__(HermesCLI)
+        from cli import ChiperCLI
+        cli_obj = ChiperCLI.__new__(ChiperCLI)
         cli_obj._attached_images = [Path("/tmp/stale.png")]
         cli_obj._pending_input = queue.Queue()
         cli_obj._voice_lock = MagicMock()

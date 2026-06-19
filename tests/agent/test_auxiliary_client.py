@@ -107,7 +107,7 @@ class TestBuildCallKwargsMaxTokens:
             ("copilot", "gpt-5.5", "https://api.githubcopilot.com"),
             ("custom", "gpt-5", "https://api.openai.com/v1"),
             ("openrouter", "anthropic/claude-sonnet-4.6", "https://openrouter.ai/api/v1"),
-            ("nous", "hermes-4", "https://inference-api.nousresearch.com/v1"),
+            ("nous", "chiper-4", "https://inference-api.nousresearch.com/v1"),
             ("custom", "qwen", "http://localhost:8080/v1"),
             ("zai", "glm-4v-flash", "https://open.bigmodel.cn/api/paas/v4"),
         ],
@@ -154,7 +154,7 @@ class TestNousTagsScoping:
 
         kwargs = aux._build_call_kwargs(
             provider="nous",
-            model="hermes-4",
+            model="chiper-4",
             messages=[{"role": "user", "content": "hi"}],
         )
 
@@ -200,7 +200,7 @@ class TestNormalizeAuxProvider:
 
 class TestReadCodexAccessToken:
     def test_valid_auth_store(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -215,7 +215,7 @@ class TestReadCodexAccessToken:
         assert result == "tok-123"
 
     def test_pool_without_selected_entry_falls_back_to_auth_store(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -229,7 +229,7 @@ class TestReadCodexAccessToken:
         assert result == valid_jwt
 
     def test_missing_returns_none(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({"version": 1, "providers": {}}))
         monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
@@ -238,7 +238,7 @@ class TestReadCodexAccessToken:
         assert result is None
 
     def test_empty_token_returns_none(self, tmp_path, monkeypatch):
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -280,7 +280,7 @@ class TestReadCodexAccessToken:
         payload = base64.urlsafe_b64encode(payload_data).rstrip(b"=").decode()
         expired_jwt = f"{header}.{payload}.fakesig"
 
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -305,7 +305,7 @@ class TestReadCodexAccessToken:
         payload = base64.urlsafe_b64encode(payload_data).rstrip(b"=").decode()
         valid_jwt = f"{header}.{payload}.fakesig"
 
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -321,7 +321,7 @@ class TestReadCodexAccessToken:
 
     def test_non_jwt_token_passes_through(self, tmp_path, monkeypatch):
         """Non-JWT tokens (no dots) should be returned as-is."""
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -340,14 +340,14 @@ class TestResolveXaiOAuthForAux:
     def test_uses_pool_backed_credentials_without_singleton(self, tmp_path, monkeypatch):
         """Auxiliary xAI OAuth must see pool-only credentials.
 
-        ``hermes auth status`` already reports these as logged in; compression
+        ``chiper auth status`` already reports these as logged in; compression
         should not fall through to "no auxiliary provider configured" just
         because the singleton auth-store entry is absent.
         """
         from agent.credential_pool import AUTH_TYPE_OAUTH, PooledCredential, load_pool
         from chiper_cli.auth import DEFAULT_XAI_OAUTH_BASE_URL
 
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -379,7 +379,7 @@ class TestResolveXaiOAuthForAux:
         from agent.credential_pool import AUTH_TYPE_OAUTH, PooledCredential, load_pool
         from chiper_cli.auth import DEFAULT_XAI_OAUTH_BASE_URL
 
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -539,7 +539,7 @@ class TestResolveProviderClientUniversalModelFallback:
 
     Aux tasks (title generation, vision, session search, etc.) routinely
     reach this function without an explicit model — the user's main
-    provider was picked via ``hermes model``, no per-task override is
+    provider was picked via ``chiper model``, no per-task override is
     set, and the expectation is "just use my main model for side tasks
     too."  The resolver fills in ``model`` from a 3-step universal
     fallback before any provider branch runs:
@@ -697,7 +697,7 @@ class TestExpiredCodexFallback:
         payload = base64.urlsafe_b64encode(payload_data).rstrip(b"=").decode()
         expired_jwt = f"{header}.{payload}.fakesig"
 
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -740,7 +740,7 @@ class TestExpiredCodexFallback:
         payload = base64.urlsafe_b64encode(payload_data).rstrip(b"=").decode()
         expired_jwt = f"{header}.{payload}.fakesig"
 
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -771,7 +771,7 @@ class TestExpiredCodexFallback:
         payload = base64.urlsafe_b64encode(payload_data).rstrip(b"=").decode()
         expired_jwt = f"{header}.{payload}.fakesig"
 
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -793,10 +793,10 @@ class TestExpiredCodexFallback:
                 assert client is not None
 
 
-    def test_hermes_oauth_file_sets_oauth_flag(self, monkeypatch):
+    def test_chiper_oauth_file_sets_oauth_flag(self, monkeypatch):
         """OAuth-style tokens should get is_oauth=*** (token is not sk-ant-api-*)."""
         # Mock resolve_anthropic_token to return an OAuth-style token
-        with patch("agent.anthropic_adapter.resolve_anthropic_token", return_value="sk-ant-oat-hermes-token"), \
+        with patch("agent.anthropic_adapter.resolve_anthropic_token", return_value="sk-ant-oat-chiper-token"), \
              patch("agent.anthropic_adapter.build_anthropic_client") as mock_build, \
              patch("agent.auxiliary_client._select_pool_entry", return_value=(False, None)):
             mock_build.return_value = MagicMock()
@@ -814,7 +814,7 @@ class TestExpiredCodexFallback:
         payload = base64.urlsafe_b64encode(payload_data).rstrip(b"=").decode()
         no_exp_jwt = f"{header}.{payload}.fakesig"
 
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -835,7 +835,7 @@ class TestExpiredCodexFallback:
         payload = base64.urlsafe_b64encode(b"not-json-content").rstrip(b"=").decode()
         bad_jwt = f"{header}.{payload}.fakesig"
 
-        chiper_home = tmp_path / "hermes"
+        chiper_home = tmp_path / "chiper"
         chiper_home.mkdir(parents=True, exist_ok=True)
         (chiper_home / "auth.json").write_text(json.dumps({
             "version": 1,
@@ -3566,7 +3566,7 @@ class TestNvidiaBillingHeaders:
         assert model == "nvidia/test-model"
         call_kwargs = mock_openai.call_args[1]
         headers = call_kwargs["default_headers"]
-        assert headers["X-BILLING-INVOKE-ORIGIN"] == "HermesAgent"
+        assert headers["X-BILLING-INVOKE-ORIGIN"] == "ChiperAgent"
 
     def test_resolve_provider_client_local_nim_skips_billing_origin_header(self, monkeypatch):
         monkeypatch.setenv("NVIDIA_API_KEY", "nvidia-key")

@@ -10,7 +10,7 @@ projection into Chiper' display, approval bridging, transcript projection into
 AIAgent.messages, plugin migration) live in sibling modules.
 
 Status: optional opt-in runtime gated behind `model.openai_runtime ==
-"codex_app_server"`. Hermes' default tool dispatch is unchanged when this
+"codex_app_server"`. Chiper' default tool dispatch is unchanged when this
 runtime is not selected.
 """
 
@@ -141,7 +141,7 @@ class CodexAppServerClient:
 
     def initialize(
         self,
-        client_name: str = "hermes",
+        client_name: str = "chiper",
         client_title: str = "ChiperFlux Agent",
         client_version: str = "0.1",
         capabilities: Optional[dict] = None,

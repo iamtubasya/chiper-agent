@@ -1,4 +1,4 @@
-"""Tests for Codex auth — tokens stored in Hermes auth store (~/.chiperflux/auth.json)."""
+"""Tests for Codex auth — tokens stored in Chiper auth store (~/.chiperflux/auth.json)."""
 
 import json
 import time
@@ -22,8 +22,8 @@ from chiper_cli.auth import (
 )
 
 
-def _setup_hermes_auth(chiper_home: Path, *, access_token: str = "access", refresh_token: str = "refresh"):
-    """Write Codex tokens into the Hermes auth store."""
+def _setup_chiper_auth(chiper_home: Path, *, access_token: str = "access", refresh_token: str = "refresh"):
+    """Write Codex tokens into the Chiper auth store."""
     chiper_home.mkdir(parents=True, exist_ok=True)
     auth_store = {
         "version": 1,
@@ -51,8 +51,8 @@ def _jwt_with_exp(exp_epoch: int) -> str:
 
 
 def test_read_codex_tokens_success(tmp_path, monkeypatch):
-    chiper_home = tmp_path / "hermes"
-    _setup_hermes_auth(chiper_home)
+    chiper_home = tmp_path / "chiper"
+    _setup_chiper_auth(chiper_home)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
     data = _read_codex_tokens()
@@ -61,7 +61,7 @@ def test_read_codex_tokens_success(tmp_path, monkeypatch):
 
 
 def test_read_codex_tokens_missing(tmp_path, monkeypatch):
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     # Empty auth store
     (chiper_home / "auth.json").write_text(json.dumps({"version": 1, "providers": {}}))
@@ -73,8 +73,8 @@ def test_read_codex_tokens_missing(tmp_path, monkeypatch):
 
 
 def test_resolve_codex_runtime_credentials_missing_access_token(tmp_path, monkeypatch):
-    chiper_home = tmp_path / "hermes"
-    _setup_hermes_auth(chiper_home, access_token="")
+    chiper_home = tmp_path / "chiper"
+    _setup_chiper_auth(chiper_home, access_token="")
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     monkeypatch.setenv("CODEX_HOME", str(tmp_path / "missing-codex"))
 
@@ -85,9 +85,9 @@ def test_resolve_codex_runtime_credentials_missing_access_token(tmp_path, monkey
 
 
 def test_resolve_codex_runtime_credentials_refreshes_expiring_token(tmp_path, monkeypatch):
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     expiring_token = _jwt_with_exp(int(time.time()) - 10)
-    _setup_hermes_auth(chiper_home, access_token=expiring_token, refresh_token="refresh-old")
+    _setup_chiper_auth(chiper_home, access_token=expiring_token, refresh_token="refresh-old")
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
     called = {"count": 0}
@@ -105,8 +105,8 @@ def test_resolve_codex_runtime_credentials_refreshes_expiring_token(tmp_path, mo
 
 
 def test_resolve_codex_runtime_credentials_force_refresh(tmp_path, monkeypatch):
-    chiper_home = tmp_path / "hermes"
-    _setup_hermes_auth(chiper_home, access_token="access-current", refresh_token="refresh-old")
+    chiper_home = tmp_path / "chiper"
+    _setup_chiper_auth(chiper_home, access_token="access-current", refresh_token="refresh-old")
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
     called = {"count": 0}
@@ -133,7 +133,7 @@ def test_resolve_codex_runtime_credentials_falls_back_to_pool_when_singleton_emp
     re-auth, restore from backup) hit a bare HTTP 401 on chat but worked fine on
     auxiliary calls.  The fallback closes that divergence.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     # Singleton: empty tokens (would normally raise AuthError).
     # Pool: valid access_token.
@@ -165,7 +165,7 @@ def test_resolve_codex_runtime_credentials_pool_fallback_skips_exhausted(tmp_pat
     """The pool fallback skips entries currently in an exhaustion cooldown window."""
     import time as _time
 
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     future_reset = _time.time() + 3600  # 1h cooldown remaining
     auth_store = {
@@ -196,7 +196,7 @@ def test_resolve_codex_runtime_credentials_pool_fallback_skips_exhausted(tmp_pat
 
 def test_resolve_codex_runtime_credentials_pool_fallback_no_usable_entry(tmp_path, monkeypatch):
     """When both singleton and pool are empty/unusable, the original AuthError propagates."""
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     auth_store = {
         "version": 1,
@@ -222,7 +222,7 @@ def test_resolve_provider_explicit_codex_does_not_fallback(monkeypatch):
 
 
 def test_save_codex_tokens_roundtrip(tmp_path, monkeypatch):
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({"version": 1, "providers": {}}))
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
@@ -242,7 +242,7 @@ def test_save_codex_tokens_syncs_credential_pool(tmp_path, monkeypatch):
     holding a consumed refresh token and stale error markers, causing an
     immediate 401 token_invalidated on the next request.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1,
@@ -306,7 +306,7 @@ def test_save_codex_tokens_syncs_manual_device_code_entries(tmp_path, monkeypatc
     aliases of the singleton, while leaving INDEPENDENT entries alone.
 
     Original regression for #33538: a user who hit #33000 before the #33164
-    fix landed would have run ``hermes auth add openai-codex`` as a
+    fix landed would have run ``chiper auth add openai-codex`` as a
     workaround, leaving a pool entry with ``source="manual:device_code"``.
     On every subsequent re-auth via setup/model picker, the singleton-seeded
     ``device_code`` entry got refreshed but the ``manual:device_code`` entry
@@ -315,12 +315,12 @@ def test_save_codex_tokens_syncs_manual_device_code_entries(tmp_path, monkeypatc
 
     Narrowed for #39236: the original fix treated every ``manual:device_code``
     entry as a singleton-alias and refreshed them all, which silently
-    clobbered independent accounts added via ``hermes auth add openai-codex``.
+    clobbered independent accounts added via ``chiper auth add openai-codex``.
     The current behavior refreshes only entries whose access_token matches
     the *previous* singleton access_token (true legacy aliases), and leaves
     distinct-token entries alone (independent accounts).
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1,
@@ -353,7 +353,7 @@ def test_save_codex_tokens_syncs_manual_device_code_entries(tmp_path, monkeypatc
                     "last_error_code": 401,
                     "last_error_reason": "token_invalidated",
                 },
-                # Independent account from `hermes auth add openai-codex` —
+                # Independent account from `chiper auth add openai-codex` —
                 # its tokens are distinct from the singleton.  Must NOT be
                 # overwritten by a re-auth that targeted a different account
                 # (#39236).
@@ -410,7 +410,7 @@ def test_save_codex_tokens_does_not_overwrite_independent_manual_entries(tmp_pat
     """Re-auth must NOT overwrite ``manual:device_code`` entries that hold
     independent token material (different OpenAI/ChatGPT accounts).
 
-    Regression for #39236: ``hermes auth add openai-codex`` for accounts B and C
+    Regression for #39236: ``chiper auth add openai-codex`` for accounts B and C
     routes through ``_save_codex_tokens`` because the singleton path is the
     only Codex OAuth save flow.  The #33538 fix refreshed every
     ``manual:device_code`` entry on every re-auth, which works fine for the
@@ -423,7 +423,7 @@ def test_save_codex_tokens_does_not_overwrite_independent_manual_entries(tmp_pat
     entries whose tokens never matched the singleton are independent accounts
     and must be left alone.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1,
@@ -449,7 +449,7 @@ def test_save_codex_tokens_does_not_overwrite_independent_manual_entries(tmp_pat
                     "refresh_token": "acctA-rt",
                 },
                 # Two INDEPENDENT manual entries added later via
-                # ``hermes auth add openai-codex`` (account B and account C).
+                # ``chiper auth add openai-codex`` (account B and account C).
                 # Each has its OWN distinct token material, unrelated to the
                 # singleton.
                 {
@@ -509,7 +509,7 @@ def test_save_codex_tokens_still_refreshes_legacy_manual_alias(tmp_path, monkeyp
     """The #33538 legacy use case must keep working.
 
     A user who hit #33000 before the #33164 fix landed might have run
-    ``hermes auth add openai-codex`` as a workaround when there was no
+    ``chiper auth add openai-codex`` as a workaround when there was no
     singleton entry — that created a ``manual:device_code`` pool entry that
     holds the SAME token material as the (later) singleton.  This entry is a
     true alias of the singleton and SHOULD still be refreshed on subsequent
@@ -518,7 +518,7 @@ def test_save_codex_tokens_still_refreshes_legacy_manual_alias(tmp_path, monkeyp
     The distinguishing signal: a legacy alias has access_token == previous
     singleton access_token; an independent account does not.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1,
@@ -589,7 +589,7 @@ def test_save_codex_tokens_handles_missing_previous_singleton_tokens(tmp_path, m
     pool entry can be a true alias and only the singleton-seeded entry gets
     written.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1,
@@ -631,7 +631,7 @@ def test_save_codex_tokens_alias_match_uses_access_token_only(tmp_path, monkeypa
     have access_token but no refresh_token.  These should still be treated as
     aliases when the access_token matches.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1,
@@ -674,7 +674,7 @@ def test_save_codex_tokens_clears_error_markers_only_on_refreshed_entries(tmp_pa
     with their own stale-error markers must be left alone (their stale state
     is not the current re-auth's business).
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1,
@@ -753,8 +753,8 @@ def test_import_codex_cli_tokens_missing(tmp_path, monkeypatch):
 
 
 def test_codex_tokens_not_written_to_shared_file(tmp_path, monkeypatch):
-    """Verify _save_codex_tokens writes only to Hermes auth store, not ~/.codex/."""
-    chiper_home = tmp_path / "hermes"
+    """Verify _save_codex_tokens writes only to Chiper auth store, not ~/.codex/."""
+    chiper_home = tmp_path / "chiper"
     codex_home = tmp_path / "codex-cli"
     chiper_home.mkdir(parents=True, exist_ok=True)
     codex_home.mkdir(parents=True, exist_ok=True)
@@ -763,23 +763,23 @@ def test_codex_tokens_not_written_to_shared_file(tmp_path, monkeypatch):
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     monkeypatch.setenv("CODEX_HOME", str(codex_home))
 
-    _save_codex_tokens({"access_token": "hermes-at", "refresh_token": "hermes-rt"})
+    _save_codex_tokens({"access_token": "chiper-at", "refresh_token": "chiper-rt"})
 
-    # ~/.codex/auth.json should NOT exist — _save_codex_tokens only touches Hermes store
+    # ~/.codex/auth.json should NOT exist — _save_codex_tokens only touches Chiper store
     assert not (codex_home / "auth.json").exists()
 
-    # Hermes auth store should have the tokens
+    # Chiper auth store should have the tokens
     data = _read_codex_tokens()
-    assert data["tokens"]["access_token"] == "hermes-at"
+    assert data["tokens"]["access_token"] == "chiper-at"
 
 
-def test_resolve_returns_hermes_auth_store_source(tmp_path, monkeypatch):
-    chiper_home = tmp_path / "hermes"
-    _setup_hermes_auth(chiper_home)
+def test_resolve_returns_chiper_auth_store_source(tmp_path, monkeypatch):
+    chiper_home = tmp_path / "chiper"
+    _setup_chiper_auth(chiper_home)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
     creds = resolve_codex_runtime_credentials()
-    assert creds["source"] == "hermes-auth-store"
+    assert creds["source"] == "chiper-auth-store"
     assert creds["provider"] == "openai-codex"
     assert creds["base_url"] == DEFAULT_CODEX_BASE_URL
 
@@ -910,7 +910,7 @@ def test_refresh_429_classified_as_quota_not_auth_failure(monkeypatch):
 
     Regression test for #32790: must NOT force relogin and must carry the
     dedicated rate-limit code so callers surface a "retry later" notice rather
-    than a misleading "run hermes auth".
+    than a misleading "run chiper auth".
     """
     from chiper_cli.auth import (
         CODEX_RATE_LIMITED_CODE,
@@ -936,7 +936,7 @@ def test_refresh_429_classified_as_quota_not_auth_failure(monkeypatch):
     # User-facing copy must not tell the operator to re-authenticate.
     rendered = format_auth_error(err)
     assert "re-authenticate" not in rendered
-    assert "hermes auth" not in rendered
+    assert "chiper auth" not in rendered
 
 
 def test_refresh_429_without_retry_after_header(monkeypatch):

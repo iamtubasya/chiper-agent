@@ -3,7 +3,7 @@
 # ChiperFlux Agent Installer
 # ============================================================================
 # Installation script for Linux, macOS, and Android/Termux.
-# Fork dari Hermes Agent oleh Nous Research.
+# Fork dari Chiper Agent oleh Nous Research.
 #
 # Usage:
 #   curl -fsSL https://raw.githubusercontent.com/iamtubasya/chiper-agent/main/scripts/install.sh | bash
@@ -161,7 +161,7 @@ show_banner() {
     echo "║   ╚═╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═╝                         ║"
     echo "║                                                              ║"
     echo "║   ⚕️  ChiperFlux Agent Installer                             ║"
-    echo "║   Fork dari Hermes Agent oleh Nous Research                  ║"
+    echo "║   Fork dari Chiper Agent oleh Nous Research                  ║"
     echo "║                                                              ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"

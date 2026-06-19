@@ -1,4 +1,4 @@
-"""ntfy platform adapter (Hermes plugin).
+"""ntfy platform adapter (Chiper plugin).
 
 Subscribes to a topic on ntfy.sh or any self-hosted ntfy server via
 HTTP streaming (``/json`` endpoint with ``poll=false``) and publishes
@@ -6,7 +6,7 @@ replies via HTTP POST. No external SDK — only httpx, which is already
 a Chiper dependency.
 
 This adapter ships as a Chiper platform plugin under
-``plugins/platforms/ntfy/``. The Hermes plugin loader scans the
+``plugins/platforms/ntfy/``. The Chiper plugin loader scans the
 directory at startup, calls :func:`register`, and the platform becomes
 available to ``gateway/run.py`` and ``tools/send_message_tool`` through
 the registry — no edits to core files required.
@@ -18,8 +18,8 @@ Configuration in config.yaml::
         enabled: true
         extra:
           server: "https://ntfy.sh"       # or self-hosted URL
-          topic: "hermes-in"              # subscribe topic (incoming)
-          publish_topic: "hermes-out"     # optional — defaults to topic
+          topic: "chiper-in"              # subscribe topic (incoming)
+          publish_topic: "chiper-out"     # optional — defaults to topic
           token: "..."                    # optional Bearer / Basic auth token
           markdown: true                  # optional — enable markdown (default: false)
 

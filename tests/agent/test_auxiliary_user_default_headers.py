@@ -17,7 +17,7 @@ import pytest
 @pytest.fixture(autouse=True)
 def _isolate(tmp_path, monkeypatch):
     """Redirect CHIPER_HOME so load_config() reads our test config.yaml."""
-    chiper_home = tmp_path / ".hermes"
+    chiper_home = tmp_path / ".chiper"
     chiper_home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     (chiper_home / "config.yaml").write_text("model:\n  default: test-model\n")
@@ -25,7 +25,7 @@ def _isolate(tmp_path, monkeypatch):
 
 def _write_config(tmp_path, config_dict):
     import yaml
-    (tmp_path / ".hermes" / "config.yaml").write_text(yaml.dump(config_dict))
+    (tmp_path / ".chiper" / "config.yaml").write_text(yaml.dump(config_dict))
 
 
 class TestApplyUserDefaultHeadersHelper:

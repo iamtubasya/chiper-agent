@@ -15,7 +15,7 @@ from chiper_cli.dashboard_auth.audit import audit_log, AuditEvent
 @pytest.fixture
 def profile_home(tmp_path, monkeypatch):
     """Redirect $CHIPER_HOME and ~ to a tmp dir for the duration of the test."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(home))
     # Some code paths fall back to Path.home() — patch that too.
@@ -72,7 +72,7 @@ def test_audit_write_failure_does_not_raise(monkeypatch, tmp_path):
 
 
 def test_audit_creates_logs_dir_if_missing(tmp_path, monkeypatch):
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(home))
     # logs/ deliberately does not exist

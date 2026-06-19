@@ -1,5 +1,5 @@
 """
-Tests for mcp_serve — Hermes MCP server.
+Tests for mcp_serve — Chiper MCP server.
 
 Three layers of tests:
 1. Unit tests — helpers, content extraction, attachment parsing
@@ -30,7 +30,7 @@ def _isolate_chiper_home(tmp_path, monkeypatch):
     monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
     try:
         import chiper_constants
-        monkeypatch.setattr(hermes_constants, "get_chiper_home", lambda: tmp_path)
+        monkeypatch.setattr(chiper_constants, "get_chiper_home", lambda: tmp_path)
     except (ImportError, AttributeError):
         pass
     return tmp_path
@@ -122,7 +122,7 @@ def populated_sessions_dir(sessions_dir, sample_sessions):
 
 
 def _create_test_db(db_path, session_id, messages):
-    """Create a minimal SQLite DB mimicking hermes_state schema."""
+    """Create a minimal SQLite DB mimicking chiper_state schema."""
     conn = sqlite3.connect(str(db_path))
     conn.execute("""
         CREATE TABLE IF NOT EXISTS sessions (

@@ -2,11 +2,11 @@
 name: watchers
 description: Poll RSS, JSON APIs, and GitHub with watermark dedup.
 version: 1.0.0
-author: Hermes Agent
+author: Chiper Agent
 license: MIT
 platforms: [linux, macos]
 metadata:
-  hermes:
+  chiper:
     tags: [cron, polling, rss, github, http, automation, monitoring]
     category: devops
     requires_toolsets: [terminal]
@@ -66,7 +66,7 @@ Watch a GitHub repo (set `GITHUB_TOKEN` in `${CHIPER_HOME:-~/.chiperflux}/.env` 
 
 ```bash
 python $CHIPER_HOME/skills/devops/watchers/scripts/watch_github.py \
-  --name hermes-issues --repo NousResearch/chiper-agent --scope issues
+  --name chiper-issues --repo NousResearch/chiper-agent --scope issues
 ```
 
 Poll an arbitrary JSON API:

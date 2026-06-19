@@ -20,12 +20,12 @@ def server():
     with patch.dict(
         "sys.modules",
         {
-            "hermes_constants": MagicMock(
-                get_chiper_home=MagicMock(return_value="/tmp/hermes_test_compaction")
+            "chiper_constants": MagicMock(
+                get_chiper_home=MagicMock(return_value="/tmp/chiper_test_compaction")
             ),
             "chiper_cli.env_loader": MagicMock(),
             "chiper_cli.banner": MagicMock(),
-            "hermes_state": MagicMock(),
+            "chiper_state": MagicMock(),
         },
     ):
         yield importlib.import_module("tui_gateway.server")

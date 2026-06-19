@@ -15,7 +15,7 @@ Rules:
   - chrome-profile→ prompt after 14 days (deep only)
   - >500 MB files → prompt always (deep only)
 
-Scope: strictly CHIPER_HOME and /tmp/hermes-*
+Scope: strictly CHIPER_HOME and /tmp/chiper-*
 Never touches: ~/.chiperflux/logs/ or any system directory.
 """
 
@@ -64,7 +64,7 @@ def get_log_file() -> Path:
 # ---------------------------------------------------------------------------
 
 def is_safe_path(path: Path) -> bool:
-    """Accept only paths under CHIPER_HOME or ``/tmp/hermes-*``.
+    """Accept only paths under CHIPER_HOME or ``/tmp/chiper-*``.
 
     Rejects Windows mounts (``/mnt/c`` etc.) and any system directory.
     """
@@ -74,9 +74,9 @@ def is_safe_path(path: Path) -> bool:
         return True
     except (ValueError, OSError):
         pass
-    # Allow /tmp/hermes-* explicitly
+    # Allow /tmp/chiper-* explicitly
     parts = path.parts
-    if len(parts) >= 3 and parts[1] == "tmp" and parts[2].startswith("hermes-"):
+    if len(parts) >= 3 and parts[1] == "tmp" and parts[2].startswith("chiper-"):
         return True
     return False
 
@@ -572,7 +572,7 @@ def guess_category(path: Path) -> Optional[str]:
         if top == "cache":
             return "temp"
     except ValueError:
-        # Path isn't under CHIPER_HOME (e.g. /tmp/hermes-*) — fall through.
+        # Path isn't under CHIPER_HOME (e.g. /tmp/chiper-*) — fall through.
         pass
 
     name = path.name

@@ -30,7 +30,7 @@ class TestWriteDenyExactPaths:
         assert _is_write_denied(path) is True
 
 
-    def test_hermes_env(self):
+    def test_chiper_env(self):
         # ``.env`` under the active CHIPER_HOME (profile-aware, not just
         # ``~/.chiperflux``) must be write-denied. The hermetic test conftest
         # points CHIPER_HOME at a tempdir — resolve via get_chiper_home()
@@ -39,7 +39,7 @@ class TestWriteDenyExactPaths:
         path = str(get_chiper_home() / ".env")
         assert _is_write_denied(path) is True
 
-    def test_hermes_root_env_when_running_under_profile(self, tmp_path, monkeypatch):
+    def test_chiper_root_env_when_running_under_profile(self, tmp_path, monkeypatch):
         """Top-level ``<root>/.env`` stays write-denied even when running under
         a profile (#15981).
 
@@ -49,7 +49,7 @@ class TestWriteDenyExactPaths:
         could be silently overwritten by ``write_file`` while a profile was
         active.
         """
-        root = tmp_path / "hermes_root"
+        root = tmp_path / "chiper_root"
         profile_home = root / "profiles" / "coder"
         profile_home.mkdir(parents=True)
         global_env = root / ".env"
@@ -120,7 +120,7 @@ class TestWriteAllowed:
     def test_project_file(self):
         assert _is_write_denied("/home/user/project/main.py") is False
 
-    def test_hermes_control_files_requested_writable(self):
+    def test_chiper_control_files_requested_writable(self):
         from chiper_constants import get_chiper_home
 
         home = get_chiper_home()

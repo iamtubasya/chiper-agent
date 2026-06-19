@@ -16,12 +16,12 @@ import pytest
 @pytest.fixture
 def store(tmp_path, monkeypatch):
     """A cron.suggestions module bound to an isolated CHIPER_HOME."""
-    home = tmp_path / ".hermes"
+    home = tmp_path / ".chiper"
     home.mkdir()
     monkeypatch.setenv("CHIPER_HOME", str(home))
     # Reload so module-level CRON_DIR/SUGGESTIONS_FILE pick up the temp home.
     import chiper_constants
-    importlib.reload(hermes_constants)
+    importlib.reload(chiper_constants)
     import cron.suggestions as s
     importlib.reload(s)
     return s

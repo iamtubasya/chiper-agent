@@ -13,7 +13,7 @@ import yaml
 
 
 def _write_auth_store(tmp_path, payload: dict) -> None:
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     (chiper_home / "auth.json").write_text(json.dumps(payload, indent=2))
 
@@ -70,7 +70,7 @@ def _clear_provider_env(monkeypatch):
 
 
 def test_auth_add_api_key_persists_manual_entry(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
@@ -85,7 +85,7 @@ def test_auth_add_api_key_persists_manual_entry(tmp_path, monkeypatch):
 
     auth_add_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     entries = payload["credential_pool"]["openrouter"]
     entry = next(item for item in entries if item["source"] == "manual")
     assert entry["label"] == "personal"
@@ -95,14 +95,14 @@ def test_auth_add_api_key_persists_manual_entry(tmp_path, monkeypatch):
 
 
 def test_auth_add_anthropic_oauth_persists_pool_entry(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("ANTHROPIC_TOKEN", raising=False)
     monkeypatch.delenv("CLAUDE_CODE_OAUTH_TOKEN", raising=False)
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
     token = _jwt_with_email("claude@example.com")
     monkeypatch.setattr(
-        "agent.anthropic_adapter.run_hermes_oauth_login_pure",
+        "agent.anthropic_adapter.run_chiper_oauth_login_pure",
         lambda: {
             "access_token": token,
             "refresh_token": "refresh-token",
@@ -120,24 +120,24 @@ def test_auth_add_anthropic_oauth_persists_pool_entry(tmp_path, monkeypatch):
 
     auth_add_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     entries = payload["credential_pool"]["anthropic"]
-    entry = next(item for item in entries if item["source"] == "manual:hermes_pkce")
+    entry = next(item for item in entries if item["source"] == "manual:chiper_pkce")
     assert entry["label"] == "claude@example.com"
-    assert entry["source"] == "manual:hermes_pkce"
+    assert entry["source"] == "manual:chiper_pkce"
     assert entry["refresh_token"] == "refresh-token"
     assert entry["expires_at_ms"] == 1711234567000
 
 
 def test_auth_add_google_gemini_cli_sets_active_provider(tmp_path, monkeypatch):
-    """hermes auth add google-gemini-cli must set active_provider in auth.json.
+    """chiper auth add google-gemini-cli must set active_provider in auth.json.
 
     Tokens are managed by agent.google_oauth (written to the Google credential
     file by start_oauth_flow). The auth.json entry must record active_provider
     so get_active_provider() and _model_section_has_credentials() detect the
     provider — without storing tokens that would become stale.
     """
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
     monkeypatch.setattr(
         "agent.google_oauth.run_gemini_oauth_login_pure",
@@ -160,7 +160,7 @@ def test_auth_add_google_gemini_cli_sets_active_provider(tmp_path, monkeypatch):
 
     auth_add_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     assert payload["active_provider"] == "google-gemini-cli"
     state = payload["providers"]["google-gemini-cli"]
     # Only email stored — no access_token/refresh_token (those live in
@@ -168,20 +168,20 @@ def test_auth_add_google_gemini_cli_sets_active_provider(tmp_path, monkeypatch):
     assert state.get("email") == "user@example.com"
     assert "access_token" not in state
     assert "refresh_token" not in state
-    # pool entry from pool.add_entry() still present for hermes auth list
+    # pool entry from pool.add_entry() still present for chiper auth list
     entries = payload["credential_pool"]["google-gemini-cli"]
     entry = next(item for item in entries if item["source"] == "manual:google_pkce")
     assert entry["access_token"] == "ya29.test-token"
 
 
 def test_auth_add_qwen_oauth_sets_active_provider(tmp_path, monkeypatch):
-    """hermes auth add qwen-oauth must set active_provider in auth.json.
+    """chiper auth add qwen-oauth must set active_provider in auth.json.
 
     Tokens are managed by the Qwen CLI credential file via
     resolve_qwen_runtime_credentials(). The auth.json entry must record
     active_provider — without storing tokens that would become stale.
     """
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
     _fake_creds = {
         "provider": "qwen-oauth",
@@ -211,20 +211,20 @@ def test_auth_add_qwen_oauth_sets_active_provider(tmp_path, monkeypatch):
 
     auth_add_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     assert payload["active_provider"] == "qwen-oauth"
     state = payload["providers"]["qwen-oauth"]
     # Only base_url stored — no api_key (that lives in the Qwen CLI file).
     assert state.get("base_url") == "https://portal.qwen.ai/v1"
     assert "api_key" not in state
-    # pool entry from pool.add_entry() still present for hermes auth list
+    # pool entry from pool.add_entry() still present for chiper auth list
     entries = payload["credential_pool"]["qwen-oauth"]
     entry = next(item for item in entries if item["source"] == "manual:qwen_cli")
     assert entry["access_token"] == "qwen-test-token"
 
 
 def test_auth_add_nous_oauth_persists_pool_entry(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
     token = _jwt_with_email("nous@example.com")
     monkeypatch.setattr(
@@ -232,7 +232,7 @@ def test_auth_add_nous_oauth_persists_pool_entry(tmp_path, monkeypatch):
         lambda **kwargs: {
             "portal_base_url": "https://portal.example.com",
             "inference_base_url": "https://inference.example.com/v1",
-            "client_id": "hermes-cli",
+            "client_id": "chiper-cli",
             "scope": "inference:invoke",
             "token_type": "Bearer",
             "access_token": token,
@@ -268,7 +268,7 @@ def test_auth_add_nous_oauth_persists_pool_entry(tmp_path, monkeypatch):
 
     auth_add_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
 
     # Pool has exactly one canonical `device_code` entry — not a duplicate
     # pair of `manual:device_code` + `device_code` (the latter would be
@@ -284,10 +284,10 @@ def test_auth_add_nous_oauth_persists_pool_entry(tmp_path, monkeypatch):
     assert entry["agent_key"] == token
     assert entry["portal_base_url"] == "https://portal.example.com"
 
-    # `hermes auth add nous` must also populate providers.nous so the
+    # `chiper auth add nous` must also populate providers.nous so the
     # 401-recovery path (resolve_nous_runtime_credentials) can refresh an
     # invoke JWT when the token expires. If this mirror is missing, recovery
-    # raises "Hermes is not logged into Nous Portal" and the agent dies.
+    # raises "Chiper is not logged into Nous Portal" and the agent dies.
     singleton = payload["providers"]["nous"]
     assert singleton["access_token"] == token
     assert singleton["refresh_token"] == "refresh-token"
@@ -297,7 +297,7 @@ def test_auth_add_nous_oauth_persists_pool_entry(tmp_path, monkeypatch):
 
 
 def test_auth_add_minimax_oauth_starts_login_and_persists_pool_entry(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
     token = _jwt_with_email("minimax@example.com")
     monkeypatch.setattr(
@@ -331,7 +331,7 @@ def test_auth_add_minimax_oauth_starts_login_and_persists_pool_entry(tmp_path, m
 
     auth_add_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     entries = payload["credential_pool"]["minimax-oauth"]
     entry = next(item for item in entries if item["source"] == "manual:minimax_oauth")
     assert entry["label"] == "minimax@example.com"
@@ -341,11 +341,11 @@ def test_auth_add_minimax_oauth_starts_login_and_persists_pool_entry(tmp_path, m
 
 
 def test_auth_add_nous_oauth_honors_custom_label(tmp_path, monkeypatch):
-    """`hermes auth add nous --type oauth --label <name>` must preserve the
+    """`chiper auth add nous --type oauth --label <name>` must preserve the
     custom label end-to-end — it was silently dropped in the first cut of the
     persist_nous_credentials helper because `--label` wasn't threaded through.
     """
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
     token = _jwt_with_email("nous@example.com")
     monkeypatch.setattr(
@@ -353,7 +353,7 @@ def test_auth_add_nous_oauth_honors_custom_label(tmp_path, monkeypatch):
         lambda **kwargs: {
             "portal_base_url": "https://portal.example.com",
             "inference_base_url": "https://inference.example.com/v1",
-            "client_id": "hermes-cli",
+            "client_id": "chiper-cli",
             "scope": "inference:invoke",
             "token_type": "Bearer",
             "access_token": token,
@@ -389,7 +389,7 @@ def test_auth_add_nous_oauth_honors_custom_label(tmp_path, monkeypatch):
 
     auth_add_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
 
     # Custom label reaches the pool entry …
     pool_entry = payload["credential_pool"]["nous"][0]
@@ -402,7 +402,7 @@ def test_auth_add_nous_oauth_honors_custom_label(tmp_path, monkeypatch):
 
 
 def test_auth_add_codex_oauth_persists_pool_entry(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
     token = _jwt_with_email("codex@example.com")
     monkeypatch.setattr(
@@ -427,7 +427,7 @@ def test_auth_add_codex_oauth_persists_pool_entry(tmp_path, monkeypatch):
 
     auth_add_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     entries = payload["credential_pool"]["openai-codex"]
     # The add path now creates a distinct, self-contained ``manual:device_code``
     # pool entry per account instead of routing through the singleton save path
@@ -444,16 +444,16 @@ def test_auth_add_codex_oauth_persists_pool_entry(tmp_path, monkeypatch):
 
 
 def test_auth_add_codex_oauth_keeps_distinct_pool_accounts(tmp_path, monkeypatch):
-    """Two ``hermes auth add openai-codex`` runs for different ChatGPT
+    """Two ``chiper auth add openai-codex`` runs for different ChatGPT
     accounts must produce two independent pool entries with distinct tokens.
 
     Regression for #39236: the add path used to route through the singleton
     ``_save_codex_tokens`` save, so the second login overwrote the first
     account's singleton-mirrored ``device_code`` entry instead of adding a
-    second independent one. ``hermes auth list`` showed two labels sharing
+    second independent one. ``chiper auth list`` showed two labels sharing
     one token pair, and rotation silently always used the latest account.
     """
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
     first_token = _jwt_with_email("first-codex@example.com")
     second_token = _jwt_with_email("second-codex@example.com")
@@ -508,7 +508,7 @@ def test_auth_add_codex_oauth_keeps_distinct_pool_accounts(tmp_path, monkeypatch
         "second-refresh-token",
     ]
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     # No singleton block — the add path is now pool-only.
     assert "openai-codex" not in payload.get("providers", {})
     # First add activated the provider; second add left it as-is.
@@ -516,7 +516,7 @@ def test_auth_add_codex_oauth_keeps_distinct_pool_accounts(tmp_path, monkeypatch
 
 
 def test_codex_auth_status_reports_pool_only_credential(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, _codex_pool_only_store())
 
     from chiper_cli.auth import get_codex_auth_status
@@ -528,7 +528,7 @@ def test_codex_auth_status_reports_pool_only_credential(tmp_path, monkeypatch):
 
 
 def test_codex_auth_status_reports_pool_only_rate_limit(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, _codex_pool_only_store(exhausted=True))
 
     from chiper_cli.auth import get_codex_auth_status
@@ -541,7 +541,7 @@ def test_codex_auth_status_reports_pool_only_rate_limit(tmp_path, monkeypatch):
 
 
 def test_codex_runtime_pool_only_rate_limit_is_not_missing_auth(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, _codex_pool_only_store(exhausted=True))
 
     from chiper_cli.auth import AuthError, CODEX_RATE_LIMITED_CODE, resolve_codex_runtime_credentials
@@ -554,14 +554,14 @@ def test_codex_runtime_pool_only_rate_limit_is_not_missing_auth(tmp_path, monkey
 
 
 def test_auth_add_xai_oauth_sets_active_provider(tmp_path, monkeypatch):
-    """hermes auth add xai-oauth must write providers singleton and set active_provider.
+    """chiper auth add xai-oauth must write providers singleton and set active_provider.
 
     Previously pool.add_entry() was called directly, which wrote only the
     credential-pool entry without setting active_provider. _model_section_has_credentials()
     checks get_active_provider() first; with it unset, the setup wizard would
     report "No inference provider configured" after a successful OAuth login.
     """
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
     access_token = "xai-test-access-token"
     monkeypatch.setattr(
@@ -594,7 +594,7 @@ def test_auth_add_xai_oauth_sets_active_provider(tmp_path, monkeypatch):
 
     auth_add_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     # active_provider must be set — the core of this regression
     assert payload["active_provider"] == "xai-oauth"
     # providers singleton written by _save_xai_oauth_tokens
@@ -606,7 +606,7 @@ def test_auth_add_xai_oauth_sets_active_provider(tmp_path, monkeypatch):
 
 
 def test_auth_remove_reindexes_priorities(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     # Prevent pool auto-seeding from host env vars and file-backed sources
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("ANTHROPIC_TOKEN", raising=False)
@@ -650,7 +650,7 @@ def test_auth_remove_reindexes_priorities(tmp_path, monkeypatch):
 
     auth_remove_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     entries = payload["credential_pool"]["anthropic"]
     assert len(entries) == 1
     assert entries[0]["label"] == "secondary"
@@ -658,7 +658,7 @@ def test_auth_remove_reindexes_priorities(tmp_path, monkeypatch):
 
 
 def test_auth_remove_accepts_label_target(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     monkeypatch.setattr(
         "agent.credential_pool._seed_from_singletons",
         lambda provider, entries: (False, set()),
@@ -698,14 +698,14 @@ def test_auth_remove_accepts_label_target(tmp_path, monkeypatch):
 
     auth_remove_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     entries = payload["credential_pool"]["openai-codex"]
     assert len(entries) == 1
     assert entries[0]["label"] == "work-account"
 
 
 def test_auth_remove_prefers_exact_numeric_label_over_index(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     monkeypatch.setattr(
         "agent.credential_pool._seed_from_singletons",
         lambda provider, entries: (False, set()),
@@ -753,13 +753,13 @@ def test_auth_remove_prefers_exact_numeric_label_over_index(tmp_path, monkeypatc
 
     auth_remove_command(_Args())
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     labels = [entry["label"] for entry in payload["credential_pool"]["openai-codex"]]
     assert labels == ["first", "third"]
 
 
 def test_auth_reset_clears_provider_statuses(tmp_path, monkeypatch, capsys):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(
         tmp_path,
         {
@@ -792,7 +792,7 @@ def test_auth_reset_clears_provider_statuses(tmp_path, monkeypatch, capsys):
     out = capsys.readouterr().out
     assert "Reset status" in out
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     entry = payload["credential_pool"]["anthropic"][0]
     assert entry["last_status"] is None
     assert entry["last_status_at"] is None
@@ -800,7 +800,7 @@ def test_auth_reset_clears_provider_statuses(tmp_path, monkeypatch, capsys):
 
 
 def test_clear_provider_auth_removes_provider_pool_entries(tmp_path, monkeypatch):
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(
         tmp_path,
         {
@@ -816,7 +816,7 @@ def test_clear_provider_auth_removes_provider_pool_entries(tmp_path, monkeypatch
                         "label": "primary",
                         "auth_type": "oauth",
                         "priority": 0,
-                        "source": "manual:hermes_pkce",
+                        "source": "manual:chiper_pkce",
                         "access_token": "pool-token",
                     }
                 ],
@@ -838,7 +838,7 @@ def test_clear_provider_auth_removes_provider_pool_entries(tmp_path, monkeypatch
 
     assert clear_provider_auth("anthropic") is True
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     assert payload["active_provider"] is None
     assert "anthropic" not in payload.get("providers", {})
     assert "anthropic" not in payload.get("credential_pool", {})
@@ -846,13 +846,13 @@ def test_clear_provider_auth_removes_provider_pool_entries(tmp_path, monkeypatch
 
 
 def test_logout_resets_codex_config_when_auth_state_already_cleared(tmp_path, monkeypatch, capsys):
-    """`hermes logout --provider openai-codex` must still clear model.provider.
+    """`chiper logout --provider openai-codex` must still clear model.provider.
 
     Users can end up with auth.json already cleared but config.yaml still set to
     openai-codex.  Previously logout reported no auth state and left the agent
     pinned to the Codex provider.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}, "credential_pool": {}})
     (chiper_home / "config.yaml").write_text(
@@ -875,8 +875,8 @@ def test_logout_resets_codex_config_when_auth_state_already_cleared(tmp_path, mo
 
 
 def test_logout_defaults_to_configured_codex_when_no_active_provider(tmp_path, monkeypatch, capsys):
-    """Bare `hermes logout` should target configured Codex if auth has no active provider."""
-    chiper_home = tmp_path / "hermes"
+    """Bare `chiper logout` should target configured Codex if auth has no active provider."""
+    chiper_home = tmp_path / "chiper"
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}, "credential_pool": {}})
     (chiper_home / "config.yaml").write_text(
@@ -899,7 +899,7 @@ def test_logout_defaults_to_configured_codex_when_no_active_provider(tmp_path, m
 
 def test_logout_clears_stale_active_codex_without_provider_credentials(tmp_path, monkeypatch, capsys):
     """Logout must clear active_provider even when provider credential payloads are gone."""
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     _write_auth_store(
         tmp_path,
@@ -932,7 +932,7 @@ def test_logout_clears_stale_active_codex_without_provider_credentials(tmp_path,
 
 def test_reset_config_provider_uses_atomic_yaml_write(tmp_path, monkeypatch):
     """Logout config reset should delegate the YAML write atomically."""
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     config_path = chiper_home / "config.yaml"
@@ -1108,7 +1108,7 @@ def test_auth_list_prefers_explicit_reset_time(monkeypatch, capsys):
 def test_auth_remove_env_seeded_clears_env_var(tmp_path, monkeypatch):
     """Removing an env-seeded credential should also clear the env var from .env
     so the entry doesn't get re-seeded on the next load_pool() call."""
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1158,7 +1158,7 @@ def test_auth_remove_env_seeded_clears_env_var(tmp_path, monkeypatch):
 
 def test_auth_remove_env_seeded_does_not_resurrect(tmp_path, monkeypatch):
     """After removing an env-seeded credential, load_pool should NOT re-create it."""
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1202,7 +1202,7 @@ def test_auth_remove_env_seeded_does_not_resurrect(tmp_path, monkeypatch):
 
 def test_auth_remove_manual_entry_does_not_touch_env(tmp_path, monkeypatch):
     """Removing a manually-added credential should NOT touch .env."""
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
@@ -1243,7 +1243,7 @@ def test_auth_remove_manual_entry_does_not_touch_env(tmp_path, monkeypatch):
 
 def test_auth_remove_claude_code_suppresses_reseed(tmp_path, monkeypatch):
     """Removing a claude_code credential must prevent it from being re-seeded."""
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("ANTHROPIC_TOKEN", raising=False)
     monkeypatch.delenv("CLAUDE_CODE_OAUTH_TOKEN", raising=False)
@@ -1251,7 +1251,7 @@ def test_auth_remove_claude_code_suppresses_reseed(tmp_path, monkeypatch):
         "agent.credential_pool._seed_from_singletons",
         lambda provider, entries: (False, {"claude_code"}),
     )
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
 
     auth_store = {
@@ -1281,7 +1281,7 @@ def test_auth_remove_claude_code_suppresses_reseed(tmp_path, monkeypatch):
 
 def test_unsuppress_credential_source_clears_marker(tmp_path, monkeypatch):
     """unsuppress_credential_source() removes a previously-set marker."""
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1})
 
     from chiper_cli.auth import suppress_credential_source, unsuppress_credential_source, is_source_suppressed
@@ -1293,14 +1293,14 @@ def test_unsuppress_credential_source_clears_marker(tmp_path, monkeypatch):
     assert cleared is True
     assert is_source_suppressed("openai-codex", "device_code") is False
 
-    payload = json.loads((tmp_path / "hermes" / "auth.json").read_text())
+    payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
     # Empty suppressed_sources dict should be cleaned up entirely
     assert "suppressed_sources" not in payload
 
 
 def test_unsuppress_credential_source_returns_false_when_absent(tmp_path, monkeypatch):
     """unsuppress_credential_source() returns False if no marker exists."""
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1})
 
     from chiper_cli.auth import unsuppress_credential_source
@@ -1311,7 +1311,7 @@ def test_unsuppress_credential_source_returns_false_when_absent(tmp_path, monkey
 
 def test_unsuppress_credential_source_preserves_other_markers(tmp_path, monkeypatch):
     """Clearing one marker must not affect unrelated markers."""
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1})
 
     from chiper_cli.auth import (
@@ -1329,12 +1329,12 @@ def test_unsuppress_credential_source_preserves_other_markers(tmp_path, monkeypa
 
 def test_auth_remove_codex_device_code_suppresses_reseed(tmp_path, monkeypatch):
     """Removing an auto-seeded openai-codex credential must mark the source as suppressed."""
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     monkeypatch.setattr(
         "agent.credential_pool._seed_from_singletons",
         lambda provider, entries: (False, {"device_code"}),
     )
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
 
     auth_store = {
@@ -1376,12 +1376,12 @@ def test_auth_remove_codex_device_code_suppresses_reseed(tmp_path, monkeypatch):
 
 def test_auth_remove_codex_manual_source_suppresses_reseed(tmp_path, monkeypatch):
     """Removing a manually-added (`manual:device_code`) openai-codex credential must also suppress."""
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     monkeypatch.setattr(
         "agent.credential_pool._seed_from_singletons",
         lambda provider, entries: (False, set()),
     )
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
 
     auth_store = {
@@ -1422,12 +1422,12 @@ def test_auth_remove_codex_manual_source_suppresses_reseed(tmp_path, monkeypatch
 
 
 def test_auth_add_codex_clears_suppression_marker(tmp_path, monkeypatch):
-    """Re-linking codex via `hermes auth add openai-codex` must clear any suppression marker."""
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
-    chiper_home = tmp_path / "hermes"
+    """Re-linking codex via `chiper auth add openai-codex` must clear any suppression marker."""
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
 
-    # Pre-existing suppression (simulating a prior `hermes auth remove`)
+    # Pre-existing suppression (simulating a prior `chiper auth remove`)
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1,
         "providers": {},
@@ -1468,8 +1468,8 @@ def test_auth_add_codex_clears_suppression_marker(tmp_path, monkeypatch):
 
 def test_seed_from_singletons_respects_codex_suppression(tmp_path, monkeypatch):
     """_seed_from_singletons() for openai-codex must skip auto-import when suppressed."""
-    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "hermes"))
-    chiper_home = tmp_path / "hermes"
+    monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
 
     # Suppression marker in place
@@ -1505,12 +1505,12 @@ def test_seed_from_singletons_respects_codex_suppression(tmp_path, monkeypatch):
 
 
 def test_auth_remove_env_seeded_suppresses_shell_exported_var(tmp_path, monkeypatch, capsys):
-    """`hermes auth remove xai 1` must stick even when the env var is exported
+    """`chiper auth remove xai 1` must stick even when the env var is exported
     by the shell (not written into ~/.chiperflux/.env).  Before PR for #13371 the
     removal silently restored on next load_pool() because _seed_from_env()
     re-read os.environ.  Now env:<VAR> is suppressed in auth.json.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1561,7 +1561,7 @@ def test_auth_remove_env_seeded_dotenv_only_no_shell_hint(tmp_path, monkeypatch,
     shell-hint should NOT be printed — avoid scaring the user about a
     non-existent shell export.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1599,11 +1599,11 @@ def test_auth_remove_env_seeded_dotenv_only_no_shell_hint(tmp_path, monkeypatch,
 
 
 def test_auth_add_clears_env_suppression_for_provider(tmp_path, monkeypatch):
-    """Re-adding a credential via `hermes auth add <provider>` clears any
+    """Re-adding a credential via `chiper auth add <provider>` clears any
     env:<VAR> suppression marker — strong signal the user wants auth back.
     Matches the Codex device_code re-link behaviour.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     monkeypatch.delenv("XAI_API_KEY", raising=False)
@@ -1631,10 +1631,10 @@ def test_auth_add_clears_env_suppression_for_provider(tmp_path, monkeypatch):
 
 def test_seed_from_env_respects_env_suppression(tmp_path, monkeypatch):
     """_seed_from_env() must skip env:<VAR> sources that the user suppressed
-    via `hermes auth remove`.  This is the gate that prevents shell-exported
+    via `chiper auth remove`.  This is the gate that prevents shell-exported
     keys from resurrecting removed credentials.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     monkeypatch.setenv("XAI_API_KEY", "sk-xai-shell-export")
@@ -1658,7 +1658,7 @@ def test_seed_from_env_respects_openrouter_suppression(tmp_path, monkeypatch):
     """OpenRouter is the special-case branch in _seed_from_env; verify it
     honours suppression too.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-shell-export")
@@ -1679,7 +1679,7 @@ def test_seed_from_env_respects_openrouter_suppression(tmp_path, monkeypatch):
 
 
 # =============================================================================
-# Unified credential-source stickiness — every source Hermes reads from has a
+# Unified credential-source stickiness — every source Chiper reads from has a
 # registered RemovalStep in agent.credential_sources, and every seeding path
 # gates on is_source_suppressed.  Below: one test per source proving remove
 # sticks across a fresh load_pool() call.
@@ -1688,7 +1688,7 @@ def test_seed_from_env_respects_openrouter_suppression(tmp_path, monkeypatch):
 
 def test_seed_from_singletons_respects_nous_suppression(tmp_path, monkeypatch):
     """nous device_code must not re-seed from auth.json when suppressed."""
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1708,7 +1708,7 @@ def test_seed_from_singletons_respects_nous_suppression(tmp_path, monkeypatch):
 
 def test_seed_from_singletons_respects_copilot_suppression(tmp_path, monkeypatch):
     """copilot gh_cli must not re-seed when suppressed."""
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1732,7 +1732,7 @@ def test_seed_from_singletons_respects_copilot_suppression(tmp_path, monkeypatch
 
 def test_seed_from_singletons_respects_qwen_suppression(tmp_path, monkeypatch):
     """qwen-oauth qwen-cli must not re-seed from ~/.qwen/oauth_creds.json when suppressed."""
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1755,9 +1755,9 @@ def test_seed_from_singletons_respects_qwen_suppression(tmp_path, monkeypatch):
     assert active == set()
 
 
-def test_seed_from_singletons_respects_hermes_pkce_suppression(tmp_path, monkeypatch):
-    """anthropic hermes_pkce must not re-seed from ~/.chiperflux/.anthropic_oauth.json when suppressed."""
-    chiper_home = tmp_path / "hermes"
+def test_seed_from_singletons_respects_chiper_pkce_suppression(tmp_path, monkeypatch):
+    """anthropic chiper_pkce must not re-seed from ~/.chiperflux/.anthropic_oauth.json when suppressed."""
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1766,12 +1766,12 @@ def test_seed_from_singletons_respects_hermes_pkce_suppression(tmp_path, monkeyp
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1,
         "providers": {},
-        "suppressed_sources": {"anthropic": ["hermes_pkce"]},
+        "suppressed_sources": {"anthropic": ["chiper_pkce"]},
     }))
 
-    # Stub the readers so only hermes_pkce is "available"; claude_code returns None
+    # Stub the readers so only chiper_pkce is "available"; claude_code returns None
     import agent.anthropic_adapter as aa
-    monkeypatch.setattr(aa, "read_hermes_oauth_credentials", lambda: {
+    monkeypatch.setattr(aa, "read_chiper_oauth_credentials", lambda: {
         "accessToken": "tok", "refreshToken": "r", "expiresAt": 9999999999000,
     })
     monkeypatch.setattr(aa, "read_claude_code_credentials", lambda: None)
@@ -1779,14 +1779,14 @@ def test_seed_from_singletons_respects_hermes_pkce_suppression(tmp_path, monkeyp
     from agent.credential_pool import _seed_from_singletons
     entries = []
     changed, active = _seed_from_singletons("anthropic", entries)
-    # hermes_pkce suppressed, claude_code returns None → nothing should be seeded
+    # chiper_pkce suppressed, claude_code returns None → nothing should be seeded
     assert entries == []
-    assert "hermes_pkce" not in active
+    assert "chiper_pkce" not in active
 
 
 def test_seed_custom_pool_respects_config_suppression(tmp_path, monkeypatch):
     """Custom provider config:<name> source must not re-seed when suppressed."""
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1878,7 +1878,7 @@ def test_auth_remove_copilot_suppresses_all_variants(tmp_path, monkeypatch):
     """Removing any copilot source must suppress gh_cli + all env:* variants
     so the duplicate-seed paths don't resurrect the credential.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1915,11 +1915,11 @@ def test_auth_remove_copilot_suppresses_all_variants(tmp_path, monkeypatch):
 
 
 def test_auth_add_clears_all_suppressions_including_non_env(tmp_path, monkeypatch):
-    """Re-adding a credential via `hermes auth add <provider>` clears ALL
+    """Re-adding a credential via `chiper auth add <provider>` clears ALL
     suppression markers for the provider, not just env:*.  This matches
     the single "re-engage" semantic — the user wants auth back, period.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
@@ -1949,11 +1949,11 @@ def test_auth_add_clears_all_suppressions_including_non_env(tmp_path, monkeypatc
 
 
 def test_auth_remove_codex_manual_device_code_suppresses_canonical(tmp_path, monkeypatch):
-    """Removing a manual:device_code entry (from `hermes auth add openai-codex`)
+    """Removing a manual:device_code entry (from `chiper auth add openai-codex`)
     must suppress the canonical ``device_code`` key, not ``manual:device_code``.
     The re-seed gate in _seed_from_singletons checks ``device_code``.
     """
-    chiper_home = tmp_path / "hermes"
+    chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
