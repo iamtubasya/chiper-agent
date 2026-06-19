@@ -230,8 +230,8 @@ detect_os() {
         log_info "Detected: macOS"
     fi
 
-    # Check for Termux
-    if [[ -d /data/data/com.termux ]]; then
+    # Check for Termux (must have pkg command - skip in chroot/proot)
+    if [[ -d /data/data/com.termux ]] && command -v pkg &>/dev/null; then
         IS_TERMUX=true
         log_info "Environment: Termux (Android)"
     fi
@@ -304,12 +304,12 @@ clone_repo() {
         log_warn "Installation directory exists: $INSTALL_DIR"
         log_info "Updating existing installation..."
         cd "$INSTALL_DIR"
-        git fetch origin
-        git checkout "$BRANCH"
-        git pull origin "$BRANCH"
+        git fetch origin -q
+        git checkout "$BRANCH" -q
+        git pull origin "$BRANCH" -q
     else
         log_info "Cloning to: $INSTALL_DIR"
-        git clone --branch "$BRANCH" "$REPO_URL_HTTPS" "$INSTALL_DIR"
+        git clone --quiet --branch "$BRANCH" "$REPO_URL_HTTPS" "$INSTALL_DIR"
     fi
 
     log_success "Repository ready"
