@@ -1,141 +1,54 @@
 #!/bin/bash
 # ============================================================================
 # ChiperFlux Agent Installer
-# ============================================================================
-# Installation script for Linux, macOS, and Android/Termux.
-# Fork dari Chiper Agent oleh Nous Research.
-#
-# Usage:
-#   curl -fsSL https://raw.githubusercontent.com/iamtubasya/chiper-agent/main/scripts/install.sh | bash
-#
-# Or with options:
-#   curl -fsSL ... | bash -s -- --no-venv --skip-setup
-#
+# Crack BY : I'AMTUBASYA
+# Original hermes-Agent from Nous-Research
 # ============================================================================
 
 set -e
 
-# Guard against environment leakage
-if [ -n "${PYTHONPATH:-}" ]; then
-    echo "⚠ Ignoring inherited PYTHONPATH during install to avoid module shadowing"
-    unset PYTHONPATH
-fi
-if [ -n "${PYTHONHOME:-}" ]; then
-    echo "⚠ Ignoring inherited PYTHONHOME during install"
-    unset PYTHONHOME
-fi
-
-export UV_NO_CONFIG=1
-
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
+YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 BOLD='\033[1m'
 
-# Configuration
-REPO_URL_SSH="git@github.com:iamtubasya/chiper-agent.git"
+# Default values
 REPO_URL_HTTPS="https://github.com/iamtubasya/chiper-agent.git"
-CHIPER_HOME="${CHIPER_HOME:-$HOME/.chiperflux}"
-INSTALL_DIR="${CHIPER_INSTALL_DIR:-/usr/local/lib/chiper-agent}"
-PYTHON_VERSION="3.11"
-NODE_VERSION="22"
-
-# Options
-USE_VENV=true
-RUN_SETUP=true
-SKIP_BROWSER=false
-NO_SKILLS=false
 BRANCH="main"
-INSTALL_COMMIT=""
-
-# Detect non-interactive mode
-if [ -t 0 ]; then
-    IS_INTERACTIVE=true
-else
-    IS_INTERACTIVE=false
-fi
-
-# Parse arguments
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        --no-venv)
-            USE_VENV=false
-            shift
-            ;;
-        --skip-setup)
-            RUN_SETUP=false
-            shift
-            ;;
-        --skip-browser)
-            SKIP_BROWSER=true
-            shift
-            ;;
-        --no-skills)
-            NO_SKILLS=true
-            shift
-            ;;
-        --branch)
-            BRANCH="$2"
-            shift 2
-            ;;
-        --commit)
-            INSTALL_COMMIT="$2"
-            shift 2
-            ;;
-        --dir)
-            INSTALL_DIR="$2"
-            shift 2
-            ;;
-        -h|--help)
-            echo "ChiperFlux Agent Installer"
-            echo ""
-            echo "Usage: install.sh [OPTIONS]"
-            echo ""
-            echo "Options:"
-            echo "  --no-venv        Skip virtual environment creation"
-            echo "  --skip-setup     Skip post-install setup wizard"
-            echo "  --skip-browser   Skip browser installation"
-            echo "  --no-skills      Skip skills installation"
-            echo "  --branch BRANCH  Install from specific branch (default: main)"
-            echo "  --commit COMMIT  Install specific commit"
-            echo "  --dir DIR        Custom installation directory"
-            echo "  -h, --help       Show this help"
-            exit 0
-            ;;
-        *)
-            echo "Unknown option: $1"
-            exit 1
-            ;;
-    esac
-done
+INSTALL_DIR="/usr/local/lib/chiper-agent"
+CHIPER_HOME="${CHIPER_HOME:-$HOME/.chiperflux}"
+IS_INTERACTIVE=false
+IS_TERMUX=false
+SKIP_BROWSER=false
+RUN_SETUP=true
+USE_VENV=true
 
 # ============================================================================
 # Helper Functions
 # ============================================================================
 
+log_step() {
+    echo -e "\n${CYAN}${BOLD}$1${NC}"
+}
+
 log_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+    echo -e "  ${BLUE}[INFO]${NC} $1"
 }
 
 log_success() {
-    echo -e "${GREEN}[OK]${NC} $1"
+    echo -e "  ${GREEN}[OK]${NC} $1"
 }
 
 log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
+    echo -e "  ${YELLOW}[WARN]${NC} $1"
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-log_step() {
-    echo -e "\n${MAGENTA}${BOLD}$1${NC}"
+    echo -e "  ${RED}[ERROR]${NC} $1"
 }
 
 # ============================================================================
@@ -146,23 +59,9 @@ show_banner() {
     echo -e "${CYAN}${BOLD}"
     echo "╔══════════════════════════════════════════════════════════════╗"
     echo "║                                                              ║"
-    echo "║   ██████╗██╗  ██╗██╗██████╗ ███████╗██████╗                  ║"
-    echo "║  ██╔════╝██║  ██║██║██╔══██╗██╔════╝██╔══██╗                 ║"
-    echo "║  ██║     ███████║██║██████╔╝█████╗  ██████╔╝                 ║"
-    echo "║  ██║     ██╔══██║██║██╔═══╝ ██╔══╝  ██╔══██╗                 ║"
-    echo "║  ╚██████╗██║  ██║██║██║     ███████╗██║  ██║                 ║"
-    echo "║   ╚═════╝╚═╝  ╚═╝╚═╝╚═╝     ╚══════╝╚═╝  ╚═╝                 ║"
+    echo "║            ⚕️  ChiperFlux Agent Installer                    ║"
     echo "║                                                              ║"
-    echo "║   ███████╗██╗     ██╗   ██╗██╗  ██╗                         ║"
-    echo "║   ██╔════╝██║     ██║   ██║╚██╗██╔╝                         ║"
-    echo "║   █████╗  ██║     ██║   ██║ ╚███╔╝                          ║"
-    echo "║   ██╔══╝  ██║     ██║   ██║ ██╔██╗                          ║"
-    echo "║   ██║     ███████╗╚██████╔╝██╔╝ ██╗                         ║"
-    echo "║   ╚═╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═╝                         ║"
-    echo "║                                                              ║"
-    echo "║   ⚕️  ChiperFlux Agent Installer                             ║"
     echo "║   Crack BY : I'AMTUBASYA                                    ║"
-    echo "║                                                              ║"
     echo "║   Original hermes-Agent from Nous-Research                   ║"
     echo "║                                                              ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
@@ -170,146 +69,156 @@ show_banner() {
 }
 
 # ============================================================================
-# OS Detection
+# Parse Arguments
 # ============================================================================
 
-detect_os() {
-    log_step "🔍 Detecting operating system..."
-
-    OS="$(uname -s)"
-    ARCH="$(uname -m)"
-
-    case "${OS}" in
-        Linux*)
-            if [ -f /etc/os-release ]; then
-                . /etc/os-release
-                DISTRO="$ID"
-                DISTRO_VERSION="$VERSION_ID"
-            else
-                DISTRO="unknown"
-                DISTRO_VERSION=""
-            fi
-
-            # Check for Termux
-            if [ -n "$TERMUX_VERSION" ] || [ -d /data/data/com.termux ]; then
-                IS_TERMUX=true
-                log_info "Detected: Android/Termux"
-            else
-                IS_TERMUX=false
-                log_info "Detected: Linux ($DISTRO $DISTRO_VERSION)"
-            fi
-            ;;
-        Darwin*)
-            IS_TERMUX=false
-            log_info "Detected: macOS $(sw_vers -productVersion)"
-            ;;
-        *)
-            log_error "Unsupported OS: ${OS}"
-            exit 1
-            ;;
-    esac
-
-    log_info "Architecture: ${ARCH}"
+parse_args() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --dir)
+                INSTALL_DIR="$2"
+                shift 2
+                ;;
+            --branch)
+                BRANCH="$2"
+                shift 2
+                ;;
+            --no-venv)
+                USE_VENV=false
+                shift
+                ;;
+            --skip-browser)
+                SKIP_BROWSER=true
+                shift
+                ;;
+            --skip-setup)
+                RUN_SETUP=false
+                shift
+                ;;
+            --yes|-y)
+                IS_INTERACTIVE=false
+                shift
+                ;;
+            --help|-h)
+                echo "Usage: install.sh [OPTIONS]"
+                echo ""
+                echo "Options:"
+                echo "  --dir DIR         Installation directory (default: /usr/local/lib/chiper-agent)"
+                echo "  --branch BRANCH   Git branch to install (default: main)"
+                echo "  --no-venv         Skip virtual environment"
+                echo "  --skip-browser    Skip browser installation"
+                echo "  --skip-setup      Skip setup wizard"
+                echo "  --yes, -y         Non-interactive mode"
+                echo "  --help, -h        Show this help"
+                exit 0
+                ;;
+            *)
+                log_error "Unknown option: $1"
+                exit 1
+                ;;
+        esac
+    done
 }
 
 # ============================================================================
-# Dependency Installation
+# Detect Environment
+# ============================================================================
+
+detect_os() {
+    log_step "🔍 Detecting environment..."
+
+    if [[ "$(uname)" == "Linux" ]]; then
+        if [[ -f /etc/os-release ]]; then
+            . /etc/os-release
+            case "$ID" in
+                ubuntu|debian)
+                    log_info "Detected: Debian/Ubuntu"
+                    ;;
+                fedora|rhel|centos)
+                    log_info "Detected: RHEL/Fedora"
+                    ;;
+                arch|manjaro)
+                    log_info "Detected: Arch Linux"
+                    ;;
+                *)
+                    log_info "Detected: Linux ($ID)"
+                    ;;
+            esac
+        else
+            log_info "Detected: Linux (unknown distro)"
+        fi
+    elif [[ "$(uname)" == "Darwin" ]]; then
+        log_info "Detected: macOS"
+    fi
+
+    # Check for Termux
+    if [[ -d /data/data/com.termux ]]; then
+        IS_TERMUX=true
+        log_info "Environment: Termux (Android)"
+    fi
+
+    # Check if interactive
+    if [[ -t 0 ]]; then
+        IS_INTERACTIVE=true
+    fi
+
+    sleep 2
+}
+
+# ============================================================================
+# Install System Dependencies
 # ============================================================================
 
 install_dependencies() {
     log_step "📦 Installing system dependencies..."
 
-    if [ "$IS_TERMUX" = true ]; then
-        install_deps_termux
+    if [[ "$IS_TERMUX" == true ]]; then
+        pkg update -y
+        pkg install -y python git nodejs
+    elif command -v apt-get &> /dev/null; then
+        sudo apt-get update
+        sudo apt-get install -y python3 python3-pip python3-venv git nodejs npm curl wget
+    elif command -v dnf &> /dev/null; then
+        sudo dnf install -y python3 python3-pip git nodejs npm curl wget
+    elif command -v pacman &> /dev/null; then
+        sudo pacman -Syu --noconfirm python python-pip git nodejs npm curl wget
+    elif command -v brew &> /dev/null; then
+        brew install python git node curl wget
     else
-        install_deps_linux
-    fi
-}
-
-install_deps_termux() {
-    log_info "Installing Termux packages..."
-
-    pkg update -y
-    pkg install -y \
-        python \
-        git \
-        nodejs-lts \
-        ripgrep \
-        ffmpeg \
-        libxml2 \
-        libxslt \
-        openssl \
-        libffi \
-        zlib \
-        2>/dev/null || true
-
-    log_success "Termux packages installed"
-}
-
-install_deps_linux() {
-    # Install git if missing
-    if ! command -v git &> /dev/null; then
-        log_info "Installing git..."
-        if command -v apt-get &> /dev/null; then
-            sudo apt-get update && sudo apt-get install -y git
-        elif command -v dnf &> /dev/null; then
-            sudo dnf install -y git
-        elif command -v yum &> /dev/null; then
-            sudo yum install -y git
-        elif command -v pacman &> /dev/null; then
-            sudo pacman -Sy --noconfirm git
-        fi
-    fi
-
-    # Install ripgrep if missing
-    if ! command -v rg &> /dev/null; then
-        log_info "Installing ripgrep..."
-        if command -v apt-get &> /dev/null; then
-            sudo apt-get install -y ripgrep 2>/dev/null || true
-        elif command -v dnf &> /dev/null; then
-            sudo dnf install -y ripgrep 2>/dev/null || true
-        fi
-    fi
-
-    # Install ffmpeg if missing
-    if ! command -v ffmpeg &> /dev/null; then
-        log_info "Installing ffmpeg..."
-        if command -v apt-get &> /dev/null; then
-            sudo apt-get install -y ffmpeg 2>/dev/null || true
-        elif command -v dnf &> /dev/null; then
-            sudo dnf install -y ffmpeg 2>/dev/null || true
-        fi
+        log_warn "Unknown package manager. Please install manually: python3, git, nodejs, npm"
     fi
 
     log_success "System dependencies installed"
+    sleep 2
 }
 
 # ============================================================================
-# UV / Python Installation
+# Install Python/UV
 # ============================================================================
 
 install_python() {
-    log_step "🐍 Setting up Python ${PYTHON_VERSION}..."
+    log_step "🐍 Setting up Python..."
 
-    if [ "$IS_TERMUX" = true ]; then
-        # Termux: use system Python
-        PYTHON_BIN=$(which python2>/dev/null || echo "")
-            log_info "Using system Python: $($PYTHON_BIN --version)"
+    # Check Python
+    if command -v python3 &> /dev/null; then
+        PYTHON_VERSION=$(python3 --version 2>&1)
+        log_info "Python: $PYTHON_VERSION"
     else
-        # Install uv if missing
-        if ! command -v uv &> /dev/null; then
-            log_info "Installing uv..."
-            curl -LsSf https://astral.sh/uv/install.sh | sh
-            export PATH="$HOME/.local/bin:$PATH"
-        fi
+        log_error "Python3 not found!"
+        exit 1
+    fi
 
-        # Install Python via uv
-        log_info "Installing Python ${PYTHON_VERSION} via uv..."
-        uv python install ${PYTHON_VERSION} 2>/dev/null || true
-        PYTHON_BIN="uv run python"
+    # Install UV if not present
+    if ! command -v uv &> /dev/null; then
+        log_info "Installing uv..."
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        export PATH="$HOME/.local/bin:$PATH"
+    else
+        log_info "uv already installed"
     fi
 
     log_success "Python ready"
+    sleep 2
 }
 
 # ============================================================================
@@ -317,7 +226,7 @@ install_python() {
 # ============================================================================
 
 clone_repo() {
-    log_step "📥 Cloning ChiperFlux Agent repository..."
+    log_step "📥 Instalasi Chiper-Agent repository..."
 
     if [ -d "$INSTALL_DIR" ]; then
         log_warn "Installation directory exists: $INSTALL_DIR"
@@ -328,16 +237,11 @@ clone_repo() {
         git pull origin "$BRANCH"
     else
         log_info "Cloning to: $INSTALL_DIR"
-        if [ -n "$INSTALL_COMMIT" ]; then
-            git clone --branch "$BRANCH" "$REPO_URL_HTTPS" "$INSTALL_DIR"
-            cd "$INSTALL_DIR"
-            git checkout "$INSTALL_COMMIT"
-        else
-            git clone --branch "$BRANCH" "$REPO_URL_HTTPS" "$INSTALL_DIR"
-        fi
+        git clone --branch "$BRANCH" "$REPO_URL_HTTPS" "$INSTALL_DIR"
     fi
 
     log_success "Repository ready"
+    sleep 2
 }
 
 # ============================================================================
@@ -367,6 +271,7 @@ setup_venv() {
     fi
 
     log_success "Virtual environment ready"
+    sleep 2
 }
 
 # ============================================================================
@@ -384,6 +289,8 @@ install_node_deps() {
     else
         log_info "No package.json found, skipping"
     fi
+
+    sleep 2
 }
 
 # ============================================================================
@@ -405,6 +312,8 @@ install_browser() {
     else
         log_warn "npx not found, skipping browser installation"
     fi
+
+    sleep 2
 }
 
 # ============================================================================
@@ -449,6 +358,8 @@ WRAPPER
             log_info "Add to your shell config: export PATH=\"\$HOME/.local/bin:\$PATH\""
         fi
     fi
+
+    sleep 2
 }
 
 # ============================================================================
@@ -485,6 +396,8 @@ ENVFILE
         log_info ".env already exists, skipping"
     fi
 
+    sleep 2
+
     # Create config.yaml if not exists
     if [ ! -f "$CHIPER_HOME/config.yaml" ]; then
         cat > "$CHIPER_HOME/config.yaml" << 'CONFIGFILE'
@@ -520,6 +433,8 @@ CONFIGFILE
     else
         log_info "config.yaml already exists, skipping"
     fi
+
+    sleep 2
 }
 
 # ============================================================================
@@ -549,6 +464,8 @@ post_install() {
         log_info "Non-interactive mode, skipping setup wizard"
         log_info "Run 'chiper setup' manually to configure"
     fi
+
+    sleep 5
 }
 
 # ============================================================================
@@ -557,6 +474,7 @@ post_install() {
 
 main() {
     show_banner
+    parse_args "$@"
     detect_os
     install_dependencies
     install_python
@@ -600,4 +518,4 @@ main() {
 }
 
 # Run main
-main
+main "$@"
