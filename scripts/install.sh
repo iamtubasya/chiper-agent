@@ -51,6 +51,47 @@ log_error() {
     echo -e "  ${RED}[ERROR]${NC} $1"
 }
 
+
+# Run step with dot animation on step message
+run_step() {
+    local msg="$1"
+    shift
+    # Run all commands in background, capture exit code
+    (
+        "$@"
+    ) > /dev/null 2>&1 &
+    local pid=$!
+    
+    # Show dots animation with step message
+    local delay=0.3
+    local dots=""
+    local max_dots=5
+    local count=0
+    while kill -0 "$pid" 2>/dev/null; do
+        count=$((count + 1))
+        dots="$dots."
+        printf "  \033[0;36m%s %s\033[0m\r" "$msg" "$dots"
+        sleep $delay
+        if [ $count -ge $max_dots ]; then
+            dots=""
+            count=0
+        fi
+    done
+    
+    # Get exit code
+    wait $pid
+    local exit_code=$?
+    
+    # Clear line and show result
+    printf "\033[2K\r"
+    if [ $exit_code -eq 0 ]; then
+        log_success "$msg"
+    else
+        log_error "$msg failed (exit code: $exit_code)"
+        return $exit_code
+    fi
+}
+
 # Spinner animation
 spinner() {
     local msg="$1"
@@ -208,19 +249,16 @@ detect_os() {
 # ============================================================================
 
 install_dependencies() {
-    log_step "📦 Installing system dependencies..."
-
     if [[ "$IS_TERMUX" == true ]]; then
-        run_with_spinner "System packages" pkg update -y && pkg install -y python git nodejs
+        run_step "📦 Installing system packages" bash -c "pkg update -y && pkg install -y python git nodejs"
     elif command -v apt-get &> /dev/null; then
-        run_with_spinner "Updating package lists" sudo apt-get update -qq
-        run_with_spinner "Installing packages" sudo apt-get install -y -qq python3 python3-pip python3-venv git nodejs npm curl wget
+        run_step "📦 Installing system dependencies" bash -c "sudo apt-get update -qq && sudo apt-get install -y -qq python3 python3-pip python3-venv git nodejs npm curl wget"
     elif command -v dnf &> /dev/null; then
-        run_with_spinner "Installing packages" sudo dnf install -y -q python3 python3-pip git nodejs npm curl wget
+        run_step "📦 Installing system dependencies" sudo dnf install -y -q python3 python3-pip git nodejs npm curl wget
     elif command -v pacman &> /dev/null; then
-        run_with_spinner "Installing packages" sudo pacman -Syu --noconfirm --quiet python python-pip git nodejs npm curl wget
+        run_step "📦 Installing system dependencies" sudo pacman -Syu --noconfirm --quiet python python-pip git nodejs npm curl wget
     elif command -v brew &> /dev/null; then
-        run_with_spinner "Installing packages" brew install python git node curl wget
+        run_step "📦 Installing system dependencies" brew install python git node curl wget
     else
         log_warn "Unknown package manager. Please install manually: python3, git, nodejs, npm"
     fi
@@ -288,19 +326,12 @@ setup_venv() {
         return
     fi
 
-    log_step "🔧 Setting up virtual environment..."
-
     cd "$INSTALL_DIR"
 
     if [ "$IS_TERMUX" = true ]; then
-        run_with_spinner "Creating venv" python -m venv venv
-        source venv/bin/activate
-        run_with_spinner "Installing dependencies" pip install -e ".[termux]"
+        run_step "🔧 Setting up virtual environment" bash -c "python -m venv venv && source venv/bin/activate && pip install -e '.[termux]'"
     else
-        run_with_spinner "Creating venv" uv venv --clear
-        source .venv/bin/activate
-        .venv/bin/python3 -m ensurepip --upgrade >/dev/null 2>&1  # Install pip for lazy installs
-        run_with_spinner "Installing dependencies" uv pip install -e ".[all]"
+        run_step "🔧 Setting up virtual environment" bash -c "uv venv --clear && .venv/bin/python3 -m ensurepip --upgrade >/dev/null 2>&1 && uv pip install -e '.[all]'"
     fi
 
     sleep 2
@@ -311,12 +342,10 @@ setup_venv() {
 # ============================================================================
 
 install_node_deps() {
-    log_step "📦 Installing Node.js dependencies..."
-
     cd "$INSTALL_DIR"
 
     if [ -f "package.json" ]; then
-        run_with_spinner "Node.js dependencies" npm install --workspaces=false --production
+        run_step "📦 Installing Node.js dependencies" npm install --workspaces=false --production
     else
         log_info "No package.json found, skipping"
     fi
@@ -334,11 +363,9 @@ install_browser() {
         return
     fi
 
-    log_step "🌐 Setting up browser automation..."
-
     # Install Playwright browsers
     if command -v npx &> /dev/null; then
-        run_with_spinner "Browser engine" npx playwright install chromium
+        run_step "🌐 Setting up browser automation" npx playwright install chromium
     else
         log_warn "npx not found, skipping browser installation"
     fi
@@ -351,44 +378,30 @@ install_browser() {
 # ============================================================================
 
 create_symlink() {
-    log_step "🔗 Creating command symlink..."
-
-    # Create wrapper script at /usr/local/bin/chiper
-    cat > /usr/local/bin/chiper << 'WRAPPER'
+    run_step "🔗 Creating command symlink" bash -c '
+cat > /usr/local/bin/chiper << '"'"'WRAPPER'"'"'
 #!/bin/bash
 export CHIPER_HOME="${CHIPER_HOME:-$HOME/.chiperflux}"
 export CHIPER_INSTALL_DIR="/usr/local/lib/chiper-agent"
 
-# Activate venv if exists
 if [ -f "$CHIPER_INSTALL_DIR/.venv/bin/activate" ]; then
     source "$CHIPER_INSTALL_DIR/.venv/bin/activate"
 elif [ -f "$CHIPER_INSTALL_DIR/venv/bin/activate" ]; then
     source "$CHIPER_INSTALL_DIR/venv/bin/activate"
 fi
 
-# Run CLI
 cd "$CHIPER_INSTALL_DIR"
 python -c "from chiper_cli.main import main; main()" "$@"
 WRAPPER
+chmod +x /usr/local/bin/chiper
 
-    chmod +x /usr/local/bin/chiper
-    log_success "Command 'chiper' available at /usr/local/bin/chiper"
-
-    # Also create symlink at ~/.local/bin/chiper (for doctor check)
-    local _venv_bin="$CHIPER_INSTALL_DIR/.venv/bin/chiper"
-    local _local_bin="$HOME/.local/bin"
-    if [ -f "$_venv_bin" ]; then
-        mkdir -p "$_local_bin"
-        ln -sf "$_venv_bin" "$_local_bin/chiper"
-        log_success "Symlink '$_local_bin/chiper' → $_venv_bin"
-
-        # Check if ~/.local/bin is on PATH
-        if ! echo "$PATH" | tr ':' '\n' | grep -q "^$_local_bin$"; then
-            log_warn "~/.local/bin is not on PATH"
-            log_info "Add to your shell config: export PATH=\"\$HOME/.local/bin:\$PATH\""
-        fi
-    fi
-
+_venv_bin="$CHIPER_INSTALL_DIR/.venv/bin/chiper"
+_local_bin="$HOME/.local/bin"
+if [ -f "$_venv_bin" ]; then
+    mkdir -p "$_local_bin"
+    ln -sf "$_venv_bin" "$_local_bin/chiper"
+fi
+'
     sleep 2
 }
 
