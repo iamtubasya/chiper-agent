@@ -229,7 +229,7 @@ def run_oneshot(
 def _create_session_db_for_oneshot():
     """Best-effort SessionDB for ``chiper -z`` / oneshot mode.
 
-    Oneshot bypasses ``HermesCLI._init_agent()``, so it must wire the SQLite
+    Oneshot bypasses ``ChiperCLI._init_agent()``, so it must wire the SQLite
     session store itself. Without this, the ``session_search``/recall tool is
     advertised but every call returns "Session database not available.".
     """
@@ -251,7 +251,7 @@ def _run_agent(
 ) -> str:
     """Build an AIAgent exactly like a normal CLI chat turn would, then
     run a single conversation.  Returns the final response string."""
-    # Imports are local so they don't run when hermes is invoked for
+    # Imports are local so they don't run when chiper is invoked for
     # other commands (keeps top-level CLI startup cheap).
     from chiper_cli.config import load_config
     from chiper_cli.models import detect_provider_for_model

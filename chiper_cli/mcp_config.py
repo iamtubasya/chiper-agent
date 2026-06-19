@@ -270,8 +270,8 @@ def _oauth_tokens_present(name: str) -> bool:
     initialize/tools-list without auth (so no token was ever acquired).
     """
     try:
-        from tools.mcp_oauth import HermesTokenStorage
-        return HermesTokenStorage(name).has_cached_tokens()
+        from tools.mcp_oauth import ChiperTokenStorage
+        return ChiperTokenStorage(name).has_cached_tokens()
     except Exception as exc:  # pragma: no cover — defensive
         logger.debug("Could not check OAuth tokens for '%s': %s", name, exc)
         # Be permissive on unexpected errors: don't block a real success.
@@ -294,7 +294,7 @@ def _unwrap_exception_group(exc: BaseException) -> Exception:
     return RuntimeError(str(exc))
 
 
-# ─── hermes mcp add ──────────────────────────────────────────────────────────
+# ─── chiper mcp add ──────────────────────────────────────────────────────────
 
 def cmd_mcp_add(args):
     """Add a new MCP server with discovery-first tool selection."""
@@ -334,9 +334,9 @@ def cmd_mcp_add(args):
     if not url and not command:
         _error("Must specify --url <endpoint>, --command <cmd>, or --preset <name>")
         _info("Examples:")
-        _info('  hermes mcp add ink --url "https://mcp.ml.ink/mcp"')
-        _info('  hermes mcp add github --command npx --args @modelcontextprotocol/server-github')
-        _info('  hermes mcp add myserver --preset mypreset')
+        _info('  chiper mcp add ink --url "https://mcp.ml.ink/mcp"')
+        _info('  chiper mcp add github --command npx --args @modelcontextprotocol/server-github')
+        _info('  chiper mcp add myserver --preset mypreset')
         return
 
     # Check if server already exists
@@ -428,7 +428,7 @@ def cmd_mcp_add(args):
             server_config["enabled"] = False
             if _save_mcp_server(name, server_config):
                 _success(f"Saved '{name}' to config (disabled)")
-                _info("Fix the issue, then: hermes mcp test " + name)
+                _info("Fix the issue, then: chiper mcp test " + name)
         return
 
     if not tools:
@@ -498,7 +498,7 @@ def cmd_mcp_add(args):
         _info("Start a new session to use these tools.")
 
 
-# ─── hermes mcp remove ───────────────────────────────────────────────────────
+# ─── chiper mcp remove ───────────────────────────────────────────────────────
 
 def cmd_mcp_remove(args):
     """Remove an MCP server from config."""
@@ -530,7 +530,7 @@ def cmd_mcp_remove(args):
         pass
 
 
-# ─── hermes mcp list ──────────────────────────────────────────────────────────
+# ─── chiper mcp list ──────────────────────────────────────────────────────────
 
 def cmd_mcp_list(args=None):
     """List all configured MCP servers."""
@@ -541,8 +541,8 @@ def cmd_mcp_list(args=None):
         _info("No MCP servers configured.")
         print()
         _info("Add one with:")
-        _info('  hermes mcp add <name> --url <endpoint>')
-        _info('  hermes mcp add <name> --command <cmd> --args <args...>')
+        _info('  chiper mcp add <name> --url <endpoint>')
+        _info('  chiper mcp add <name> --command <cmd> --args <args...>')
         print()
         return
 
@@ -599,7 +599,7 @@ def cmd_mcp_list(args=None):
     print()
 
 
-# ─── hermes mcp test ──────────────────────────────────────────────────────────
+# ─── chiper mcp test ──────────────────────────────────────────────────────────
 
 def cmd_mcp_test(args):
     """Test connection to an MCP server."""
@@ -663,7 +663,7 @@ def cmd_mcp_test(args):
     print()
 
 
-# ─── hermes mcp login ────────────────────────────────────────────────────────
+# ─── chiper mcp login ────────────────────────────────────────────────────────
 
 def cmd_mcp_login(args):
     """Force re-authentication for an OAuth-based MCP server.
@@ -750,7 +750,7 @@ def cmd_mcp_login(args):
         _error(f"Authentication failed: {exc}")
 
 
-# ─── hermes mcp configure ────────────────────────────────────────────────────
+# ─── chiper mcp configure ────────────────────────────────────────────────────
 
 def cmd_mcp_configure(args):
     """Reconfigure which tools are enabled for an existing MCP server."""

@@ -176,13 +176,13 @@ def is_interactive_stdin() -> bool:
 def print_noninteractive_setup_guidance(reason: str | None = None) -> None:
     """Print guidance for headless/non-interactive setup flows."""
     print()
-    print(color("⚕ Hermes Setup — Non-interactive mode", Colors.CYAN, Colors.BOLD))
+    print(color("⚕ Chiper Setup — Non-interactive mode", Colors.CYAN, Colors.BOLD))
     print()
     if reason:
         print_info(reason)
     print_info("The interactive wizard cannot be used here.")
     print()
-    print_info("Configure Hermes using environment variables or config commands:")
+    print_info("Configure Chiper using environment variables or config commands:")
     print_info("  chiper config set model.provider custom")
     print_info("  chiper config set model.base_url http://localhost:8080/v1")
     print_info("  chiper config set model.default your-model-name")
@@ -633,7 +633,7 @@ def _print_setup_summary(config: dict, chiper_home):
     print()
     print(color("🚀 Ready to go!", Colors.CYAN, Colors.BOLD))
     print()
-    print(f"   {color('hermes', Colors.GREEN)}              Start chatting")
+    print(f"   {color('chiper', Colors.GREEN)}              Start chatting")
     print(f"   {color('chiper gateway', Colors.GREEN)}      Start messaging gateway")
     print(f"   {color('chiper doctor', Colors.GREEN)}       Check for issues")
     print()
@@ -1135,7 +1135,7 @@ def setup_terminal_backend(config: dict):
     """Configure the terminal execution backend."""
     import platform as _platform
     print_header("Terminal Backend")
-    print_info("Choose where Hermes runs shell commands and code.")
+    print_info("Choose where Chiper runs shell commands and code.")
     print_info("This affects tool execution, file access, and isolation.")
     print_info(f"   Guide: {_DOCS_BASE}/developer-guide/environments")
     print()
@@ -1780,7 +1780,7 @@ def _setup_telegram():
         print_info("⚠️  No allowlist set - anyone who finds your bot can use it!")
 
     print()
-    print_info("📬 Home Channel: where Hermes delivers cron job results,")
+    print_info("📬 Home Channel: where Chiper delivers cron job results,")
     print_info("   cross-platform messages, and notifications.")
     print_info("   For Telegram DMs, this is your user ID (same as above).")
 
@@ -1858,7 +1858,7 @@ def _setup_slack():
         print_info("   Set SLACK_ALLOW_ALL_USERS=true or GATEWAY_ALLOW_ALL_USERS=true only if you intentionally want open workspace access.")
 
     print()
-    print_info("📬 Home Channel: where Hermes delivers cron job results,")
+    print_info("📬 Home Channel: where Chiper delivers cron job results,")
     print_info("   cross-platform messages, and notifications.")
     print_info("   To get a channel ID: open the channel in Slack, then right-click")
     print_info("   the channel name → Copy link — the ID starts with C (e.g. C01ABC2DE3F).")
@@ -1883,8 +1883,8 @@ def _write_slack_manifest_and_instruct():
         from chiper_constants import get_chiper_home
 
         manifest = _build_full_manifest(
-            bot_name="Hermes",
-            bot_description="Your Hermes agent on Slack",
+            bot_name="Chiper",
+            bot_description="Your Chiper agent on Slack",
         )
         target = Path(get_chiper_home()) / "slack-manifest.json"
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -1901,7 +1901,7 @@ def _write_slack_manifest_and_instruct():
         )
         print_info(
             "   Re-run `chiper slack manifest --write` anytime to refresh after "
-            "Hermes adds new commands."
+            "Chiper adds new commands."
         )
     except Exception as exc:  # pragma: no cover - best-effort UX helper
         print_warning(f"Couldn't write Slack manifest: {exc}")
@@ -2019,7 +2019,7 @@ def _setup_matrix():
             print_info("⚠️  No allowlist set - anyone who can message the bot can use it!")
 
         print()
-        print_info("📬 Home Room: where Hermes delivers cron job results and notifications.")
+        print_info("📬 Home Room: where Chiper delivers cron job results and notifications.")
         print_info("   Room IDs look like !abc123:server (shown in Element room settings)")
         print_info("   You can also set this later by typing /set-home in a Matrix room.")
         home_room = prompt("Home room ID (leave empty to set later with /set-home)")
@@ -2036,7 +2036,7 @@ def _setup_bluebubbles():
         if not prompt_yes_no("Reconfigure BlueBubbles?", False):
             return
 
-    print_info("Connects Hermes to iMessage via BlueBubbles — a free, open-source")
+    print_info("Connects Chiper to iMessage via BlueBubbles — a free, open-source")
     print_info("macOS server that bridges iMessage to any device.")
     print_info("   Requires a Mac running BlueBubbles Server v1.0.0+")
     print_info("   Download: https://bluebubbles.app/")
@@ -2236,7 +2236,7 @@ def setup_gateway(config: dict):
             _is_service_running,
             supports_systemd_services,
             has_conflicting_systemd_units,
-            has_legacy_hermes_units,
+            has_legacy_chiper_units,
             install_linux_gateway_from_setup,
             print_systemd_scope_conflict_warning,
             print_legacy_unit_warning,
@@ -2261,7 +2261,7 @@ def setup_gateway(config: dict):
             print_systemd_scope_conflict_warning()
             print()
 
-        if supports_systemd and has_legacy_hermes_units():
+        if supports_systemd and has_legacy_chiper_units():
             print_legacy_unit_warning()
             print()
 
@@ -2553,12 +2553,12 @@ _OPENCLAW_SCRIPT = (
     / "migration"
     / "openclaw-migration"
     / "scripts"
-    / "openclaw_to_hermes.py"
+    / "openclaw_to_chiper.py"
 )
 
 
 def _load_openclaw_migration_module():
-    """Load the openclaw_to_hermes migration script as a module.
+    """Load the openclaw_to_chiper migration script as a module.
 
     Returns the loaded module, or None if the script can't be loaded.
     """
@@ -2566,7 +2566,7 @@ def _load_openclaw_migration_module():
         return None
 
     spec = importlib.util.spec_from_file_location(
-        "openclaw_to_hermes", _OPENCLAW_SCRIPT
+        "openclaw_to_chiper", _OPENCLAW_SCRIPT
     )
     if spec is None or spec.loader is None:
         return None
@@ -2586,14 +2586,14 @@ def _load_openclaw_migration_module():
 
 # Item kinds that represent high-impact changes warranting explicit warnings.
 # Gateway tokens/channels can hijack messaging platforms from the old agent.
-# Config values may have different semantics between OpenClaw and Hermes.
+# Config values may have different semantics between OpenClaw and Chiper.
 # Instruction/context files (.md) can contain incompatible setup procedures.
 _HIGH_IMPACT_KIND_KEYWORDS = {
-    "gateway": "⚠ Gateway/messaging — this will configure Hermes to use your OpenClaw messaging channels",
-    "telegram": "⚠ Telegram — this will point Hermes at your OpenClaw Telegram bot",
-    "slack": "⚠ Slack — this will point Hermes at your OpenClaw Slack workspace",
-    "discord": "⚠ Discord — this will point Hermes at your OpenClaw Discord bot",
-    "whatsapp": "⚠ WhatsApp — this will point Hermes at your OpenClaw WhatsApp connection",
+    "gateway": "⚠ Gateway/messaging — this will configure Chiper to use your OpenClaw messaging channels",
+    "telegram": "⚠ Telegram — this will point Chiper at your OpenClaw Telegram bot",
+    "slack": "⚠ Slack — this will point Chiper at your OpenClaw Slack workspace",
+    "discord": "⚠ Discord — this will point Chiper at your OpenClaw Discord bot",
+    "whatsapp": "⚠ WhatsApp — this will point Chiper at your OpenClaw WhatsApp connection",
     "config": "⚠ Config values — OpenClaw settings may not map 1:1 to Chiper equivalents",
     "soul": "⚠ Instruction file — may contain OpenClaw-specific setup/restart procedures",
     "memory": "⚠ Memory/context file — may reference OpenClaw-specific infrastructure",
@@ -2683,12 +2683,12 @@ def _offer_openclaw_migration(chiper_home: Path) -> bool:
     print()
     print_header("OpenClaw Installation Detected")
     print_info(f"Found OpenClaw data at {openclaw_dir}")
-    print_info("Hermes can preview what would be imported before making any changes.")
+    print_info("Chiper can preview what would be imported before making any changes.")
     print()
 
     if not prompt_yes_no("Would you like to see what can be imported?", default=True):
         print_info(
-            "Skipping migration. You can run it later with: hermes claw migrate --dry-run"
+            "Skipping migration. You can run it later with: chiper claw migrate --dry-run"
         )
         return False
 
@@ -2746,7 +2746,7 @@ def _offer_openclaw_migration(chiper_home: Path) -> bool:
     # ── Phase 2: Confirm and execute ──
     if not prompt_yes_no("Proceed with migration?", default=False):
         print_info(
-            "Migration cancelled. You can run it later with: hermes claw migrate"
+            "Migration cancelled. You can run it later with: chiper claw migrate"
         )
         print_info(
             "Use --dry-run to preview again, or --preset minimal for a lighter import."
@@ -2784,7 +2784,7 @@ def _offer_openclaw_migration(chiper_home: Path) -> bool:
     if migrated:
         print_success(f"Imported {migrated} item(s) from OpenClaw.")
     if conflicts:
-        print_info(f"Skipped {conflicts} item(s) that already exist in Chiper (use hermes claw migrate --overwrite to force).")
+        print_info(f"Skipped {conflicts} item(s) that already exist in Chiper (use chiper claw migrate --overwrite to force).")
     if skipped:
         print_info(f"Skipped {skipped} item(s) (not found or unchanged).")
     if errors:
@@ -2838,7 +2838,7 @@ def _run_portal_one_shot(config: dict) -> None:
             Colors.MAGENTA,
         )
     )
-    print(color("│     ⚕ Hermes Setup — Nous Portal (one-shot)             │", Colors.MAGENTA))
+    print(color("│     ⚕ Chiper Setup — Nous Portal (one-shot)             │", Colors.MAGENTA))
     print(
         color(
             "└─────────────────────────────────────────────────────────┘",
@@ -2893,7 +2893,7 @@ def _run_portal_one_shot(config: dict) -> None:
     print()
     print_success("Portal setup complete.")
     print_info("  Run `chiper portal info` to inspect routing.")
-    print_info("  Run `hermes` to start chatting.")
+    print_info("  Run `chiper` to start chatting.")
 
 
 def run_setup_wizard(args):
@@ -2968,7 +2968,7 @@ def run_setup_wizard(args):
                         Colors.MAGENTA,
                     )
                 )
-                print(color(f"│     ⚕ Hermes Setup — {label:<34s} │", Colors.MAGENTA))
+                print(color(f"│     ⚕ Chiper Setup — {label:<34s} │", Colors.MAGENTA))
                 print(
                     color(
                         "└─────────────────────────────────────────────────────────┘",
@@ -3069,7 +3069,7 @@ def run_setup_wizard(args):
             config = load_config()
 
         setup_mode = prompt_choice(
-            "How would you like to set up Hermes?",
+            "How would you like to set up Chiper?",
             [
                 "Quick Setup (Nous Portal) — free OAuth login, no API keys, model + tools (recommended)",
                 "Full setup — configure every provider, tool & option yourself (bring your own keys)",
@@ -3293,7 +3293,7 @@ def _run_quick_setup(config: dict, chiper_home):
     if missing_messaging:
         print()
         print_header("Messaging Platforms")
-        print_info("Connect Hermes to messaging apps to chat from anywhere.")
+        print_info("Connect Chiper to messaging apps to chat from anywhere.")
         print_info("You can configure these later with 'chiper setup gateway'.")
 
         # Group by platform (preserving order)

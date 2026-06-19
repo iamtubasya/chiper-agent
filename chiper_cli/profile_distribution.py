@@ -14,9 +14,9 @@ Where this fits relative to the existing pieces:
 
 Subcommands (all live under ``chiper profile``, not a parallel tree):
 
-    hermes profile install <source> [--name N] [--alias] [--force] [--yes]
-    hermes profile update  <name>  [--force-config] [--yes]
-    hermes profile info    <name>
+    chiper profile install <source> [--name N] [--alias] [--force] [--yes]
+    chiper profile update  <name>  [--force-config] [--yes]
+    chiper profile info    <name>
 
 ``<source>`` is one of:
 
@@ -31,7 +31,7 @@ Manifest format (``distribution.yaml`` at the profile root)::
     name: telemetry
     version: 0.1.0
     description: "Compliance monitoring harness"
-    hermes_requires: ">=0.12.0"
+    chiper_requires: ">=0.12.0"
     author: "..."
     license: "..."
     env_requires:
@@ -102,7 +102,7 @@ USER_OWNED_EXCLUDE: frozenset = frozenset({
     "auth.json", ".env",
     # Databases & runtime state
     "state.db", "state.db-shm", "state.db-wal",
-    "hermes_state.db", "response_store.db",
+    "chiper_state.db", "response_store.db",
     "response_store.db-shm", "response_store.db-wal",
     "gateway.pid", "gateway_state.json", "processes.json",
     "auth.lock", "active_profile", ".update_check",
@@ -170,7 +170,7 @@ class DistributionManifest:
     name: str
     version: str = "0.1.0"
     description: str = ""
-    hermes_requires: str = ""
+    chiper_requires: str = ""
     author: str = ""
     license: str = ""
     env_requires: List[EnvRequirement] = field(default_factory=list)
@@ -203,7 +203,7 @@ class DistributionManifest:
             name=name,
             version=str(data.get("version") or "0.1.0"),
             description=str(data.get("description") or ""),
-            hermes_requires=str(data.get("hermes_requires") or ""),
+            chiper_requires=str(data.get("chiper_requires") or ""),
             author=str(data.get("author") or ""),
             license=str(data.get("license") or ""),
             env_requires=env_requires,
@@ -219,8 +219,8 @@ class DistributionManifest:
         }
         if self.description:
             out["description"] = self.description
-        if self.hermes_requires:
-            out["hermes_requires"] = self.hermes_requires
+        if self.chiper_requires:
+            out["chiper_requires"] = self.chiper_requires
         if self.author:
             out["author"] = self.author
         if self.license:
@@ -296,7 +296,7 @@ def _parse_semver(v: str) -> Tuple[int, int, int]:
         raise DistributionError(f"Unparseable version: {v!r}") from exc
 
 
-def check_hermes_requires(spec: str, current_version: str) -> None:
+def check_chiper_requires(spec: str, current_version: str) -> None:
     """Raise DistributionError if ``current_version`` does not satisfy ``spec``.
 
     ``spec`` accepts a single comparator (``>=0.12.0``, ``==0.12.0``, etc.).
@@ -322,7 +322,7 @@ def check_hermes_requires(spec: str, current_version: str) -> None:
     }[op]
     if not ok:
         raise DistributionError(
-            f"This distribution requires Hermes {op}{target}, "
+            f"This distribution requires Chiper {op}{target}, "
             f"but you have {current_version}."
         )
 
@@ -335,7 +335,7 @@ def check_hermes_requires(spec: str, current_version: str) -> None:
 def _env_template_from_manifest(manifest: DistributionManifest) -> str:
     """Generate a ``.env.template`` body from env_requires."""
     lines = [
-        "# Environment variables required by this Hermes distribution.",
+        "# Environment variables required by this Chiper distribution.",
         "# Copy to `.env` and fill in your own values before running.",
         "",
     ]
@@ -507,7 +507,7 @@ def plan_install(
         )
 
     # Version check up-front so we fail fast
-    check_hermes_requires(manifest.hermes_requires, chiper_version)
+    check_chiper_requires(manifest.chiper_requires, chiper_version)
 
     # Resolve target profile name
     target_name = override_name or manifest.name
@@ -619,7 +619,7 @@ def install_distribution(
         create_wrapper_script,
     )
 
-    with tempfile.TemporaryDirectory(prefix="hermes_dist_install_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="chiper_dist_install_") as tmp:
         plan = plan_install(source, Path(tmp), override_name=name)
 
         if plan.existing and not force:
@@ -681,7 +681,7 @@ def update_distribution(
             "`chiper profile install <source> --name {canon} --force`."
         )
 
-    with tempfile.TemporaryDirectory(prefix="hermes_dist_update_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="chiper_dist_update_") as tmp:
         plan = plan_install(
             existing_manifest.source,
             Path(tmp),

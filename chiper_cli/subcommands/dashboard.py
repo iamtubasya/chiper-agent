@@ -81,13 +81,13 @@ def build_dashboard_parser(
         action="store_true",
         help="List running chiper dashboard processes and exit",
     )
-    # Backward-compat shim: older Hermes desktop app shells (<= 0.15.x) spawn the
+    # Backward-compat shim: older Chiper desktop app shells (<= 0.15.x) spawn the
     # backend as `chiper dashboard --no-open --tui --host ... --port ...`. The
     # `--tui` flag was removed from this subcommand in cae6b5486 (embedded chat is
     # always on now). When a user's CLI updates past that commit but their desktop
     # app binary has not, argparse used to hard-error with "unrecognized arguments:
     # --tui" and exit(2) — the backend died before becoming ready and the GUI just
-    # showed "Hermes couldn't start" with no actionable cause. Accept and silently
+    # showed "Chiper couldn't start" with no actionable cause. Accept and silently
     # ignore the flag so an old app + new CLI degrades gracefully instead of
     # bricking. Hidden from --help; safe to delete once the floor app version is
     # well past 0.16.0.
@@ -126,7 +126,7 @@ def build_dashboard_parser(
         default=None,
         help=(
             "Optional public HTTPS OAuth redirect URI for the dashboard, e.g. "
-            "https://hermes.example.com/auth/callback. Omit for localhost-only use."
+            "https://chiper.example.com/auth/callback. Omit for localhost-only use."
         ),
     )
     dashboard_register_parser.add_argument(

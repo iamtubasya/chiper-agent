@@ -1,13 +1,13 @@
 """chiper claw — OpenClaw migration commands.
 
 Usage:
-    hermes claw migrate              # Preview then migrate (always shows preview first)
-    hermes claw migrate --dry-run    # Preview only, no changes
-    hermes claw migrate --yes        # Skip confirmation prompt
-    hermes claw migrate --preset full --overwrite --migrate-secrets  # Full run w/ secrets
-    hermes claw migrate --no-backup  # Skip pre-migration snapshot
-    hermes claw cleanup              # Archive leftover OpenClaw directories
-    hermes claw cleanup --dry-run    # Preview what would be archived
+    chiper claw migrate              # Preview then migrate (always shows preview first)
+    chiper claw migrate --dry-run    # Preview only, no changes
+    chiper claw migrate --yes        # Skip confirmation prompt
+    chiper claw migrate --preset full --overwrite --migrate-secrets  # Full run w/ secrets
+    chiper claw migrate --no-backup  # Skip pre-migration snapshot
+    chiper claw cleanup              # Archive leftover OpenClaw directories
+    chiper claw cleanup --dry-run    # Preview what would be archived
 """
 
 import importlib.util
@@ -39,7 +39,7 @@ _OPENCLAW_SCRIPT = (
     / "migration"
     / "openclaw-migration"
     / "scripts"
-    / "openclaw_to_hermes.py"
+    / "openclaw_to_chiper.py"
 )
 
 # Fallback: user may have installed the skill from the Hub
@@ -49,7 +49,7 @@ _OPENCLAW_SCRIPT_INSTALLED = (
     / "migration"
     / "openclaw-migration"
     / "scripts"
-    / "openclaw_to_hermes.py"
+    / "openclaw_to_chiper.py"
 )
 
 # Known OpenClaw directory names (current + legacy)
@@ -134,7 +134,7 @@ def _warn_if_openclaw_running(auto_yes: bool) -> None:
     print_info(
         "Messaging platforms (Telegram, Discord, Slack) only allow one "
         "active session per bot token. If you continue, both OpenClaw and "
-        "Hermes may try to use the same token, causing disconnects."
+        "Chiper may try to use the same token, causing disconnects."
     )
     print_info("Recommendation: stop OpenClaw before migrating.")
     print()
@@ -169,7 +169,7 @@ def _warn_if_gateway_running(auto_yes: bool) -> None:
 
     print()
     print_error(
-        "Hermes gateway is running with active connections: "
+        "Chiper gateway is running with active connections: "
         + ", ".join(connected)
     )
     print_info(
@@ -194,7 +194,7 @@ _WORKSPACE_STATE_GLOBS = (
 
 
 def _find_migration_script() -> Path | None:
-    """Find the openclaw_to_hermes.py script in known locations."""
+    """Find the openclaw_to_chiper.py script in known locations."""
     for candidate in [_OPENCLAW_SCRIPT, _OPENCLAW_SCRIPT_INSTALLED]:
         if candidate.exists():
             return candidate
@@ -203,7 +203,7 @@ def _find_migration_script() -> Path | None:
 
 def _load_migration_module(script_path: Path):
     """Dynamically load the migration script as a module."""
-    spec = importlib.util.spec_from_file_location("openclaw_to_hermes", script_path)
+    spec = importlib.util.spec_from_file_location("openclaw_to_chiper", script_path)
     if spec is None or spec.loader is None:
         return None
     mod = importlib.util.module_from_spec(spec)
@@ -293,7 +293,7 @@ def _archive_directory(source_dir: Path, dry_run: bool = False) -> Path:
 
 
 def claw_command(args):
-    """Route hermes claw subcommands."""
+    """Route chiper claw subcommands."""
     action = getattr(args, "claw_action", None)
 
     if action == "migrate":
@@ -301,7 +301,7 @@ def claw_command(args):
     elif action in {"cleanup", "clean"}:
         _cmd_cleanup(args)
     else:
-        print("Usage: hermes claw <command> [options]")
+        print("Usage: chiper claw <command> [options]")
         print()
         print("Commands:")
         print("  migrate          Migrate settings from OpenClaw to Chiper")
@@ -311,7 +311,7 @@ def claw_command(args):
 
 
 def _cmd_migrate(args):
-    """Run the OpenClaw → Hermes migration."""
+    """Run the OpenClaw → Chiper migration."""
     # Check current and legacy OpenClaw directories
     explicit_source = getattr(args, "source", None)
     if explicit_source:
@@ -335,7 +335,7 @@ def _cmd_migrate(args):
 
     # Secrets are never included implicitly — they must be explicitly requested
     # via --migrate-secrets, even under --preset full.  This mirrors OpenClaw's
-    # migrate-hermes posture (two-phase: run once without secrets, rerun with
+    # migrate-chiper posture (two-phase: run once without secrets, rerun with
     # --include-secrets) and prevents a --preset full invocation from silently
     # importing API keys that the user may not have intended to copy.
 
@@ -364,7 +364,7 @@ def _cmd_migrate(args):
         print()
         print_error(f"OpenClaw directory not found: {source_dir}")
         print_info("Make sure your OpenClaw installation is at the expected path.")
-        print_info("You can specify a custom path: hermes claw migrate --source /path/to/.openclaw")
+        print_info("You can specify a custom path: chiper claw migrate --source /path/to/.openclaw")
         return
 
     # Find the migration script
@@ -492,7 +492,7 @@ def _cmd_migrate(args):
     if not auto_yes:
         if not sys.stdin.isatty():
             print_info("Non-interactive session — preview only.")
-            print_info("To execute, re-run with: hermes claw migrate --yes")
+            print_info("To execute, re-run with: chiper claw migrate --yes")
             return
         if not prompt_yes_no("Proceed with migration?", default=True):
             print_info("Migration cancelled.")
@@ -514,7 +514,7 @@ def _cmd_migrate(args):
                 size_str = _format_size(backup_archive.stat().st_size)
                 print()
                 print_success(f"Pre-migration backup: {backup_archive} ({size_str})")
-                print_info(f"Restore with: hermes import {backup_archive.name}")
+                print_info(f"Restore with: chiper import {backup_archive.name}")
         except Exception as e:
             print()
             print_error(f"Could not create pre-migration backup: {e}")
@@ -544,7 +544,7 @@ def _cmd_migrate(args):
         logger.debug("OpenClaw migration error", exc_info=True)
         if backup_archive:
             print_info(f"A pre-migration backup is available at: {backup_archive}")
-            print_info(f"Restore with: hermes import {backup_archive.name}")
+            print_info(f"Restore with: chiper import {backup_archive.name}")
         return
 
     # Print results
@@ -615,7 +615,7 @@ def _cmd_cleanup(args):
                 print_info("Non-interactive session — aborting. Stop OpenClaw and re-run.")
                 return
             if not prompt_yes_no("Proceed anyway?", default=False):
-                print_info("Aborted. Stop OpenClaw first, then re-run: hermes claw cleanup")
+                print_info("Aborted. Stop OpenClaw first, then re-run: chiper claw cleanup")
                 return
 
     total_archived = 0
@@ -669,7 +669,7 @@ def _cmd_cleanup(args):
             print_info(f"Would archive: {source_dir} → {archive_path}")
         elif not auto_yes and not sys.stdin.isatty():
             print_info(f"Non-interactive session — would archive: {source_dir}")
-            print_info("To execute, re-run with: hermes claw cleanup --yes")
+            print_info("To execute, re-run with: chiper claw cleanup --yes")
         elif auto_yes or prompt_yes_no(f"Archive {source_dir}?", default=True):
             try:
                 archive_path = _archive_directory(source_dir)
@@ -788,7 +788,7 @@ def _print_migration_report(report: dict, dry_run: bool):
     if dry_run:
         print()
         print_info("To execute the migration, run without --dry-run:")
-        print_info(f"  hermes claw migrate --preset {report.get('preset', 'full')}")
+        print_info(f"  chiper claw migrate --preset {report.get('preset', 'full')}")
     elif migrated:
         print()
         print_success("Migration complete!")
@@ -803,7 +803,7 @@ def _print_migration_report(report: dict, dry_run: bool):
             print(color("  Your OPENROUTER_API_KEY and other provider keys must be added manually.", Colors.YELLOW))
             print()
             print_info("To migrate API keys, re-run with:")
-            print_info("  hermes claw migrate --migrate-secrets")
+            print_info("  chiper claw migrate --migrate-secrets")
             print()
             print_info("Or add your key manually:")
             print_info("  chiper config set OPENROUTER_API_KEY sk-or-v1-...")

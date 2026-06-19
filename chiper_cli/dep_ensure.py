@@ -29,7 +29,7 @@ _DEP_CHECKS = {
     "browser": lambda: (
         shutil.which("agent-browser") is not None
         or _has_system_browser()
-        or _has_hermes_agent_browser()
+        or _has_chiper_agent_browser()
     ),
     "ripgrep": lambda: shutil.which("rg") is not None,
     "ffmpeg": lambda: shutil.which("ffmpeg") is not None,
@@ -54,7 +54,7 @@ def _has_system_browser() -> bool:
     return False
 
 
-def _has_hermes_agent_browser() -> bool:
+def _has_chiper_agent_browser() -> bool:
     from chiper_constants import get_chiper_home
     home = get_chiper_home()
     if _IS_WINDOWS:
@@ -141,7 +141,7 @@ def ensure_dependency(
             "-ExecutionPolicy", "Bypass",
             "-File", str(script),
             "-Ensure", dep,
-            "-HermesHome", str(get_chiper_home()),
+            "-ChiperHome", str(get_chiper_home()),
         ]
     else:
         cmd = ["bash", str(script), "--ensure", dep]

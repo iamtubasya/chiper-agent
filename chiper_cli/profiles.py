@@ -10,13 +10,13 @@ zero migration needed.
 
 Usage::
 
-    hermes profile create coder          # fresh profile + bundled skills
-    hermes profile create coder --clone  # also copy config, .env, SOUL.md, skills
-    hermes profile create coder --clone-all  # full copy of source profile
+    chiper profile create coder          # fresh profile + bundled skills
+    chiper profile create coder --clone  # also copy config, .env, SOUL.md, skills
+    chiper profile create coder --clone-all  # full copy of source profile
     coder chat                           # use via wrapper alias
     chiper -p coder chat                 # or via flag
-    hermes profile use coder             # set as sticky default
-    hermes profile delete coder          # remove profile + alias + service
+    chiper profile use coder             # set as sticky default
+    chiper profile delete coder          # remove profile + alias + service
 """
 
 import json
@@ -48,7 +48,7 @@ _PROFILE_DIRS = [
     # Back-compat/Docker HOME for tool subprocesses. Host subprocesses keep
     # the user's real HOME by default so normal CLI credentials remain visible;
     # containers still use this directory for persistent HOME state.
-    # See hermes_constants.get_subprocess_home().
+    # See chiper_constants.get_subprocess_home().
     "home",
 ]
 
@@ -125,7 +125,7 @@ _CLONE_ALL_HISTORY_EXCLUDE_ROOT: frozenset[str] = frozenset({
 })
 
 # Marker file written by `chiper profile create --no-skills`.  When present in
-# a profile's root, callers of seed_profile_skills() (fresh-create, `hermes
+# a profile's root, callers of seed_profile_skills() (fresh-create, `chiper
 # update`'s all-profile sync, the web dashboard) skip bundled-skill seeding
 # for that profile.  The user can still install skills manually via
 # `chiper skills install` or drop SKILL.md files into the profile's skills/.
@@ -149,7 +149,7 @@ def _clone_all_copytree_ignore(source_dir: Path):
          history, backups, and snapshots that belong to the SOURCE profile
          and should never carry into a fresh clone.  Applies to any source.
       2. Root-level entries in ``_CLONE_ALL_DEFAULT_EXCLUDE_ROOT`` — known
-         Hermes infrastructure directories that only the default profile
+         Chiper infrastructure directories that only the default profile
          (``~/.chiperflux``) ever contains.  Gated on ``source_dir`` actually
          being the default profile so a named-profile source never has its
          own data silently dropped.
@@ -208,7 +208,7 @@ _DEFAULT_EXPORT_EXCLUDE_ROOT = frozenset({
     "node_modules",         # npm packages
     # Databases & runtime state
     "state.db", "state.db-shm", "state.db-wal",
-    "hermes_state.db",
+    "chiper_state.db",
     "response_store.db", "response_store.db-shm", "response_store.db-wal",
     "gateway.pid", "gateway_state.json", "processes.json",
     "auth.json",            # API keys, OAuth tokens, credential pools
@@ -225,11 +225,11 @@ _DEFAULT_EXPORT_EXCLUDE_ROOT = frozenset({
 
 # Names that cannot be used as profile aliases
 _RESERVED_NAMES = frozenset({
-    "hermes", "default", "test", "tmp", "root", "sudo",
+    "chiper", "default", "test", "tmp", "root", "sudo",
 })
 
-# Hermes subcommands that cannot be used as profile names/aliases
-_HERMES_SUBCOMMANDS = frozenset({
+# Chiper subcommands that cannot be used as profile names/aliases
+_CHIPER_SUBCOMMANDS = frozenset({
     "chat", "model", "gateway", "setup", "whatsapp", "login", "logout",
     "status", "cron", "doctor", "dump", "config", "pairing", "skills", "tools",
     "mcp", "sessions", "insights", "version", "update", "uninstall",
@@ -244,7 +244,7 @@ _HERMES_SUBCOMMANDS = frozenset({
 def _get_profiles_root() -> Path:
     """Return the directory where named profiles are stored.
 
-    Anchored to the hermes root, NOT to the current CHIPER_HOME
+    Anchored to the chiper root, NOT to the current CHIPER_HOME
     (which may itself be a profile).  This ensures ``coder profile list``
     can see all profiles.
 
@@ -307,9 +307,9 @@ def validate_profile_name(name: str) -> None:
     honest about what the on-disk directory name must look like, while
     ingress-point normalization handles UX flexibility (see #18498).
 
-    Also rejects names in :data:`_RESERVED_NAMES` (``hermes``, ``test``,
+    Also rejects names in :data:`_RESERVED_NAMES` (``chiper``, ``test``,
     ``tmp``, ``root``, ``sudo``) that would create confusing on-disk
-    collisions (a ``hermes`` profile inside ``~/.chiperflux/``) or get refused
+    collisions (a ``chiper`` profile inside ``~/.chiperflux/``) or get refused
     at alias-creation time anyway. ``default`` is a special pass-through —
     it's a valid alias for the built-in root profile.
     """
@@ -351,13 +351,13 @@ def profile_exists(name: str) -> bool:
 def check_alias_collision(name: str) -> Optional[str]:
     """Return a human-readable collision message, or None if the name is safe.
 
-    Checks: reserved names, hermes subcommands, existing binaries in PATH.
+    Checks: reserved names, chiper subcommands, existing binaries in PATH.
     """
     canon = normalize_profile_name(name)
     if canon in _RESERVED_NAMES:
         return f"'{canon}' is a reserved name"
-    if canon in _HERMES_SUBCOMMANDS:
-        return f"'{canon}' conflicts with a hermes subcommand"
+    if canon in _CHIPER_SUBCOMMANDS:
+        return f"'{canon}' conflicts with a chiper subcommand"
 
     # Check existing commands in PATH
     wrapper_dir = _get_wrapper_dir()
@@ -422,8 +422,8 @@ def create_wrapper_script(name: str, target: Optional[str] = None) -> Optional[P
     else:
         wrapper_path = wrapper_dir / canon
         try:
-            hermes_exe = shutil.which("hermes") or "hermes"
-            wrapper_path.write_text(f'#!/bin/sh\nexec {shlex.quote(hermes_exe)} -p {profile} "$@"\n')
+            chiper_exe = shutil.which("chiper") or "chiper"
+            wrapper_path.write_text(f'#!/bin/sh\nexec {shlex.quote(chiper_exe)} -p {profile} "$@"\n')
             wrapper_path.chmod(wrapper_path.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
             return wrapper_path
         except OSError as e:
@@ -459,7 +459,7 @@ def _migrate_profile_config_if_outdated(profile_dir: Path) -> None:
     """Bring a copied profile config.yaml up to the current schema.
 
     Profile creation can clone a config file that predates schema tracking (no
-    ``_config_version``) or that is simply older than the running Hermes. If we
+    ``_config_version``) or that is simply older than the running Chiper. If we
     leave it untouched, the first desktop/doctor view of the new profile shows a
     scary ``v0 → latest`` warning even though we just created the profile. Scope
     the normal migration pipeline to the new profile and keep it non-interactive.
@@ -941,7 +941,7 @@ def create_profile(
         except OSError:
             pass  # best-effort — the feature still works via the empty skills/ dir
 
-    # Cloned configs can be older than the running Hermes (or predate schema
+    # Cloned configs can be older than the running Chiper (or predate schema
     # tracking entirely). Migrate config-only clones immediately so
     # desktop/status surfaces don't warn that a just-created profile is
     # v0/outdated. Leave --clone-all snapshots byte-for-byte apart from the
@@ -1084,7 +1084,7 @@ def delete_profile(name: str, yes: bool = False) -> Path:
     if canon == "default":
         raise ValueError(
             "Cannot delete the default profile (~/.chiperflux).\n"
-            "To remove everything, use: hermes uninstall"
+            "To remove everything, use: chiper uninstall"
         )
 
     profile_dir = get_profile_dir(canon)
@@ -1421,7 +1421,7 @@ def set_active_profile(name: str) -> None:
     if canon != "default" and not profile_exists(canon):
         raise FileNotFoundError(
             f"Profile '{canon}' does not exist. "
-            f"Create it with: hermes profile create {canon}"
+            f"Create it with: chiper profile create {canon}"
         )
 
     path = _get_active_profile_path()
@@ -1510,7 +1510,7 @@ def export_profile(name: str, output_path: str) -> Path:
 
     if canon == "default":
         # The default profile IS ~/.chiperflux itself — its parent is ~/ and its
-        # directory name is ".hermes", not "default".  We stage a clean copy
+        # directory name is ".chiper", not "default".  We stage a clean copy
         # under a temp dir so the archive contains ``default/...``.
         with tempfile.TemporaryDirectory() as tmpdir:
             staged = Path(tmpdir) / "default"
@@ -1630,7 +1630,7 @@ def import_profile(archive_path: str, name: Optional[str] = None) -> Path:
     if not inferred_name:
         raise ValueError(
             "Cannot determine profile name from archive. "
-            "Specify it explicitly: hermes profile import <archive> --name <name>"
+            "Specify it explicitly: chiper profile import <archive> --name <name>"
         )
     if archive_root is None:
         raise ValueError(
@@ -1645,7 +1645,7 @@ def import_profile(archive_path: str, name: Optional[str] = None) -> Path:
     if canon == "default":
         raise ValueError(
             "Cannot import as 'default' — that is the built-in root profile (~/.chiperflux). "
-            "Specify a different name: hermes profile import <archive> --name <name>"
+            "Specify a different name: chiper profile import <archive> --name <name>"
         )
 
     profile_dir = get_profile_dir(canon)
@@ -1655,7 +1655,7 @@ def import_profile(archive_path: str, name: Optional[str] = None) -> Path:
     profiles_root = _get_profiles_root()
     profiles_root.mkdir(parents=True, exist_ok=True)
 
-    with tempfile.TemporaryDirectory(prefix="hermes_profile_import_") as tmpdir:
+    with tempfile.TemporaryDirectory(prefix="chiper_profile_import_") as tmpdir:
         staging_root = Path(tmpdir)
         _safe_extract_profile_archive(archive, staging_root)
 
@@ -1681,9 +1681,9 @@ def import_profile(archive_path: str, name: Optional[str] = None) -> Path:
 
 def _migrate_honcho_profile_host(old_name: str, new_name: str, new_dir: Path) -> None:
     """Rename Honcho host blocks for a renamed profile without changing peers."""
-    old_host = f"hermes_{old_name}"
-    legacy_old_host = f"hermes.{old_name}"
-    new_host = f"hermes_{new_name}"
+    old_host = f"chiper_{old_name}"
+    legacy_old_host = f"chiper.{old_name}"
+    new_host = f"chiper_{new_name}"
 
     candidates = [
         new_dir / "honcho.json",
@@ -1719,7 +1719,7 @@ def _migrate_honcho_profile_host(old_name: str, new_name: str, new_dir: Path) ->
 
         block = hosts[source_host]
         if isinstance(block, dict) and "aiPeer" not in block:
-            if source_host.startswith("hermes_"):
+            if source_host.startswith("chiper_"):
                 bare = source_host.split("_", 1)[1]
             else:
                 bare = source_host.split(".", 1)[1] if "." in source_host else source_host
@@ -1801,7 +1801,7 @@ def rename_profile(old_name: str, new_name: str) -> Path:
 def resolve_profile_env(profile_name: str) -> str:
     """Resolve a profile name to a CHIPER_HOME path string.
 
-    Called early in the CLI entry point, before any hermes modules
+    Called early in the CLI entry point, before any chiper modules
     are imported, to set the CHIPER_HOME environment variable.
     """
     canon = normalize_profile_name(profile_name)
@@ -1811,7 +1811,7 @@ def resolve_profile_env(profile_name: str) -> str:
     if canon != "default" and not profile_dir.is_dir():
         raise FileNotFoundError(
             f"Profile '{canon}' does not exist. "
-            f"Create it with: hermes profile create {canon}"
+            f"Create it with: chiper profile create {canon}"
         )
 
     return str(profile_dir)

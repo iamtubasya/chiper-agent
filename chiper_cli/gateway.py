@@ -1,5 +1,5 @@
 """
-Gateway subcommand for hermes CLI.
+Gateway subcommand for chiper CLI.
 
 Handles: chiper gateway [run|start|stop|restart|status|install|uninstall|setup]
 """
@@ -34,7 +34,7 @@ from chiper_cli.config import (
 )
 
 # display_chiper_home is imported lazily at call sites to avoid ImportError
-# when hermes_constants is cached from a pre-update version during `chiper update`.
+# when chiper_constants is cached from a pre-update version during `chiper update`.
 from chiper_cli.setup import (
     print_header,
     print_info,
@@ -282,7 +282,7 @@ def _get_ancestor_pids() -> set[int]:
 
     Walks from the current PID up to PID 1 (init) so that process-table scans
     never match the calling CLI process or any of its parents.  This prevents
-    ``chiper gateway status`` from falsely counting the ``hermes`` CLI that
+    ``chiper gateway status`` from falsely counting the ``chiper`` CLI that
     invoked it as a running gateway instance (see #13242).
     """
     ancestors: set[int] = set()
@@ -329,10 +329,10 @@ def _scan_gateway_pids(exclude_pids: set[int], all_profiles: bool = False) -> li
         "chiper gateway",
         # Windows: only match invocations that actually carry the ``gateway``
         # subcommand or the gateway-dedicated console-script shim. Bare
-        # ``hermes.exe --profile`` / ``hermes.exe -p`` would also match
-        # ``hermes.exe --profile foo dashboard`` and other CLI subcommands,
+        # ``chiper.exe --profile`` / ``chiper.exe -p`` would also match
+        # ``chiper.exe --profile foo dashboard`` and other CLI subcommands,
         # producing false-positive gateway PIDs (Copilot review).
-        "hermes.exe gateway",
+        "chiper.exe gateway",
         "chiper-gateway.exe",
         "gateway/run.py",
     ]
@@ -1357,7 +1357,7 @@ def _systemd_operational(system: bool = False) -> bool:
 def _container_systemd_operational() -> bool:
     """Return True when a container exposes working user or system systemd.
 
-    This is NOT our Hermes Docker image — that one runs s6-overlay as
+    This is NOT our Chiper Docker image — that one runs s6-overlay as
     PID 1 (since Phase 2 of the s6-overlay supervision plan) and is
     detected via ``service_manager.detect_service_manager() == "s6"``.
     This function handles the "container managed by something else"
@@ -1460,7 +1460,7 @@ def _profile_arg(chiper_home: str | None = None, default_root: str | Path | None
         chiper_home: Optional explicit CHIPER_HOME path. Defaults to the current
             ``get_chiper_home()`` value. Should be passed when generating a
             service definition for a different user (e.g. system service).
-        default_root: Optional Hermes root to compare against. Used when
+        default_root: Optional Chiper root to compare against. Used when
             generating a system service for another user from a sudo/root
             process, where ``Path.home()`` and ``get_default_chiper_root()``
             refer to root but the target profile lives under the service user.
@@ -1760,11 +1760,11 @@ def has_conflicting_systemd_units() -> bool:
     return len(get_installed_systemd_scopes()) > 1
 
 
-# Legacy service names from older Hermes installs that predate the
+# Legacy service names from older Chiper installs that predate the
 # chiper-gateway rename. Kept as an explicit allowlist (NOT a glob) so
 # profile units (chiper-gateway-*.service) and unrelated third-party
-# "hermes" units are never matched.
-_LEGACY_SERVICE_NAMES: tuple[str, ...] = ("hermes.service",)
+# "chiper" units are never matched.
+_LEGACY_SERVICE_NAMES: tuple[str, ...] = ("chiper.service",)
 
 # ExecStart content markers that identify a unit as running our gateway.
 # A legacy unit is only flagged when its file contains one of these.
@@ -1789,11 +1789,11 @@ def _legacy_unit_search_paths() -> list[tuple[bool, Path]]:
     ]
 
 
-def _find_legacy_hermes_units() -> list[tuple[str, Path, bool]]:
-    """Return ``[(unit_name, unit_path, is_system)]`` for legacy Hermes gateway units.
+def _find_legacy_chiper_units() -> list[tuple[str, Path, bool]]:
+    """Return ``[(unit_name, unit_path, is_system)]`` for legacy Chiper gateway units.
 
-    Detects unit files installed by older Hermes versions that used a
-    different service name (e.g. ``hermes.service`` before the rename to
+    Detects unit files installed by older Chiper versions that used a
+    different service name (e.g. ``chiper.service`` before the rename to
     ``chiper-gateway.service``). When both a legacy unit and the current
     ``chiper-gateway.service`` are active, they fight over the same bot
     token — the PR #5646 signal-recovery change turns this into a 30-second
@@ -1803,9 +1803,9 @@ def _find_legacy_hermes_units() -> list[tuple[str, Path, bool]]:
 
     * Explicit allowlist of legacy names (no globbing). Profile units such
       as ``chiper-gateway-coder.service`` and unrelated third-party
-      ``hermes-*`` services are never matched.
+      ``chiper-*`` services are never matched.
     * ExecStart content check — only flag units that invoke our gateway
-      entrypoint. A user-created ``hermes.service`` running an unrelated
+      entrypoint. A user-created ``chiper.service`` running an unrelated
       binary is left untouched.
     * Results are returned purely for caller inspection; this function
       never mutates or removes anything.
@@ -1827,21 +1827,21 @@ def _find_legacy_hermes_units() -> list[tuple[str, Path, bool]]:
     return results
 
 
-def has_legacy_hermes_units() -> bool:
-    """Return True when any legacy Hermes gateway unit files exist."""
-    return bool(_find_legacy_hermes_units())
+def has_legacy_chiper_units() -> bool:
+    """Return True when any legacy Chiper gateway unit files exist."""
+    return bool(_find_legacy_chiper_units())
 
 
 def print_legacy_unit_warning() -> None:
-    """Warn about legacy Hermes gateway unit files if any are installed.
+    """Warn about legacy Chiper gateway unit files if any are installed.
 
     Idempotent: prints nothing when no legacy units are detected. Safe to
     call from any status/install/setup path.
     """
-    legacy = _find_legacy_hermes_units()
+    legacy = _find_legacy_chiper_units()
     if not legacy:
         return
-    print_warning("Legacy Hermes gateway unit(s) detected from an older install:")
+    print_warning("Legacy Chiper gateway unit(s) detected from an older install:")
     for name, path, is_system in legacy:
         scope = "system" if is_system else "user"
         print_info(f"    {path}  ({scope} scope)")
@@ -1851,13 +1851,13 @@ def print_legacy_unit_warning() -> None:
     print_info("    chiper gateway migrate-legacy")
 
 
-def remove_legacy_hermes_units(
+def remove_legacy_chiper_units(
     interactive: bool = True,
     dry_run: bool = False,
 ) -> tuple[int, list[Path]]:
-    """Stop, disable, and remove legacy Hermes gateway unit files.
+    """Stop, disable, and remove legacy Chiper gateway unit files.
 
-    Iterates over whatever ``_find_legacy_hermes_units()`` returns — which is
+    Iterates over whatever ``_find_legacy_chiper_units()`` returns — which is
     an explicit allowlist of legacy names (not a glob). Profile units and
     unrelated third-party services are never touched.
 
@@ -1871,16 +1871,16 @@ def remove_legacy_hermes_units(
         ``(removed_count, remaining_paths)`` — remaining includes units we
         couldn't remove (typically system-scope when not running as root).
     """
-    legacy = _find_legacy_hermes_units()
+    legacy = _find_legacy_chiper_units()
     if not legacy:
-        print("No legacy Hermes gateway units found.")
+        print("No legacy Chiper gateway units found.")
         return 0, []
 
     user_units = [(n, p) for n, p, is_sys in legacy if not is_sys]
     system_units = [(n, p) for n, p, is_sys in legacy if is_sys]
 
     print()
-    print("Legacy Hermes gateway unit(s) found:")
+    print("Legacy Chiper gateway unit(s) found:")
     for name, path, is_system in legacy:
         scope = "system" if is_system else "user"
         print(f"  {path}  ({scope} scope)")
@@ -2054,7 +2054,7 @@ def install_linux_gateway_from_setup(force: bool = False, enable_on_startup: boo
         run_as_user = _default_system_service_user()
         if os.geteuid() != 0:  # windows-footgun: ok — Linux systemd install wizard, never invoked on Windows
             print_warning(
-                "  System service install requires sudo, so Hermes can't create it from this user session."
+                "  System service install requires sudo, so Chiper can't create it from this user session."
             )
             if run_as_user:
                 print_info(
@@ -2151,7 +2151,7 @@ def print_systemd_linger_guidance() -> None:
 def _launchd_user_home() -> Path:
     """Return the real macOS user home for launchd artifacts.
 
-    Profile-mode Hermes often sets ``HOME`` to a profile-scoped directory, but
+    Profile-mode Chiper often sets ``HOME`` to a profile-scoped directory, but
     launchd user agents still live under the actual account home.
     """
     import pwd
@@ -2278,7 +2278,7 @@ def _remap_path_for_user(path: str, target_home_dir: str) -> str:
     to *target_home_dir*; otherwise the path is returned unchanged.
 
       /root/.chiperflux/chiper-agent  -> /home/alice/.chiperflux/chiper-agent
-      /opt/hermes                 -> /opt/hermes  (kept as-is)
+      /opt/chiper                 -> /opt/chiper  (kept as-is)
 
     Note: this function intentionally does NOT resolve symlinks. A venv's
     ``bin/python`` is typically a symlink to the base interpreter (e.g. a
@@ -2304,23 +2304,23 @@ def _chiper_home_for_target_user(target_home_dir: str) -> str:
     root's home.  This translates it to the target user's equivalent path:
       /root/.chiperflux                    → /home/alice/.chiperflux
       /root/.chiperflux/profiles/coder     → /home/alice/.chiperflux/profiles/coder
-      /opt/custom-hermes               → /opt/custom-hermes  (kept as-is)
+      /opt/custom-chiper               → /opt/custom-chiper  (kept as-is)
     """
-    current_hermes = get_chiper_home().resolve()
+    current_chiper = get_chiper_home().resolve()
     current_default = (Path.home() / ".chiperflux").resolve()
     target_default = Path(target_home_dir) / ".chiperflux"
 
     # Default ~/.chiperflux → remap to target user's default
-    if current_hermes == current_default:
+    if current_chiper == current_default:
         return str(target_default)
 
     # Profile or subdir of ~/.chiperflux → preserve the relative structure
     try:
-        relative = current_hermes.relative_to(current_default)
+        relative = current_chiper.relative_to(current_default)
         return str(target_default / relative)
     except ValueError:
         # Completely custom path (not under ~/.chiperflux) — keep as-is
-        return str(current_hermes)
+        return str(current_chiper)
 
 
 def _build_service_path_dirs(project_root: Path | None = None) -> list[str]:
@@ -2347,12 +2347,12 @@ def _build_service_path_dirs(project_root: Path | None = None) -> list[str]:
         candidates.append(str(node_bin))
 
     chiper_home = get_chiper_home()
-    hermes_node = chiper_home / "node" / "bin"
-    if _is_dir(hermes_node):
-        candidates.append(str(hermes_node))
-    hermes_nm = chiper_home / "node_modules" / ".bin"
-    if _is_dir(hermes_nm):
-        candidates.append(str(hermes_nm))
+    chiper_node = chiper_home / "node" / "bin"
+    if _is_dir(chiper_node):
+        candidates.append(str(chiper_node))
+    chiper_nm = chiper_home / "node_modules" / ".bin"
+    if _is_dir(chiper_nm):
+        candidates.append(str(chiper_nm))
 
     return candidates
 
@@ -2539,7 +2539,7 @@ def _normalize_launchd_plist_for_comparison(text: str) -> str:
     normalized = _normalize_service_definition(text)
     return re.sub(
         r"(<key>PATH</key>\s*<string>)(.*?)(</string>)",
-        r"\1__HERMES_PATH__\3",
+        r"\1__CHIPER_PATH__\3",
         normalized,
         flags=re.S,
     )
@@ -2576,7 +2576,7 @@ def _temp_home_in_service_definition(definition: str) -> str | None:
     the gateway comes back "active (running)" but pointed at an empty temp
     home ("No messaging platforms enabled"), deaf to every platform.
     Seen live 2026-06-11: an E2E guard probe ran ``chiper gateway restart``
-    with ``CHIPER_HOME=/tmp/hermes-e2e-<pr>`` exported; the restart path's
+    with ``CHIPER_HOME=/tmp/chiper-e2e-<pr>`` exported; the restart path's
     unit refresh baked the temp path into the production unit and the
     post-update restart produced a zombie gateway for 7+ hours.
 
@@ -2637,7 +2637,7 @@ def refresh_systemd_unit_if_needed(system: bool = False) -> bool:
     # The user-scope unit path resolves under ``Path.home()``, which is NOT
     # sandboxed by the test conftest (only CHIPER_HOME is). If a test
     # exercises ``run_gateway()`` with a pytest-tmp CHIPER_HOME, the freshly
-    # generated unit bakes that ``/tmp/pytest-of-.../hermes_test`` path into
+    # generated unit bakes that ``/tmp/pytest-of-.../chiper_test`` path into
     # ``Environment="CHIPER_HOME=..."``. Writing that to the developer's
     # real user systemd unit file silently breaks their gateway on the next
     # reboot (systemd loads the polluted env, the gateway looks at an empty
@@ -2649,13 +2649,13 @@ def refresh_systemd_unit_if_needed(system: bool = False) -> bool:
     # still works.
     if not system and (
         "/pytest-of-" in new_unit
-        or '/hermes_test"' in new_unit
-        or "/hermes_test/" in new_unit
+        or '/chiper_test"' in new_unit
+        or "/chiper_test/" in new_unit
     ):
         return False
 
     # Structural variant of the same belt: refuse to bake ANY temp-dir
-    # CHIPER_HOME into the unit (manual E2E homes like /tmp/hermes-e2e-NNN
+    # CHIPER_HOME into the unit (manual E2E homes like /tmp/chiper-e2e-NNN
     # don't carry the pytest markers above but poison the unit identically).
     if _refuse_temp_home_service_write(new_unit, "systemd unit"):
         return False
@@ -2663,7 +2663,7 @@ def refresh_systemd_unit_if_needed(system: bool = False) -> bool:
     unit_path.write_text(new_unit, encoding="utf-8")
     _run_systemctl(["daemon-reload"], system=system, check=True, timeout=30)
     print(
-        f"↻ Updated gateway {_service_scope_label(system)} service definition to match the current Hermes install"
+        f"↻ Updated gateway {_service_scope_label(system)} service definition to match the current Chiper install"
     )
     return True
 
@@ -2797,17 +2797,17 @@ def systemd_install(
     if system:
         _require_root_for_system_service("install")
 
-    # Offer to remove legacy units (hermes.service from pre-rename installs)
+    # Offer to remove legacy units (chiper.service from pre-rename installs)
     # before installing the new chiper-gateway.service. If both remain, they
     # flap-fight for the Telegram bot token on every gateway startup.
     # Only removes units matching _LEGACY_SERVICE_NAMES + our ExecStart
     # signature — profile units are never touched.
-    if has_legacy_hermes_units():
+    if has_legacy_chiper_units():
         print()
         print_legacy_unit_warning()
         print()
         if prompt_yes_no("Remove the legacy unit(s) before installing?", True):
-            remove_legacy_hermes_units(interactive=False)
+            remove_legacy_chiper_units(interactive=False)
             print()
 
     unit_path = get_systemd_unit_path(system=system)
@@ -3051,7 +3051,7 @@ def systemd_status(deep: bool = False, system: bool = False, full: bool = False)
         print_systemd_scope_conflict_warning()
         print()
 
-    if has_legacy_hermes_units():
+    if has_legacy_chiper_units():
         print_legacy_unit_warning()
         print()
 
@@ -3526,7 +3526,7 @@ def refresh_launchd_plist_if_needed() -> bool:
         timeout=30,
     )
     print(
-        "↻ Updated gateway launchd service definition to match the current Hermes install"
+        "↻ Updated gateway launchd service definition to match the current Chiper install"
     )
     return True
 
@@ -3805,9 +3805,9 @@ def launchd_status(deep: bool = False):
 
     print(f"Launchd plist: {plist_path}")
     if launchd_plist_is_current():
-        print("✓ Service definition matches the current Hermes install")
+        print("✓ Service definition matches the current Chiper install")
     else:
-        print("⚠ Service definition is stale relative to the current Hermes install")
+        print("⚠ Service definition is stale relative to the current Chiper install")
         print("  Run: chiper gateway start")
 
     if loaded:
@@ -3837,7 +3837,7 @@ def _truthy_env(value: str | None) -> bool:
 
 def _is_official_docker_checkout() -> bool:
     return (
-        str(PROJECT_ROOT) == "/opt/hermes"
+        str(PROJECT_ROOT) == "/opt/chiper"
         and (PROJECT_ROOT / "docker" / "entrypoint.sh").is_file()
     )
 
@@ -3950,9 +3950,9 @@ def _guard_official_docker_root_gateway() -> None:
         "Refusing to run the Chiper gateway as root inside the official Docker image."
     )
     print(
-        "  The image entrypoint normally drops privileges to the 'hermes' user. "
+        "  The image entrypoint normally drops privileges to the 'chiper' user. "
         "If you override entrypoint in Docker Compose, include "
-        "/opt/hermes/docker/entrypoint.sh before the Chiper command."
+        "/opt/chiper/docker/entrypoint.sh before the Chiper command."
     )
     print(
         "  Running the gateway as root can leave root-owned files in "
@@ -4233,7 +4233,7 @@ _PLATFORMS = [
             "3. Get an access token: Element → Settings → Help & About → Access Token",
             "   Or via API: curl -X POST https://your-server/_matrix/client/v3/login \\",
             '     -d \'{"type":"m.login.password","user":"@bot:server","password":"..."}\'',
-            "4. Alternatively, provide user ID + password and Hermes will log in directly",
+            "4. Alternatively, provide user ID + password and Chiper will log in directly",
             "5. For E2EE: set MATRIX_ENCRYPTION=true (requires pip install 'mautrix[encryption]')",
             "6. To find your user ID: it's @username:your-server (shown in Element profile)",
         ],
@@ -4254,7 +4254,7 @@ _PLATFORMS = [
                 "name": "MATRIX_USER_ID",
                 "prompt": "User ID (@bot:server — required for password login)",
                 "password": False,
-                "help": "Full Matrix user ID, e.g. @hermes:matrix.example.org",
+                "help": "Full Matrix user ID, e.g. @chiper:matrix.example.org",
             },
             {
                 "name": "MATRIX_ALLOWED_USERS",
@@ -4279,7 +4279,7 @@ _PLATFORMS = [
         "setup_instructions": [
             "1. In Mattermost: Integrations → Bot Accounts → Add Bot Account",
             "   (System Console → Integrations → Bot Accounts must be enabled)",
-            "2. Give it a username (e.g. hermes) and copy the bot token",
+            "2. Give it a username (e.g. chiper) and copy the bot token",
             "3. Works with any self-hosted Mattermost instance — enter your server URL",
             "4. To find your user ID: click your avatar (top-left) → Profile",
             "   Your user ID is displayed there — click it to copy.",
@@ -4310,7 +4310,7 @@ _PLATFORMS = [
                 "name": "MATTERMOST_HOME_CHANNEL",
                 "prompt": "Home channel ID (for cron/notification delivery, or empty to set later with /set-home)",
                 "password": False,
-                "help": "Channel ID where Hermes delivers cron results and notifications.",
+                "help": "Channel ID where Chiper delivers cron results and notifications.",
             },
             {
                 "name": "MATTERMOST_REPLY_MODE",
@@ -4338,7 +4338,7 @@ _PLATFORMS = [
         "emoji": "📧",
         "token_var": "EMAIL_ADDRESS",
         "setup_instructions": [
-            "1. Use a dedicated email account for your Hermes agent",
+            "1. Use a dedicated email account for your Chiper agent",
             "2. For Gmail: enable 2FA, then create an App Password at",
             "   https://myaccount.google.com/apppasswords",
             "3. For other providers: use your email password or app-specific password",
@@ -4349,7 +4349,7 @@ _PLATFORMS = [
                 "name": "EMAIL_ADDRESS",
                 "prompt": "Email address",
                 "password": False,
-                "help": "The email address Hermes will use (e.g., hermes@gmail.com).",
+                "help": "The email address Chiper will use (e.g., chiper@gmail.com).",
             },
             {
                 "name": "EMAIL_PASSWORD",
@@ -4620,9 +4620,9 @@ _PLATFORMS = [
             "2. Complete the BlueBubbles setup wizard — sign in with your Apple ID",
             "3. In BlueBubbles Settings → API, note the Server URL and password",
             "4. The server URL is typically http://<your-mac-ip>:1234",
-            "5. Hermes connects via the BlueBubbles REST API and receives",
+            "5. Chiper connects via the BlueBubbles REST API and receives",
             "   incoming messages via a local webhook",
-            "6. To authorize users, use DM pairing: hermes pairing generate bluebubbles",
+            "6. To authorize users, use DM pairing: chiper pairing generate bluebubbles",
             "   Share the code — the user sends it via iMessage to get approved",
         ],
         "vars": [
@@ -4701,7 +4701,7 @@ _PLATFORMS = [
             "1. Download the Yuanbao app from https://yuanbao.tencent.com/",
             "2. In the app, go to PAI → My Bot and create a new bot",
             "3. After the bot is created, copy the App ID and App Secret",
-            "4. Enter them below and Hermes will connect automatically over WebSocket",
+            "4. Enter them below and Chiper will connect automatically over WebSocket",
         ],
         "vars": [
             {
@@ -4737,7 +4737,7 @@ def _all_platforms() -> list[dict]:
         ``mautrix[encryption]`` -> ``python-olm``, which has no Windows
         wheel and needs ``make`` + libolm to build from sdist. There's
         no native Windows path that works, so we don't offer it in the
-        picker. Users who want Matrix on Windows can run hermes under
+        picker. Users who want Matrix on Windows can run chiper under
         WSL.
     """
     # Populate the registry so plugin platforms are visible. Idempotent.
@@ -5021,7 +5021,7 @@ def _setup_standard_platform(platform: dict):
                         "  DM pairing mode — users will receive a code to request access."
                     )
                     print_info(
-                        "  Approve with: hermes pairing approve <platform> <code>"
+                        "  Approve with: chiper pairing approve <platform> <code>"
                     )
                 else:
                     print_info(
@@ -5229,7 +5229,7 @@ def _setup_wecom():
             print_success(
                 "  DM pairing mode — users will receive a code to request access."
             )
-            print_info("  Approve with: hermes pairing approve <platform> <code>")
+            print_info("  Approve with: chiper pairing approve <platform> <code>")
         elif access_idx == 2:
             save_env_value("WECOM_DM_POLICY", "disabled")
             print_warning("  Direct messages disabled.")
@@ -5326,10 +5326,10 @@ def _setup_weixin():
     print()
     print(color("  ─── 💬 Weixin / WeChat Setup ───", Colors.CYAN))
     print()
-    print_info("  1. Hermes will open Tencent iLink QR login in this terminal.")
+    print_info("  1. Chiper will open Tencent iLink QR login in this terminal.")
     print_info("  2. Use WeChat to scan and confirm the QR code.")
     print_info(
-        "  3. Hermes will store the returned account_id/token in ~/.chiperflux/.env."
+        "  3. Chiper will store the returned account_id/token in ~/.chiperflux/.env."
     )
     print_info(
         "  4. This adapter supports native text, image, video, and document delivery."
@@ -5837,7 +5837,7 @@ def _setup_signal():
         print_info("    Docker: bbernhard/signal-cli-rest-api")
         print()
         print_info("  After installing, link your account and start the daemon:")
-        print_info('    signal-cli link -n "HermesAgent"')
+        print_info('    signal-cli link -n "ChiperAgent"')
         print_info("    signal-cli --account +YOURNUMBER daemon --http 127.0.0.1:8080")
         print()
 
@@ -6063,7 +6063,7 @@ def gateway_setup():
         print_systemd_scope_conflict_warning()
         print()
 
-    if supports_systemd_services() and has_legacy_hermes_units():
+    if supports_systemd_services() and has_legacy_chiper_units():
         print_legacy_unit_warning()
         print()
 
@@ -6248,7 +6248,7 @@ def gateway_setup():
                 print_info("  WSL detected but systemd is not running.")
                 print_info("  Run in foreground: chiper gateway run")
                 print_info(
-                    "  For persistence:   tmux new -s hermes 'chiper gateway run'"
+                    "  For persistence:   tmux new -s chiper 'chiper gateway run'"
                 )
                 print_info(
                     "  To enable systemd: add systemd=true to /etc/wsl.conf, then 'wsl --shutdown'"
@@ -6465,8 +6465,8 @@ def _maybe_redirect_run_to_s6_supervision(args) -> bool:
     # `docker stop` sends SIGTERM, at which point /init runs stage 3
     # shutdown (which tears down the supervised gateway cleanly).
     #
-    # Prefer `sleep infinity` (matches the static main-hermes service's
-    # pattern in docker/s6-rc.d/main-hermes/run, and frees the Python
+    # Prefer `sleep infinity` (matches the static main-chiper service's
+    # pattern in docker/s6-rc.d/main-chiper/run, and frees the Python
     # interpreter — the heartbeat is a tiny `sleep` process, not a
     # resident interpreter). But `os.execvp` does a PATH lookup for the
     # `sleep` binary and historically crashed the whole container with
@@ -6553,7 +6553,7 @@ def _gateway_command_inner(args):
                     "  Consider running in foreground instead: chiper gateway run"
                 )
                 print_info(
-                    "  Or use tmux/screen for persistence: tmux new -s hermes 'chiper gateway run'"
+                    "  Or use tmux/screen for persistence: tmux new -s chiper 'chiper gateway run'"
                 )
                 print()
             start_now = prompt_yes_no("Start the gateway now after installing the service?", True)
@@ -6588,7 +6588,7 @@ def _gateway_command_inner(args):
                 "  chiper gateway run                              # direct foreground"
             )
             print(
-                "  tmux new -s hermes 'chiper gateway run'         # persistent via tmux"
+                "  tmux new -s chiper 'chiper gateway run'         # persistent via tmux"
             )
             print(
                 "  nohup chiper gateway run > ~/.chiperflux/logs/gateway.log 2>&1 &  # background"
@@ -6602,9 +6602,9 @@ def _gateway_command_inner(args):
             if detect_service_manager() == "s6":
                 print("Per-profile gateways are auto-registered when you create a profile.")
                 print()
-                print("  hermes profile create <name>     # creates the s6 service slot")
+                print("  chiper profile create <name>     # creates the s6 service slot")
                 print("  chiper -p <name> gateway start   # bring it up via s6")
-                print("  hermes status                    # see currently-supervised gateways")
+                print("  chiper status                    # see currently-supervised gateways")
                 return
             # Fallback for pre-s6 containers or other container runtimes
             # we haven't taught about supervision (Podman without our
@@ -6651,7 +6651,7 @@ def _gateway_command_inner(args):
             if detect_service_manager() == "s6":
                 print("Per-profile gateways are auto-unregistered when you delete the profile.")
                 print()
-                print("  hermes profile delete <name>     # tears down the s6 service slot")
+                print("  chiper profile delete <name>     # tears down the s6 service slot")
                 print("  chiper -p <name> gateway stop    # stop without deleting the profile")
                 return
             print("Service uninstall is not applicable inside a Docker container.")
@@ -6707,7 +6707,7 @@ def _gateway_command_inner(args):
                 "  chiper gateway run                              # direct foreground"
             )
             print(
-                "  tmux new -s hermes 'chiper gateway run'         # persistent via tmux"
+                "  tmux new -s chiper 'chiper gateway run'         # persistent via tmux"
             )
             print(
                 "  nohup chiper gateway run > ~/.chiperflux/logs/gateway.log 2>&1 &  # background"
@@ -6738,7 +6738,7 @@ def _gateway_command_inner(args):
     elif subcmd == "stop":
         # Defense: refuse self-targeting gateway stop from inside the gateway.
         # Prevents agent-initiated kill loops when combined with supervisor KeepAlive.
-        if os.getenv("_HERMES_GATEWAY") == "1":
+        if os.getenv("_CHIPER_GATEWAY") == "1":
             print_error(
                 "Refusing to stop the gateway from inside the gateway process.\n"
                 "This command was blocked to prevent restart loops.\n"
@@ -6831,7 +6831,7 @@ def _gateway_command_inner(args):
     elif subcmd == "restart":
         # Defense: refuse self-targeting gateway restart from inside the gateway.
         # Prevents agent-initiated kill loops when combined with supervisor KeepAlive.
-        if os.getenv("_HERMES_GATEWAY") == "1":
+        if os.getenv("_CHIPER_GATEWAY") == "1":
             print_error(
                 "Refusing to restart the gateway from inside the gateway process.\n"
                 "This command was blocked to prevent restart loops.\n"
@@ -7062,7 +7062,7 @@ def _gateway_command_inner(args):
                     )
                 elif is_wsl():
                     print(
-                        "  tmux new -s hermes 'chiper gateway run'         # persistent via tmux"
+                        "  tmux new -s chiper 'chiper gateway run'         # persistent via tmux"
                     )
                     print(
                         "  nohup chiper gateway run > ~/.chiperflux/logs/gateway.log 2>&1 &  # background"
@@ -7084,12 +7084,12 @@ def _gateway_command_inner(args):
         _gateway_list()
 
     elif subcmd == "migrate-legacy":
-        # Stop, disable, and remove legacy Hermes gateway unit files from
-        # pre-rename installs (e.g. hermes.service). Profile units and
+        # Stop, disable, and remove legacy Chiper gateway unit files from
+        # pre-rename installs (e.g. chiper.service). Profile units and
         # unrelated third-party services are never touched.
         dry_run = getattr(args, "dry_run", False)
         yes = getattr(args, "yes", False)
         if not supports_systemd_services() and not is_macos():
             print("Legacy unit migration only applies to systemd-based Linux hosts.")
             return
-        remove_legacy_hermes_units(interactive=not yes, dry_run=dry_run)
+        remove_legacy_chiper_units(interactive=not yes, dry_run=dry_run)

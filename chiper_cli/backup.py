@@ -1,5 +1,5 @@
 """
-Backup and import commands for hermes CLI.
+Backup and import commands for chiper CLI.
 
 `chiper backup` creates a zip archive of the entire ~/.chiperflux/ directory
 (excluding the chiper-agent repo and transient files).
@@ -102,7 +102,7 @@ _SECRET_FILE_NAMES = {".env", "auth.json", "state.db"}
 
 
 def _should_exclude(rel_path: Path) -> bool:
-    """Return True if *rel_path* (relative to hermes root) should be skipped."""
+    """Return True if *rel_path* (relative to chiper root) should be skipped."""
     parts = rel_path.parts
 
     for part in parts:
@@ -184,10 +184,10 @@ def _format_size(nbytes: int) -> str:
 
 def run_backup(args) -> None:
     """Create a zip backup of the Chiper home directory."""
-    hermes_root = get_default_chiper_root()
+    chiper_root = get_default_chiper_root()
 
-    if not hermes_root.is_dir():
-        print(f"Error: Chiper home directory not found at {hermes_root}")
+    if not chiper_root.is_dir():
+        print(f"Error: Chiper home directory not found at {chiper_root}")
         sys.exit(1)
 
     # Determine output path
@@ -196,10 +196,10 @@ def run_backup(args) -> None:
         # If user gave a directory, put the zip inside it
         if out_path.is_dir():
             stamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
-            out_path = out_path / f"hermes-backup-{stamp}.zip"
+            out_path = out_path / f"chiper-backup-{stamp}.zip"
     else:
         stamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
-        out_path = Path.home() / f"hermes-backup-{stamp}.zip"
+        out_path = Path.home() / f"chiper-backup-{stamp}.zip"
 
     # Ensure the suffix is .zip
     if out_path.suffix.lower() != ".zip":
@@ -213,9 +213,9 @@ def run_backup(args) -> None:
     files_to_add: list[tuple[Path, Path]] = []  # (absolute, relative)
     skipped_dirs = set()
 
-    for dirpath, dirnames, filenames in os.walk(hermes_root, followlinks=False):
+    for dirpath, dirnames, filenames in os.walk(chiper_root, followlinks=False):
         dp = Path(dirpath)
-        rel_dir = dp.relative_to(hermes_root)
+        rel_dir = dp.relative_to(chiper_root)
 
         # Prune excluded directories in-place so os.walk doesn't descend
         # ``chiper-agent`` is only pruned at the root level; nested dirs
@@ -231,7 +231,7 @@ def run_backup(args) -> None:
 
         for fname in filenames:
             fpath = dp / fname
-            rel = fpath.relative_to(hermes_root)
+            rel = fpath.relative_to(chiper_root)
 
             if _should_skip_backup_file(fpath, rel, out_path):
                 continue
@@ -305,7 +305,7 @@ def run_backup(args) -> None:
         if len(errors) > 10:
             print(f"  ... and {len(errors) - 10} more")
 
-    print(f"\nRestore with: hermes import {out_path.name}")
+    print(f"\nRestore with: chiper import {out_path.name}")
 
 
 # ---------------------------------------------------------------------------
@@ -321,7 +321,7 @@ def _validate_backup_zip(zf: zipfile.ZipFile) -> tuple[bool, str]:
     if not names:
         return False, "zip archive is empty"
 
-    # Look for telltale files that a hermes home would have
+    # Look for telltale files that a chiper home would have
     markers = {"config.yaml", ".env", "state.db"}
     found = set()
     for n in names:
@@ -356,8 +356,8 @@ def _detect_prefix(zf: zipfile.ZipFile) -> str:
     first_parts = {p[0] for p in parts_list if len(p) > 1}
     if len(first_parts) == 1:
         prefix = first_parts.pop()
-        # Only strip if it looks like a hermes dir name
-        if prefix in {".chiperflux", "hermes"}:
+        # Only strip if it looks like a chiper dir name
+        if prefix in {".chiperflux", "chiper"}:
             return prefix + "/"
 
     return ""
@@ -375,7 +375,7 @@ def run_import(args) -> None:
         print(f"Error: Not a valid zip file: {zip_path}")
         sys.exit(1)
 
-    hermes_root = get_default_chiper_root()
+    chiper_root = get_default_chiper_root()
 
     with zipfile.ZipFile(zip_path, "r") as zf:
         # Validate
@@ -395,8 +395,8 @@ def run_import(args) -> None:
             print(f"Detected archive prefix: {prefix!r} (will be stripped)")
 
         # Check for existing installation
-        has_config = (hermes_root / "config.yaml").exists()
-        has_env = (hermes_root / ".env").exists()
+        has_config = (chiper_root / "config.yaml").exists()
+        has_env = (chiper_root / ".env").exists()
 
         if (has_config or has_env) and not args.force:
             print()
@@ -414,7 +414,7 @@ def run_import(args) -> None:
 
         # Extract
         print(f"\nImporting {file_count} files ...")
-        hermes_root.mkdir(parents=True, exist_ok=True)
+        chiper_root.mkdir(parents=True, exist_ok=True)
 
         errors = []
         restored = 0
@@ -441,11 +441,11 @@ def run_import(args) -> None:
                 skipped_runtime.append(rel)
                 continue
 
-            target = hermes_root / rel
+            target = chiper_root / rel
 
             # Security: reject absolute paths and traversals
             try:
-                target.resolve().relative_to(hermes_root.resolve())
+                target.resolve().relative_to(chiper_root.resolve())
             except ValueError:
                 errors.append(f"  {rel}: path traversal blocked")
                 continue
@@ -488,7 +488,7 @@ def run_import(args) -> None:
                 print(f"    ... and {len(skipped_runtime) - 10} more")
 
         # Post-import: restore profile wrapper scripts
-        profiles_dir = hermes_root / "profiles"
+        profiles_dir = chiper_root / "profiles"
         restored_profiles = []
         if profiles_dir.is_dir():
             try:
@@ -526,11 +526,11 @@ def run_import(args) -> None:
                 # chiper_cli.profiles might not be available (fresh install)
                 if any(profiles_dir.iterdir()):
                     print(f"\n  Profiles detected but aliases could not be created.")
-                    print(f"  Run: hermes profile list  (after installing hermes)")
+                    print(f"  Run: chiper profile list  (after installing chiper)")
 
         # Guidance
         print()
-        if not (hermes_root / "chiper-agent").is_dir():
+        if not (chiper_root / "chiper-agent").is_dir():
             print("Note: The chiper-agent codebase was not included in the backup.")
             print("  If this is a fresh install, run: chiper update")
 
@@ -544,7 +544,7 @@ def run_import(args) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Quick state snapshots (used by /snapshot slash command and hermes backup --quick)
+# Quick state snapshots (used by /snapshot slash command and chiper backup --quick)
 # ---------------------------------------------------------------------------
 
 # Critical state files to include in quick snapshots (relative to CHIPER_HOME).
@@ -872,7 +872,7 @@ def prune_quick_snapshots(
 
 
 def run_quick_backup(args) -> None:
-    """CLI entry point for hermes backup --quick."""
+    """CLI entry point for chiper backup --quick."""
     label = getattr(args, "label", None)
     snap_id = create_quick_snapshot(label=label)
     if snap_id:
@@ -888,8 +888,8 @@ def run_quick_backup(args) -> None:
 # Shared full-zip backup helper
 # ---------------------------------------------------------------------------
 
-def _write_full_zip_backup(out_path: Path, hermes_root: Path) -> Optional[Path]:
-    """Write a full zip snapshot of ``hermes_root`` to ``out_path``.
+def _write_full_zip_backup(out_path: Path, chiper_root: Path) -> Optional[Path]:
+    """Write a full zip snapshot of ``chiper_root`` to ``out_path``.
 
     Uses the same exclusion rules and SQLite safe-copy as :func:`run_backup`.
     Returns the output path on success, None on failure (nothing to back up,
@@ -897,7 +897,7 @@ def _write_full_zip_backup(out_path: Path, hermes_root: Path) -> Optional[Path]:
     """
     files_to_add: list[tuple[Path, Path]] = []
     try:
-        for dirpath, dirnames, filenames in os.walk(hermes_root, followlinks=False):
+        for dirpath, dirnames, filenames in os.walk(chiper_root, followlinks=False):
             dp = Path(dirpath)
             # Prune excluded directories in-place so os.walk doesn't descend
             dirnames[:] = [d for d in dirnames if d not in _EXCLUDED_DIRS]
@@ -905,7 +905,7 @@ def _write_full_zip_backup(out_path: Path, hermes_root: Path) -> Optional[Path]:
             for fname in filenames:
                 fpath = dp / fname
                 try:
-                    rel = fpath.relative_to(hermes_root)
+                    rel = fpath.relative_to(chiper_root)
                 except ValueError:
                     continue
 
@@ -1020,11 +1020,11 @@ def create_pre_update_backup(
     found or the backup could not be created.  Never raises — the caller
     (``chiper update``) should continue even if the backup fails.
     """
-    hermes_root = chiper_home or get_default_chiper_root()
-    if not hermes_root.is_dir():
+    chiper_root = chiper_home or get_default_chiper_root()
+    if not chiper_root.is_dir():
         return None
 
-    backup_dir = _pre_update_backup_dir(hermes_root)
+    backup_dir = _pre_update_backup_dir(chiper_root)
     try:
         backup_dir.mkdir(parents=True, exist_ok=True)
     except OSError as exc:
@@ -1034,7 +1034,7 @@ def create_pre_update_backup(
     stamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
     out_path = backup_dir / f"{_PRE_UPDATE_PREFIX}{stamp}.zip"
 
-    result = _write_full_zip_backup(out_path, hermes_root)
+    result = _write_full_zip_backup(out_path, chiper_root)
     if result is None:
         return None
 
@@ -1095,13 +1095,13 @@ def create_pre_migration_backup(
     to back up (fresh install) or the write failed.  Never raises — the
     caller decides whether to abort or proceed.
     """
-    hermes_root = chiper_home or get_default_chiper_root()
-    if not hermes_root.is_dir():
+    chiper_root = chiper_home or get_default_chiper_root()
+    if not chiper_root.is_dir():
         return None
 
     # Reuses the shared backups/ directory so `chiper import` and the
     # update-backup listing pick up pre-migration archives too.
-    backup_dir = _pre_update_backup_dir(hermes_root)
+    backup_dir = _pre_update_backup_dir(chiper_root)
     try:
         backup_dir.mkdir(parents=True, exist_ok=True)
     except OSError as exc:
@@ -1111,7 +1111,7 @@ def create_pre_migration_backup(
     stamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
     out_path = backup_dir / f"{_PRE_MIGRATION_PREFIX}{stamp}.zip"
 
-    result = _write_full_zip_backup(out_path, hermes_root)
+    result = _write_full_zip_backup(out_path, chiper_root)
     if result is None:
         return None
 

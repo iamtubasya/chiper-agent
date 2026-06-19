@@ -2,12 +2,12 @@
 Chiper CLI - Unified command-line interface for Chiper Agent.
 
 Provides subcommands for:
-- chiper chat          - Interactive chat (same as ./hermes)
+- chiper chat          - Interactive chat (same as ./chiper)
 - chiper gateway       - Run gateway in foreground
 - chiper gateway start - Start gateway service
 - chiper gateway stop  - Stop gateway service
 - chiper setup         - Interactive setup wizard
-- hermes status        - Show status of all components
+- chiper status        - Show status of all components
 - chiper cron          - Manage cron jobs
 """
 

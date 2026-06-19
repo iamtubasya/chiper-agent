@@ -33,27 +33,27 @@ Usage:
     chiper honcho tokens --dialectic N     # Set dialectic result char cap
     chiper honcho identity                 # Show AI peer identity representation
     chiper honcho identity <file>          # Seed AI peer identity from a file (SOUL.md etc.)
-    chiper honcho migrate                  # Step-by-step migration guide: OpenClaw native → Hermes + Honcho
-    hermes version             Show version
+    chiper honcho migrate                  # Step-by-step migration guide: OpenClaw native → Chiper + Honcho
+    chiper version             Show version
     chiper update              Update to latest version
-    hermes uninstall           Uninstall Chiper Agent
-    hermes acp                 Run as an ACP server for editor integration
+    chiper uninstall           Uninstall Chiper Agent
+    chiper acp                 Run as an ACP server for editor integration
     chiper sessions browse     Interactive session picker with search
 
-    hermes claw migrate --dry-run  # Preview migration without changes
+    chiper claw migrate --dry-run  # Preview migration without changes
 """
 
-# IMPORTANT: hermes_bootstrap must be the very first import — it sets up
+# IMPORTANT: chiper_bootstrap must be the very first import — it sets up
 # UTF-8 stdio on Windows so print()/subprocess children don't hit
 # UnicodeEncodeError with non-ASCII characters.  No-op on POSIX.
 #
-# Guarded against ModuleNotFoundError because ``hermes_bootstrap`` is a
+# Guarded against ModuleNotFoundError because ``chiper_bootstrap`` is a
 # top-level module registered via pyproject.toml's ``py-modules`` list.
 # When the user upgrades code via ``git pull`` (or ``chiper update``
 # crashes between ``git reset --hard`` and ``uv pip install -e .``), the
-# new code references ``hermes_bootstrap`` but the editable install's
+# new code references ``chiper_bootstrap`` but the editable install's
 # ``.pth`` file still points at the old set of top-level modules.  Without
-# this guard, hermes crashes on import and the user can't run
+# this guard, chiper crashes on import and the user can't run
 # ``chiper update`` to recover.  Missing the bootstrap means UTF-8 stdio
 # setup is skipped on Windows — degraded, not broken.  POSIX is unaffected.
 try:
@@ -66,7 +66,7 @@ import sys
 
 
 def _set_process_title() -> None:
-    """Set the process title to 'hermes' so tools like 'ps', 'top', and
+    """Set the process title to 'chiper' so tools like 'ps', 'top', and
     'htop' show the app name instead of 'python3.xx'.
 
     Purely cosmetic — non-fatal on any platform.
@@ -77,13 +77,13 @@ def _set_process_title() -> None:
       2. ctypes ``prctl(PR_SET_NAME)`` (Linux only, 15-char limit).
       3. ctypes ``pthread_setname_np`` (macOS only, kernel thread name —
          changes lldb/top but not ``ps aux``).
-      4. No-op on Windows (the .exe name is already ``hermes.exe``).
+      4. No-op on Windows (the .exe name is already ``chiper.exe``).
     """
     # Strategy 1: setproctitle (best — works on macOS, Linux, BSD)
     try:
         import setproctitle  # type: ignore[import-untyped]
 
-        setproctitle.setproctitle("hermes")
+        setproctitle.setproctitle("chiper")
         return
     except ImportError:
         pass
@@ -96,11 +96,11 @@ def _set_process_title() -> None:
         system = platform.system()
         if system == "Linux":
             libc = ctypes.CDLL("libc.so.6", use_errno=True)
-            libc.prctl(15, b"hermes", 0, 0, 0)  # PR_SET_NAME = 15
+            libc.prctl(15, b"chiper", 0, 0, 0)  # PR_SET_NAME = 15
         elif system == "Darwin":
             libc = ctypes.CDLL("libc.dylib", use_errno=True)
-            libc.pthread_setname_np(b"hermes")
-        # Windows: the .exe name is already ``hermes.exe`` — nothing to do.
+            libc.pthread_setname_np(b"chiper")
+        # Windows: the .exe name is already ``chiper.exe`` — nothing to do.
     except Exception:
         pass
 
@@ -305,7 +305,7 @@ from chiper_cli.subcommands.claw import build_claw_parser
 def _require_tty(command_name: str) -> None:
     """Exit with a clear error if stdin is not a terminal.
 
-    Interactive TUI commands (hermes tools, chiper setup, chiper model) use
+    Interactive TUI commands (chiper tools, chiper setup, chiper model) use
     curses or input() prompts that spin at 100% CPU when stdin is a pipe.
     This guard prevents accidental non-interactive invocation.
     """
@@ -325,7 +325,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 
 # ---------------------------------------------------------------------------
-# Profile override — MUST happen before any hermes module import.
+# Profile override — MUST happen before any chiper module import.
 #
 # Many modules cache CHIPER_HOME at import time (module-level constants).
 # We intercept --profile/-p from sys.argv here and set the env var so that
@@ -442,7 +442,7 @@ def _apply_profile_override() -> None:
     # only when it already points to a specific profile directory.  The
     # distinguishing heuristic: a profile path has "profiles" as its immediate
     # parent directory name (e.g. ~/.chiperflux/profiles/coder or
-    # /opt/data/profiles/coder).  If CHIPER_HOME points to the hermes root
+    # /opt/data/profiles/coder).  If CHIPER_HOME points to the chiper root
     # instead (e.g. systemd hardcodes CHIPER_HOME=/root/.chiperflux), we must
     # still read active_profile — the user may have switched profiles via
     # `chiper profile use` and the gateway should honour that choice.
@@ -452,7 +452,7 @@ def _apply_profile_override() -> None:
         if Path(chiper_home_env).parent.name == "profiles":
             return
 
-    # 2. If no flag, check active_profile in the hermes root.
+    # 2. If no flag, check active_profile in the chiper root.
     #
     # EXCEPTION: a supervised s6 gateway child (exported by the container
     # run-script as CHIPER_S6_SUPERVISED_CHILD=1) must NOT follow the sticky
@@ -492,7 +492,7 @@ def _apply_profile_override() -> None:
             print(f"Error: {exc}", file=sys.stderr)
             sys.exit(1)
         except Exception as exc:
-            # A bug in profiles.py must NEVER prevent hermes from starting
+            # A bug in profiles.py must NEVER prevent chiper from starting
             print(
                 f"Warning: profile override failed ({exc}), using default",
                 file=sys.stderr,
@@ -515,7 +515,7 @@ from chiper_cli.env_loader import load_chiper_dotenv
 load_chiper_dotenv(project_env=PROJECT_ROOT / ".env")
 
 # Bridge security.redact_secrets from config.yaml → CHIPER_REDACT_SECRETS env
-# var BEFORE hermes_logging imports agent.redact (which snapshots the flag at
+# var BEFORE chiper_logging imports agent.redact (which snapshots the flag at
 # module-import time). Without this, config.yaml's toggle is ignored because
 # the setup_logging() call below imports agent.redact, which reads the env var
 # exactly once. Env var in .env still wins — this is config.yaml fallback only.
@@ -545,7 +545,7 @@ try:
 except Exception:
     pass  # best-effort — redaction stays at default (enabled) on config errors
 
-# Initialize centralized file logging early — all `hermes` subcommands
+# Initialize centralized file logging early — all `chiper` subcommands
 # (chat, setup, gateway, config, etc.) write to agent.log + errors.log.
 # Dashboard entrypoints bootstrap with GUI mode so gui.log is always present
 # during GUI testing, including pre-dispatch startup failures.
@@ -572,7 +572,7 @@ if _FORCE_IPV4_EARLY:
 
         _apply_ipv4(force=True)
     except Exception:
-        pass  # best-effort — don't crash if hermes_constants not importable yet
+        pass  # best-effort — don't crash if chiper_constants not importable yet
 
 import logging
 import threading
@@ -769,7 +769,7 @@ def _has_any_provider_configured() -> bool:
     from chiper_cli.config import get_env_path, get_chiper_home, load_config
     from chiper_cli.auth import get_auth_status
 
-    # Determine whether Hermes itself has been explicitly configured (model
+    # Determine whether Chiper itself has been explicitly configured (model
     # in config that isn't the hardcoded default). Used below to gate external
     # tool credentials (Claude Code, Codex CLI) that shouldn't silently skip
     # the setup wizard on a fresh install.
@@ -784,7 +784,7 @@ def _has_any_provider_configured() -> bool:
         _model_name = model_cfg.strip()
     else:
         _model_name = ""
-    _has_hermes_config = _model_name and _model_name != _DEFAULT_MODEL
+    _has_chiper_config = _model_name and _model_name != _DEFAULT_MODEL
 
     # Check env vars (may be set by .env or shell).
     # OPENAI_BASE_URL alone counts — local models (vLLM, llama.cpp, etc.)
@@ -859,8 +859,8 @@ def _has_any_provider_configured() -> bool:
 
     # Check for Claude Code OAuth credentials (~/.claude/.credentials.json)
     # Only count these if Chiper has been explicitly configured — Claude Code
-    # being installed doesn't mean the user wants Hermes to use their tokens.
-    if _has_hermes_config:
+    # being installed doesn't mean the user wants Chiper to use their tokens.
+    if _has_chiper_config:
         try:
             from agent.anthropic_adapter import (
                 read_claude_code_credentials,
@@ -1166,14 +1166,14 @@ def _exec_in_container(container_info: dict, cli_args: list):
     On failure, OSError propagates naturally.
 
     Args:
-        container_info: dict with backend, container_name, exec_user, hermes_bin
-        cli_args: the original CLI arguments (everything after 'hermes')
+        container_info: dict with backend, container_name, exec_user, chiper_bin
+        cli_args: the original CLI arguments (everything after 'chiper')
     """
 
     backend = container_info["backend"]
     container_name = container_info["container_name"]
     exec_user = container_info["exec_user"]
-    hermes_bin = container_info["hermes_bin"]
+    chiper_bin = container_info["chiper_bin"]
 
     runtime = shutil.which(backend)
     if not runtime:
@@ -1215,14 +1215,14 @@ def _exec_in_container(container_info: dict, cli_args: list):
                     f'    commands = [{{ command = "{runtime}"; options = [ "NOPASSWD" ]; }}];\n'
                     f"  }}];\n"
                     f"\n"
-                    f"Or run: sudo hermes {' '.join(cli_args)}",
+                    f"Or run: sudo chiper {' '.join(cli_args)}",
                     file=sys.stderr,
                 )
                 sys.exit(1)
         else:
             print(
                 f"Error: container '{container_name}' not found via {backend}.\n"
-                f"The container may be running under root. Try: sudo hermes {' '.join(cli_args)}",
+                f"The container may be running under root. Try: sudo chiper {' '.join(cli_args)}",
                 file=sys.stderr,
             )
             sys.exit(1)
@@ -1243,7 +1243,7 @@ def _exec_in_container(container_info: dict, cli_args: list):
         + tty_flags
         + ["-u", exec_user]
         + env_flags
-        + [container_name, hermes_bin]
+        + [container_name, chiper_bin]
         + cli_args
     )
 
@@ -1428,7 +1428,7 @@ def _termux_workspace_install_context(
 
 
 def _tui_need_npm_install(root: Path) -> bool:
-    """True when @hermes/ink is missing or node_modules is behind package-lock.json.
+    """True when @chiper/ink is missing or node_modules is behind package-lock.json.
 
     Prebuilt bundle mode: when ``dist/entry.js`` exists and there is no
     ``package-lock.json`` (nix install layout only ships ``dist/`` +
@@ -1510,7 +1510,7 @@ def _tui_need_npm_install(root: Path) -> bool:
 
 _TUI_BUILD_INPUT_DIRS = (
     "src",
-    "packages/hermes-ink/src",
+    "packages/chiper-ink/src",
 )
 
 _TUI_BUILD_INPUT_FILES = (
@@ -1520,9 +1520,9 @@ _TUI_BUILD_INPUT_FILES = (
     "tsconfig.build.json",
     "babel.compiler.config.cjs",
     "scripts/build.mjs",
-    "packages/hermes-ink/package.json",
-    "packages/hermes-ink/index.js",
-    "packages/hermes-ink/text-input.js",
+    "packages/chiper-ink/package.json",
+    "packages/chiper-ink/index.js",
+    "packages/chiper-ink/text-input.js",
 )
 
 _TUI_BUILD_INPUT_SUFFIXES = frozenset(
@@ -1749,13 +1749,13 @@ def _make_tui_argv(tui_dir: Path, tui_dev: bool) -> tuple[list[str], Path]:
         did_install = True
 
     if tui_dev:
-        # Keep the local @hermes/ink package exports in sync with source.
-        # --dev runs src/entry.tsx directly, but @hermes/ink resolves through
-        # packages/hermes-ink/dist/entry-exports.js. If that dist bundle is
+        # Keep the local @chiper/ink package exports in sync with source.
+        # --dev runs src/entry.tsx directly, but @chiper/ink resolves through
+        # packages/chiper-ink/dist/entry-exports.js. If that dist bundle is
         # stale after a pull, newer hooks/components can exist in src while
         # being missing at runtime (e.g. useCursorAdvance). Prebuild it here.
         npm = _node_bin("npm")
-        ink_dir = tui_dir / "packages" / "hermes-ink"
+        ink_dir = tui_dir / "packages" / "chiper-ink"
         result = subprocess.run(
             [npm, "run", "build"],
             cwd=str(ink_dir),
@@ -1930,7 +1930,7 @@ def _launch_tui(
     except Exception:
         logger.debug("Failed to apply terminal config bridge for TUI launch", exc_info=True)
     active_session_fd, active_session_file = tempfile.mkstemp(
-        prefix="hermes-tui-active-session-", suffix=".json"
+        prefix="chiper-tui-active-session-", suffix=".json"
     )
     os.close(active_session_fd)
     env["CHIPER_TUI_ACTIVE_SESSION_FILE"] = active_session_file
@@ -2096,7 +2096,7 @@ def _sync_bundled_skills_quietly() -> None:
     skipped skills cost ~milliseconds, so calling this repeatedly is fine.
 
     Failures are swallowed because skills are an enhancement, not a hard
-    dependency. Hermes still functions without them; the user just sees an
+    dependency. Chiper still functions without them; the user just sees an
     empty skills library.
     """
     try:
@@ -2606,7 +2606,7 @@ def cmd_postinstall(args):
 
     stamp_install_method("pip")
 
-    print("⚕ Hermes post-install bootstrap")
+    print("⚕ Chiper post-install bootstrap")
     print()
 
     for dep in ("node", "browser", "ripgrep", "ffmpeg"):
@@ -3093,7 +3093,7 @@ def _clear_stale_openai_base_url():
 # ─────────────────────────────────────────────────────────────────────────────
 # Auxiliary model configuration
 #
-# Hermes uses lightweight "auxiliary" models for side tasks (vision analysis,
+# Chiper uses lightweight "auxiliary" models for side tasks (vision analysis,
 # context compression, web extraction, session search, etc.). Each task has
 # its own provider+model pair in config.yaml under `auxiliary.<task>`.
 #
@@ -3241,7 +3241,7 @@ def _aux_config_menu() -> None:
         print()
         print("  Side tasks (vision, compression, web extraction, etc.) default")
         print('  to your main chat model.  "auto" means "use my main model" —')
-        print("  Hermes only falls back to a lightweight backend (OpenRouter,")
+        print("  Chiper only falls back to a lightweight backend (OpenRouter,")
         print("  Nous Portal) if the main model is unavailable.  Override a")
         print("  task below if you want it pinned to a specific provider/model.")
         print()
@@ -3546,7 +3546,7 @@ def _prompt_custom_api_mode_selection(base_url: str, current_api_mode: str = "")
         (
             "",
             "Auto-detect",
-            "Use Hermes URL heuristics; best for standard OpenAI-compatible endpoints.",
+            "Use Chiper URL heuristics; best for standard OpenAI-compatible endpoints.",
         ),
         (
             "chat_completions",
@@ -3772,7 +3772,7 @@ def _remove_custom_provider(config):
 # Lazy-export the model catalog at module level. Tests and a handful of
 # downstream call sites read `chiper_cli.main._PROVIDER_MODELS` directly,
 # so the symbol needs to be reachable as a module attribute. But importing
-# the catalog eagerly costs ~55ms on every `hermes` invocation — including
+# the catalog eagerly costs ~55ms on every `chiper` invocation — including
 # fast paths like `chiper --version` and slash-command dispatch that never
 # touch the catalog. PEP 562 module-level __getattr__ defers the import
 # until first attribute access, so the cost is only paid by callers that
@@ -4030,7 +4030,7 @@ def _run_anthropic_oauth_flow(save_env_value):
             from chiper_constants import display_chiper_home as _dhh_fn
 
             print(
-                f"    Hermes will use Claude's credential store directly instead of copying a setup-token into {_dhh_fn()}/.env."
+                f"    Chiper will use Claude's credential store directly instead of copying a setup-token into {_dhh_fn()}/.env."
             )
             return True
         return False
@@ -4153,7 +4153,7 @@ def cmd_slack(args):
     if sub in {None, ""}:
         # No subcommand — print usage hint.
         print(
-            "usage: hermes slack <subcommand>\n"
+            "usage: chiper slack <subcommand>\n"
             "\n"
             "subcommands:\n"
             "  manifest   Generate a Slack app manifest with every gateway\n"
@@ -4353,7 +4353,7 @@ def _clear_bytecode_cache(root: Path) -> int:
     return removed
 
 
-# Critical files that every ``hermes`` invocation imports at startup. If any
+# Critical files that every ``chiper`` invocation imports at startup. If any
 # of these fail to parse after a pull, the CLI is bricked — the user can't
 # even run ``chiper update`` again to roll forward. The post-pull syntax
 # guard validates these and auto-rolls-back on failure.
@@ -4365,7 +4365,7 @@ _UPDATE_CRITICAL_FILES = (
     "run_agent.py",
     "model_tools.py",
     "toolsets.py",
-    "hermes_constants.py",
+    "chiper_constants.py",
 )
 
 
@@ -4387,7 +4387,7 @@ def _capture_head_sha(git_cmd, cwd) -> str | None:
 def _validate_critical_files_syntax(root) -> tuple[bool, str | None, str | None]:
     """Compile each file in ``_UPDATE_CRITICAL_FILES`` to catch SyntaxErrors.
 
-    These are the files imported on every ``hermes`` startup; if any of them
+    These are the files imported on every ``chiper`` startup; if any of them
     has a syntax error (orphan merge-conflict markers, bad ref to a name
     that no longer exists, etc.) the CLI can't bootstrap at all. We validate
     them after a successful ``git pull`` so we can auto-roll-back instead of
@@ -4407,7 +4407,7 @@ def _validate_critical_files_syntax(root) -> tuple[bool, str | None, str | None]
     import tempfile
 
     root = Path(root)
-    with tempfile.TemporaryDirectory(prefix="hermes-syntax-check-") as tmpdir:
+    with tempfile.TemporaryDirectory(prefix="chiper-syntax-check-") as tmpdir:
         for relpath in _UPDATE_CRITICAL_FILES:
             path = root / relpath
             if not path.exists():
@@ -4533,7 +4533,7 @@ def _run_with_idle_timeout(
     WSL2 with the default 4 GB cap) the build can stall or sit silent for
     minutes; users see a frozen terminal, assume the update is hung, and
     reboot — leaving the editable install in a half-state with the
-    ``hermes`` launcher present but ``chiper_cli`` not importable.
+    ``chiper`` launcher present but ``chiper_cli`` not importable.
 
     This helper fixes both halves: stdout is streamed (so the user sees
     progress), and if no bytes have appeared on stdout/stderr for
@@ -4627,7 +4627,7 @@ def _nixos_build_env() -> dict[str, str] | None:
     does a bare ``PATH`` lookup — which fails on NixOS.
 
     Two-tier resolution:
-    1. Fast path — the hermes venv's python3 (present in managed installs)
+    1. Fast path — the chiper venv's python3 (present in managed installs)
     2. Fallback — resolves the absolute python3 path via ``nix-shell``
 
     Returns an env dict suitable for ``subprocess.run(env=...)`` or
@@ -4646,7 +4646,7 @@ def _nixos_build_env() -> dict[str, str] | None:
     if shutil.which("python3"):
         return None
 
-    # Tier 1: fast path — hermes venv python3, no nix-shell overhead
+    # Tier 1: fast path — chiper venv python3, no nix-shell overhead
     for venv_name in ("venv", ".venv"):
         venv_python = PROJECT_ROOT / venv_name / "bin" / "python3"
         if venv_python.exists():
@@ -4654,7 +4654,7 @@ def _nixos_build_env() -> dict[str, str] | None:
 
     # Tier 2: nix-shell fallback — resolves the absolute python3 path once.
     # Slower (~2–5 s for the nix-shell eval) but always works, even without
-    # a hermes venv (pip / non-managed / bare-git installs).  The resolved
+    # a chiper venv (pip / non-managed / bare-git installs).  The resolved
     # path is a self-contained Nix store binary (all deps via RPATH) so it
     # stays valid even after the nix-shell exits.
     try:
@@ -4791,7 +4791,7 @@ def _build_web_ui(web_dir: Path, *, fatal: bool = False) -> bool:
     if r1.returncode != 0:
         _say(
             f"  {'✗' if fatal else '⚠'} Web UI npm install failed"
-            + ("" if fatal else " (hermes web will not be available)")
+            + ("" if fatal else " (chiper web will not be available)")
         )
         _relay(r1)
         if fatal:
@@ -4833,7 +4833,7 @@ def _build_web_ui(web_dir: Path, *, fatal: bool = False) -> bool:
 
         _say(
             f"  {'✗' if fatal else '⚠'} Web UI build failed"
-            + ("" if fatal else " (hermes web will not be available)")
+            + ("" if fatal else " (chiper web will not be available)")
         )
         _relay(r2)
         if fatal:
@@ -4993,19 +4993,19 @@ def _desktop_packaged_executable(desktop_dir: Path) -> Optional[Path]:
     """Return the current platform's unpacked Electron app executable."""
     release_dir = desktop_dir / "release"
     if sys.platform == "darwin":
-        candidates = list(release_dir.glob("mac*/Hermes.app/Contents/MacOS/Hermes"))
+        candidates = list(release_dir.glob("mac*/Chiper.app/Contents/MacOS/Chiper"))
     elif sys.platform == "win32":
         candidates = [
-            release_dir / "win-unpacked" / "Hermes.exe",
-            release_dir / "win-ia32-unpacked" / "Hermes.exe",
-            release_dir / "win-arm64-unpacked" / "Hermes.exe",
+            release_dir / "win-unpacked" / "Chiper.exe",
+            release_dir / "win-ia32-unpacked" / "Chiper.exe",
+            release_dir / "win-arm64-unpacked" / "Chiper.exe",
         ]
     else:
         candidates = [
-            release_dir / "linux-unpacked" / "hermes",
-            release_dir / "linux-unpacked" / "Hermes",
-            release_dir / "linux-arm64-unpacked" / "hermes",
-            release_dir / "linux-arm64-unpacked" / "Hermes",
+            release_dir / "linux-unpacked" / "chiper",
+            release_dir / "linux-unpacked" / "Chiper",
+            release_dir / "linux-arm64-unpacked" / "chiper",
+            release_dir / "linux-arm64-unpacked" / "Chiper",
         ]
 
     existing = [p for p in candidates if p.exists()]
@@ -5056,7 +5056,7 @@ def _purge_electron_build_cache(desktop_dir: Path) -> list[Path]:
     next ``pack`` re-downloads and re-stages from scratch.
 
     Root cause of the ``ENOENT … rename '…/linux-unpacked/electron' ->
-    '…/linux-unpacked/Hermes'`` desktop build failure: a corrupt zip in the
+    '…/linux-unpacked/Chiper'`` desktop build failure: a corrupt zip in the
     per-user Electron download cache (a partial download resumed into the same
     file leaves prepended/concatenated junk, or an interrupted write truncates
     it). electron-builder's ``app-builder unpack-electron`` extracts the
@@ -5221,9 +5221,9 @@ def _stop_desktop_processes_locking_build(desktop_dir: Path) -> list[int]:
     """Terminate any running desktop app executing from this build's ``release``
     dir so a rebuild can replace its (otherwise locked) executable.
 
-    On Windows a running ``Hermes.exe`` keeps an exclusive lock on
-    ``release/win-unpacked/Hermes.exe``. electron-builder's pack then can't
-    delete the stale binary and dies with ``remove …\\Hermes.exe: Access is
+    On Windows a running ``Chiper.exe`` keeps an exclusive lock on
+    ``release/win-unpacked/Chiper.exe``. electron-builder's pack then can't
+    delete the stale binary and dies with ``remove …\\Chiper.exe: Access is
     denied`` / ``ERR_ELECTRON_BUILDER_CANNOT_EXECUTE`` (before-pack hits the same
     EPERM cleaning the dir). The retry path repeats the failure because the lock
     is still held. POSIX lets you unlink a running binary, so this is a no-op
@@ -5231,7 +5231,7 @@ def _stop_desktop_processes_locking_build(desktop_dir: Path) -> list[int]:
 
     Scope is deliberately narrow: only processes whose executable lives *inside*
     this desktop's ``release`` tree are stopped — a packaged install elsewhere or
-    an unrelated "Hermes" process is never touched. Best-effort: never raises.
+    an unrelated "Chiper" process is never touched. Best-effort: never raises.
     Returns the PIDs we asked to stop.
     """
     if sys.platform != "win32":
@@ -5313,7 +5313,7 @@ def _desktop_macos_relaunchable_fixup(desktop_dir: Path) -> None:
     exe = _desktop_packaged_executable(desktop_dir)
     if exe is None:
         return
-    # exe = .../Hermes.app/Contents/MacOS/Hermes  ->  app bundle = .../Hermes.app
+    # exe = .../Chiper.app/Contents/MacOS/Chiper  ->  app bundle = .../Chiper.app
     app = exe.parents[2]
     if not str(app).endswith(".app") or not app.is_dir():
         return
@@ -5334,7 +5334,7 @@ def _desktop_linux_sandbox_fixup(packaged_executable: Path) -> bool:
 
     sandbox = packaged_executable.parent / "chrome-sandbox"
     if not sandbox.exists():
-        print(f"✗ Hermes Desktop is missing Electron's Linux sandbox helper: {sandbox}")
+        print(f"✗ Chiper Desktop is missing Electron's Linux sandbox helper: {sandbox}")
         return False
 
     # Reject symlinks — chown/chmod must not follow an attacker-controlled
@@ -5354,7 +5354,7 @@ def _desktop_linux_sandbox_fixup(packaged_executable: Path) -> bool:
 
     sudo = shutil.which("sudo")
     if not sudo:
-        print("✗ Hermes Desktop requires sudo to configure Electron's Linux sandbox helper.")
+        print("✗ Chiper Desktop requires sudo to configure Electron's Linux sandbox helper.")
         return False
 
     print("→ Configuring Electron Linux sandbox helper (sudo required)...")
@@ -5383,8 +5383,8 @@ def cmd_gui(args: argparse.Namespace):
         env["CHIPER_DESKTOP_BOOT_FAKE"] = "1"
     if getattr(args, "ignore_existing", False):
         env["CHIPER_DESKTOP_IGNORE_EXISTING"] = "1"
-    if getattr(args, "hermes_root", None):
-        env["CHIPER_DESKTOP_HERMES_ROOT"] = str(Path(args.hermes_root).expanduser().resolve())
+    if getattr(args, "chiper_root", None):
+        env["CHIPER_DESKTOP_CHIPER_ROOT"] = str(Path(args.chiper_root).expanduser().resolve())
     if getattr(args, "cwd", None):
         env["CHIPER_DESKTOP_CWD"] = str(Path(args.cwd).expanduser().resolve())
 
@@ -5398,7 +5398,7 @@ def cmd_gui(args: argparse.Namespace):
         npm = shutil.which("npm")
         if not npm:
             print("Desktop GUI requires Node.js/npm, but npm was not found on PATH.")
-            print("Install Node.js, then run:  hermes gui")
+            print("Install Node.js, then run:  chiper gui")
             sys.exit(1)
     else:
         npm = None
@@ -5457,7 +5457,7 @@ def cmd_gui(args: argparse.Namespace):
             build_script = "build" if source_mode else "pack"
             if not source_mode:
                 # A running desktop instance launched from release/win-unpacked
-                # holds Hermes.exe locked on Windows, so the pack can't replace
+                # holds Chiper.exe locked on Windows, so the pack can't replace
                 # it ("Access is denied" / ERR_ELECTRON_BUILDER_CANNOT_EXECUTE).
                 # Stop it first so the rebuild — including the installer's
                 # headless --update rebuild — succeeds instead of failing cryptically.
@@ -5478,7 +5478,7 @@ def cmd_gui(args: argparse.Namespace):
                     print("  ⚠ Desktop build failed; refreshed the Electron download and retrying once...")
                     for p in purged:
                         print(f"    - {p}")
-                    # The purge can't remove a win-unpacked tree whose Hermes.exe
+                    # The purge can't remove a win-unpacked tree whose Chiper.exe
                     # is still locked by a running instance; stop it before retry.
                     _stop_desktop_processes_locking_build(desktop_dir)
                     build_result = subprocess.run([npm, "run", build_script], cwd=desktop_dir, env=env, check=False)
@@ -5497,10 +5497,10 @@ def cmd_gui(args: argparse.Namespace):
                 print("✗ Desktop GUI build failed")
                 print(f"  Run manually:  cd apps/desktop && npm run {build_script}")
                 if sys.platform == "win32":
-                    print("  If this says \"Access is denied\" on Hermes.exe, close any")
-                    print("  running Hermes desktop window and retry.")
+                    print("  If this says \"Access is denied\" on Chiper.exe, close any")
+                    print("  running Chiper desktop window and retry.")
                 print("  If the log shows Electron download retries, rebuild via a mirror:")
-                print("    ELECTRON_MIRROR=<mirror-base-url> hermes desktop --force-build")
+                print("    ELECTRON_MIRROR=<mirror-base-url> chiper desktop --force-build")
                 sys.exit(build_result.returncode or 1)
             packaged_executable = _desktop_packaged_executable(desktop_dir)
             if not source_mode:
@@ -5533,7 +5533,7 @@ def cmd_gui(args: argparse.Namespace):
         return
 
     if source_mode:
-        print("→ Launching Hermes Desktop from source build...")
+        print("→ Launching Chiper Desktop from source build...")
         launch_result = subprocess.run([npm, "exec", "--", "electron", "."], cwd=desktop_dir, env=env, check=False)
         sys.exit(launch_result.returncode)
 
@@ -5545,7 +5545,7 @@ def cmd_gui(args: argparse.Namespace):
     if not _desktop_linux_sandbox_fixup(packaged_executable):
         sys.exit(1)
 
-    print(f"→ Launching packaged Hermes Desktop: {packaged_executable}")
+    print(f"→ Launching packaged Chiper Desktop: {packaged_executable}")
     launch_result = subprocess.run([str(packaged_executable)], cwd=desktop_dir, env=env, check=False)
     sys.exit(launch_result.returncode)
 
@@ -5624,7 +5624,7 @@ def _find_stale_dashboard_pids(
         else:
             # Linux / macOS: scan the process table via ps and match against
             # the same explicit patterns list used on Windows.  Using ps
-            # (rather than `pgrep -f "hermes.*dashboard"`) keeps us consistent
+            # (rather than `pgrep -f "chiper.*dashboard"`) keeps us consistent
             # with `chiper_cli.gateway._scan_gateway_pids` and avoids the
             # greedy regex matching unrelated cmdlines that merely contain
             # both words (e.g. a chat session discussing "dashboard").
@@ -5942,7 +5942,7 @@ def _update_via_zip(args):
     )
 
     print("→ Downloading latest version...")
-    tmp_dir = tempfile.mkdtemp(prefix="hermes-update-")
+    tmp_dir = tempfile.mkdtemp(prefix="chiper-update-")
     try:
         zip_path = os.path.join(tmp_dir, f"chiper-agent-{branch}.zip")
         urlretrieve(zip_url, zip_path)
@@ -6135,7 +6135,7 @@ def _stash_local_changes_if_needed(git_cmd: list[str], cwd: Path) -> Optional[st
     from datetime import datetime, timezone
 
     stash_name = datetime.now(timezone.utc).strftime(
-        "hermes-update-autostash-%Y%m%d-%H%M%S"
+        "chiper-update-autostash-%Y%m%d-%H%M%S"
     )
     print("→ Local changes detected — stashing before update...")
     subprocess.run(
@@ -6198,7 +6198,7 @@ def _restore_stashed_changes(
         print(
             "  Restoring them may reapply local customizations onto the updated codebase."
         )
-        print("  Review the result afterward if Hermes behaves unexpectedly.")
+        print("  Review the result afterward if Chiper behaves unexpectedly.")
         print("Restore local changes now? [Y/n]")
         if input_fn is not None:
             response = input_fn("Restore local changes now? [Y/n]", "y")
@@ -6245,7 +6245,7 @@ def _restore_stashed_changes(
         print(f"  Stash ref: {stash_ref}")
 
         # Always reset to clean state — leaving conflict markers in source
-        # files makes hermes completely unrunnable (SyntaxError on import).
+        # files makes chiper completely unrunnable (SyntaxError on import).
         # The user's changes are safe in the stash for manual recovery.
         subprocess.run(
             git_cmd + ["reset", "--hard", "HEAD"],
@@ -6262,7 +6262,7 @@ def _restore_stashed_changes(
     stash_selector = _resolve_stash_selector(git_cmd, cwd, stash_ref)
     if stash_selector is None:
         print(
-            "⚠ Local changes were restored, but Hermes couldn't find the stash entry to drop."
+            "⚠ Local changes were restored, but Chiper couldn't find the stash entry to drop."
         )
         print(
             "  The stash was left in place. You can remove it manually after checking the result."
@@ -6277,7 +6277,7 @@ def _restore_stashed_changes(
         )
         if drop.returncode != 0:
             print(
-                "⚠ Local changes were restored, but Hermes couldn't drop the saved stash entry."
+                "⚠ Local changes were restored, but Chiper couldn't drop the saved stash entry."
             )
             if drop.stdout.strip():
                 print(drop.stdout.strip())
@@ -6289,7 +6289,7 @@ def _restore_stashed_changes(
             _print_stash_cleanup_guidance(stash_ref, stash_selector)
 
     print("⚠ Local changes were restored on top of the updated codebase.")
-    print("  Review `git diff` / `git status` if Hermes behaves unexpectedly.")
+    print("  Review `git diff` / `git status` if Chiper behaves unexpectedly.")
     return True
 
 
@@ -6316,7 +6316,7 @@ def _discard_stashed_changes(
     if stash_selector is None:
         print(
             "⚠ Configured to discard local changes on non-interactive update, "
-            "but Hermes couldn't find the stash entry to drop."
+            "but Chiper couldn't find the stash entry to drop."
         )
         _print_stash_cleanup_guidance(stash_ref)
         return False
@@ -6329,7 +6329,7 @@ def _discard_stashed_changes(
     )
     if drop.returncode != 0:
         print(
-            "⚠ Configured to discard local changes, but Hermes couldn't drop "
+            "⚠ Configured to discard local changes, but Chiper couldn't drop "
             "the saved stash entry."
         )
         if drop.stderr.strip():
@@ -6484,7 +6484,7 @@ def _sync_with_upstream_if_needed(git_cmd: list[str], cwd: Path) -> None:
 
         # Ask user if they want to add upstream
         print()
-        print("ℹ Your fork is not tracking the official Hermes repository.")
+        print("ℹ Your fork is not tracking the official Chiper repository.")
         print("  This means you may miss updates from NousResearch/chiper-agent.")
         print()
         try:
@@ -6642,7 +6642,7 @@ def _load_installable_optional_extras(group: str = "all") -> list[str]:
 # Install-scoped breadcrumb dropped right before ``chiper update`` mutates the
 # venv and cleared only after the dependency install verifies clean.  If a user
 # kills the update mid-install (Ctrl-C, terminal close, WSL OOM), the marker
-# survives and the next ``hermes`` launch finishes the install instead of
+# survives and the next ``chiper`` launch finishes the install instead of
 # limping along on a half-built venv (e.g. pip wiped, a core dep like Pillow
 # never landed).  Lives next to the venv (not under $CHIPER_HOME) because the
 # venv is shared across all profiles, so a single marker covers every profile.
@@ -6852,7 +6852,7 @@ def _venv_scripts_dir() -> Path | None:
     return scripts if scripts.is_dir() else None
 
 
-def _hermes_exe_shims(scripts_dir: Path) -> list[Path]:
+def _chiper_exe_shims(scripts_dir: Path) -> list[Path]:
     """Entry-point shims that uv may try to rewrite during ``pip install -e .``.
 
     On Windows these are .exe launchers generated by setuptools/uv. On POSIX
@@ -6862,29 +6862,29 @@ def _hermes_exe_shims(scripts_dir: Path) -> list[Path]:
     if not _is_windows():
         return []
     return [
-        scripts_dir / "hermes.exe",
+        scripts_dir / "chiper.exe",
         scripts_dir / "chiper-gateway.exe",
     ]
 
 
-def _detect_concurrent_hermes_instances(
+def _detect_concurrent_chiper_instances(
     scripts_dir: Path, *, exclude_pid: int | None = None
 ) -> list[tuple[int, str]]:
     """Find other live processes whose .exe is one of our entry-point shims.
 
     Windows blocks DELETE/REPLACE on a running .exe — and even RENAME on the
     same .exe when another process opened it without ``FILE_SHARE_DELETE``.
-    The Hermes Desktop Electron app spawns ``hermes.EXE`` as a backend child,
+    The Chiper Desktop Electron app spawns ``chiper.EXE`` as a backend child,
     so during ``chiper update`` the user-invoked process and the desktop's
     child both hold the same file. The quarantine rename then fails with
     ``[WinError 32]`` and uv inherits the lock.
 
     This helper enumerates processes whose ``exe`` matches one of the venv's
-    shims (``hermes.exe`` / ``chiper-gateway.exe``) and returns ``(pid,
+    shims (``chiper.exe`` / ``chiper-gateway.exe``) and returns ``(pid,
     process_name)`` pairs. The caller's own PID and its entire ancestor
     chain are excluded so the running ``chiper update`` invocation never
     reports itself — this matters on Windows where the setuptools .exe
-    launcher (``hermes.exe``) is a separate process from the Python
+    launcher (``chiper.exe``) is a separate process from the Python
     interpreter it loads (``python.exe``).
 
     Returns an empty list off-Windows, on missing psutil, or when no other
@@ -6900,7 +6900,7 @@ def _detect_concurrent_hermes_instances(
 
     # Resolve every shim path to its canonical form once for cheap comparison.
     shim_paths: set[str] = set()
-    for shim in _hermes_exe_shims(scripts_dir):
+    for shim in _chiper_exe_shims(scripts_dir):
         try:
             shim_paths.add(str(shim.resolve()).lower())
         except OSError:
@@ -6910,7 +6910,7 @@ def _detect_concurrent_hermes_instances(
 
     # Build a set of PIDs to exclude: the Python process itself plus every
     # ancestor whose executable is one of our shims. On Windows the
-    # setuptools-generated hermes.exe launcher is a separate native process
+    # setuptools-generated chiper.exe launcher is a separate native process
     # that spawns python.exe (the interpreter that runs our code).
     # os.getpid() returns the Python PID, but the launcher (which holds the
     # file lock) is the parent. Without excluding it, every ``chiper update``
@@ -6924,7 +6924,7 @@ def _detect_concurrent_hermes_instances(
     #      across session/elevation boundaries), leaving the launcher shim in
     #      the candidate set and re-triggering the false positive.
     #   2. Only exclude ancestors whose exe is itself a shim. A genuine second
-    #      hermes.exe sitting *under* a non-Hermes parent (e.g. a Chiper
+    #      chiper.exe sitting *under* a non-Chiper parent (e.g. a Chiper
     #      Desktop backend child) must still be flagged, so we don't blanket-
     #      exclude unrelated ancestors like the shell or terminal.
     # Broad ``except Exception`` guards against partially-stubbed psutil in
@@ -6988,15 +6988,15 @@ def _format_concurrent_instances_message(
     matches: list[tuple[int, str]], scripts_dir: Path
 ) -> str:
     """Build a human-readable explanation + remediation hint for the user."""
-    shim = scripts_dir / "hermes.exe"
-    lines = ["✗ Another hermes.exe is running:"]
+    shim = scripts_dir / "chiper.exe"
+    lines = ["✗ Another chiper.exe is running:"]
     for pid, name in matches:
         lines.append(f"    PID {pid}  {name}")
     lines.append("")
     lines.append(f"  Updating now would fail to overwrite {shim} because")
     lines.append("  Windows blocks REPLACE on a running executable.")
     lines.append("")
-    lines.append("  Close Hermes Desktop, exit any open `hermes` REPLs, and")
+    lines.append("  Close Chiper Desktop, exit any open `chiper` REPLs, and")
     lines.append("  stop the gateway (`chiper gateway stop`) before retrying.")
     lines.append("")
     if matches:
@@ -7010,20 +7010,20 @@ def _format_concurrent_instances_message(
     return "\n".join(lines)
 
 
-def _quarantine_running_hermes_exe(
+def _quarantine_running_chiper_exe(
     scripts_dir: Path, *, max_attempts: int = 4
 ) -> list[tuple[Path, Path]]:
-    """Pre-empt Windows file lock on the running ``hermes.exe``.
+    """Pre-empt Windows file lock on the running ``chiper.exe``.
 
     Windows allows RENAMING a mapped/running executable (the kernel tracks the
     file by handle, not path), but blocks DELETE/REPLACE while it's loaded. uv
     needs to overwrite the entry-point shims during ``pip install -e .``;
-    when ``chiper update`` runs, ``hermes.exe`` IS the live process, and uv
+    when ``chiper update`` runs, ``chiper.exe`` IS the live process, and uv
     fails with ``Access is denied. (os error 5)``.
 
-    We rename live shims to ``hermes.exe.old.<unix-ms>`` first. uv then writes
+    We rename live shims to ``chiper.exe.old.<unix-ms>`` first. uv then writes
     fresh shims at the original paths. The ``.old`` files are cleaned up on
-    the next hermes invocation by ``_cleanup_quarantined_exes``.
+    the next chiper invocation by ``_cleanup_quarantined_exes``.
 
     Rename can still fail when *another* process has opened the .exe without
     ``FILE_SHARE_DELETE`` — typically AV real-time scanners with transient
@@ -7039,7 +7039,7 @@ def _quarantine_running_hermes_exe(
        update can complete; the user just needs to reboot to fully unload
        the stale image.
     3. Print a clear warning naming the most likely culprit (running
-       Hermes Desktop / gateway / REPL) and pointing to ``--force``.
+       Chiper Desktop / gateway / REPL) and pointing to ``--force``.
 
     Returns the list of (original, quarantined) pairs so the caller can roll
     back if the install itself fails before uv writes a replacement. Pairs
@@ -7058,7 +7058,7 @@ def _quarantine_running_hermes_exe(
     backoff_ms = [0, 100, 250, 500, 1000]
     attempts = max(1, min(max_attempts, len(backoff_ms)))
 
-    for shim in _hermes_exe_shims(scripts_dir):
+    for shim in _chiper_exe_shims(scripts_dir):
         if not shim.exists():
             continue
         target = shim.with_suffix(shim.suffix + f".old.{stamp}")
@@ -7106,7 +7106,7 @@ def _quarantine_running_hermes_exe(
             f"another process is holding it open)."
         )
         print(
-            "    Close Hermes Desktop, exit other `hermes` REPLs, stop the "
+            "    Close Chiper Desktop, exit other `chiper` REPLs, stop the "
             "gateway, or pause AV scanning, then re-run `chiper update`."
         )
 
@@ -7149,7 +7149,7 @@ def _schedule_replace_on_reboot(shim: Path, quarantine_target: Path) -> bool:
 
 
 def _restore_quarantined_exes(moved: list[tuple[Path, Path]]) -> None:
-    """Roll back ``_quarantine_running_hermes_exe`` if uv didn't write replacements."""
+    """Roll back ``_quarantine_running_chiper_exe`` if uv didn't write replacements."""
     for original, quarantined in moved:
         try:
             if not original.exists() and quarantined.exists():
@@ -7164,12 +7164,12 @@ def _run_quarantined_install(
     env: dict[str, str] | None = None,
     scripts_dir: Path | None = None,
 ) -> None:
-    """Run an editable install, quarantining the running ``hermes.exe`` first.
+    """Run an editable install, quarantining the running ``chiper.exe`` first.
 
     Any ``pip install -e .`` (or ``--reinstall``) rewrites the entry-point
-    shims, and on Windows the live ``hermes.exe`` is the running process —
+    shims, and on Windows the live ``chiper.exe`` is the running process —
     pip can neither delete nor overwrite it, so without quarantine the shim
-    is left missing and ``hermes`` drops off PATH. This wraps
+    is left missing and ``chiper`` drops off PATH. This wraps
     :func:`_run_install_with_heartbeat` with the same rename-out-of-the-way /
     restore-on-failure dance that the primary install path uses, so EVERY
     install that touches the shims is protected — including the
@@ -7181,7 +7181,7 @@ def _run_quarantined_install(
     """
     moved: list[tuple[Path, Path]] = []
     if scripts_dir is not None:
-        moved = _quarantine_running_hermes_exe(scripts_dir)
+        moved = _quarantine_running_chiper_exe(scripts_dir)
     try:
         _run_install_with_heartbeat(cmd, env=env)
     except BaseException:
@@ -7193,9 +7193,9 @@ def _run_quarantined_install(
 
 
 def _cleanup_quarantined_exes(scripts_dir: Path | None = None) -> None:
-    """Sweep ``hermes.exe.old.*`` left by prior updates.
+    """Sweep ``chiper.exe.old.*`` left by prior updates.
 
-    Called early on every hermes invocation. The .old files are unlocked once
+    Called early on every chiper invocation. The .old files are unlocked once
     their owning process exited, so deletion succeeds the next run. Silent
     no-op when nothing's there or on file-locked / permission errors.
     """
@@ -7294,10 +7294,10 @@ def _install_python_dependencies_with_optional_fallback(
     By default this targets ``.[all]``; Termux callers can pass
     ``group='termux-all'`` to use the curated Android-compatible profile.
 
-    On Windows, pre-renames live ``hermes.exe`` / ``chiper-gateway.exe`` shims
+    On Windows, pre-renames live ``chiper.exe`` / ``chiper-gateway.exe`` shims
     in the venv Scripts dir before each install attempt so uv can write fresh
     copies (Windows blocks REPLACE on a running .exe but allows RENAME). See
-    ``_quarantine_running_hermes_exe`` for the rationale.
+    ``_quarantine_running_chiper_exe`` for the rationale.
     """
     scripts_dir = _venv_scripts_dir() if _is_windows() else None
 
@@ -7472,9 +7472,9 @@ def _verify_core_dependencies_installed(
     # extras install can cost minutes and trips on whatever optional extra
     # was already broken upstream. Base is fast and is what's actually wrong.
     #
-    # Quarantine the running ``hermes.exe`` first: ``--reinstall -e .``
+    # Quarantine the running ``chiper.exe`` first: ``--reinstall -e .``
     # rewrites the entry-point shims, and on Windows pip can't overwrite the
-    # live launcher, which would leave ``hermes`` off PATH.
+    # live launcher, which would leave ``chiper`` off PATH.
     scripts_dir = _venv_scripts_dir() if _is_windows() else None
     repair_args = ["install", "--reinstall", "-e", "."]
     try:
@@ -7516,7 +7516,7 @@ def _verify_core_dependencies_installed(
         logger.warning("dep verification: per-package repair failed: %s", e)
         print(
             f"  ⚠ Could not install: {', '.join(still_missing)}. "
-            "Run `chiper update --force` after closing other hermes processes."
+            "Run `chiper update --force` after closing other chiper processes."
         )
         return
 
@@ -7524,7 +7524,7 @@ def _verify_core_dependencies_installed(
     if final_missing:
         print(
             f"  ⚠ Still missing after repair: {', '.join(final_missing)}. "
-            "Run `chiper update --force` after closing other hermes processes."
+            "Run `chiper update --force` after closing other chiper processes."
         )
     else:
         print("  ✓ All declared core dependencies now installed")
@@ -8010,11 +8010,11 @@ def _ensure_fhs_path_guard() -> None:
     standard shell breaks on those distros in non-login interactive shells
     (su, sudo -s, tmux panes, some web terminals): /etc/bashrc doesn't
     add /usr/local/bin and /root/.bash_profile doesn't either.  Symptom:
-    ``hermes`` prints ``command not found`` even though the symlink lives
-    at /usr/local/bin/hermes.
+    ``chiper`` prints ``command not found`` even though the symlink lives
+    at /usr/local/bin/chiper.
 
     Silent no-op on: non-Linux, non-root, non-FHS installs, and any system
-    where ``bash -i -c 'command -v hermes'`` already resolves.  Idempotent.
+    where ``bash -i -c 'command -v chiper'`` already resolves.  Idempotent.
     """
     if sys.platform != "linux":
         return
@@ -8024,8 +8024,8 @@ def _ensure_fhs_path_guard() -> None:
     except AttributeError:
         return
     # Only act when this is actually an FHS-layout install (command link at
-    # /usr/local/bin/hermes, code at /usr/local/lib/chiper-agent).
-    fhs_link = Path("/usr/local/bin/hermes")
+    # /usr/local/bin/chiper, code at /usr/local/lib/chiper-agent).
+    fhs_link = Path("/usr/local/bin/chiper")
     if not fhs_link.is_symlink() and not fhs_link.exists():
         return
 
@@ -8043,7 +8043,7 @@ def _ensure_fhs_path_guard() -> None:
                 "bash",
                 "-i",
                 "-c",
-                "command -v hermes",
+                "command -v chiper",
             ],
             capture_output=True,
             text=True,
@@ -8185,7 +8185,7 @@ def _run_pre_update_backup(args) -> None:
         display_path = str(out_path)
 
     print(f"  Saved:    {display_path} ({size_str}, {elapsed:.1f}s)")
-    print(f"  Restore:  hermes import {out_path}")
+    print(f"  Restore:  chiper import {out_path}")
     print(f"  Disable:  omit --backup (backups are off by default)")
     print(f"            set updates.pre_update_backup: false in config.yaml")
     print()
@@ -8251,7 +8251,7 @@ def _pause_windows_gateways_for_update() -> dict | None:
     """Stop running Windows gateways before mutating the checkout or venv.
 
     Windows scheduled/startup gateways run through pythonw.exe, so the generic
-    hermes.exe concurrent-instance guard does not see them. They still import
+    chiper.exe concurrent-instance guard does not see them. They still import
     from the checkout and can keep files locked while ``git`` or ``uv`` updates
     the install. Stop only PIDs that the gateway discovery code identifies.
     """
@@ -8295,7 +8295,7 @@ def _pause_windows_gateways_for_update() -> dict | None:
         mapped_pids.append(int(pid))
         _write_update_planned_stop_marker(Path(proc.path), int(pid))
 
-    print("→ Stopping Windows gateway process(es) before updating Hermes...")
+    print("→ Stopping Windows gateway process(es) before updating Chiper...")
     try:
         drain_timeout = max(float(_get_restart_drain_timeout()), 1.0)
     except Exception:
@@ -8461,7 +8461,7 @@ def cmd_update(args):
 
 
 def _cmd_update_pip(args):
-    """Update Hermes via pip (for PyPI installs)."""
+    """Update Chiper via pip (for PyPI installs)."""
     from chiper_cli import __version__
     from chiper_cli.config import is_uv_tool_install
 
@@ -8518,7 +8518,7 @@ def _cmd_update_pip(args):
         print("✗ Update failed")
         sys.exit(1)
 
-    print("✓ Update complete! Restart hermes to use the new version.")
+    print("✓ Update complete! Restart chiper to use the new version.")
 
 
 def _cmd_update_impl(args, gateway_mode: bool):
@@ -8559,14 +8559,14 @@ def _cmd_update_impl(args, gateway_mode: bool):
     print("⚕ Updating Chiper Agent...")
     print()
 
-    # On Windows, abort early if another hermes.exe is holding the venv shim
+    # On Windows, abort early if another chiper.exe is holding the venv shim
     # open. Continuing would result in a string of WinError 32 warnings and
     # then either a deferred-rename leftover or a failed git-pull fast path
     # that silently falls back to the slower ZIP route. See issue #26670.
     if _is_windows() and not getattr(args, "force", False):
         scripts_dir = _venv_scripts_dir()
         if scripts_dir is not None:
-            concurrent = _detect_concurrent_hermes_instances(scripts_dir)
+            concurrent = _detect_concurrent_chiper_instances(scripts_dir)
             if concurrent:
                 print(_format_concurrent_instances_message(concurrent, scripts_dir))
                 sys.exit(2)
@@ -8849,7 +8849,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
             # parse before declaring the update successful. If a bad commit
             # made it through CI (e.g. admin-merge bypass of a failing
             # ruff check), this catches it on the user side and rolls back
-            # so the CLI stays bootable. The user can then retry ``hermes
+            # so the CLI stays bootable. The user can then retry ``chiper
             # update`` later once a fix lands upstream.
             syntax_ok, failing_path, syntax_error = _validate_critical_files_syntax(
                 PROJECT_ROOT
@@ -8918,7 +8918,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
 
         # Clear stale .pyc bytecode cache — prevents ImportError on gateway
         # restart when updated source references names that didn't exist in
-        # the old bytecode (e.g. get_chiper_home added to hermes_constants).
+        # the old bytecode (e.g. get_chiper_home added to chiper_constants).
         removed = _clear_bytecode_cache(PROJECT_ROOT)
         if removed:
             print(
@@ -8935,7 +8935,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
         #
         # Drop the interrupted-install breadcrumb BEFORE touching the venv. If
         # the install is killed mid-flight (Ctrl-C, terminal close, WSL OOM),
-        # the marker survives and the next ``hermes`` launch finishes the
+        # the marker survives and the next ``chiper`` launch finishes the
         # install via ``_recover_from_interrupted_install``. Cleared only after
         # the install + core-dependency verification completes below.
         _write_update_incomplete_marker()
@@ -9045,7 +9045,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
             logger.debug("Model catalog seed during update failed: %s", e)
 
         # After git pull, source files on disk are newer than cached Python
-        # modules in this process.  Reload hermes_constants so that any lazy
+        # modules in this process.  Reload chiper_constants so that any lazy
         # import executed below (skills sync, gateway restart) sees new
         # attributes like display_chiper_home() added since the last release.
         try:
@@ -9989,26 +9989,26 @@ def _cmd_update_impl(args, gateway_mode: bool):
 
         _resume_windows_gateways_after_update(_windows_gateway_resume)
 
-        # Warn if legacy Hermes gateway unit files are still installed.
-        # When both hermes.service (from a pre-rename install) and the
+        # Warn if legacy Chiper gateway unit files are still installed.
+        # When both chiper.service (from a pre-rename install) and the
         # current chiper-gateway.service are enabled, they SIGTERM-fight
         # for the same bot token (see PR #11909). Flagging here means
         # every `chiper update` surfaces the issue until the user migrates.
         try:
             from chiper_cli.gateway import (
-                has_legacy_hermes_units,
-                _find_legacy_hermes_units,
+                has_legacy_chiper_units,
+                _find_legacy_chiper_units,
                 supports_systemd_services,
             )
 
-            if supports_systemd_services() and has_legacy_hermes_units():
+            if supports_systemd_services() and has_legacy_chiper_units():
                 print()
-                print("⚠ Legacy Hermes gateway unit(s) detected:")
-                for name, path, is_sys in _find_legacy_hermes_units():
+                print("⚠ Legacy Chiper gateway unit(s) detected:")
+                for name, path, is_sys in _find_legacy_chiper_units():
                     scope = "system" if is_sys else "user"
                     print(f"    {path}  ({scope} scope)")
                 print()
-                print("  These pre-rename units (hermes.service) fight the current")
+                print("  These pre-rename units (chiper.service) fight the current")
                 print("  chiper-gateway.service for the bot token and cause SIGTERM")
                 print("  flap loops. Remove them with:")
                 print()
@@ -10285,7 +10285,7 @@ def cmd_profile(args):
                 if collision:
                     print(f"\n⚠ Cannot create alias '{name}' — {collision}")
                     print(
-                        f"  Choose a custom alias:  hermes profile alias {name} --name <custom>"
+                        f"  Choose a custom alias:  chiper profile alias {name} --name <custom>"
                     )
                     print(f"  Or access via flag:     chiper -p {name} chat")
                 else:
@@ -10568,7 +10568,7 @@ def cmd_profile(args):
             # Preview: stage the distribution into a scratch dir, show the
             # manifest, then do the real install.  The double-stage avoids
             # any side-effects if the user declines.
-            with tempfile.TemporaryDirectory(prefix="hermes_dist_preview_") as tmp:
+            with tempfile.TemporaryDirectory(prefix="chiper_dist_preview_") as tmp:
                 plan = plan_install(
                     args.source,
                     Path(tmp),
@@ -10677,8 +10677,8 @@ def cmd_profile(args):
             print(f"Author:       {data['author']}")
         if data.get("license"):
             print(f"License:      {data['license']}")
-        if data.get("hermes_requires"):
-            print(f"Requires:     Hermes {data['hermes_requires']}")
+        if data.get("chiper_requires"):
+            print(f"Requires:     Chiper {data['chiper_requires']}")
         if data.get("source"):
             print(f"Source:       {data['source']}")
         if data.get("installed_at"):
@@ -10706,8 +10706,8 @@ def _render_distribution_plan(plan) -> None:
         print(f"  {mf.description}")
     if mf.author:
         print(f"  Author:   {mf.author}")
-    if mf.hermes_requires:
-        print(f"  Requires: Hermes {mf.hermes_requires}")
+    if mf.chiper_requires:
+        print(f"  Requires: Chiper {mf.chiper_requires}")
     print(f"  Source:   {plan.provenance}")
     print(f"  Target:   {plan.target_dir}")
     if plan.existing:
@@ -10918,7 +10918,7 @@ def cmd_dashboard(args):
             os.execvpe(sys.executable, reexec_argv, env)
 
     # Attach gui.log early so dashboard startup/build failures are captured in
-    # the same logs directory as every other Hermes surface.
+    # the same logs directory as every other Chiper surface.
     try:
         from chiper_logging import setup_logging as _setup_logging_gui
         _setup_logging_gui(mode="gui")
@@ -11165,7 +11165,7 @@ def _plugin_cli_discovery_needed() -> bool:
     """
     first = _first_positional_argv()
     if first is None:
-        # Bare ``hermes`` or only flags → defaults to ``chat``.
+        # Bare ``chiper`` or only flags → defaults to ``chat``.
         return False
     if first in _BUILTIN_SUBCOMMANDS:
         return False
@@ -11556,8 +11556,8 @@ def cmd_claw(args):
 
 
 def main():
-    """Main entry point for hermes CLI."""
-    # Cosmetic: make the process show up as 'hermes' instead of 'python3.11'
+    """Main entry point for chiper CLI."""
+    # Cosmetic: make the process show up as 'chiper' instead of 'python3.11'
     # in ps/top/htop.  Non-fatal — just a nicer UX.
     _set_process_title()
 
@@ -11568,9 +11568,9 @@ def main():
     except Exception:
         pass
 
-    # Sweep stale ``hermes.exe.old.*`` quarantine files left by previous
+    # Sweep stale ``chiper.exe.old.*`` quarantine files left by previous
     # ``chiper update`` runs on Windows. Silent no-op on non-Windows or when
-    # there's nothing to clean. See ``_quarantine_running_hermes_exe``.
+    # there's nothing to clean. See ``_quarantine_running_chiper_exe``.
     try:
         _cleanup_quarantined_exes()
     except Exception:
@@ -11861,7 +11861,7 @@ def main():
         "checkpoints",
         help="Inspect / prune / clear ~/.chiperflux/checkpoints/",
         description="Manage the filesystem checkpoint store — the shadow git "
-        "repo hermes uses to snapshot working directories before "
+        "repo chiper uses to snapshot working directories before "
         "write_file/patch/terminal calls. Lets you see how much "
         "space checkpoints occupy, force a prune, or wipe the base.",
     )
@@ -12045,10 +12045,10 @@ def main():
                     print(f"cua-driver: installed at {path} ({version})")
                 else:
                     print(f"cua-driver: installed at {path}")
-                print("  Refresh to latest: hermes computer-use install --upgrade")
+                print("  Refresh to latest: chiper computer-use install --upgrade")
                 return
             print("cua-driver: not installed")
-            print("  Run: hermes computer-use install")
+            print("  Run: chiper computer-use install")
             return
         # No subcommand → show help
         computer_use_parser.print_help()
@@ -12463,7 +12463,7 @@ def main():
     # desktop (a.k.a. gui) command
     #
     # The canonical name is "desktop"; "gui" is kept as a deprecated alias
-    # for one release. The Hermes-Setup.exe success screen tells users to
+    # for one release. The Chiper-Setup.exe success screen tells users to
     # run `chiper desktop` from a terminal, so the canonical name needs
     # to be the one that appears in --help (argparse promotes the primary
     # name; aliases stay hidden).
@@ -12552,7 +12552,7 @@ def main():
 
     # Discover Python plugins and register shell hooks once, before any
     # command that can fire lifecycle hooks.  Both are idempotent; gated
-    # so introspection/management commands (hermes hooks list, cron
+    # so introspection/management commands (chiper hooks list, cron
     # list, gateway status, mcp add, ...) don't pay discovery cost or
     # trigger consent prompts for hooks the user is still inspecting.
     _prepare_agent_startup(args)

@@ -336,7 +336,7 @@ def do_browse(page: int = 1, page_size: int = 20, source: str = "all",
     # Per-source limits are generous — parallelism + 30s timeout cap prevents hangs.
     _TRUST_RANK = {"builtin": 3, "trusted": 2, "community": 1}
     # NOTE: when the centralized index is available, parallel_search_sources
-    # skips the external API sources and serves everything from "hermes-index".
+    # skips the external API sources and serves everything from "chiper-index".
     # That source MUST therefore carry a limit large enough to cover the whole
     # catalog, or browse silently caps the hub — it shipped at 50 (surfaced
     # ~136 of 88k skills), then 5000 (surfaced ~5.4k of 90k). The index is
@@ -345,7 +345,7 @@ def do_browse(page: int = 1, page_size: int = 20, source: str = "all",
     # only apply when the index is unavailable (offline / first run before the
     # cache populates).
     _PER_SOURCE_LIMIT = {
-        "hermes-index": 1000000,
+        "chiper-index": 1000000,
         "official": 200, "skills-sh": 200, "well-known": 50,
         "github": 200, "clawhub": 500, "claude-marketplace": 100,
         "lobehub": 500, "browse-sh": 500,
@@ -692,7 +692,7 @@ def do_install(identifier: str, category: str = "", force: bool = False,
     c.print(f"[dim]Files: {', '.join(bundle.files.keys())}[/]\n")
 
     # Blueprint detection: if the installed skill declares a
-    # metadata.hermes.blueprint block, it is a runnable automation. Register it as
+    # metadata.chiper.blueprint block, it is a runnable automation. Register it as
     # a Suggested Cron Job rather than auto-scheduling — installing never
     # silently creates a recurring job; the user accepts it via /suggestions.
     # This is the single surface every automation proposal flows through.
@@ -805,16 +805,16 @@ def browse_skills(page: int = 1, page_size: int = 20, source: str = "all") -> di
 
     page_size = max(1, min(page_size, 100))
     _TRUST_RANK = {"builtin": 3, "trusted": 2, "community": 1}
-    # "hermes-index" must carry a high limit: when the index is available the
+    # "chiper-index" must carry a high limit: when the index is available the
     # router skips external API sources and serves everything from it, so a
     # low cap here silently truncates the whole hub (see do_browse note).
-    _PER_SOURCE_LIMIT = {"hermes-index": 5000, "official": 100, "skills-sh": 100,
+    _PER_SOURCE_LIMIT = {"chiper-index": 5000, "official": 100, "skills-sh": 100,
                          "well-known": 25, "github": 100, "clawhub": 50,
                          "claude-marketplace": 50, "lobehub": 50, "browse-sh": 500}
     auth = GitHubAuth()
     sources = create_source_router(auth)
     # Delegate to the shared parallel walker so this inherits the index-aware
-    # source-skip logic — querying hermes-index AND the external APIs at once
+    # source-skip logic — querying chiper-index AND the external APIs at once
     # would double-count every skill.
     all_results, _counts, _timed_out = parallel_search_sources(
         sources, query="", per_source_limits=_PER_SOURCE_LIMIT,
@@ -1580,7 +1580,7 @@ def do_snapshot_export(output_path: str, console: Optional[Console] = None) -> N
     tap_list = taps.list_taps()
 
     snapshot = {
-        "hermes_version": "0.1.0",
+        "chiper_version": "0.1.0",
         "exported_at": __import__("datetime").datetime.now(
             __import__("datetime").timezone.utc
         ).isoformat(),

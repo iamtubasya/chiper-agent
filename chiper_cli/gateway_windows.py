@@ -49,7 +49,7 @@ _FALLBACK_PATTERNS = re.compile(
 )
 _ACCESS_DENIED_PATTERN = re.compile(r"(access is denied|acceso denegado)", re.IGNORECASE)
 
-_TASK_NAME_DEFAULT = "Hermes_Gateway"
+_TASK_NAME_DEFAULT = "Chiper_Gateway"
 _TASK_DESCRIPTION = "Chiper Agent Gateway - Messaging Platform Integration"
 
 
@@ -251,8 +251,8 @@ def _launch_elevated_uninstall() -> bool:
 def get_task_name() -> str:
     """Scheduled Task name, scoped per profile.
 
-    Default profile: ``Hermes_Gateway``
-    Named profile X: ``Hermes_Gateway_<X>``
+    Default profile: ``Chiper_Gateway``
+    Named profile X: ``Chiper_Gateway_<X>``
     """
     _assert_windows()
     # Local import to avoid circular module initialization during chiper_cli boot.
@@ -272,9 +272,9 @@ def _sanitize_filename(value: str) -> str:
 def get_task_script_path() -> Path:
     """The generated ``gateway.cmd`` wrapper that the schtasks entry invokes.
 
-    Lives under ``%LOCALAPPDATA%\\hermes\\gateway-service\\<task_name>.cmd``
+    Lives under ``%LOCALAPPDATA%\\chiper\\gateway-service\\<task_name>.cmd``
     (or ``<CHIPER_HOME>/gateway-service/<task_name>.cmd`` so per-profile
-    Hermes installs stay self-contained).
+    Chiper installs stay self-contained).
     """
     _assert_windows()
     from chiper_cli.config import get_chiper_home
@@ -359,7 +359,7 @@ def _build_gateway_cmd_script(
     lines.append('set "PYTHONIOENCODING=utf-8"')
     lines.append('set "CHIPER_GATEWAY_DETACHED=1"')
     # VIRTUAL_ENV lets the gateway's own python detection find the venv
-    # if someone imports hermes_constants-based logic during startup.
+    # if someone imports chiper_constants-based logic during startup.
     venv_dir = str(Path(python_path).resolve().parent.parent)
     lines.append(f'set "VIRTUAL_ENV={venv_dir}"')
 
@@ -446,7 +446,7 @@ def _resolve_task_user() -> str | None:
 def _install_scheduled_task(task_name: str, script_path: Path) -> tuple[bool, str]:
     """Create or replace the Scheduled Task. Returns (success, detail).
 
-    Always recreate instead of ``/Change``. Older Hermes builds and failed
+    Always recreate instead of ``/Change``. Older Chiper builds and failed
     experiments may have left repeat/restart settings on the task; ``/Change``
     preserves those stale triggers and can make the gateway relaunch every
     minute. Delete+create gives us a clean ONLOGON task every install.
@@ -790,7 +790,7 @@ def install(
         print("  UAC is Windows' admin approval prompt; it is needed to create/update the Scheduled Task.")
         if prompt_yes_no("  Open the UAC prompt now?", False):
             if _launch_elevated_install(force=force, start_now=start_now, start_on_login=start_on_login):
-                print("✓ Launched elevated Hermes gateway install prompt.")
+                print("✓ Launched elevated Chiper gateway install prompt.")
                 if start_now:
                     print("  Approve the Windows UAC prompt; the elevated install will start the gateway afterwards.")
                 else:
@@ -831,7 +831,7 @@ def install(
         print("  UAC is Windows' admin approval prompt; it is needed to create/update the Scheduled Task.")
         if prompt_yes_no("  Open the UAC prompt now?", False):
             if _launch_elevated_install(force=force, start_now=start_now, start_on_login=start_on_login):
-                print("✓ Launched elevated Hermes gateway install prompt.")
+                print("✓ Launched elevated Chiper gateway install prompt.")
                 if start_now:
                     print("  Approve the Windows UAC prompt; the elevated install will start the gateway afterwards.")
                 else:
@@ -932,7 +932,7 @@ def uninstall() -> None:
             print("  UAC is Windows' admin approval prompt; it is needed to remove the Scheduled Task.")
             if prompt_yes_no("  Open the UAC prompt now?", False):
                 if _launch_elevated_uninstall():
-                    print("✓ Launched elevated Hermes gateway uninstall prompt.")
+                    print("✓ Launched elevated Chiper gateway uninstall prompt.")
                     print("  Approve the Windows UAC prompt, then run: chiper gateway status")
                     return
                 print("⚠ Elevated uninstall prompt was unavailable or cancelled.")

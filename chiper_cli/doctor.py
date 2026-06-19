@@ -1,5 +1,5 @@
 """
-Doctor command for hermes CLI.
+Doctor command for chiper CLI.
 
 Diagnoses issues with Chiper Agent setup.
 """
@@ -23,7 +23,7 @@ _env_path = get_env_path()
 load_chiper_dotenv(chiper_home=_env_path.parent, project_env=PROJECT_ROOT / ".env")
 
 from chiper_cli.colors import Colors, color
-from chiper_cli.models import _HERMES_USER_AGENT
+from chiper_cli.models import _CHIPER_USER_AGENT
 from chiper_constants import OPENROUTER_MODELS_URL
 from utils import base_url_host_matches
 
@@ -266,7 +266,7 @@ def _check_s6_supervision(issues: list[str]) -> None:
     container so host runs aren't cluttered with irrelevant output.
 
     Reports:
-      - Whether the main-hermes and dashboard static services are up
+      - Whether the main-chiper and dashboard static services are up
       - How many per-profile gateway slots are registered (via
         ``S6ServiceManager.list_profile_gateways()``) and how many are
         currently supervised as ``up``
@@ -288,7 +288,7 @@ def _check_s6_supervision(issues: list[str]) -> None:
 
     # Static services. They live under /run/service/ via s6-rc symlinks,
     # so the same s6-svstat probe works.
-    for static in ("main-hermes", "dashboard"):
+    for static in ("main-chiper", "dashboard"):
         if mgr.is_running(static):
             check_ok(f"{static}: up")
         else:
@@ -468,7 +468,7 @@ def run_doctor(args):
     ack_target = getattr(args, 'ack', None)
 
     # Doctor runs from the interactive CLI, so CLI-gated tool availability
-    # checks (like cronjob management) should see the same context as `hermes`.
+    # checks (like cronjob management) should see the same context as `chiper`.
     os.environ.setdefault("CHIPER_INTERACTIVE", "1")
 
     # Handle `chiper doctor --ack <id>` as a fast path. Persist the ack and
@@ -508,7 +508,7 @@ def run_doctor(args):
 
     print()
     print(color("┌─────────────────────────────────────────────────────────┐", Colors.CYAN))
-    print(color("│                 🩺 Hermes Doctor                        │", Colors.CYAN))
+    print(color("│                 🩺 Chiper Doctor                        │", Colors.CYAN))
     print(color("└─────────────────────────────────────────────────────────┘", Colors.CYAN))
 
     _section("Security Advisories")
@@ -1067,7 +1067,7 @@ def run_doctor(args):
             check_warn("OpenAI Codex auth", "(not logged in)")
             if codex_status.get("error"):
                 check_info(codex_status["error"])
-            # Native OAuth uses Hermes' own device-code flow — the Codex CLI is
+            # Native OAuth uses Chiper' own device-code flow — the Codex CLI is
             # only needed to import existing tokens from ~/.codex/auth.json.
             # Attach the hint to the Codex auth row so it doesn't read as
             # remediation for whichever provider happens to print next (#27975).
@@ -1150,13 +1150,13 @@ def run_doctor(args):
         else:
             check_info(f"{_DHH}/SOUL.md exists but is empty — edit it to customize personality")
     else:
-        check_warn(f"{_DHH}/SOUL.md not found", "(create it to give Hermes a custom personality)")
+        check_warn(f"{_DHH}/SOUL.md not found", "(create it to give Chiper a custom personality)")
         if should_fix:
             soul_path.parent.mkdir(parents=True, exist_ok=True)
             soul_path.write_text(
                 "# Chiper Agent Persona\n\n"
-                "<!-- Edit this file to customize how Hermes communicates. -->\n\n"
-                "You are Hermes, a helpful AI assistant.\n",
+                "<!-- Edit this file to customize how Chiper communicates. -->\n\n"
+                "You are Chiper, a helpful AI assistant.\n",
                 encoding="utf-8",
             )
             check_ok(f"Created {_DHH}/SOUL.md with basic template")
@@ -1279,7 +1279,7 @@ def run_doctor(args):
         # Determine the venv entry point location
         _venv_bin = None
         for _venv_name in ("venv", ".venv"):
-            _candidate = PROJECT_ROOT / _venv_name / "bin" / "hermes"
+            _candidate = PROJECT_ROOT / _venv_name / "bin" / "chiper"
             if _candidate.exists():
                 _venv_bin = _candidate
                 break
@@ -1293,12 +1293,12 @@ def run_doctor(args):
         else:
             _cmd_link_dir = Path.home() / ".local" / "bin"
             _cmd_link_display = "~/.local/bin"
-        _cmd_link = _cmd_link_dir / "hermes"
+        _cmd_link = _cmd_link_dir / "chiper"
 
         if _venv_bin is None:
             check_warn(
                 "Venv entry point not found",
-                "(hermes not in venv/bin/ or .venv/bin/ — reinstall with pip install -e '.[all]')"
+                "(chiper not in venv/bin/ or .venv/bin/ — reinstall with pip install -e '.[all]')"
             )
             manual_issues.append(
                 f"Reinstall entry point: cd {PROJECT_ROOT} && source venv/bin/activate && pip install -e '.[all]'"
@@ -1311,31 +1311,31 @@ def run_doctor(args):
                 _target = _cmd_link.resolve()
                 _expected = _venv_bin.resolve()
                 if _target == _expected:
-                    check_ok(f"{_cmd_link_display}/hermes → correct target")
+                    check_ok(f"{_cmd_link_display}/chiper → correct target")
                 else:
                     check_warn(
-                        f"{_cmd_link_display}/hermes points to wrong target",
+                        f"{_cmd_link_display}/chiper points to wrong target",
                         f"(→ {_target}, expected → {_expected})"
                     )
                     if should_fix:
                         _cmd_link.unlink()
                         _cmd_link.symlink_to(_venv_bin)
-                        check_ok(f"Fixed symlink: {_cmd_link_display}/hermes → {_venv_bin}")
+                        check_ok(f"Fixed symlink: {_cmd_link_display}/chiper → {_venv_bin}")
                         fixed_count += 1
                     else:
-                        issues.append(f"Broken symlink at {_cmd_link_display}/hermes — run 'chiper doctor --fix'")
+                        issues.append(f"Broken symlink at {_cmd_link_display}/chiper — run 'chiper doctor --fix'")
             elif _cmd_link.exists():
                 # It's a regular file, not a symlink — possibly a wrapper script
-                check_ok(f"{_cmd_link_display}/hermes exists (non-symlink)")
+                check_ok(f"{_cmd_link_display}/chiper exists (non-symlink)")
             else:
                 check_fail(
-                    f"{_cmd_link_display}/hermes not found",
-                    "(hermes command may not work outside the venv)"
+                    f"{_cmd_link_display}/chiper not found",
+                    "(chiper command may not work outside the venv)"
                 )
                 if should_fix:
                     _cmd_link_dir.mkdir(parents=True, exist_ok=True)
                     _cmd_link.symlink_to(_venv_bin)
-                    check_ok(f"Created symlink: {_cmd_link_display}/hermes → {_venv_bin}")
+                    check_ok(f"Created symlink: {_cmd_link_display}/chiper → {_venv_bin}")
                     fixed_count += 1
 
                     # Check if the link dir is on PATH
@@ -1347,7 +1347,7 @@ def run_doctor(args):
                         )
                         manual_issues.append(f"Add {_cmd_link_display} to your PATH")
                 else:
-                    issues.append(f"Missing {_cmd_link_display}/hermes symlink — run 'chiper doctor --fix'")
+                    issues.append(f"Missing {_cmd_link_display}/chiper symlink — run 'chiper doctor --fix'")
 
     _section("External Tools")
     # Git
@@ -1830,7 +1830,7 @@ def run_doctor(args):
             url = (base.rstrip("/") + "/models") if base else default_url
             headers = {
                 "Authorization": f"Bearer {key}",
-                "User-Agent": _HERMES_USER_AGENT,
+                "User-Agent": _CHIPER_USER_AGENT,
             }
             if base_url_host_matches(base, "api.kimi.com"):
                 headers["User-Agent"] = "claude-code/0.1.0"
@@ -2173,13 +2173,13 @@ def run_doctor(args):
                         f"config file {_honcho_cfg_path} not found, using HONCHO_API_KEY env var",
                     )
                 else:
-                    check_warn("Honcho config not found", "run: hermes memory setup")
+                    check_warn("Honcho config not found", "run: chiper memory setup")
             elif not hcfg.enabled:
                 check_info(f"Honcho disabled (set enabled: true in {_honcho_cfg_path} to activate)")
             elif not (hcfg.api_key or hcfg.base_url):
                 _fail_and_issue(
                     "Honcho API key or base URL not set",
-                    "run: hermes memory setup",
+                    "run: chiper memory setup",
                     "No Honcho API key — run 'chiper memory setup'",
                     issues,
                 )
@@ -2214,7 +2214,7 @@ def run_doctor(args):
             else:
                 _fail_and_issue(
                     "Mem0 API key not set",
-                    "(set MEM0_API_KEY in .env or run hermes memory setup)",
+                    "(set MEM0_API_KEY in .env or run chiper memory setup)",
                     "Mem0 is set as memory provider but API key is missing",
                     issues,
                 )
@@ -2235,9 +2235,9 @@ def run_doctor(args):
             if _provider and _provider.is_available():
                 check_ok(f"{_active_memory_provider} provider active")
             elif _provider:
-                check_warn(f"{_active_memory_provider} configured but not available", "run: hermes memory status")
+                check_warn(f"{_active_memory_provider} configured but not available", "run: chiper memory status")
             else:
-                check_warn(f"{_active_memory_provider} plugin not found", "run: hermes memory setup")
+                check_warn(f"{_active_memory_provider} plugin not found", "run: chiper memory setup")
         except Exception as _e:
             check_warn(f"{_active_memory_provider} check failed", str(_e))
 

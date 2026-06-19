@@ -1,7 +1,7 @@
 """CLI for the Chiper Kanban board — ``chiper kanban …`` subcommand.
 
 Exposes the full Kanban command surface documented in the design spec
-(``docs/hermes-kanban-v1-spec.pdf``).  All DB work is delegated to
+(``docs/chiper-kanban-v1-spec.pdf``).  All DB work is delegated to
 ``kanban_db``.  This module adds:
 
   * Argparse subcommand construction (``build_parser``).
@@ -202,7 +202,7 @@ def build_parser(parent_subparsers: argparse._SubParsersAction) -> argparse.Argu
             "Tasks are claimed atomically, can depend on other tasks, and "
             "are executed by a named profile in an isolated workspace. "
             "See https://chiper-agent.nousresearch.com/docs/user-guide/features/kanban "
-            "or docs/hermes-kanban-v1-spec.pdf for the full design."
+            "or docs/chiper-kanban-v1-spec.pdf for the full design."
         ),
     )
     # --- global --board flag ---
@@ -865,7 +865,7 @@ def kanban_command(args: argparse.Namespace) -> int:
             parser.print_help()
         else:
             print(
-                "usage: hermes kanban <action> [options]\n"
+                "usage: chiper kanban <action> [options]\n"
                 "Run 'chiper kanban --help' for the full list of actions.",
                 file=sys.stderr,
             )
@@ -989,7 +989,7 @@ def _profile_author() -> str:
 
 
 # ---------------------------------------------------------------------------
-# Boards management (hermes kanban boards …)
+# Boards management (chiper kanban boards …)
 # ---------------------------------------------------------------------------
 
 def _dispatch_boards(args: argparse.Namespace) -> int:

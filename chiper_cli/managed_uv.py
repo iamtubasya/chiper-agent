@@ -1,6 +1,6 @@
 """Managed uv — one path, no guessing.
 
-Hermes owns its own uv binary at ``$CHIPER_HOME/bin/uv`` (or ``uv.exe`` on
+Chiper owns its own uv binary at ``$CHIPER_HOME/bin/uv`` (or ``uv.exe`` on
 Windows).  Every code path that needs uv resolves it from that single location.
 If the binary is missing, ``ensure_uv()`` bootstraps it via the official
 standalone installer with ``UV_UNMANAGED_INSTALL`` / ``UV_INSTALL_DIR`` pointed

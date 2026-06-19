@@ -40,11 +40,11 @@ def build_gui_parser(subparsers, *, cmd_gui: Callable) -> None:
     gui_parser.add_argument(
         "--ignore-existing",
         action="store_true",
-        help="Force Desktop to ignore any hermes CLI already on PATH during backend resolution",
+        help="Force Desktop to ignore any chiper CLI already on PATH during backend resolution",
     )
     gui_parser.add_argument(
-        "--hermes-root",
-        help="Override the Chiper source root used by Desktop (sets CHIPER_DESKTOP_HERMES_ROOT)",
+        "--chiper-root",
+        help="Override the Chiper source root used by Desktop (sets CHIPER_DESKTOP_CHIPER_ROOT)",
     )
     gui_parser.add_argument(
         "--cwd",

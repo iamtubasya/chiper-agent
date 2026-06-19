@@ -98,7 +98,7 @@ def gui_toolset_label(label: str) -> str:
 
 
 # Toolsets that are OFF by default for new installs.
-# They're still in _HERMES_CORE_TOOLS (available at runtime if enabled),
+# They're still in _CHIPER_CORE_TOOLS (available at runtime if enabled),
 # but the setup checklist won't pre-select them for first-time users.
 #
 # Video gen is off by default — it's a niche, paid, slow feature. Users
@@ -410,7 +410,7 @@ TOOL_CATEGORIES = {
         "name": "X (Twitter) Search",
         "setup_title": "Select xAI Credential Source",
         "setup_note": (
-            "Hermes routes X searches through xAI's built-in x_search "
+            "Chiper routes X searches through xAI's built-in x_search "
             "Responses tool. Both credential sources hit the same "
             "https://api.x.ai/v1/responses endpoint — pick whichever you "
             "already have. SuperGrok OAuth is preferred when both are set "
@@ -816,7 +816,7 @@ def _run_cua_driver_installer(label: str = "Installing", verbose: bool = True) -
                 _print_info("    IMPORTANT — grant macOS permissions now:")
                 _print_info("      System Settings > Privacy & Security > Accessibility")
                 _print_info("      System Settings > Privacy & Security > Screen Recording")
-                _print_info("    Both must allow the terminal / Hermes process.")
+                _print_info("    Both must allow the terminal / Chiper process.")
             return True
         _print_warning(f"    cua-driver {label.lower()} did not complete. Re-run manually:")
         _print_info(f"      {install_cmd}")
@@ -1099,9 +1099,9 @@ def _run_post_setup(post_setup_key: str):
                 _print_success("    Plugin observability/langfuse enabled")
         except Exception as exc:
             _print_warning(f"    Could not enable plugin automatically: {exc}")
-            _print_info("    Run manually: hermes plugins enable observability/langfuse")
-        _print_info("    Restart Hermes for tracing to take effect.")
-        _print_info("    Verify: hermes plugins list")
+            _print_info("    Run manually: chiper plugins enable observability/langfuse")
+        _print_info("    Restart Chiper for tracing to take effect.")
+        _print_info("    Verify: chiper plugins list")
 
     elif post_setup_key == "xai_grok":
         # Shared credential bootstrap for any picker entry that talks to xAI
@@ -1214,7 +1214,7 @@ def run_post_setup_command(args) -> int:
     """
     key = getattr(args, "post_setup_key", None)
     if not key:
-        _print_error("Usage: hermes tools post-setup <key>")
+        _print_error("Usage: chiper tools post-setup <key>")
         return 2
     valid = valid_post_setup_keys()
     if key not in valid:
@@ -1302,7 +1302,7 @@ def _get_platform_tools(
             default_ts = plat_info["default_toolset"]
         else:
             # Plugin platform — derive toolset name from platform key
-            default_ts = f"hermes-{platform}"
+            default_ts = f"chiper-{platform}"
         toolset_names = [default_ts]
 
     # YAML may parse bare numeric names (e.g. ``12306:``) as int.
@@ -1316,7 +1316,7 @@ def _get_platform_tools(
     # If the saved list contains any configurable keys directly, the user
     # has explicitly configured this platform — use direct membership.
     # This avoids the subset-inference bug where composite toolsets like
-    # "hermes-cli" (which include all _HERMES_CORE_TOOLS) cause disabled
+    # "chiper-cli" (which include all _CHIPER_CORE_TOOLS) cause disabled
     # toolsets to re-appear as enabled.
     has_explicit_config = any(ts in configurable_keys for ts in toolset_names)
 
@@ -1326,7 +1326,7 @@ def _get_platform_tools(
             if ts in configurable_keys and _toolset_allowed_for_platform(ts, platform)
         }
         # Mixed config: composite toolset alongside configurables (e.g.
-        # ``[hermes-cli, spotify]`` after enabling Spotify via ``hermes
+        # ``[chiper-cli, spotify]`` after enabling Spotify via ``chiper
         # tools``). Without expansion the composite name is silently dropped,
         # leaving sessions with only the configurable opt-ins and no native
         # tools. Mirror the else-branch's subset inference, but apply
@@ -1359,7 +1359,7 @@ def _get_platform_tools(
             enabled_toolsets |= expanded
     else:
         # No explicit config — fall back to resolving composite toolset names
-        # (e.g. "hermes-cli") to individual tool names and reverse-mapping.
+        # (e.g. "chiper-cli") to individual tool names and reverse-mapping.
         all_tool_names = set()
         for ts_name in toolset_names:
             all_tool_names.update(resolve_toolset(ts_name))
@@ -1420,7 +1420,7 @@ def _get_platform_tools(
     # otherwise saving via `chiper tools` (which flips has_explicit_config
     # to True) silently drops them.
     _plat_info = PLATFORMS.get(platform)
-    _default_ts = _plat_info["default_toolset"] if _plat_info else f"hermes-{platform}"
+    _default_ts = _plat_info["default_toolset"] if _plat_info else f"chiper-{platform}"
     platform_tool_universe = set(resolve_toolset(_default_ts))
     configurable_tool_universe = set()
     for ck in configurable_keys:
@@ -1429,7 +1429,7 @@ def _get_platform_tools(
     for ts_key in enabled_toolsets:
         claimed.update(resolve_toolset(ts_key))
     skip = configurable_keys | plugin_ts_keys | platform_default_keys
-    skip |= {k for k in TOOLSETS if k.startswith("hermes-")}
+    skip |= {k for k in TOOLSETS if k.startswith("chiper-")}
     skip |= set(_DEFAULT_OFF_TOOLSETS) - {platform}
     for ts_key, ts_def in TOOLSETS.items():
         if ts_key in skip:
@@ -1467,7 +1467,7 @@ def _get_platform_tools(
                 # Opt-in plugin toolset — stay off until user picks it
                 continue
             elif pts not in known_for_platform:
-                # New plugin not yet seen by hermes tools — default enabled
+                # New plugin not yet seen by chiper tools — default enabled
                 enabled_toolsets.add(pts)
             # else: known but not in config = user disabled it
 
@@ -1559,7 +1559,7 @@ def _save_platform_tools(config: dict, platform: str, enabled_toolset_keys: Set[
     plugin_keys = _get_plugin_toolset_keys()
     configurable_keys |= plugin_keys
 
-    # Also exclude platform default toolsets (hermes-cli, hermes-telegram, etc.)
+    # Also exclude platform default toolsets (chiper-cli, chiper-telegram, etc.)
     # These are "super" toolsets that resolve to ALL tools, so preserving them
     # would silently override the user's unchecked selections on the next read.
     platform_default_keys = {p["default_toolset"] for p in PLATFORMS.values()}
@@ -3408,7 +3408,7 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
                 print(color("    (none enabled)", Colors.DIM))
         print()
         return
-    print(color("⚕ Hermes Tool Configuration", Colors.CYAN, Colors.BOLD))
+    print(color("⚕ Chiper Tool Configuration", Colors.CYAN, Colors.BOLD))
     print(color("  Enable or disable tools per platform.", Colors.DIM))
     print(color("  Tools that need API keys will be configured when enabled.", Colors.DIM))
     print(color("  Guide: https://chiper-agent.nousresearch.com/docs/user-guide/features/tools", Colors.DIM))
@@ -3636,7 +3636,7 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
     print()
     from chiper_constants import display_chiper_home
     print(color(f"  Tool configuration saved to {display_chiper_home()}/config.yaml", Colors.DIM))
-    print(color("  Changes take effect on next 'hermes' or gateway restart.", Colors.DIM))
+    print(color("  Changes take effect on next 'chiper' or gateway restart.", Colors.DIM))
     print()
 
 
@@ -3741,7 +3741,7 @@ def _configure_mcp_tools_interactive(config: dict):
             continue
 
         # Compute new include list (the chosen tools). We standardize on
-        # tools.include across the codebase (catalog installs, hermes mcp
+        # tools.include across the codebase (catalog installs, chiper mcp
         # configure, and this UI) so a server\'s on-disk config shape doesn\'t
         # depend on which UI the user touched last.
         chosen_names = [tool_names[i] for i in sorted(chosen)]

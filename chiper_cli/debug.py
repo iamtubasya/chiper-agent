@@ -189,7 +189,7 @@ def _best_effort_sweep_expired_pastes() -> None:
 
 _PRIVACY_NOTICE = """\
 ⚠️  This will upload the following to a public paste service:
-  • System info (OS, Python version, Hermes version, provider, which API keys
+  • System info (OS, Python version, Chiper version, provider, which API keys
     are configured — NOT the actual keys)
   • Recent log lines (agent.log, errors.log, gateway.log, desktop.log — may
     contain conversation fragments and file paths)
@@ -283,7 +283,7 @@ def _upload_dpaste_com(content: str, expiry_days: int = 7) -> str:
 
     dpaste.com uses multipart form data.
     """
-    boundary = "----HermesDebugBoundary9f3c"
+    boundary = "----ChiperDebugBoundary9f3c"
 
     def _field(name: str, value: str) -> str:
         return (

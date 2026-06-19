@@ -3,7 +3,7 @@
 Scans three surfaces a Chiper user actually controls and we can map to
 upstream advisories without auth or extra binaries:
 
-1. The Hermes venv (every PyPI dist via ``importlib.metadata``).
+1. The Chiper venv (every PyPI dist via ``importlib.metadata``).
 2. Python deps declared by user-installed plugins under ``~/.chiperflux/plugins``
    (``requirements.txt`` + ``pyproject.toml`` best-effort pin extraction).
 3. MCP servers wired in ``config.yaml`` whose ``command/args`` look like

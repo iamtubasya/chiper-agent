@@ -19,7 +19,7 @@ def cmd_migrate(args: Any) -> int:
     if sub == "xai":
         return cmd_migrate_xai(args)
 
-    print("usage: hermes migrate xai [--apply] [--no-backup]", file=sys.stderr)
+    print("usage: chiper migrate xai [--apply] [--no-backup]", file=sys.stderr)
     return 2
 
 

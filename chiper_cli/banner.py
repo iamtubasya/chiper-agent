@@ -285,7 +285,7 @@ def check_for_updates() -> Optional[int]:
     # then gets rendered by the CLI banner and the TUI badge as a phantom
     # "1 commit behind" — even though no git repo or commit math is involved,
     # and `chiper update` correctly refuses to run in-place inside the
-    # container anyway. The dashboard's REST `/api/hermes/update/check`
+    # container anyway. The dashboard's REST `/api/chiper/update/check`
     # endpoint already short-circuits docker the same way (web_server.py);
     # mirror that here so the banner/TUI surfaces agree. Returning None makes
     # both the Rich banner (build_welcome_banner) and the Ink badge
@@ -340,7 +340,7 @@ def check_for_updates() -> Optional[int]:
 
 
 def _resolve_repo_dir() -> Optional[Path]:
-    """Return the active Hermes git checkout, or None if this isn't a git install.
+    """Return the active Chiper git checkout, or None if this isn't a git install.
 
     Prefers the running code's location over the profile-scoped path
     because ``$CHIPER_HOME/chiper-agent/`` may be a stale copy carried

@@ -9,7 +9,7 @@ persistent profiles, recreate the s6 service slots, and auto-start
 only those whose last recorded state was ``running``.
 
 Wired into the image as /etc/cont-init.d/02-reconcile-profiles by the
-Dockerfile (Phase 4 Task 4.0). Runs as root after 01-hermes-setup
+Dockerfile (Phase 4 Task 4.0). Runs as root after 01-chiper-setup
 (the stage2 hook) has chowned the volume and seeded $CHIPER_HOME, but
 before s6-rc starts user services.
 
@@ -208,12 +208,12 @@ def _read_container_argv() -> tuple[str, ...]:
 
 
 def _strip_container_argv_prefix(argv: Sequence[str]) -> list[str]:
-    """Strip the s6/wrapper prefix off PID 1 argv, leaving the hermes args.
+    """Strip the s6/wrapper prefix off PID 1 argv, leaving the chiper args.
 
     The container PID 1 argv looks like
-    ``/init /opt/hermes/docker/main-wrapper.sh <subcommand> [args...]`` and
+    ``/init /opt/chiper/docker/main-wrapper.sh <subcommand> [args...]`` and
     the wrapper re-execs ``chiper <subcommand>``. Peel ``init`` →
-    ``main-wrapper.sh`` → ``hermes`` so callers can match on the bare
+    ``main-wrapper.sh`` → ``chiper`` so callers can match on the bare
     subcommand. Shared by the legacy-gateway and dashboard role detectors.
     """
     args = list(argv)
@@ -221,7 +221,7 @@ def _strip_container_argv_prefix(argv: Sequence[str]) -> list[str]:
         args = args[1:]
     if args and args[0].endswith("main-wrapper.sh"):
         args = args[1:]
-    if args and Path(args[0]).name == "hermes":
+    if args and Path(args[0]).name == "chiper":
         args = args[1:]
     return args
 
@@ -352,13 +352,13 @@ def _register_service(scandir: Path, profile: str, *, start: bool) -> None:
         if not start:
             (tmp_dir / "down").touch()
 
-        # Pre-create the supervise/ skeleton with hermes ownership
+        # Pre-create the supervise/ skeleton with chiper ownership
         # BEFORE we publish the slot. Mirrors the same pre-creation
         # step in S6ServiceManager.register_profile_gateway — when
         # s6-svscan picks the published slot up, the s6-supervise it
-        # spawns will EEXIST our dirs/FIFOs and inherit hermes
+        # spawns will EEXIST our dirs/FIFOs and inherit chiper
         # ownership, so runtime s6-svc / s6-svstat / s6-svwait calls
-        # (all dispatched as the hermes user) won't hit EACCES. See
+        # (all dispatched as the chiper user) won't hit EACCES. See
         # ``_seed_supervise_skeleton`` in service_manager.py for the
         # full rationale.
         _seed_supervise_skeleton(tmp_dir)

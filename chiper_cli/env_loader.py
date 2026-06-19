@@ -1,4 +1,4 @@
-"""Helpers for loading Hermes .env files consistently across entrypoints."""
+"""Helpers for loading Chiper .env files consistently across entrypoints."""
 
 from __future__ import annotations
 
@@ -169,7 +169,7 @@ def _sanitize_env_file_if_needed(path: Path) -> None:
     copy-pasting API keys from terminals or rich-text editors.
 
     We delegate to ``chiper_cli.config._sanitize_env_lines`` which
-    already knows all valid Hermes env-var names and can split
+    already knows all valid Chiper env-var names and can split
     concatenated lines correctly.
     """
     if not path.exists():
@@ -214,7 +214,7 @@ def load_chiper_dotenv(
     chiper_home: str | os.PathLike | None = None,
     project_env: str | os.PathLike | None = None,
 ) -> list[Path]:
-    """Load Hermes environment files with user config taking precedence.
+    """Load Chiper environment files with user config taking precedence.
 
     Behavior:
     - `~/.chiperflux/.env` overrides stale shell-exported values when present.

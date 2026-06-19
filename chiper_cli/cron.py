@@ -1,5 +1,5 @@
 """
-Cron subcommand for hermes CLI.
+Cron subcommand for chiper CLI.
 
 Handles standalone cron management commands like list, create, edit,
 pause/resume/run/remove, status, and tick.
@@ -23,10 +23,10 @@ from chiper_cli.colors import Colors, color
 # the API gateway logs and report restart events").
 _GATEWAY_LIFECYCLE_PATTERNS = re.compile(
     r"(?i)"
-    r"(hermes\s+gateway\s+(restart|stop|start))"
-    r"|(launchctl\s+(kickstart|unload|load|stop|restart)\s+.*hermes)"
-    r"|(systemctl\s+(restart|stop|start)\s+.*hermes)"
-    r"|(p?kill\s+.*hermes.*gateway)"
+    r"(chiper\s+gateway\s+(restart|stop|start))"
+    r"|(launchctl\s+(kickstart|unload|load|stop|restart)\s+.*chiper)"
+    r"|(systemctl\s+(restart|stop|start)\s+.*chiper)"
+    r"|(p?kill\s+.*chiper.*gateway)"
 )
 
 

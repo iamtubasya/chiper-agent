@@ -94,8 +94,8 @@ def _unauth_response(request: Request, *, reason: str) -> Response:
     navigation to ``/sessions`` (etc.) without a cookie comes back to
     ``/sessions`` after login.
 
-    Under a reverse proxy with ``X-Forwarded-Prefix: /hermes``, the
-    ``login_url`` is prefixed (``/hermes/login?next=...``) so the
+    Under a reverse proxy with ``X-Forwarded-Prefix: /chiper``, the
+    ``login_url`` is prefixed (``/chiper/login?next=...``) so the
     browser's window.location.assign / Location: follow lands on the
     proxied login page rather than the bare ``/login`` (which the
     proxy doesn't route to the dashboard).
@@ -157,7 +157,7 @@ def _safe_next_target(request: Request) -> str:
     # navigates to ``login_url``. After the OAuth round trip the user
     # would land on the API URL and see raw JSON instead of the
     # dashboard. SPA routes survive (they don't start with ``/api/``);
-    # the SPA's own ``sessionStorage["hermes.lastLocation"]`` fallback
+    # the SPA's own ``sessionStorage["chiper.lastLocation"]`` fallback
     # in ``web/src/lib/api.ts`` covers the deep-link case.
     if path == "/api" or path.startswith("/api/"):
         return ""
@@ -202,7 +202,7 @@ async def gated_auth_middleware(
     # cookie is set with ``Max-Age = access_token_expires_in`` (~15 min), so
     # the browser EVICTS it the moment the token lapses, while the
     # refresh-token cookie lives for 30 days. From that point the browser
-    # sends only ``hermes_session_rt``. If we bailed on ``not at`` here we'd
+    # sends only ``chiper_session_rt``. If we bailed on ``not at`` here we'd
     # bounce the user to /login on every expiry despite holding a perfectly
     # good refresh token — defeating the whole transparent-refresh feature.
     session = None

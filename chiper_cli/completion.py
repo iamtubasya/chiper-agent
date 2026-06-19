@@ -1,4 +1,4 @@
-"""Shell completion script generation for hermes CLI.
+"""Shell completion script generation for chiper CLI.
 
 Walks the live argparse parser tree to generate accurate, always-up-to-date
 completion scripts — no hardcoded subcommand lists, no extra dependencies.
@@ -72,7 +72,7 @@ def generate_bash(parser: argparse.ArgumentParser) -> str:
                 f"                    return\n"
                 f"                    ;;\n"
                 f"                {profile_actions.replace(' ', '|')})\n"
-                f"                    COMPREPLY=($(compgen -W \"$(_hermes_profiles)\" -- \"$cur\"))\n"
+                f"                    COMPREPLY=($(compgen -W \"$(_chiper_profiles)\" -- \"$cur\"))\n"
                 f"                    return\n"
                 f"                    ;;\n"
                 f"            esac\n"
@@ -99,9 +99,9 @@ def generate_bash(parser: argparse.ArgumentParser) -> str:
 
     return f"""# Chiper Agent bash completion
 # Add to ~/.bashrc:
-#   eval "$(hermes completion bash)"
+#   eval "$(chiper completion bash)"
 
-_hermes_profiles() {{
+_chiper_profiles() {{
     local profiles_dir="$HOME/.chiperflux/profiles"
     local profiles="default"
     if [ -d "$profiles_dir" ]; then
@@ -112,7 +112,7 @@ _hermes_profiles() {{
     echo "$profiles"
 }}
 
-_hermes_completion() {{
+_chiper_completion() {{
     local cur prev
     COMPREPLY=()
     cur="${{COMP_WORDS[COMP_CWORD]}}"
@@ -120,7 +120,7 @@ _hermes_completion() {{
 
     # Complete profile names after -p / --profile
     if [[ "$prev" == "-p" || "$prev" == "--profile" ]]; then
-        COMPREPLY=($(compgen -W "$(_hermes_profiles)" -- "$cur"))
+        COMPREPLY=($(compgen -W "$(_chiper_profiles)" -- "$cur"))
         return
     fi
 
@@ -135,7 +135,7 @@ _hermes_completion() {{
     fi
 }}
 
-complete -F _hermes_completion hermes
+complete -F _chiper_completion chiper
 """
 
 
@@ -169,7 +169,7 @@ def generate_zsh(parser: argparse.ArgumentParser) -> str:
                 f"                profile)\n"
                 f"                    case ${{line[2]}} in\n"
                 f"                        use|delete|show|alias|rename|export)\n"
-                f"                            _hermes_profiles\n"
+                f"                            _chiper_profiles\n"
                 f"                            ;;\n"
                 f"                        *)\n"
                 f"                            local -a profile_cmds\n"
@@ -199,12 +199,12 @@ def generate_zsh(parser: argparse.ArgumentParser) -> str:
             )
     sub_cases_str = "\n".join(sub_cases)
 
-    return f"""#compdef hermes
+    return f"""#compdef chiper
 # Chiper Agent zsh completion
 # Add to ~/.zshrc:
-#   eval "$(hermes completion zsh)"
+#   eval "$(chiper completion zsh)"
 
-_hermes_profiles() {{
+_chiper_profiles() {{
     local -a profiles
     profiles=(default)
     if [[ -d "$HOME/.chiperflux/profiles" ]]; then
@@ -213,14 +213,14 @@ _hermes_profiles() {{
     _describe 'profile' profiles
 }}
 
-_hermes() {{
+_chiper() {{
     local context state line
     typeset -A opt_args
 
     _arguments -C \\
         '(-)'{{-h,--help}}'[Show help and exit]' \\
         '(-)'{{-V,--version}}'[Show version and exit]' \\
-        '(-)'{{-p,--profile}}'[Profile name]:profile:_hermes_profiles' \\
+        '(-)'{{-p,--profile}}'[Profile name]:profile:_chiper_profiles' \\
         '1:command:->commands' \\
         '*::arg:->args'
 
@@ -240,7 +240,7 @@ _hermes() {{
     esac
 }}
 
-compdef _hermes hermes
+compdef _chiper chiper
 """
 
 
@@ -256,10 +256,10 @@ def generate_fish(parser: argparse.ArgumentParser) -> str:
     lines: list[str] = [
         "# Chiper Agent fish completion",
         "# Add to your config:",
-        "#   hermes completion fish | source",
+        "#   chiper completion fish | source",
         "",
         "# Helper: list available profiles",
-        "function __hermes_profiles",
+        "function __chiper_profiles",
         "    echo default",
         "    if test -d $HOME/.chiperflux/profiles",
         "        for d in $HOME/.chiperflux/profiles/*/",
@@ -273,7 +273,7 @@ def generate_fish(parser: argparse.ArgumentParser) -> str:
         "",
         "# Complete profile names after -p / --profile",
         "complete -c chiper -f -s p -l profile"
-        " -d 'Profile name' -xa '(__hermes_profiles)'",
+        " -d 'Profile name' -xa '(__chiper_profiles)'",
         "",
         "# Top-level subcommands",
     ]
@@ -312,7 +312,7 @@ def generate_fish(parser: argparse.ArgumentParser) -> str:
                     f"complete -c chiper -f "
                     f"-n '__fish_seen_subcommand_from {action}; "
                     f"and __fish_seen_subcommand_from profile' "
-                    f"-a '(__hermes_profiles)' -d 'Profile name'"
+                    f"-a '(__chiper_profiles)' -d 'Profile name'"
                 )
 
     lines.append("")

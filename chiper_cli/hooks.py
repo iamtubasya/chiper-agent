@@ -2,10 +2,10 @@
 
 Usage::
 
-    hermes hooks list
-    hermes hooks test <event> [--for-tool X] [--payload-file F]
-    hermes hooks revoke <command>
-    hermes hooks doctor
+    chiper hooks list
+    chiper hooks test <event> [--for-tool X] [--payload-file F]
+    chiper hooks revoke <command>
+    chiper hooks doctor
 
 Consent records live under ``~/.chiperflux/shell-hooks-allowlist.json`` and
 hook definitions come from the ``hooks:`` block in ``~/.chiperflux/config.yaml``
@@ -28,7 +28,7 @@ def hooks_command(args) -> None:
     sub = getattr(args, "hooks_action", None)
 
     if not sub:
-        print("Usage: hermes hooks {list|test|revoke|doctor}")
+        print("Usage: chiper hooks {list|test|revoke|doctor}")
         print("Run 'chiper hooks --help' for details.")
         return
 
@@ -259,7 +259,7 @@ def _print_run_result(result: Dict[str, Any]) -> None:
 
     parsed = result.get("parsed")
     if parsed:
-        print(f"      parsed (Hermes wire shape): {json.dumps(parsed)}")
+        print(f"      parsed (Chiper wire shape): {json.dumps(parsed)}")
     else:
         print("      parsed: <none — hook contributed nothing to the dispatcher>")
 

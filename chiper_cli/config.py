@@ -51,7 +51,7 @@ def _backup_corrupt_config(config_path: Path) -> Optional[Path]:
     This snapshots the corrupted file to ``config.yaml.corrupt.<ts>.bak`` so
     the user can diff/repair it. Unlike Gemini CLI's policy-file recovery
     (which resets the live file to a clean state), we deliberately leave
-    ``config.yaml`` in place: hermes never silently mutates the user's config,
+    ``config.yaml`` in place: chiper never silently mutates the user's config,
     and leaving it means a hand-fixed file is re-read on the next load. The
     backup is best-effort — any failure (permissions, symlink, disk full) is
     swallowed so config loading is never blocked by backup problems.
@@ -146,10 +146,10 @@ _ENV_VAR_NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 #
 # * ``LD_PRELOAD`` / ``LD_LIBRARY_PATH`` / ``LD_AUDIT`` — Linux dynamic
 #   loader. ``DYLD_*`` — macOS equivalent. Planting a path here means
-#   the next ``subprocess.run([...])`` Hermes makes loads attacker code
+#   the next ``subprocess.run([...])`` Chiper makes loads attacker code
 #   before main().
 # * ``PYTHONPATH`` / ``PYTHONHOME`` / ``PYTHONSTARTUP`` /
-#   ``PYTHONUSERBASE`` — Python interpreter init. Hermes itself starts
+#   ``PYTHONUSERBASE`` — Python interpreter init. Chiper itself starts
 #   from one of these on every restart.
 # * ``NODE_OPTIONS`` / ``NODE_PATH`` — Node interpreter; affects npm,
 #   ``chiper update``, the TUI build.
@@ -164,11 +164,11 @@ _ENV_VAR_NAME_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 # * ``SHELL`` — what subprocess uses with ``shell=True`` (we try to
 #   avoid that, but defense in depth).
 # * ``CHIPER_HOME`` / ``CHIPER_PROFILE`` / ``CHIPER_CONFIG`` /
-#   ``CHIPER_ENV`` — Hermes runtime location flags. Writing these into
+#   ``CHIPER_ENV`` — Chiper runtime location flags. Writing these into
 #   ``.env`` would relocate state in ways the user did not request from
 #   the dashboard. ``config.yaml`` is the supported surface for these.
 #
-# IMPORTANT: ``HERMES_*`` overall is NOT blocked. Many legitimate
+# IMPORTANT: ``CHIPER_*`` overall is NOT blocked. Many legitimate
 # integration credentials follow that prefix (CHIPER_GEMINI_CLIENT_ID,
 # CHIPER_LANGFUSE_PUBLIC_KEY, CHIPER_SPOTIFY_CLIENT_ID, ...). The
 # denylist is name-by-name on purpose so the gate stays narrow and
@@ -192,8 +192,8 @@ _ENV_VAR_NAME_DENYLIST: frozenset[str] = frozenset({
     "PATH", "SHELL", "BROWSER", "EDITOR", "VISUAL", "PAGER",
     # Git
     "GIT_SSH_COMMAND", "GIT_EXEC_PATH", "GIT_SHELL",
-    # Hermes runtime location — never via dashboard env writer.
-    # NOT a HERMES_* blanket: integration credentials (CHIPER_GEMINI_*,
+    # Chiper runtime location — never via dashboard env writer.
+    # NOT a CHIPER_* blanket: integration credentials (CHIPER_GEMINI_*,
     # CHIPER_LANGFUSE_*, CHIPER_SPOTIFY_*, ...) ARE allowed.
     "CHIPER_HOME", "CHIPER_PROFILE", "CHIPER_CONFIG", "CHIPER_ENV",
 })
@@ -209,7 +209,7 @@ def _reject_denylisted_env_var(key: str) -> None:
         raise ValueError(
             f"Environment variable {key!r} is on the writer denylist. "
             "Names that influence subprocess execution (LD_PRELOAD, "
-            "PYTHONPATH, PATH, EDITOR, ...) or Hermes runtime location "
+            "PYTHONPATH, PATH, EDITOR, ...) or Chiper runtime location "
             "(CHIPER_HOME, CHIPER_PROFILE, ...) cannot be persisted via "
             "the env writer. If you really need this, edit "
             "~/.chiperflux/.env directly."
@@ -354,7 +354,7 @@ def _install_method_project_root(project_root: Optional[Path] = None) -> Path:
     """Resolve the directory that holds the *running code* (the install tree).
 
     This is the parent of ``chiper_cli/`` — i.e. the git checkout for source
-    installs, ``/opt/hermes`` inside the published image, the venv's
+    installs, ``/opt/chiper`` inside the published image, the venv's
     site-packages root for pip installs. It is a property of the running
     interpreter, NOT of ``$CHIPER_HOME``, which is why a code-scoped stamp
     here is immune to two installs sharing one data directory.
@@ -402,7 +402,7 @@ def detect_install_method(project_root: Optional[Path] = None) -> str:
       - the curl installer (scripts/install.sh, the README/website install
         command) git-clones the repo and stamps ``git`` next to the code;
       - the published ``nousresearch/chiper-agent`` image bakes a ``docker``
-        stamp into ``/opt/hermes`` at build time.
+        stamp into ``/opt/chiper`` at build time.
     An unsupported manual install dropped into a container (no stamp) falls
     through to the ``.git``/pip checks and behaves like any off-path install.
     See issue #34397.
@@ -442,7 +442,7 @@ def detect_install_method(project_root: Optional[Path] = None) -> str:
 
 
 def _running_in_container() -> bool:
-    """Thin wrapper around ``hermes_constants.is_container`` (import-safe)."""
+    """Thin wrapper around ``chiper_constants.is_container`` (import-safe)."""
     try:
         from chiper_constants import is_container
 
@@ -460,7 +460,7 @@ def stamp_install_method(method: str, project_root: Optional[Path] = None) -> No
     the full rationale.
 
     Best-effort: if the install tree is read-only (e.g. the immutable
-    ``/opt/hermes`` in the published image, which instead bakes the stamp at
+    ``/opt/chiper`` in the published image, which instead bakes the stamp at
     build time) the write silently no-ops and detection falls back to its
     other signals.
     """
@@ -473,7 +473,7 @@ def stamp_install_method(method: str, project_root: Optional[Path] = None) -> No
 
 
 def is_uv_tool_install() -> bool:
-    """Return True when the *running* Hermes lives in a ``uv tool`` layout.
+    """Return True when the *running* Chiper lives in a ``uv tool`` layout.
 
     ``uv tool install chiper-agent`` places the install at
     ``.../uv/tools/chiper-agent/...`` (default ``~/.local/share/uv/tools``,
@@ -537,7 +537,7 @@ def recommended_update_command() -> str:
 #     git-based update path can never succeed inside the container.
 #   - The pre-existing fallback message ("✗ Not a git repository. Please
 #     reinstall: curl ... install.sh") is actively misleading inside Docker
-#     — that script installs a *new* host-side Hermes, it doesn't update
+#     — that script installs a *new* host-side Chiper, it doesn't update
 #     the running container.
 #   - The right action is ``docker pull`` + restart the container; this
 #     helper spells that out, with notes on tag pinning and config
@@ -579,7 +579,7 @@ def format_docker_update_message() -> str:
     return _DOCKER_UPDATE_MESSAGE
 
 
-def format_managed_message(action: str = "modify this Hermes installation") -> str:
+def format_managed_message(action: str = "modify this Chiper installation") -> str:
     """Build a user-facing error for managed installs."""
     managed_system = get_managed_system() or "a package manager"
     raw = os.getenv("CHIPER_MANAGED", "").strip().lower()
@@ -587,7 +587,7 @@ def format_managed_message(action: str = "modify this Hermes installation") -> s
     if managed_system == "NixOS":
         env_hint = "true" if raw in _MANAGED_TRUE_VALUES else raw or "true"
         return (
-            f"Cannot {action}: this Hermes installation is managed by NixOS "
+            f"Cannot {action}: this Chiper installation is managed by NixOS "
             f"(CHIPER_MANAGED={env_hint}).\n"
             "Edit services.chiper-agent.settings in your configuration.nix and run:\n"
             "  sudo nixos-rebuild switch"
@@ -596,15 +596,15 @@ def format_managed_message(action: str = "modify this Hermes installation") -> s
     if managed_system == "Homebrew":
         env_hint = raw or "homebrew"
         return (
-            f"Cannot {action}: this Hermes installation is managed by Homebrew "
+            f"Cannot {action}: this Chiper installation is managed by Homebrew "
             f"(CHIPER_MANAGED={env_hint}).\n"
             "Use:\n"
             "  brew upgrade chiper-agent"
         )
 
     return (
-        f"Cannot {action}: this Hermes installation is managed by {managed_system}.\n"
-        "Use your package manager to upgrade or reinstall Hermes."
+        f"Cannot {action}: this Chiper installation is managed by {managed_system}.\n"
+        "Use your package manager to upgrade or reinstall Chiper."
     )
 
 def managed_error(action: str = "modify configuration"):
@@ -619,7 +619,7 @@ def managed_error(action: str = "modify configuration"):
 def get_container_exec_info() -> Optional[dict]:
     """Read container mode metadata from CHIPER_HOME/.container-mode.
 
-    Returns a dict with keys: backend, container_name, exec_user, hermes_bin
+    Returns a dict with keys: backend, container_name, exec_user, chiper_bin
     or None if container mode is not active, we're already inside the
     container, or CHIPER_DEV=1 is set.
 
@@ -650,14 +650,14 @@ def get_container_exec_info() -> Optional[dict]:
 
     backend = info.get("backend", "docker")
     container_name = info.get("container_name", "chiper-agent")
-    exec_user = info.get("exec_user", "hermes")
-    hermes_bin = info.get("hermes_bin", "/data/current-package/bin/hermes")
+    exec_user = info.get("exec_user", "chiper")
+    chiper_bin = info.get("chiper_bin", "/data/current-package/bin/chiper")
 
     return {
         "backend": backend,
         "container_name": container_name,
         "exec_user": exec_user,
-        "hermes_bin": hermes_bin,
+        "chiper_bin": chiper_bin,
     }
 
 
@@ -681,10 +681,10 @@ def get_project_root() -> Path:
     """Get the project installation directory."""
     return Path(__file__).parent.parent.resolve()
 
-def _resolve_hermes_uid_gid() -> tuple[Optional[int], Optional[int]]:
+def _resolve_chiper_uid_gid() -> tuple[Optional[int], Optional[int]]:
     """Read the CHIPER_UID / CHIPER_GID env vars set by Docker deployments.
 
-    Docker containers running Hermes commonly set these to map the in-container
+    Docker containers running Chiper commonly set these to map the in-container
     user to a host user so volume-mounted state files end up with the right
     ownership. The entrypoint chowns the top-level CHIPER_HOME once, but
     subdirectories created at runtime by ``ensure_chiper_home()`` (especially
@@ -711,7 +711,7 @@ def _resolve_hermes_uid_gid() -> tuple[Optional[int], Optional[int]]:
     return uid, gid
 
 
-def _chown_to_hermes_uid(path) -> None:
+def _chown_to_chiper_uid(path) -> None:
     """Chown ``path`` to ``CHIPER_UID:CHIPER_GID`` if those env vars are set.
 
     No-op when:
@@ -723,7 +723,7 @@ def _chown_to_hermes_uid(path) -> None:
     directories created by :func:`ensure_chiper_home` on Docker deployments.
     See #34107.
     """
-    uid, gid = _resolve_hermes_uid_gid()
+    uid, gid = _resolve_chiper_uid_gid()
     if uid is None and gid is None:
         return
     try:
@@ -744,7 +744,7 @@ def _secure_dir(path):
     """Set directory to owner-only access (0700 by default). No-op on Windows.
 
     Skipped in managed mode — the NixOS module sets group-readable
-    permissions (0750) so interactive users in the hermes group can
+    permissions (0750) so interactive users in the chiper group can
     share state with the gateway service.
 
     The mode can be overridden via the CHIPER_HOME_MODE environment variable
@@ -769,13 +769,13 @@ def _secure_dir(path):
         os.chmod(path, mode)
     except (OSError, NotImplementedError):
         pass
-    _chown_to_hermes_uid(path)
+    _chown_to_chiper_uid(path)
 
 
 def _is_container() -> bool:
     """Detect if we're running inside a Docker/Podman/LXC container.
 
-    When Hermes runs in a container with volume-mounted config files, forcing
+    When Chiper runs in a container with volume-mounted config files, forcing
     0o600 permissions breaks multi-process setups where the gateway and
     dashboard run as different UIDs or the volume mount requires broader
     permissions.
@@ -882,7 +882,7 @@ DEFAULT_CONFIG = {
     "providers": {},
     "fallback_providers": [],
     "credential_pool_strategies": {},
-    "toolsets": ["hermes-cli"],
+    "toolsets": ["chiper-cli"],
     # Global active chat session cap across CLI, TUI/dashboard, and messaging.
     # None/0 = unbounded.
     "max_concurrent_sessions": None,
@@ -943,14 +943,14 @@ DEFAULT_CONFIG = {
         # disable entirely.
         "environment_probe": True,
         # Embedder-supplied environment description appended to the system
-        # prompt's environment-hints block. Lets a host that wraps Hermes
+        # prompt's environment-hints block. Lets a host that wraps Chiper
         # (sandbox runner, managed platform) explain the runtime environment
         # — proxy, credential handling, mount layout — without editing the
         # identity slot (SOUL.md). Empty by default. The CHIPER_ENVIRONMENT_HINT
         # env var overrides this (build-time/container mechanism).
         "environment_hint": "",
         # Coding posture — on interactive coding surfaces (CLI, TUI, desktop
-        # app, ACP) in a code workspace, Hermes adds a coding operating brief
+        # app, ACP) in a code workspace, Chiper adds a coding operating brief
         # + a live git/workspace snapshot to the system prompt. See
         # agent/coding_context.py.
         #   "auto" (default) — prompt-only posture when the surface is
@@ -1036,13 +1036,13 @@ DEFAULT_CONFIG = {
         # (bash doesn't source bashrc in non-interactive login mode) or
         # zsh-specific files like ``~/.zshrc`` / ``~/.zprofile``.
         # Paths support ``~`` / ``${VAR}``. Missing files are silently
-        # skipped. When empty, Hermes auto-sources ``~/.profile``,
+        # skipped. When empty, Chiper auto-sources ``~/.profile``,
         # ``~/.bash_profile``, and ``~/.bashrc`` (in that order) if the
         # snapshot shell is bash (this is the ``auto_source_bashrc``
         # behaviour — disable with that key if you want strict login-only
         # semantics).
         "shell_init_files": [],
-        # When true (default), Hermes sources the user's shell rc files
+        # When true (default), Chiper sources the user's shell rc files
         # (``~/.profile``, ``~/.bash_profile``, ``~/.bashrc``) in the
         # login shell used to build the environment snapshot. This
         # captures PATH additions, shell functions, and aliases — which a
@@ -1059,7 +1059,7 @@ DEFAULT_CONFIG = {
         "docker_forward_env": [],
         # Explicit environment variables to set inside Docker containers.
         # Unlike docker_forward_env (which reads values from the host process),
-        # docker_env lets you specify exact key-value pairs — useful when Hermes
+        # docker_env lets you specify exact key-value pairs — useful when Chiper
         # runs as a systemd service without access to the user's shell environment.
         # Example: {"SSH_AUTH_SOCK": "/run/user/1000/ssh-agent.sock"}
         "docker_env": {},
@@ -1089,7 +1089,7 @@ DEFAULT_CONFIG = {
         # are owned by your host user instead of root, which avoids needing
         # `sudo chown` after container runs. Default off to preserve behavior
         # for images whose entrypoints expect to start as root (e.g. the
-        # bundled Hermes image, which drops to the `hermes` user via
+        # bundled Chiper image, which drops to the `chiper` user via
         # s6-setuidgid inside each supervised service).
         # When on, SETUID/SETGID caps are omitted from the container since
         # no privilege drop is needed.
@@ -1128,12 +1128,12 @@ DEFAULT_CONFIG = {
         "dialog_policy": "must_respond",  # must_respond | auto_dismiss | auto_accept
         "dialog_timeout_s": 300,  # Safety auto-dismiss after N seconds under must_respond
         "camofox": {
-            # When true, Hermes sends a stable profile-scoped userId to Camofox
+            # When true, Chiper sends a stable profile-scoped userId to Camofox
             # so the server maps it to a persistent Firefox profile automatically.
             # When false (default), each session gets a random userId (ephemeral).
             "managed_persistence": False,
             # Optional externally managed Camofox identity. Useful when another
-            # app owns the visible browser and Hermes should operate in it.
+            # app owns the visible browser and Chiper should operate in it.
             "user_id": "",
             "session_key": "",
             # Rehydrate tab_id from Camofox before creating a new tab.
@@ -1171,7 +1171,7 @@ DEFAULT_CONFIG = {
         # Prevents accidental snapshotting of datasets, model weights, and
         # other large generated assets.  0 disables the filter.
         "max_file_size_mb": 10,
-        # Auto-maintenance: hermes sweeps the checkpoint base at startup
+        # Auto-maintenance: chiper sweeps the checkpoint base at startup
         # (at most once per ``min_interval_hours``) and:
         #   * deletes project entries whose workdir no longer exists (orphan)
         #   * deletes project entries whose last_touch is older than
@@ -1186,7 +1186,7 @@ DEFAULT_CONFIG = {
     },
 
     # Hard cap (chars) for a single automatic context file such as SOUL.md,
-    # AGENTS.md, CLAUDE.md, .hermes.md, or .cursorrules before Hermes applies
+    # AGENTS.md, CLAUDE.md, .chiper.md, or .cursorrules before Chiper applies
     # head/tail truncation. ``null`` (the default) lets the cap scale with the
     # model's context window (floor 20K, ceiling 500K) so large-context models
     # rarely truncate a project doc. Set a positive integer to pin a fixed cap
@@ -1199,7 +1199,7 @@ DEFAULT_CONFIG = {
     "file_read_max_chars": 100_000,
 
     # Tool-output truncation thresholds. When terminal output or a
-    # single read_file page exceeds these limits, Hermes truncates the
+    # single read_file page exceeds these limits, Chiper truncates the
     # payload sent to the model (keeping head + tail for terminal,
     # enforcing pagination for read_file). Tuning these trades context
     # footprint against how much raw output the model can see in one
@@ -1499,7 +1499,7 @@ DEFAULT_CONFIG = {
         # behavior of showing tool-call summaries inline.
         "resume_skip_tool_only": True,
         "busy_input_mode": "interrupt",  # interrupt | queue | steer
-        # Which interface bare `hermes` (and `chiper chat`) launches by default:
+        # Which interface bare `chiper` (and `chiper chat`) launches by default:
         #   "cli" — the classic prompt_toolkit REPL (default, preserves prior behavior)
         #   "tui" — the modern Ink TUI (same as passing `--tui`)
         # Explicit flags always win over this setting: `--cli` forces the classic
@@ -1611,7 +1611,7 @@ DEFAULT_CONFIG = {
         },
         # Gateway runtime-metadata footer appended to the FINAL message of a turn
         # (disabled by default to keep replies minimal). When enabled, renders
-        # e.g. `model · 68% · ~/projects/hermes`. Per-platform overrides go under
+        # e.g. `model · 68% · ~/projects/chiper`. Per-platform overrides go under
         # display.platforms.<platform>.runtime_footer.
         "runtime_footer": {
             "enabled": False,
@@ -1685,7 +1685,7 @@ DEFAULT_CONFIG = {
         },
         # Public URL override (env: ``CHIPER_DASHBOARD_PUBLIC_URL``).
         # When set, this is the complete authority — scheme + host +
-        # optional path prefix (e.g. ``https://example.com/hermes``) —
+        # optional path prefix (e.g. ``https://example.com/chiper``) —
         # the OAuth ``redirect_uri`` is built from. Set this for deploys
         # behind reverse proxies that don't reliably forward
         # ``X-Forwarded-Host`` / ``X-Forwarded-Proto`` / ``X-Forwarded-Prefix``
@@ -1741,7 +1741,7 @@ DEFAULT_CONFIG = {
             # Optional local Markdown/text file with Gemini TTS performance
             # direction. It may include AUDIO PROFILE, SCENE, DIRECTOR'S NOTES,
             # SAMPLE CONTEXT, and either a `{transcript}` placeholder or no
-            # transcript section; Hermes appends the live transcript when absent.
+            # transcript section; Chiper appends the live transcript when absent.
             "persona_prompt_file": "",
         },
         "xai": {
@@ -1901,13 +1901,13 @@ DEFAULT_CONFIG = {
     # Goals — persistent cross-turn goals (Ralph-style loop).
     # After every turn, a lightweight judge call asks the auxiliary model
     # whether the active /goal is satisfied by the assistant's last
-    # response. If not, Hermes feeds a continuation prompt back into the
+    # response. If not, Chiper feeds a continuation prompt back into the
     # same session and keeps working until the goal is done, the turn
     # budget is exhausted, or the user pauses/clears it. Judge failures
     # fail OPEN (continue) so a flaky judge never wedges progress — the
     # turn budget is the real backstop.
     "goals": {
-        # Max continuation turns before Hermes auto-pauses the goal and
+        # Max continuation turns before Chiper auto-pauses the goal and
         # asks the user to /goal resume. Protects against judge false
         # negatives (goal actually done but judge says continue) and
         # unbounded model spend on fuzzy / unachievable goals.
@@ -2009,7 +2009,7 @@ DEFAULT_CONFIG = {
     },
 
     # Honcho AI-native memory -- reads ~/.honcho/config.json as single source of truth.
-    # This section is only needed for hermes-specific overrides; everything else
+    # This section is only needed for chiper-specific overrides; everything else
     # (apiKey, workspace, peerName, sessions, enabled) comes from the global config.
     "honcho": {},
 
@@ -2194,7 +2194,7 @@ DEFAULT_CONFIG = {
         # <id>`; remove by editing the list directly. See
         # ``chiper_cli/security_advisories.py`` for the catalog.
         "acked_advisories": [],
-        # Allow Hermes to lazy-install opt-in backend packages from PyPI
+        # Allow Chiper to lazy-install opt-in backend packages from PyPI
         # the first time the user enables a backend that needs them
         # (e.g. installing ``elevenlabs`` when the user picks ElevenLabs as
         # their TTS provider). Set to false to require explicit
@@ -2242,7 +2242,7 @@ DEFAULT_CONFIG = {
         "worker_log_backup_count": 1,
         # Profile assigned to the root/orchestration task after Triage
         # decomposition. When unset, falls back to the default profile (the
-        # one `hermes` launches with no -p flag). This does not control the
+        # one `chiper` launches with no -p flag). This does not control the
         # decomposer prompt, model, or skills; configure that LLM path under
         # auxiliary.kanban_decomposer.
         "orchestrator_profile": "",
@@ -2297,7 +2297,7 @@ DEFAULT_CONFIG = {
     # in the model-facing tools array with three bridge tools —
     # tool_search / tool_describe / tool_call — and surfaced on demand.
     #
-    # Core Hermes tools (terminal, read_file, write_file, patch,
+    # Core Chiper tools (terminal, read_file, write_file, patch,
     # search_files, todo, memory, browser_*, etc.) are NEVER deferred.
     # See tools/tool_search.py for full design notes and the
     # openclaw-tool-search-report PDF in this PR for the rationale.
@@ -3458,7 +3458,7 @@ OPTIONAL_ENV_VARS = {
         "category": "messaging",
     },
     "MATRIX_USER_ID": {
-        "description": "Matrix user ID (e.g. @hermes:example.org)",
+        "description": "Matrix user ID (e.g. @chiper:example.org)",
         "prompt": "Matrix user ID (@user:server)",
         "url": None,
         "password": False,
@@ -3595,14 +3595,14 @@ OPTIONAL_ENV_VARS = {
         "category": "messaging",
     },
     "IRC_CHANNEL": {
-        "description": "IRC channel to join (e.g. #hermes)",
+        "description": "IRC channel to join (e.g. #chiper)",
         "prompt": "IRC channel",
         "url": None,
         "password": False,
         "category": "messaging",
     },
     "IRC_NICKNAME": {
-        "description": "Bot nickname on IRC (default: hermes-bot)",
+        "description": "Bot nickname on IRC (default: chiper-bot)",
         "prompt": "IRC nickname",
         "url": None,
         "password": False,
@@ -3673,15 +3673,15 @@ OPTIONAL_ENV_VARS = {
         "advanced": True,
     },
     "GATEWAY_PROXY_URL": {
-        "description": "URL of a remote Hermes API server to forward messages to (proxy mode). When set, the gateway handles platform I/O only — all agent work is delegated to the remote server. Use for Docker E2EE containers that relay to a host agent. Also configurable via gateway.proxy_url in config.yaml.",
-        "prompt": "Remote Hermes API server URL (e.g. http://192.168.1.100:8642)",
+        "description": "URL of a remote Chiper API server to forward messages to (proxy mode). When set, the gateway handles platform I/O only — all agent work is delegated to the remote server. Use for Docker E2EE containers that relay to a host agent. Also configurable via gateway.proxy_url in config.yaml.",
+        "prompt": "Remote Chiper API server URL (e.g. http://192.168.1.100:8642)",
         "url": None,
         "password": False,
         "category": "messaging",
         "advanced": True,
     },
     "GATEWAY_PROXY_KEY": {
-        "description": "Bearer token for authenticating with the remote Hermes API server (proxy mode). Must match the API_SERVER_KEY on the remote host.",
+        "description": "Bearer token for authenticating with the remote Chiper API server (proxy mode). Must match the API_SERVER_KEY on the remote host.",
         "prompt": "Remote API server auth key",
         "url": None,
         "password": True,
@@ -3851,7 +3851,7 @@ def get_missing_config_fields() -> List[Dict[str, Any]]:
 def get_missing_skill_config_vars() -> List[Dict[str, Any]]:
     """Return skill-declared config vars that are missing or empty in config.yaml.
 
-    Scans all enabled skills for ``metadata.hermes.config`` entries, then checks
+    Scans all enabled skills for ``metadata.chiper.config`` entries, then checks
     which ones are absent or empty under ``skills.config.<key>`` in the user's
     config.yaml.  Returns a list of dicts suitable for prompting.
     """
@@ -4000,7 +4000,7 @@ def _normalize_custom_provider_entry(
     if isinstance(models, dict) and models:
         normalized["models"] = models
     elif isinstance(models, list) and models:
-        # Hand-edited configs (and older Hermes versions) write ``models`` as
+        # Hand-edited configs (and older Chiper versions) write ``models`` as
         # a plain list of model ids. Preserve them by converting to the dict
         # shape downstream code expects; otherwise normalize silently drops
         # the list and /model shows the provider with (0) models.
@@ -4392,7 +4392,7 @@ def validate_config_structure(config: Optional[Dict[str, Any]] = None) -> List["
     if cp and not model_cfg:
         issues.append(ConfigIssue(
             "warning",
-            "custom_providers defined but no 'model' section — Hermes won't know which provider to use",
+            "custom_providers defined but no 'model' section — Chiper won't know which provider to use",
             "Add a model section:\n"
             "  model:\n"
             "    provider: custom\n"
@@ -5116,7 +5116,7 @@ def migrate_config(interactive: bool = True, quiet: bool = False) -> Dict[str, A
 
     # ── Skill-declared config vars ──────────────────────────────────────
     # Skills can declare config.yaml settings they need via
-    # metadata.hermes.config in their SKILL.md frontmatter.
+    # metadata.chiper.config in their SKILL.md frontmatter.
     # Prompt for any that are missing/empty.
     missing_skill_config = get_missing_skill_config_vars()
     if missing_skill_config and interactive and not quiet:
@@ -5802,7 +5802,7 @@ def _sanitize_env_lines(lines: list) -> list:
     2. Stale ``KEY=***`` placeholder entries left by incomplete setup runs.
 
     Uses a known-keys set (OPTIONAL_ENV_VARS + _EXTRA_ENV_KEYS) so we only
-    split on real Hermes env var names, avoiding false positives from values
+    split on real Chiper env var names, avoiding false positives from values
     that happen to contain uppercase text with ``=``.
     """
     # Build the known keys set lazily from OPTIONAL_ENV_VARS + extras.
@@ -6119,7 +6119,7 @@ def reload_env() -> int:
         if os.environ.get(key) != value:
             os.environ[key] = value
             count += 1
-    # Remove known Hermes vars that are no longer in .env
+    # Remove known Chiper vars that are no longer in .env
     for key in known_keys:
         if key not in env_vars and key in os.environ:
             del os.environ[key]
@@ -6158,7 +6158,7 @@ def show_config():
     
     print()
     print(color("┌─────────────────────────────────────────────────────────┐", Colors.CYAN))
-    print(color("│              ⚕ Hermes Configuration                    │", Colors.CYAN))
+    print(color("│              ⚕ Chiper Configuration                    │", Colors.CYAN))
     print(color("└─────────────────────────────────────────────────────────┘", Colors.CYAN))
     
     # Paths

@@ -1,7 +1,7 @@
 """
-Dump command for hermes CLI.
+Dump command for chiper CLI.
 
-Outputs a compact, plain-text summary of the user's Hermes setup
+Outputs a compact, plain-text summary of the user's Chiper setup
 that can be copy-pasted into Discord/GitHub/Telegram for support context.
 No ANSI colors, no checkmarks — just data.
 """
@@ -25,7 +25,7 @@ def _get_git_commit(project_root: Path) -> str:
     Source installs and dev images resolve this live via ``git rev-parse``.
     The published Docker image excludes ``.git`` from the build context, so
     that lookup always fails — we fall back to the baked-in build SHA written
-    to ``<project_root>/.hermes_build_sha`` by the Dockerfile's
+    to ``<project_root>/.chiper_build_sha`` by the Dockerfile's
     ``CHIPER_GIT_SHA`` build-arg (see ``chiper_cli/build_info.py``).
     The output format is identical regardless of source.
     """
@@ -306,7 +306,7 @@ def run_dump(args):
     os_info = f"{platform.system()} {platform.release()} {platform.machine()}"
 
     lines = []
-    lines.append("--- hermes dump ---")
+    lines.append("--- chiper dump ---")
     # Identify the build by commit + the date that commit was made, resolved
     # live via git.  __release_date__ (the package release date) is
     # intentionally NOT shown here — it reads like a wall-clock timestamp and
@@ -378,7 +378,7 @@ def run_dump(args):
     lines.append("")
     lines.append("features:")
 
-    toolsets = config.get("toolsets", ["hermes-cli"])
+    toolsets = config.get("toolsets", ["chiper-cli"])
     lines.append(f"  toolsets:           {', '.join(toolsets) if toolsets else '(default)'}")
     lines.append(f"  mcp_servers:        {_count_mcp_servers(config)}")
     lines.append(f"  memory_provider:    {_memory_provider(config)}")

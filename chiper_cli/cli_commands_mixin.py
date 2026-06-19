@@ -1,7 +1,7 @@
 """Slash-command handlers for the interactive CLI (god-file decomposition Phase 4).
 
 This module hosts the ``_handle_*_command`` slash-command handlers lifted out of
-``cli.py``'s ``HermesCLI`` class. ``HermesCLI`` inherits ``CLICommandsMixin`` so
+``cli.py``'s ``ChiperCLI`` class. ``ChiperCLI`` inherits ``CLICommandsMixin`` so
 every ``self.<handler>`` call resolves unchanged via the MRO — behavior-neutral.
 
 Import discipline (mirrors gateway/slash_commands.py, PR #41886):
@@ -40,7 +40,7 @@ class CLICommandsMixin:
 
     All methods use only ``self`` state plus the imports above and per-method
     lazy ``from cli import ...`` lines, so they compose cleanly onto
-    ``HermesCLI`` via the MRO.
+    ``ChiperCLI`` via the MRO.
     """
 
     def _handle_rollback_command(self, command: str):
@@ -1525,11 +1525,11 @@ class CLICommandsMixin:
                     try:
                         from chiper_cli.skin_engine import get_active_skin
                         _skin = get_active_skin()
-                        label = _skin.get_branding("response_label", "⚕ Hermes")
+                        label = _skin.get_branding("response_label", "⚕ Chiper")
                         _resp_color = _maybe_remap_for_light_mode(_skin.get_color("response_border", "#CD7F32"))
                         _resp_text = _maybe_remap_for_light_mode(_skin.get_color("banner_text", "#FFF8DC"))
                     except Exception:
-                        label = "⚕ Hermes"
+                        label = "⚕ Chiper"
                         _resp_color = "#CD7F32"
                         _resp_text = "#FFF8DC"
 

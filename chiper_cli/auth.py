@@ -69,7 +69,7 @@ AUTH_LOCK_TIMEOUT_SECONDS = 15.0
 # Nous Portal defaults
 DEFAULT_NOUS_PORTAL_URL = "https://portal.nousresearch.com"
 DEFAULT_NOUS_INFERENCE_URL = "https://inference-api.nousresearch.com/v1"
-DEFAULT_NOUS_CLIENT_ID = "hermes-cli"
+DEFAULT_NOUS_CLIENT_ID = "chiper-cli"
 NOUS_INFERENCE_INVOKE_SCOPE = "inference:invoke"
 DEFAULT_NOUS_SCOPE = NOUS_INFERENCE_INVOKE_SCOPE
 NOUS_DEVICE_CODE_SOURCE = "device_code"
@@ -2557,7 +2557,7 @@ def _make_xai_callback_handler(expected_path: str) -> tuple[type[BaseHTTPRequest
             }
 
             # Diagnostic logging — emits at INFO so reporters of loopback bugs
-            # (#27385 — "callback received but Hermes times out") can produce
+            # (#27385 — "callback received but Chiper times out") can produce
             # actionable evidence without a code change.  Logged values are
             # fingerprints / booleans only; no actual code/state strings leak
             # into the log file.  Run with ``CHIPER_LOG_LEVEL=INFO`` (or check
@@ -3843,7 +3843,7 @@ def resolve_codex_runtime_credentials(
     if (not should_refresh) and refresh_if_expiring:
         should_refresh = _codex_access_token_is_expiring(access_token, refresh_skew_seconds)
     if should_refresh:
-        # Re-read under lock to avoid racing with other Hermes processes
+        # Re-read under lock to avoid racing with other Chiper processes
         with _auth_store_lock(timeout_seconds=max(float(AUTH_LOCK_TIMEOUT_SECONDS), refresh_timeout_seconds + 5.0)):
             data = _read_codex_tokens(_lock=False)
             tokens = dict(data["tokens"])
@@ -3866,7 +3866,7 @@ def resolve_codex_runtime_credentials(
         "provider": "openai-codex",
         "base_url": base_url,
         "api_key": access_token,
-        "source": "hermes-auth-store",
+        "source": "chiper-auth-store",
         "last_refresh": data.get("last_refresh"),
         "auth_mode": "chatgpt",
     }
@@ -4353,7 +4353,7 @@ def refresh_xai_oauth_pure(
         )
     endpoint = token_endpoint.strip() or _xai_oauth_discovery(timeout_seconds)["token_endpoint"]
     # Re-validate cached endpoints on the refresh hot path: an auth.json
-    # written by an older Hermes (or hand-edited) may carry a non-xAI
+    # written by an older Chiper (or hand-edited) may carry a non-xAI
     # token_endpoint that would receive every future refresh_token in
     # plaintext if we trusted it blindly. Cheap suffix check; fast-fail
     # with a clear error so the user can re-run `chiper model` to refetch.
@@ -4541,7 +4541,7 @@ def resolve_xai_oauth_runtime_credentials(
         "provider": "xai-oauth",
         "base_url": base_url,
         "api_key": access_token,
-        "source": "hermes-auth-store",
+        "source": "chiper-auth-store",
         "last_refresh": data.get("last_refresh"),
         "auth_mode": "oauth_pkce",
     }
@@ -4694,11 +4694,11 @@ def _poll_for_token(
 # import instead of running the full device-code flow every time.
 #
 # File lives at ${CHIPER_SHARED_AUTH_DIR}/nous_auth.json, defaulting to
-# ``<hermes-root>/shared/nous_auth.json`` where ``<hermes-root>`` is what
+# ``<chiper-root>/shared/nous_auth.json`` where ``<chiper-root>`` is what
 # ``get_default_chiper_root()`` returns — ``~/.chiperflux`` on Linux/macOS,
-# ``%LOCALAPPDATA%\hermes`` on native Windows, or the Docker/custom root.
+# ``%LOCALAPPDATA%\chiper`` on native Windows, or the Docker/custom root.
 # It is OUTSIDE any named profile's CHIPER_HOME so named profiles (which
-# typically live under ``<hermes-root>/profiles/<name>/``) all see the
+# typically live under ``<chiper-root>/profiles/<name>/``) all see the
 # same file.
 #
 # Written on successful login and on every runtime refresh so the stored
@@ -4716,10 +4716,10 @@ def _nous_shared_auth_dir() -> Path:
 
     Honors ``CHIPER_SHARED_AUTH_DIR`` so tests can redirect it to a tmp
     path without touching the real user's home. Defaults to
-    ``<hermes-root>/shared/``, where ``<hermes-root>`` is what
-    :func:`hermes_constants.get_default_chiper_root` returns — so
+    ``<chiper-root>/shared/``, where ``<chiper-root>`` is what
+    :func:`chiper_constants.get_default_chiper_root` returns — so
     Linux/macOS classic installs land at ``~/.chiperflux/shared/``, native
-    Windows installs at ``%LOCALAPPDATA%\\hermes\\shared\\``, and
+    Windows installs at ``%LOCALAPPDATA%\\chiper\\shared\\``, and
     Docker / custom ``CHIPER_HOME`` deployments at
     ``<CHIPER_HOME>/shared/``. Sits outside any named profile so all
     profiles under the same root share the store.
@@ -4734,7 +4734,7 @@ def _nous_shared_auth_dir() -> Path:
 def _nous_shared_store_path() -> Path:
     path = _nous_shared_auth_dir() / NOUS_SHARED_STORE_FILENAME
     # Seat belt: if pytest is running and this resolves to a path under the
-    # real user's Hermes root, refuse rather than silently corrupt cross-profile
+    # real user's Chiper root, refuse rather than silently corrupt cross-profile
     # state. Tests must set CHIPER_SHARED_AUTH_DIR to a tmp_path (conftest
     # does not do this automatically — mirror the _auth_file_path() guard
     # so forgetting to set it fails loudly instead of writing to the real
@@ -5162,10 +5162,10 @@ def _refresh_access_token(
         description = (
             "Nous Portal detected refresh-token reuse and revoked this session.\n"
             "This usually means an external process (monitoring script, "
-            "custom self-heal hook, or another Hermes install sharing "
+            "custom self-heal hook, or another Chiper install sharing "
             "~/.chiperflux/auth.json) called POST /api/oauth/token with Chiper's "
             "refresh token without persisting the rotated token back.\n"
-            "Nous refresh tokens are single-use — only Hermes may call the "
+            "Nous refresh tokens are single-use — only Chiper may call the "
             "refresh endpoint. For health checks, use `chiper auth status` "
             "instead.\n"
             "Re-authenticate with: chiper auth add nous"
@@ -5211,8 +5211,8 @@ def fetch_nous_models(
         model_id = item.get("id")
         if isinstance(model_id, str) and model_id.strip():
             mid = model_id.strip()
-            # Skip Hermes models — they're not reliable for agentic tool-calling
-            if "hermes" in mid.lower():
+            # Skip Chiper models — they're not reliable for agentic tool-calling
+            if "chiper" in mid.lower():
                 continue
             model_ids.append(mid)
 
@@ -5458,7 +5458,7 @@ def refresh_nous_oauth_from_state(
     return refresh_nous_oauth_pure(
         state.get("access_token", ""),
         state.get("refresh_token", ""),
-        state.get("client_id", "hermes-cli"),
+        state.get("client_id", "chiper-cli"),
         state.get("portal_base_url", DEFAULT_NOUS_PORTAL_URL),
         state.get("inference_base_url", DEFAULT_NOUS_INFERENCE_URL),
         token_type=state.get("token_type", "Bearer"),
@@ -6232,7 +6232,7 @@ def _get_azure_foundry_auth_status() -> Dict[str, Any]:
             if not installed:
                 info["hint"] = (
                     "azure-identity not installed. Install with: "
-                    "pip install azure-identity  (or rely on Hermes' "
+                    "pip install azure-identity  (or rely on Chiper' "
                     "lazy-install at first use)."
                 )
             else:
@@ -6747,7 +6747,7 @@ def _login_openai_codex(
 
     del args, pconfig  # kept for parity with other provider login helpers
 
-    # Check for existing Hermes-owned credentials
+    # Check for existing Chiper-owned credentials
     if not force_new_login:
         try:
             existing = resolve_codex_runtime_credentials()
@@ -6778,7 +6778,7 @@ def _login_openai_codex(
         cli_tokens = _import_codex_cli_tokens()
         if cli_tokens:
             print("Found existing Codex CLI credentials at ~/.codex/auth.json")
-            print("Hermes will create its own session to avoid conflicts with Codex CLI / VS Code.")
+            print("Chiper will create its own session to avoid conflicts with Codex CLI / VS Code.")
             try:
                 do_import = input("Import these credentials? (a separate login is recommended) [y/N]: ").strip().lower()
             except (EOFError, KeyboardInterrupt):
@@ -6789,14 +6789,14 @@ def _login_openai_codex(
                 config_path = _update_config_for_provider("openai-codex", base_url)
                 print()
                 print("Credentials imported. Note: if Codex CLI refreshes its token,")
-                print("Hermes will keep working independently with its own session.")
+                print("Chiper will keep working independently with its own session.")
                 print(f"  Config updated: {config_path} (model.provider=openai-codex)")
                 return
 
-    # Run a fresh device code flow — Hermes gets its own OAuth session
+    # Run a fresh device code flow — Chiper gets its own OAuth session
     print()
     print("Signing in to OpenAI Codex...")
-    print("(Hermes creates its own session — won't affect Codex CLI or VS Code)")
+    print("(Chiper creates its own session — won't affect Codex CLI or VS Code)")
     print()
 
     creds = _codex_device_code_login()
@@ -6843,7 +6843,7 @@ def _login_xai_oauth(
 
     print()
     print("Signing in to xAI Grok OAuth (SuperGrok / Premium+)...")
-    print("(Hermes creates its own local OAuth session)")
+    print("(Chiper creates its own local OAuth session)")
     print()
 
     timeout_seconds = float(getattr(args, "timeout", None) or 20.0)
@@ -6882,7 +6882,7 @@ def _xai_oauth_build_authorize_url(
     # `plan=generic` opts the consent screen into xAI's generic OAuth plan
     # tier instead of falling back to the per-account default. Without it,
     # accounts.x.ai rejects loopback OAuth from non-allowlisted clients.
-    # `referrer=chiper-agent` lets xAI attribute Hermes-originated logins
+    # `referrer=chiper-agent` lets xAI attribute Chiper-originated logins
     # in their OAuth server logs (we still impersonate the upstream Grok-CLI
     # client_id; this is best-effort attribution until xAI mints us our own).
     authorize_params = {
@@ -8111,7 +8111,7 @@ def _login_nous(args, pconfig: ProviderConfig) -> None:
                     # The Portal's freeRecommendedModels endpoint is the
                     # source of truth for what's free *right now*. Augment
                     # the curated list with anything new the Portal flags
-                    # as free so users on older Hermes builds still see
+                    # as free so users on older Chiper builds still see
                     # newly-launched free models without a CLI release.
                     model_ids, pricing = union_with_portal_free_recommendations(
                         model_ids, pricing, _portal_for_recs,
@@ -8211,9 +8211,9 @@ def logout_command(args) -> None:
             _reset_config_provider()
         print(f"Logged out of {provider_name}.")
         if should_reset_config and os.getenv("OPENROUTER_API_KEY"):
-            print("Hermes will use OpenRouter for inference.")
+            print("Chiper will use OpenRouter for inference.")
         elif should_reset_config:
-            print("Run `chiper model` or configure an API key to use Hermes.")
+            print("Run `chiper model` or configure an API key to use Chiper.")
         else:
             print("Model provider configuration was unchanged.")
     else:

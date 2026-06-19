@@ -21,7 +21,7 @@ def build_mcp_parser(subparsers, *, cmd_mcp: Callable) -> None:
             "Manage MCP server connections and run Chiper as an MCP server.\n\n"
             "MCP servers provide additional tools via the Model Context Protocol.\n"
             "Use 'chiper mcp add' to connect to a new server, or\n"
-            "'chiper mcp serve' to expose Hermes conversations over MCP."
+            "'chiper mcp serve' to expose Chiper conversations over MCP."
         ),
     )
     mcp_sub = mcp_parser.add_subparsers(dest="mcp_action")

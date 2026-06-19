@@ -1,5 +1,5 @@
 """
-Hermes Plugin System
+Chiper Plugin System
 ====================
 
 Discovers, loads, and manages plugins from four sources:
@@ -10,7 +10,7 @@ Discovers, loads, and manages plugins from four sources:
 2. **User plugins**   – ``~/.chiperflux/plugins/<name>/``
 3. **Project plugins** – ``./.chiperflux/plugins/<name>/`` (opt-in via
    ``CHIPER_ENABLE_PROJECT_PLUGINS``)
-4. **Pip plugins**     – packages that expose the ``hermes_agent.plugins``
+4. **Pip plugins**     – packages that expose the ``chiper_agent.plugins``
    entry-point group.
 
 Later sources override earlier ones on name collision, so a user or project
@@ -169,9 +169,9 @@ VALID_HOOKS: Set[str] = {
     "post_approval_response",
 }
 
-ENTRY_POINTS_GROUP = "hermes_agent.plugins"
+ENTRY_POINTS_GROUP = "chiper_agent.plugins"
 
-_NS_PARENT = "hermes_plugins"
+_NS_PARENT = "chiper_plugins"
 
 
 def _env_enabled(name: str) -> bool:
@@ -830,7 +830,7 @@ class PluginContext:
     ) -> None:
         """Register a Slack Block Kit action handler from a plugin.
 
-        Hermes' Slack adapter wires registered handlers into its
+        Chiper' Slack adapter wires registered handlers into its
         ``slack_bolt.AsyncApp`` at connect time. The callback is invoked
         when a user clicks a button (or interacts with another Block Kit
         action element) whose ``action_id`` matches.
@@ -1267,13 +1267,13 @@ class PluginManager:
                 )
                 continue
 
-            # Built-in backends auto-load — they ship with hermes and must
+            # Built-in backends auto-load — they ship with chiper and must
             # just work. Selection among them (e.g. which image_gen backend
             # services calls) is driven by ``<category>.provider`` config,
             # enforced by the tool wrapper.
             #
             # Bundled platform plugins (gateway adapters like IRC) auto-load
-            # for the same reason: every platform Hermes ships must be
+            # for the same reason: every platform Chiper ships must be
             # available out of the box without the user having to opt in.
             if manifest.source == "bundled" and manifest.kind in {"backend", "platform"}:
                 self._load_plugin(manifest)
@@ -1596,11 +1596,11 @@ class PluginManager:
         self._plugins[manifest.key or manifest.name] = loaded
 
     def _load_directory_module(self, manifest: PluginManifest) -> types.ModuleType:
-        """Import a directory-based plugin as ``hermes_plugins.<slug>``.
+        """Import a directory-based plugin as ``chiper_plugins.<slug>``.
 
         The module slug is derived from ``manifest.key`` so category-namespaced
         plugins (``image_gen/openai``) import as
-        ``hermes_plugins.image_gen__openai`` without colliding with any
+        ``chiper_plugins.image_gen__openai`` without colliding with any
         future ``tts/openai``.
         """
         plugin_dir = Path(manifest.path)  # type: ignore[arg-type]
@@ -1963,7 +1963,7 @@ def resolve_plugin_command_result(result: Any) -> Any:
 
     thread = threading.Thread(
         target=_runner,
-        name="hermes-plugin-command-await",
+        name="chiper-plugin-command-await",
         daemon=True,
     )
     thread.start()

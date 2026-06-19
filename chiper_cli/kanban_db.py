@@ -1,7 +1,7 @@
 """SQLite-backed Kanban board for multi-profile, multi-project collaboration.
 
 In a fresh install the board lives at ``<root>/kanban.db`` where
-``<root>`` is the **shared Hermes root** (the parent of any active
+``<root>`` is the **shared Chiper root** (the parent of any active
 profile). Profiles intentionally collapse onto a shared board: it IS
 the cross-profile coordination primitive. A worker spawned with
 ``chiper -p <profile>`` joins the same board as the dispatcher that
@@ -38,7 +38,7 @@ Board resolution order (highest precedence first, all optional):
 
 In standard installs ``<root>`` is ``~/.chiperflux``. In Docker / custom
 deployments where ``CHIPER_HOME`` points outside ``~/.chiperflux`` (e.g.
-``/opt/hermes``), ``<root>`` is ``CHIPER_HOME``. Legacy env-var
+``/opt/chiper``), ``<root>`` is ``CHIPER_HOME``. Legacy env-var
 overrides still work:
 
 * ``CHIPER_KANBAN_DB`` — pin the database file path directly.
@@ -55,7 +55,7 @@ Docker layouts.
 Schema is intentionally small: tasks, task_links, task_comments,
 task_events.  The ``workspace_kind`` field decouples coordination from git
 worktrees so that research / ops / digital-twin workloads work alongside
-coding workloads.  See ``docs/hermes-kanban-v1-spec.pdf`` for the full
+coding workloads.  See ``docs/chiper-kanban-v1-spec.pdf`` for the full
 design specification.
 
 Concurrency strategy: WAL mode + ``BEGIN IMMEDIATE`` for write
@@ -224,7 +224,7 @@ _CTX_MAX_COMMENT_BYTES  = 2 * 1024   # 2 KB per comment
 
 DEFAULT_BOARD = "default"
 _CURRENT_BOARD_OVERRIDE: ContextVar[str | None] = ContextVar(
-    "hermes_kanban_current_board_override",
+    "chiper_kanban_current_board_override",
     default=None,
 )
 
@@ -262,7 +262,7 @@ def _normalize_board_slug(slug: Optional[str]) -> Optional[str]:
 
 
 def kanban_home() -> Path:
-    """Return the shared Hermes root that anchors the kanban board.
+    """Return the shared Chiper root that anchors the kanban board.
 
     Resolution order:
 
@@ -1374,7 +1374,7 @@ def _guard_existing_db_is_healthy(path: Path) -> None:
     Path-trust note: ``path`` arrives via :func:`connect`, which itself
     resolves it from an explicit ``db_path`` argument, the
     :func:`kanban_db_path` env-var chain, or the kanban-home default —
-    all sources Hermes treats as user-controlled-but-trusted on the
+    all sources Chiper treats as user-controlled-but-trusted on the
     user's own machine. We additionally resolve the path here and
     confine all filesystem writes to its parent directory so any
     accidental ``..`` segments are collapsed before any I/O happens.
@@ -1459,7 +1459,7 @@ def connect(
                 # startup threads do not race before _INITIALIZED_PATHS is populated.
                 # WAL doesn't work on network filesystems (NFS/SMB/FUSE). Shared helper
                 # falls back to DELETE with one WARNING so kanban stays usable there.
-                # See hermes_state._WAL_INCOMPAT_MARKERS for detection logic.
+                # See chiper_state._WAL_INCOMPAT_MARKERS for detection logic.
                 from chiper_state import apply_wal_with_fallback
                 apply_wal_with_fallback(conn, db_label=f"kanban.db ({path.name})")
                 # FULL (was NORMAL): fsync before each checkpoint to narrow the
@@ -3763,10 +3763,10 @@ def _is_managed_scratch_path(p: Path) -> bool:
     task's scratch dir at once), and a path that resolves to ``<kanban_home>
     /kanban`` itself, ``<kanban_home>/kanban/logs``, or
     ``<kanban_home>/kanban/boards/<slug>`` is rejected because those
-    subtrees hold Hermes' own DB, metadata, and logs, not task workspaces.
+    subtrees hold Chiper' own DB, metadata, and logs, not task workspaces.
 
     Used by :func:`_cleanup_workspace` to refuse to ``shutil.rmtree`` paths
-    outside Hermes-managed storage. A board ``default_workdir`` pointing at a
+    outside Chiper-managed storage. A board ``default_workdir`` pointing at a
     real source tree can otherwise pair with ``workspace_kind='scratch'`` and
     cause task completion to delete user data (#28818).
     """
@@ -6494,16 +6494,16 @@ def _rotate_worker_log(
         pass
 
 
-def _module_hermes_argv() -> list[str]:
+def _module_chiper_argv() -> list[str]:
     """Return the interpreter-bound Chiper CLI invocation."""
     # ``chiper_cli.main`` is the console-script target declared in
-    # pyproject.toml, NOT a top-level ``hermes`` package — there is no
-    # ``hermes`` package to import.
+    # pyproject.toml, NOT a top-level ``chiper`` package — there is no
+    # ``chiper`` package to import.
     return [sys.executable, "-m", "chiper_cli.main"]
 
 
-def _absolute_hermes_path(path: str) -> str:
-    """Return an absolute filesystem path for a resolved Hermes shim."""
+def _absolute_chiper_path(path: str) -> str:
+    """Return an absolute filesystem path for a resolved Chiper shim."""
     expanded = os.path.expanduser(path)
     return expanded if os.path.isabs(expanded) else os.path.abspath(expanded)
 
@@ -6556,8 +6556,8 @@ def _safe_which_no_cwd(command: str) -> Optional[str]:
     return None
 
 
-def _hermes_path_argv(path: str) -> list[str]:
-    """Return argv for a resolved Hermes executable path.
+def _chiper_path_argv(path: str) -> list[str]:
+    """Return argv for a resolved Chiper executable path.
 
     Windows batch shims (`.cmd` / `.bat`) are not safe as argv[0] for
     worker launches because the argument vector includes task-derived
@@ -6565,31 +6565,31 @@ def _hermes_path_argv(path: str) -> list[str]:
     executable is only a shell shim.
     """
     if _IS_WINDOWS and _is_windows_batch_shim(path):
-        return _module_hermes_argv()
-    return [_absolute_hermes_path(path)]
+        return _module_chiper_argv()
+    return [_absolute_chiper_path(path)]
 
 
-def _resolve_hermes_argv() -> list[str]:
-    """Resolve the ``hermes`` invocation as argv parts for ``Popen``.
+def _resolve_chiper_argv() -> list[str]:
+    """Resolve the ``chiper`` invocation as argv parts for ``Popen``.
 
     Tries in order:
 
     1. ``$CHIPER_BIN`` — explicit operator override. Path-like values are
        normalized to absolute paths; bare command names keep normal PATH
        semantics and never prefer a same-directory file before ``PATH``.
-    2. ``shutil.which("hermes")`` — the console-script shim, normalized to
+    2. ``shutil.which("chiper")`` — the console-script shim, normalized to
        an absolute path. On Windows, ``which`` can return a relative
-       ``.\\hermes.CMD`` when the current directory is on ``PATH``; directly
+       ``.\\chiper.CMD`` when the current directory is on ``PATH``; directly
        launching batch shims is also unsafe with task-derived argv. The
        dispatcher therefore falls back to the interpreter-bound module form
        for implicit ``.cmd`` / ``.bat`` shims.
     3. ``sys.executable -m chiper_cli.main`` — fallback for setups where
-       Chiper is launched from a venv and the ``hermes`` shim is not on
+       Chiper is launched from a venv and the ``chiper`` shim is not on
        the dispatcher's ``$PATH`` (cron, systemd ``User=`` services,
        launchd jobs, detached processes, etc.). Goes through the running
        interpreter so the result is independent of ``$PATH``.
 
-    Mirrors ``gateway.run._resolve_hermes_bin`` for the same reason. Kept
+    Mirrors ``gateway.run._resolve_chiper_bin`` for the same reason. Kept
     local (not imported from gateway) because ``chiper_cli`` sits below
     ``gateway`` in the dependency order.
     """
@@ -6598,16 +6598,16 @@ def _resolve_hermes_argv() -> list[str]:
     env_bin = os.environ.get("CHIPER_BIN", "").strip()
     if env_bin:
         if _looks_like_path(env_bin):
-            return _hermes_path_argv(env_bin)
+            return _chiper_path_argv(env_bin)
         resolved_env_bin = _safe_which_no_cwd(env_bin)
         if resolved_env_bin:
-            return _hermes_path_argv(resolved_env_bin)
-        return _module_hermes_argv()
+            return _chiper_path_argv(resolved_env_bin)
+        return _module_chiper_argv()
 
-    hermes_bin = _safe_which_no_cwd("hermes") if _IS_WINDOWS else shutil.which("hermes")
-    if hermes_bin:
-        return _hermes_path_argv(hermes_bin)
-    return _module_hermes_argv()
+    chiper_bin = _safe_which_no_cwd("chiper") if _IS_WINDOWS else shutil.which("chiper")
+    if chiper_bin:
+        return _chiper_path_argv(chiper_bin)
+    return _module_chiper_argv()
 
 
 def _kanban_worker_skill_available(chiper_home: Optional[str]) -> bool:
@@ -6742,7 +6742,7 @@ def _default_spawn(
     # (fallback_providers, toolsets, agent settings, etc.) instead of the root
     # config.  Without this, `env = dict(os.environ)` copies only the parent's
     # env, and when the child process starts `chiper -p <name>` the
-    # _apply_profile_override() runs *before* hermes_constants is imported.
+    # _apply_profile_override() runs *before* chiper_constants is imported.
     # If CHIPER_HOME is absent from the child's env, get_chiper_home() falls
     # back to Path.home() / ".chiperflux" (the DEFAULT profile root), ignoring the
     # profile-specific config entirely.  Fixes profile-scoped fallback_providers
@@ -6805,7 +6805,7 @@ def _default_spawn(
     env["CHIPER_PROFILE"] = profile_arg
 
     cmd = [
-        *_resolve_hermes_argv(),
+        *_resolve_chiper_argv(),
         "-p", profile_arg,
         # Worker subprocesses switch to a profile-scoped CHIPER_HOME above,
         # so they see that profile's shell-hook allowlist instead of the
@@ -6875,7 +6875,7 @@ def _default_spawn(
     except FileNotFoundError:
         log_f.close()
         raise RuntimeError(
-            "`hermes` executable not found on PATH. "
+            "`chiper` executable not found on PATH. "
             "Install Chiper Agent or activate its venv before running the kanban dispatcher."
         )
     # NOTE: we intentionally do NOT close log_f here — we want Popen's
@@ -7157,7 +7157,7 @@ def build_worker_context(conn: sqlite3.Connection, task_id: str) -> str:
         for c in shown_c:
             ts = time.strftime("%Y-%m-%d %H:%M", time.localtime(c.created_at))
             # Render author with explicit "comment from worker" framing so
-            # operator-controlled CHIPER_PROFILE values like "hermes-system"
+            # operator-controlled CHIPER_PROFILE values like "chiper-system"
             # or "operator" can't be misread by the next worker as a system
             # directive above the (attacker-influenceable) comment body.
             # Defense-in-depth — the LLM-controlled author-forgery surface
@@ -7571,7 +7571,7 @@ def list_profiles_on_disk() -> list[str]:
 
     Includes:
     - named profiles under ``<default-root>/profiles/<name>/config.yaml``
-    - the implicit ``default`` profile when the default Hermes root exists
+    - the implicit ``default`` profile when the default Chiper root exists
 
     Reads profile paths directly so this module has no import dependency on
     ``chiper_cli.profiles`` (which pulls in a large chunk of the CLI startup

@@ -19,28 +19,28 @@ class PlatformInfo(NamedTuple):
 
 # Ordered so that TUI menus are deterministic.
 PLATFORMS: OrderedDict[str, PlatformInfo] = OrderedDict([
-    ("cli",            PlatformInfo(label="🖥️  CLI",            default_toolset="hermes-cli")),
-    ("telegram",       PlatformInfo(label="📱 Telegram",        default_toolset="hermes-telegram")),
-    ("discord",        PlatformInfo(label="💬 Discord",         default_toolset="hermes-discord")),
-    ("slack",          PlatformInfo(label="💼 Slack",           default_toolset="hermes-slack")),
-    ("whatsapp",       PlatformInfo(label="📱 WhatsApp",        default_toolset="hermes-whatsapp")),
-    ("whatsapp_cloud", PlatformInfo(label="📱 WhatsApp Business (Cloud)", default_toolset="hermes-whatsapp")),
-    ("signal",         PlatformInfo(label="📡 Signal",          default_toolset="hermes-signal")),
-    ("bluebubbles",    PlatformInfo(label="💙 BlueBubbles",     default_toolset="hermes-bluebubbles")),
-    ("email",          PlatformInfo(label="📧 Email",           default_toolset="hermes-email")),
-    ("homeassistant",  PlatformInfo(label="🏠 Home Assistant",  default_toolset="hermes-homeassistant")),
-    ("mattermost",     PlatformInfo(label="💬 Mattermost",      default_toolset="hermes-mattermost")),
-    ("matrix",         PlatformInfo(label="💬 Matrix",          default_toolset="hermes-matrix")),
-    ("dingtalk",       PlatformInfo(label="💬 DingTalk",        default_toolset="hermes-dingtalk")),
-    ("feishu",         PlatformInfo(label="🪽 Feishu",          default_toolset="hermes-feishu")),
-    ("wecom",          PlatformInfo(label="💬 WeCom",           default_toolset="hermes-wecom")),
-    ("wecom_callback", PlatformInfo(label="💬 WeCom Callback",  default_toolset="hermes-wecom-callback")),
-    ("weixin",         PlatformInfo(label="💬 Weixin",          default_toolset="hermes-weixin")),
-    ("qqbot",          PlatformInfo(label="💬 QQBot",           default_toolset="hermes-qqbot")),
-    ("yuanbao",        PlatformInfo(label="🤖 Yuanbao",         default_toolset="hermes-yuanbao")),
-    ("webhook",        PlatformInfo(label="🔗 Webhook",         default_toolset="hermes-webhook")),
-    ("api_server",     PlatformInfo(label="🌐 API Server",      default_toolset="hermes-api-server")),
-    ("cron",           PlatformInfo(label="⏰ Cron",            default_toolset="hermes-cron")),
+    ("cli",            PlatformInfo(label="🖥️  CLI",            default_toolset="chiper-cli")),
+    ("telegram",       PlatformInfo(label="📱 Telegram",        default_toolset="chiper-telegram")),
+    ("discord",        PlatformInfo(label="💬 Discord",         default_toolset="chiper-discord")),
+    ("slack",          PlatformInfo(label="💼 Slack",           default_toolset="chiper-slack")),
+    ("whatsapp",       PlatformInfo(label="📱 WhatsApp",        default_toolset="chiper-whatsapp")),
+    ("whatsapp_cloud", PlatformInfo(label="📱 WhatsApp Business (Cloud)", default_toolset="chiper-whatsapp")),
+    ("signal",         PlatformInfo(label="📡 Signal",          default_toolset="chiper-signal")),
+    ("bluebubbles",    PlatformInfo(label="💙 BlueBubbles",     default_toolset="chiper-bluebubbles")),
+    ("email",          PlatformInfo(label="📧 Email",           default_toolset="chiper-email")),
+    ("homeassistant",  PlatformInfo(label="🏠 Home Assistant",  default_toolset="chiper-homeassistant")),
+    ("mattermost",     PlatformInfo(label="💬 Mattermost",      default_toolset="chiper-mattermost")),
+    ("matrix",         PlatformInfo(label="💬 Matrix",          default_toolset="chiper-matrix")),
+    ("dingtalk",       PlatformInfo(label="💬 DingTalk",        default_toolset="chiper-dingtalk")),
+    ("feishu",         PlatformInfo(label="🪽 Feishu",          default_toolset="chiper-feishu")),
+    ("wecom",          PlatformInfo(label="💬 WeCom",           default_toolset="chiper-wecom")),
+    ("wecom_callback", PlatformInfo(label="💬 WeCom Callback",  default_toolset="chiper-wecom-callback")),
+    ("weixin",         PlatformInfo(label="💬 Weixin",          default_toolset="chiper-weixin")),
+    ("qqbot",          PlatformInfo(label="💬 QQBot",           default_toolset="chiper-qqbot")),
+    ("yuanbao",        PlatformInfo(label="🤖 Yuanbao",         default_toolset="chiper-yuanbao")),
+    ("webhook",        PlatformInfo(label="🔗 Webhook",         default_toolset="chiper-webhook")),
+    ("api_server",     PlatformInfo(label="🌐 API Server",      default_toolset="chiper-api-server")),
+    ("cron",           PlatformInfo(label="⏰ Cron",            default_toolset="chiper-cron")),
 ])
 
 
@@ -77,7 +77,7 @@ def get_all_platforms() -> "OrderedDict[str, PlatformInfo]":
             if entry.name not in merged:
                 merged[entry.name] = PlatformInfo(
                     label=f"{entry.emoji}  {entry.label}" if entry.emoji else entry.label,
-                    default_toolset=f"hermes-{entry.name}",
+                    default_toolset=f"chiper-{entry.name}",
                 )
     except Exception:
         pass

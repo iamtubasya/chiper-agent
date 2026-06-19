@@ -144,7 +144,7 @@ async def _lifespan(app: "FastAPI"):
     app.state.event_lock = asyncio.Lock()
 
     # Desktop-spawned backends (CHIPER_DESKTOP=1) fire cron jobs themselves,
-    # since the app has no gateway running the scheduler. Server `hermes
+    # since the app has no gateway running the scheduler. Server `chiper
     # dashboard` is unaffected — it relies on its own gateway.
     cron_stop: "threading.Event | None" = None
     cron_thread: "threading.Thread | None" = None
@@ -193,7 +193,7 @@ app = FastAPI(title="Chiper Agent", version=__version__, lifespan=_lifespan)
 # injected into the SPA HTML so only the legitimate web UI can use it.
 # ---------------------------------------------------------------------------
 _SESSION_TOKEN = os.environ.get("CHIPER_DASHBOARD_SESSION_TOKEN") or secrets.token_urlsafe(32)
-_SESSION_HEADER_NAME = "X-Hermes-Session-Token"
+_SESSION_HEADER_NAME = "X-Chiper-Session-Token"
 
 # In-browser Chat tab (/chat, /api/pty, /api/ws, …).  Always enabled: the
 # desktop app and the dashboard's own Chat tab both drive the agent over the
@@ -277,7 +277,7 @@ def _require_token(request: Request) -> None:
 
     * **Loopback / ``--insecure`` mode** (``auth_required`` False): the
       ephemeral ``_SESSION_TOKEN`` is injected into the SPA HTML and echoed
-      back via ``X-Hermes-Session-Token`` (or the legacy ``Bearer`` header).
+      back via ``X-Chiper-Session-Token`` (or the legacy ``Bearer`` header).
       Validate it here.
     * **Gated / OAuth mode** (``auth_required`` True): ``_SESSION_TOKEN`` is
       NOT injected (the SPA authenticates with a session cookie), so there is
@@ -535,7 +535,7 @@ _SCHEMA_OVERRIDES: Dict[str, Dict[str, Any]] = {
     "updates.non_interactive_local_changes": {
         "type": "select",
         "description": (
-            "When the chat app / gateway updates Hermes (no terminal prompt), "
+            "When the chat app / gateway updates Chiper (no terminal prompt), "
             "what to do with uncommitted local source edits. 'stash' keeps them "
             "and re-applies them after the update; 'discard' throws them away. "
             "Terminal updates always ask, regardless of this setting."
@@ -767,7 +767,7 @@ def _normalize_main_model_assignment(provider: str, model: str) -> tuple[str, st
 
     The Models page has two assignment paths and only one of them was safe:
 
-    - The "Change" picker sends a real Hermes provider slug — fine.
+    - The "Change" picker sends a real Chiper provider slug — fine.
     - The per-card "Use as → Main model" menu sends ``entry.provider``
       from the analytics rows, falling back to the model's VENDOR prefix
       (``modelVendor("anthropic/claude-opus-4.6") == "anthropic"``) when
@@ -780,8 +780,8 @@ def _normalize_main_model_assignment(provider: str, model: str) -> tuple[str, st
 
     Two repairs, both at this single chokepoint so every caller inherits:
 
-    1. Vendor-name → Hermes-provider mapping: when the provider string is
-       not a known Hermes provider/alias (e.g. ``moonshotai``, ``x-ai`` is
+    1. Vendor-name → Chiper-provider mapping: when the provider string is
+       not a known Chiper provider/alias (e.g. ``moonshotai``, ``x-ai`` is
        known but ``poolside`` isn't) but the model is a vendor-prefixed
        aggregator slug, keep the user's CURRENT aggregator if they're on
        one, else fall back to openrouter.
@@ -1235,7 +1235,7 @@ def _local_dashboard_request(request: Request) -> bool:
     return host in local_hosts or client_host in local_hosts
 
 
-def _default_hermes_root_is_opt_data() -> bool:
+def _default_chiper_root_is_opt_data() -> bool:
     raw = os.environ.get("CHIPER_HOME", "").strip()
     if not raw:
         return False
@@ -1273,9 +1273,9 @@ def _managed_files_policy(request: Request, *, create_root: bool = True) -> Mana
     # Remote/OAuth access does not imply a hosted container. Users can expose a
     # local dashboard through the auth gate (for example a macOS launchd install)
     # and still expect the Files page to browse their local home directory. Lock
-    # to /opt/data only when the installation's Hermes root is actually /opt/data
+    # to /opt/data only when the installation's Chiper root is actually /opt/data
     # (the container/hosted layout) or when CHIPER_DASHBOARD_FILES_ROOT is set.
-    if _default_hermes_root_is_opt_data():
+    if _default_chiper_root_is_opt_data():
         root = _ensure_managed_root(_HOSTED_MANAGED_FILES_ROOT) if create_root else _HOSTED_MANAGED_FILES_ROOT
         return ManagedFilesPolicy(default_path=root, locked_root=root, can_change_path=False)
 
@@ -1822,7 +1822,7 @@ async def get_status(profile: Optional[str] = None):
             "release_date": __release_date__,
             "config_version": current_ver,
             "latest_config_version": latest_ver,
-            "can_update_hermes": not _dashboard_local_update_managed_externally(),
+            "can_update_chiper": not _dashboard_local_update_managed_externally(),
             "gateway_running": gateway_running,
             "gateway_state": gateway_state,
             "gateway_platforms": gateway_platforms,
@@ -1907,7 +1907,7 @@ async def get_system_stats():
 
     OS / Python / host identity from stdlib; CPU / memory / disk / uptime from
     psutil when available, with graceful degradation when it isn't.  Read-only
-    and non-sensitive (no env values, no paths beyond the hermes home root).
+    and non-sensitive (no env values, no paths beyond the chiper home root).
     """
     import platform as _platform
 
@@ -1922,7 +1922,7 @@ async def get_system_stats():
         "hostname": _platform.node(),
         "python_version": _platform.python_version(),
         "python_impl": _platform.python_implementation(),
-        "hermes_version": __version__,
+        "chiper_version": __version__,
         "cpu_count": os.cpu_count(),
     }
 
@@ -2028,7 +2028,7 @@ async def set_curator_paused(body: CuratorPause):
 async def run_curator():
     """Trigger a curator review now (backgrounded; tail via action status)."""
     try:
-        proc = _spawn_hermes_action(["curator", "run"], "curator-run")
+        proc = _spawn_chiper_action(["curator", "run"], "curator-run")
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed to run curator: {exc}")
     return {"ok": True, "pid": proc.pid, "name": "curator-run"}
@@ -2098,7 +2098,7 @@ async def get_portal_status():
 @app.post("/api/ops/prompt-size")
 async def run_prompt_size():
     try:
-        proc = _spawn_hermes_action(["prompt-size"], "prompt-size")
+        proc = _spawn_chiper_action(["prompt-size"], "prompt-size")
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed: {exc}")
     return {"ok": True, "pid": proc.pid, "name": "prompt-size"}
@@ -2107,7 +2107,7 @@ async def run_prompt_size():
 @app.post("/api/ops/dump")
 async def run_dump():
     try:
-        proc = _spawn_hermes_action(["dump"], "dump")
+        proc = _spawn_chiper_action(["dump"], "dump")
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed: {exc}")
     return {"ok": True, "pid": proc.pid, "name": "dump"}
@@ -2116,7 +2116,7 @@ async def run_dump():
 @app.post("/api/ops/config-migrate")
 async def run_config_migrate():
     try:
-        proc = _spawn_hermes_action(["config", "migrate"], "config-migrate")
+        proc = _spawn_chiper_action(["config", "migrate"], "config-migrate")
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Failed: {exc}")
     return {"ok": True, "pid": proc.pid, "name": "config-migrate"}
@@ -2184,7 +2184,7 @@ _ACTION_LOG_FILES: Dict[str, str] = {
     "gateway-restart": "gateway-restart.log",
     "gateway-start": "gateway-start.log",
     "gateway-stop": "gateway-stop.log",
-    "hermes-update": "hermes-update.log",
+    "chiper-update": "chiper-update.log",
     "doctor": "action-doctor.log",
     "security-audit": "action-security-audit.log",
     "backup": "action-backup.log",
@@ -2227,7 +2227,7 @@ def _record_completed_action(name: str, message: str, exit_code: int = 1) -> Non
     _ACTION_RESULTS[name] = {"exit_code": exit_code, "pid": None}
 
 
-def _spawn_hermes_action(subcommand: List[str], name: str) -> subprocess.Popen:
+def _spawn_chiper_action(subcommand: List[str], name: str) -> subprocess.Popen:
     """Spawn ``chiper <subcommand>`` detached and record the Popen handle.
 
     Uses the running interpreter's ``chiper_cli.main`` module so the action
@@ -2288,7 +2288,7 @@ def _gateway_subcommand(profile: Optional[str], verb: str) -> List[str]:
 
 
 def _gateway_display_command(profile: Optional[str], verb: str) -> str:
-    return " ".join(["hermes", *_gateway_subcommand(profile, verb)])
+    return " ".join(["chiper", *_gateway_subcommand(profile, verb)])
 
 
 def _spawn_gateway_restart(profile: Optional[str] = None) -> Tuple[subprocess.Popen, bool]:
@@ -2309,7 +2309,7 @@ def _spawn_gateway_restart(profile: Optional[str] = None) -> Tuple[subprocess.Po
         if existing_command is None or existing_command == tuple(subcommand):
             return existing, True
         raise RuntimeError("gateway restart already in progress for another profile")
-    return _spawn_hermes_action(subcommand, "gateway-restart"), False
+    return _spawn_chiper_action(subcommand, "gateway-restart"), False
 
 
 def _restart_gateway_after_webhook_enable(profile: Optional[str] = None) -> dict[str, Any]:
@@ -2351,20 +2351,20 @@ async def restart_gateway(profile: Optional[str] = None):
     }
 
 
-@app.post("/api/hermes/update")
-async def update_hermes():
+@app.post("/api/chiper/update")
+async def update_chiper():
     """Kick off ``chiper update`` in the background."""
     if _dashboard_local_update_managed_externally():
         message = (
-            "Hermes updates are managed outside this dashboard in "
+            "Chiper updates are managed outside this dashboard in "
             "containerized environments. The built-in local updater is "
             "disabled here."
         )
-        _record_completed_action("hermes-update", message, exit_code=1)
+        _record_completed_action("chiper-update", message, exit_code=1)
         return {
             "ok": False,
             "pid": None,
-            "name": "hermes-update",
+            "name": "chiper-update",
             "error": "dashboard_update_managed_externally",
             "message": message,
             "update_command": "managed outside dashboard",
@@ -2373,25 +2373,25 @@ async def update_hermes():
     install_method = detect_install_method(PROJECT_ROOT)
     if install_method == "docker":
         message = format_docker_update_message()
-        _record_completed_action("hermes-update", message, exit_code=1)
+        _record_completed_action("chiper-update", message, exit_code=1)
         return {
             "ok": False,
             "pid": None,
-            "name": "hermes-update",
+            "name": "chiper-update",
             "error": "docker_update_unsupported",
             "message": message,
             "update_command": recommended_update_command_for_method(install_method),
         }
 
     try:
-        proc = _spawn_hermes_action(["update"], "hermes-update")
+        proc = _spawn_chiper_action(["update"], "chiper-update")
     except Exception as exc:
         _log.exception("Failed to spawn chiper update")
         raise HTTPException(status_code=500, detail=f"Failed to start update: {exc}")
     return {
         "ok": True,
         "pid": proc.pid,
-        "name": "hermes-update",
+        "name": "chiper-update",
     }
 
 
@@ -2443,17 +2443,17 @@ def _recent_upstream_commits(n: int = 20) -> List[Dict[str, Any]]:
         return []
 
 
-@app.get("/api/hermes/update/check")
-async def check_hermes_update(force: bool = False):
+@app.get("/api/chiper/update/check")
+async def check_chiper_update(force: bool = False):
     """Report whether a Chiper update is available, without applying it.
 
     Powers the dashboard's "check before you update" flow: the System page
     shows the commit-behind count and asks the user to confirm before
-    ``POST /api/hermes/update`` actually runs ``chiper update``.
+    ``POST /api/chiper/update`` actually runs ``chiper update``.
 
     Returns:
         install_method: 'git' | 'pip' | 'docker' | 'nixos' | 'homebrew' | ...
-        current_version: installed Hermes version string
+        current_version: installed Chiper version string
         behind: commits behind upstream (>=1), 0 if up to date,
                 -1 if behind by an unknown count (nix/pypi), or null if the
                 check could not run (offline, no remote, etc.)
@@ -2478,7 +2478,7 @@ async def check_hermes_update(force: bool = False):
             "can_apply": False,
             "update_command": "managed outside dashboard",
             "message": (
-                "Hermes updates are managed outside this dashboard in "
+                "Chiper updates are managed outside this dashboard in "
                 "containerized environments."
             ),
         }
@@ -2571,7 +2571,7 @@ async def transcribe_audio_upload(payload: AudioTranscriptionRequest):
     try:
         suffix = _audio_extension_for_mime(mime_type)
         with tempfile.NamedTemporaryFile(
-            prefix="hermes-desktop-voice-",
+            prefix="chiper-desktop-voice-",
             suffix=suffix,
             delete=False,
         ) as tmp:
@@ -3083,7 +3083,7 @@ async def search_sessions(q: str = "", limit: int = 20, profile: Optional[str] =
                 seen[root] = payload
 
             # Direct ID matches first: users often paste a session id from CLI,
-            # logs, or another Hermes surface. FTS can't find those unless the
+            # logs, or another Chiper surface. FTS can't find those unless the
             # id happens to appear in message text. search_sessions_by_id is
             # SQL-bounded, so this stays cheap even with thousands of sessions.
             for row in db.search_sessions_by_id(q, limit=safe_limit, include_archived=True):
@@ -3143,7 +3143,7 @@ async def search_sessions(q: str = "", limit: int = 20, profile: Optional[str] =
 def _normalize_config_for_web(config: Dict[str, Any]) -> Dict[str, Any]:
     """Normalize config for the web UI.
 
-    Hermes supports ``model`` as either a bare string (``"anthropic/claude-sonnet-4"``)
+    Chiper supports ``model`` as either a bare string (``"anthropic/claude-sonnet-4"``)
     or a dict (``{default: ..., provider: ..., base_url: ...}``).  The schema is built
     from DEFAULT_CONFIG where ``model`` is a string, but user configs often have the
     dict form.  Normalize to the string form so the frontend schema matches.
@@ -3945,14 +3945,14 @@ async def reveal_env_var(
 _PLATFORM_OVERRIDES: dict[str, dict[str, Any]] = {
     "telegram": {
         "name": "Telegram",
-        "description": "Run Hermes from Telegram DMs, groups, and topics.",
+        "description": "Run Chiper from Telegram DMs, groups, and topics.",
         "docs_url": "https://core.telegram.org/bots/features#botfather",
         "env_vars": ("TELEGRAM_BOT_TOKEN", "TELEGRAM_ALLOWED_USERS", "TELEGRAM_PROXY"),
         "required_env": ("TELEGRAM_BOT_TOKEN",),
     },
     "discord": {
         "name": "Discord",
-        "description": "Connect Hermes to Discord DMs, channels, and threads.",
+        "description": "Connect Chiper to Discord DMs, channels, and threads.",
         "docs_url": "https://discord.com/developers/applications",
         "env_vars": (
             "DISCORD_BOT_TOKEN",
@@ -3963,21 +3963,21 @@ _PLATFORM_OVERRIDES: dict[str, dict[str, Any]] = {
     },
     "slack": {
         "name": "Slack",
-        "description": "Use Hermes from Slack via Socket Mode.",
+        "description": "Use Chiper from Slack via Socket Mode.",
         "docs_url": "https://api.slack.com/apps",
         "env_vars": ("SLACK_BOT_TOKEN", "SLACK_APP_TOKEN"),
         "required_env": ("SLACK_BOT_TOKEN", "SLACK_APP_TOKEN"),
     },
     "mattermost": {
         "name": "Mattermost",
-        "description": "Connect Hermes to Mattermost channels and direct messages.",
+        "description": "Connect Chiper to Mattermost channels and direct messages.",
         "docs_url": "https://mattermost.com/deploy/",
         "env_vars": ("MATTERMOST_URL", "MATTERMOST_TOKEN", "MATTERMOST_ALLOWED_USERS"),
         "required_env": ("MATTERMOST_URL", "MATTERMOST_TOKEN"),
     },
     "matrix": {
         "name": "Matrix",
-        "description": "Use Hermes in Matrix rooms and direct messages.",
+        "description": "Use Chiper in Matrix rooms and direct messages.",
         "docs_url": "https://matrix.org/ecosystem/servers/",
         "env_vars": (
             "MATRIX_HOMESERVER",
@@ -3996,7 +3996,7 @@ _PLATFORM_OVERRIDES: dict[str, dict[str, Any]] = {
     },
     "whatsapp": {
         "name": "WhatsApp",
-        "description": "Use Hermes through the bundled WhatsApp bridge with QR-based auth.",
+        "description": "Use Chiper through the bundled WhatsApp bridge with QR-based auth.",
         "docs_url": "https://github.com/tulir/whatsmeow",
         "env_vars": ("WHATSAPP_ENABLED", "WHATSAPP_MODE", "WHATSAPP_ALLOWED_USERS"),
         "required_env": (),
@@ -4034,14 +4034,14 @@ _PLATFORM_OVERRIDES: dict[str, dict[str, Any]] = {
     },
     "dingtalk": {
         "name": "DingTalk",
-        "description": "Connect Hermes to DingTalk groups (钉钉).",
+        "description": "Connect Chiper to DingTalk groups (钉钉).",
         "docs_url": "https://open.dingtalk.com/document/orgapp/the-robot-development-process",
         "env_vars": ("DINGTALK_CLIENT_ID", "DINGTALK_CLIENT_SECRET"),
         "required_env": ("DINGTALK_CLIENT_ID", "DINGTALK_CLIENT_SECRET"),
     },
     "feishu": {
         "name": "Feishu / Lark",
-        "description": "Use Hermes inside Feishu / Lark.",
+        "description": "Use Chiper inside Feishu / Lark.",
         "docs_url": "https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/intro",
         "env_vars": (
             "FEISHU_APP_ID",
@@ -4084,7 +4084,7 @@ _PLATFORM_OVERRIDES: dict[str, dict[str, Any]] = {
     },
     "bluebubbles": {
         "name": "BlueBubbles (iMessage)",
-        "description": "Use Hermes through iMessage via a BlueBubbles server.",
+        "description": "Use Chiper through iMessage via a BlueBubbles server.",
         "docs_url": "https://bluebubbles.app/",
         "env_vars": (
             "BLUEBUBBLES_SERVER_URL",
@@ -4095,20 +4095,20 @@ _PLATFORM_OVERRIDES: dict[str, dict[str, Any]] = {
     },
     "qqbot": {
         "name": "QQ Bot",
-        "description": "Connect Hermes to a QQ Bot from the QQ Open Platform.",
+        "description": "Connect Chiper to a QQ Bot from the QQ Open Platform.",
         "docs_url": "https://q.qq.com",
         "env_vars": ("QQ_APP_ID", "QQ_CLIENT_SECRET", "QQ_ALLOWED_USERS"),
         "required_env": ("QQ_APP_ID", "QQ_CLIENT_SECRET"),
     },
     "yuanbao": {
         "name": "Yuanbao (元宝)",
-        "description": "Connect Hermes to Tencent Yuanbao.",
+        "description": "Connect Chiper to Tencent Yuanbao.",
         "docs_url": "",
         "required_env": (),
     },
     "api_server": {
         "name": "API server",
-        "description": "Expose Hermes as an OpenAI-compatible HTTP API for tools like Open WebUI.",
+        "description": "Expose Chiper as an OpenAI-compatible HTTP API for tools like Open WebUI.",
         "docs_url": "https://chiper-agent.nousresearch.com/docs/user-guide/messaging/",
         "env_vars": (
             "API_SERVER_ENABLED",
@@ -4611,7 +4611,7 @@ def _write_platform_enabled(platform_id: str, enabled: bool) -> None:
 
 
 _TELEGRAM_ONBOARDING_DEFAULT_URL = "https://setup.chiper-agent.nousresearch.com"
-_TELEGRAM_ONBOARDING_USER_AGENT = f"HermesDashboard/{__version__}"
+_TELEGRAM_ONBOARDING_USER_AGENT = f"ChiperDashboard/{__version__}"
 _TELEGRAM_USER_ID_RE = re.compile(r"^\d+$")
 
 
@@ -4879,7 +4879,7 @@ def _restart_gateway_after_telegram_onboarding(profile: Optional[str] = None) ->
     """Best-effort gateway restart after saving Telegram QR onboarding.
 
     The QR flow naturally pulls users into Telegram on another device. If the
-    saved token waits on a separate dashboard restart click, Hermes appears
+    saved token waits on a separate dashboard restart click, Chiper appears
     broken from the chat side. Keep the config save authoritative, but report
     restart failures so the UI can fall back to the existing manual banner.
     """
@@ -5136,7 +5136,7 @@ def _anthropic_oauth_status() -> Dict[str, Any]:
     """Status for the "Anthropic API Key" catalog entry.
 
     Two sources, in priority order:
-    1. ``~/.chiperflux/.anthropic_oauth.json`` — Hermes-managed PKCE flow (what
+    1. ``~/.chiperflux/.anthropic_oauth.json`` — Chiper-managed PKCE flow (what
        this entry's Connect button writes)
     2. ``ANTHROPIC_API_KEY`` → ``ANTHROPIC_TOKEN`` → ``CLAUDE_CODE_OAUTH_TOKEN``
        env vars (registry order) — from ``.env``, the shell, or an external
@@ -5150,27 +5150,27 @@ def _anthropic_oauth_status() -> Dict[str, Any]:
     """
     try:
         from agent.anthropic_adapter import (
-            read_hermes_oauth_credentials,
-            _HERMES_OAUTH_FILE,
+            read_chiper_oauth_credentials,
+            _CHIPER_OAUTH_FILE,
         )
     except ImportError:
-        read_hermes_oauth_credentials = None  # type: ignore
-        _HERMES_OAUTH_FILE = None  # type: ignore
+        read_chiper_oauth_credentials = None  # type: ignore
+        _CHIPER_OAUTH_FILE = None  # type: ignore
 
-    hermes_creds = None
-    if read_hermes_oauth_credentials:
+    chiper_creds = None
+    if read_chiper_oauth_credentials:
         try:
-            hermes_creds = read_hermes_oauth_credentials()
+            chiper_creds = read_chiper_oauth_credentials()
         except Exception:
-            hermes_creds = None
-    if hermes_creds and hermes_creds.get("accessToken"):
+            chiper_creds = None
+    if chiper_creds and chiper_creds.get("accessToken"):
         return {
             "logged_in": True,
-            "source": "hermes_pkce",
-            "source_label": f"Hermes PKCE ({_HERMES_OAUTH_FILE})",
-            "token_preview": _truncate_token(hermes_creds.get("accessToken")),
-            "expires_at": hermes_creds.get("expiresAt"),
-            "has_refresh_token": bool(hermes_creds.get("refreshToken")),
+            "source": "chiper_pkce",
+            "source_label": f"Chiper PKCE ({_CHIPER_OAUTH_FILE})",
+            "token_preview": _truncate_token(chiper_creds.get("accessToken")),
+            "expires_at": chiper_creds.get("expiresAt"),
+            "has_refresh_token": bool(chiper_creds.get("refreshToken")),
         }
 
     # Env-var / secret-source path. ``get_env_value`` checks the process
@@ -5211,7 +5211,7 @@ def _claude_code_only_status() -> Dict[str, Any]:
 
     Independent of the Anthropic entry above so users can see whether their
     Claude Code subscription tokens are actively flowing into Chiper even
-    when they also have a separate Hermes-managed PKCE login.
+    when they also have a separate Chiper-managed PKCE login.
     """
     try:
         from agent.anthropic_adapter import read_claude_code_credentials
@@ -5380,11 +5380,11 @@ def _resolve_provider_status(provider_id: str, status_fn) -> Dict[str, Any]:
 def _oauth_provider_disconnect_command(provider: Dict[str, Any]) -> Optional[str]:
     """Shell command that clears an external provider's credentials.
 
-    External providers store their credentials outside Hermes, so the disconnect
+    External providers store their credentials outside Chiper, so the disconnect
     API deliberately refuses them (we never delete files another CLI owns on the
     user's behalf via a silent API call). For the ones we know how to clear we
     instead hand the GUI a command it can *run in the embedded terminal* — the
-    user sees exactly what executes, and Hermes then stops resolving the token.
+    user sees exactly what executes, and Chiper then stops resolving the token.
 
     Claude Code has no scriptable logout (only the interactive ``/logout``), so
     we remove the credential the same way logout does: the macOS Keychain entry
@@ -5408,7 +5408,7 @@ def _oauth_provider_disconnect_hint(provider: Dict[str, Any], status: Dict[str, 
         if _oauth_provider_disconnect_command(provider):
             # The GUI offers a one-click "run in terminal" path; this hint is the
             # fallback wording for surfaces that only show text.
-            return "Managed outside Hermes — run the disconnect command to remove it."
+            return "Managed outside Chiper — run the disconnect command to remove it."
         return "Managed by that provider's CLI; remove it there."
     if status.get("source") == "env_var":
         return "Remove the API key from Settings → Keys instead."
@@ -5429,7 +5429,7 @@ async def list_oauth_providers(profile: Optional[str] = None):
         docs_url        external docs/portal link for the "Learn more" link
         status:
           logged_in        bool — currently has usable creds
-          source           short slug ("hermes_pkce", "claude_code", ...)
+          source           short slug ("chiper_pkce", "claude_code", ...)
           source_label     human-readable origin (file path, env var name)
           token_preview    last N chars of the token, never the full token
           expires_at       ISO timestamp string or null
@@ -5494,9 +5494,9 @@ async def disconnect_oauth_provider(
         if provider_id == "anthropic":
             cleared = False
             try:
-                from agent.anthropic_adapter import _HERMES_OAUTH_FILE
-                if _HERMES_OAUTH_FILE.exists():
-                    _HERMES_OAUTH_FILE.unlink()
+                from agent.anthropic_adapter import _CHIPER_OAUTH_FILE
+                if _CHIPER_OAUTH_FILE.exists():
+                    _CHIPER_OAUTH_FILE.unlink()
                     cleared = True
             except Exception:
                 pass
@@ -5575,7 +5575,7 @@ _oauth_sessions: Dict[str, Dict[str, Any]] = {}
 _oauth_sessions_lock = threading.Lock()
 
 # Import OAuth constants from canonical source instead of duplicating.
-# Guarded so hermes web still starts if anthropic_adapter is unavailable;
+# Guarded so chiper web still starts if anthropic_adapter is unavailable;
 # Phase 2 endpoints will return 501 in that case.
 try:
     from agent.anthropic_adapter import (
@@ -5647,29 +5647,29 @@ def _oauth_session_profile(
 
 
 def _save_anthropic_oauth_creds(access_token: str, refresh_token: str, expires_at_ms: int) -> None:
-    """Persist Anthropic PKCE creds to both Hermes file AND credential pool.
+    """Persist Anthropic PKCE creds to both Chiper file AND credential pool.
 
     Mirrors what auth_commands.add_command does so the dashboard flow leaves
     the system in the same state as ``chiper auth add anthropic``.
     """
-    from agent.anthropic_adapter import _HERMES_OAUTH_FILE
+    from agent.anthropic_adapter import _CHIPER_OAUTH_FILE
     payload = {
         "accessToken": access_token,
         "refreshToken": refresh_token,
         "expiresAt": expires_at_ms,
     }
-    _HERMES_OAUTH_FILE.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = _HERMES_OAUTH_FILE.with_name(
-        f"{_HERMES_OAUTH_FILE.name}.tmp.{os.getpid()}.{secrets.token_hex(8)}"
+    _CHIPER_OAUTH_FILE.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = _CHIPER_OAUTH_FILE.with_name(
+        f"{_CHIPER_OAUTH_FILE.name}.tmp.{os.getpid()}.{secrets.token_hex(8)}"
     )
     try:
         with tmp_path.open("w", encoding="utf-8") as handle:
             handle.write(json.dumps(payload, indent=2))
             handle.flush()
             os.fsync(handle.fileno())
-        os.replace(tmp_path, _HERMES_OAUTH_FILE)
+        os.replace(tmp_path, _CHIPER_OAUTH_FILE)
         try:
-            _HERMES_OAUTH_FILE.chmod(stat.S_IRUSR | stat.S_IWUSR)
+            _CHIPER_OAUTH_FILE.chmod(stat.S_IRUSR | stat.S_IWUSR)
         except OSError:
             pass
     finally:
@@ -5774,7 +5774,7 @@ def _submit_anthropic_pkce(
         data=exchange_data,
         headers={
             "Content-Type": "application/json",
-            "User-Agent": "hermes-dashboard/1.0",
+            "User-Agent": "chiper-dashboard/1.0",
         },
         method="POST",
     )
@@ -7682,7 +7682,7 @@ async def install_mcp_catalog_entry(body: MCPCatalogInstall, profile: Optional[s
     # The -p subprocess rebinds CHIPER_HOME-derived paths in the child.
     if entry.install is not None:
         try:
-            proc = _spawn_hermes_action(
+            proc = _spawn_chiper_action(
                 _profile_cli_args(effective_profile) + ["mcp", "install", name],
                 "mcp-install",
             )
@@ -7971,7 +7971,7 @@ async def set_webhook_enabled(name: str, body: WebhookEnabledToggle):
 @app.post("/api/gateway/start")
 async def start_gateway(profile: Optional[str] = None):
     try:
-        proc = _spawn_hermes_action(_gateway_subcommand(profile, "start"), "gateway-start")
+        proc = _spawn_chiper_action(_gateway_subcommand(profile, "start"), "gateway-start")
     except HTTPException:
         raise
     except Exception as exc:
@@ -7983,7 +7983,7 @@ async def start_gateway(profile: Optional[str] = None):
 @app.post("/api/gateway/stop")
 async def stop_gateway(profile: Optional[str] = None):
     try:
-        proc = _spawn_hermes_action(_gateway_subcommand(profile, "stop"), "gateway-stop")
+        proc = _spawn_chiper_action(_gateway_subcommand(profile, "stop"), "gateway-stop")
     except HTTPException:
         raise
     except Exception as exc:
@@ -8227,7 +8227,7 @@ async def reset_memory(body: MemoryReset):
 @app.post("/api/ops/doctor")
 async def run_doctor():
     try:
-        proc = _spawn_hermes_action(["doctor"], "doctor")
+        proc = _spawn_chiper_action(["doctor"], "doctor")
     except Exception as exc:
         _log.exception("Failed to spawn doctor")
         raise HTTPException(status_code=500, detail=f"Failed to run doctor: {exc}")
@@ -8237,7 +8237,7 @@ async def run_doctor():
 @app.post("/api/ops/security-audit")
 async def run_security_audit():
     try:
-        proc = _spawn_hermes_action(["security", "audit"], "security-audit")
+        proc = _spawn_chiper_action(["security", "audit"], "security-audit")
     except Exception as exc:
         _log.exception("Failed to spawn security audit")
         raise HTTPException(status_code=500, detail=f"Failed to run security audit: {exc}")
@@ -8255,7 +8255,7 @@ async def run_backup(body: BackupRequest):
     if body.output:
         args.append(body.output.strip())
     try:
-        proc = _spawn_hermes_action(args, "backup")
+        proc = _spawn_chiper_action(args, "backup")
     except Exception as exc:
         _log.exception("Failed to spawn backup")
         raise HTTPException(status_code=500, detail=f"Failed to run backup: {exc}")
@@ -8285,7 +8285,7 @@ async def run_import(body: ImportRequest):
     if body.force:
         args.append("--force")
     try:
-        proc = _spawn_hermes_action(args, "import")
+        proc = _spawn_chiper_action(args, "import")
     except Exception as exc:
         _log.exception("Failed to spawn import")
         raise HTTPException(status_code=500, detail=f"Failed to run import: {exc}")
@@ -8485,7 +8485,7 @@ async def list_checkpoints():
 @app.post("/api/ops/checkpoints/prune")
 async def prune_checkpoints():
     try:
-        proc = _spawn_hermes_action(["checkpoints", "prune"], "checkpoints-prune")
+        proc = _spawn_chiper_action(["checkpoints", "prune"], "checkpoints-prune")
     except Exception as exc:
         _log.exception("Failed to spawn checkpoints prune")
         raise HTTPException(status_code=500, detail=f"Failed to prune checkpoints: {exc}")
@@ -8510,7 +8510,7 @@ class SkillInstallRequest(BaseModel):
 def _profile_cli_args(profile: Optional[str]) -> List[str]:
     """Return ``["-p", <name>]`` for a validated non-default profile.
 
-    Hub install/uninstall/update run in a fresh ``hermes`` subprocess, and
+    Hub install/uninstall/update run in a fresh ``chiper`` subprocess, and
     ``_apply_profile_override()`` reads ``-p`` from argv in the child — the
     only mechanism that reaches import-time-bound globals like
     ``skills_hub.SKILLS_DIR``. Empty/"current" means the dashboard's own
@@ -8530,7 +8530,7 @@ async def install_skill_hub(body: SkillInstallRequest, profile: Optional[str] = 
     if not identifier:
         raise HTTPException(status_code=400, detail="identifier is required")
     try:
-        proc = _spawn_hermes_action(
+        proc = _spawn_chiper_action(
             _profile_cli_args(body.profile or profile)
             + ["skills", "install", identifier, "--yes"],
             "skills-install",
@@ -8554,7 +8554,7 @@ async def uninstall_skill_hub(body: SkillUninstallRequest, profile: Optional[str
     if not name:
         raise HTTPException(status_code=400, detail="name is required")
     try:
-        proc = _spawn_hermes_action(
+        proc = _spawn_chiper_action(
             _profile_cli_args(body.profile or profile) + ["skills", "uninstall", name, "--yes"],
             "skills-uninstall",
         )
@@ -8576,7 +8576,7 @@ async def update_skills_hub(
 ):
     try:
         effective = (body.profile if body else None) or profile
-        proc = _spawn_hermes_action(
+        proc = _spawn_chiper_action(
             _profile_cli_args(effective) + ["skills", "update"], "skills-update"
         )
     except HTTPException:
@@ -8591,7 +8591,7 @@ async def update_skills_hub(
 # provenance).  Keep in sync with create_source_router()'s source list.
 _SKILL_HUB_SOURCE_LABELS = {
     "official": "Official (Nous)",
-    "hermes-index": "Hermes Index",
+    "chiper-index": "Chiper Index",
     "skills-sh": "skills.sh",
     "well-known": "Well-Known",
     "url": "Direct URL",
@@ -8676,7 +8676,7 @@ async def list_skills_hub_sources(profile: Optional[str] = None):
                     entry["rate_limited"] = bool(getattr(src, "is_rate_limited", False))
                 except Exception:
                     entry["rate_limited"] = False
-            if sid == "hermes-index":
+            if sid == "chiper-index":
                 try:
                     index_available = bool(getattr(src, "is_available", False))
                 except Exception:
@@ -9278,7 +9278,7 @@ async def create_profile_endpoint(body: ProfileCreate):
         if not ident:
             continue
         try:
-            proc = _spawn_hermes_action(
+            proc = _spawn_chiper_action(
                 ["-p", body.name, "skills", "install", ident, "--yes"],
                 "skills-install",
             )
@@ -10021,7 +10021,7 @@ async def run_toolset_post_setup(
         )
 
     try:
-        proc = _spawn_hermes_action(
+        proc = _spawn_chiper_action(
             _profile_cli_args(body.profile or profile)
             + ["tools", "post-setup", body.key],
             "tools-post-setup",
@@ -10806,7 +10806,7 @@ async def pty_ws(ws: WebSocket) -> None:
         await ws.send_text(
             "\r\n\x1b[31mChat unavailable: the embedded terminal requires a "
             "POSIX PTY, which native Windows Python doesn't provide.\x1b[0m\r\n"
-            "\x1b[33mInstall Hermes inside WSL2 to use the dashboard's /chat "
+            "\x1b[33mInstall Chiper inside WSL2 to use the dashboard's /chat "
             "tab — the rest of the dashboard works here.\x1b[0m\r\n"
         )
         await ws.close(code=1011)
@@ -11033,10 +11033,10 @@ def mount_spa(application: FastAPI):
     separate (unauthenticated) token-dispensing endpoint.
 
     When served behind a path-prefix reverse proxy (e.g.
-    ``mission-control.tilos.com/hermes/*`` -> local Caddy -> :9119), the
-    proxy injects ``X-Forwarded-Prefix: /hermes`` on every request. We
+    ``mission-control.tilos.com/chiper/*`` -> local Caddy -> :9119), the
+    proxy injects ``X-Forwarded-Prefix: /chiper`` on every request. We
     rewrite the served ``index.html`` so absolute asset URLs (``/assets/...``)
-    and the SPA's runtime ``__HERMES_BASE_PATH__`` honour that prefix
+    and the SPA's runtime ``__CHIPER_BASE_PATH__`` honour that prefix
     without rebuilding the bundle.
     """
     if not WEB_DIST.exists():
@@ -11053,13 +11053,13 @@ def mount_spa(application: FastAPI):
     def _serve_index(prefix: str = ""):
         """Return index.html with the session token + base-path injected.
 
-        ``prefix`` is the normalised ``X-Forwarded-Prefix`` (e.g. ``/hermes``)
+        ``prefix`` is the normalised ``X-Forwarded-Prefix`` (e.g. ``/chiper``)
         or empty string when served at root.
 
         When the OAuth auth gate is active (``app.state.auth_required``),
         the legacy ``_SESSION_TOKEN`` is NOT injected — the SPA reads
         identity from ``/api/auth/me`` over cookie auth instead.  The
-        ``__HERMES_AUTH_REQUIRED__`` flag lets the SPA pick the right
+        ``__CHIPER_AUTH_REQUIRED__`` flag lets the SPA pick the right
         auth scheme for /api/pty and /api/ws (ticket vs token).
         """
         html = _index_path.read_text(encoding="utf-8")
@@ -11069,17 +11069,17 @@ def mount_spa(application: FastAPI):
         if gated:
             bootstrap_script = (
                 f"<script>"
-                f"window.__HERMES_DASHBOARD_EMBEDDED_CHAT__={chat_js};"
-                f'window.__HERMES_BASE_PATH__="{prefix}";'
-                f"window.__HERMES_AUTH_REQUIRED__={gated_js};"
+                f"window.__CHIPER_DASHBOARD_EMBEDDED_CHAT__={chat_js};"
+                f'window.__CHIPER_BASE_PATH__="{prefix}";'
+                f"window.__CHIPER_AUTH_REQUIRED__={gated_js};"
                 f"</script>"
             )
         else:
             bootstrap_script = (
-                f'<script>window.__HERMES_SESSION_TOKEN__="{_SESSION_TOKEN}";'
-                f"window.__HERMES_DASHBOARD_EMBEDDED_CHAT__={chat_js};"
-                f'window.__HERMES_BASE_PATH__="{prefix}";'
-                f"window.__HERMES_AUTH_REQUIRED__={gated_js};"
+                f'<script>window.__CHIPER_SESSION_TOKEN__="{_SESSION_TOKEN}";'
+                f"window.__CHIPER_DASHBOARD_EMBEDDED_CHAT__={chat_js};"
+                f'window.__CHIPER_BASE_PATH__="{prefix}";'
+                f"window.__CHIPER_AUTH_REQUIRED__={gated_js};"
                 f"</script>"
             )
         if prefix:
@@ -11100,7 +11100,7 @@ def mount_spa(application: FastAPI):
     # When served behind a path-prefix proxy, the built CSS contains
     # absolute ``url(/fonts/...)`` and ``url(/ds-assets/...)`` references.
     # Browsers resolve those against the document origin, which means
-    # under ``/hermes`` they'd hit ``mission-control.tilos.com/fonts/...``
+    # under ``/chiper`` they'd hit ``mission-control.tilos.com/fonts/...``
     # (the MC Pages app), not the Chiper backend. Intercept CSS asset
     # requests BEFORE the StaticFiles mount and rewrite the absolute paths
     # when a prefix is in play.
@@ -11155,8 +11155,8 @@ def mount_spa(application: FastAPI):
 # Built-in dashboard themes — label + description only.  The actual color
 # definitions live in the frontend (web/src/themes/presets.ts).
 _BUILTIN_DASHBOARD_THEMES = [
-    {"name": "default",       "label": "Hermes Teal",         "description": "Classic dark teal — the canonical Hermes look"},
-    {"name": "default-large", "label": "Hermes Teal (Large)", "description": "Hermes Teal with bigger fonts and roomier spacing"},
+    {"name": "default",       "label": "Chiper Teal",         "description": "Classic dark teal — the canonical Chiper look"},
+    {"name": "default-large", "label": "Chiper Teal (Large)", "description": "Chiper Teal with bigger fonts and roomier spacing"},
     {"name": "nous-blue",     "label": "Nous Blue",           "description": "Light mode — vivid Nous-blue accents on cream canvas"},
     {"name": "midnight",      "label": "Midnight",            "description": "Deep blue-violet with cool accents"},
     {"name": "ember",     "label": "Ember",          "description": "Warm crimson and bronze — forge vibes"},
@@ -12059,7 +12059,7 @@ def _mount_plugin_api_routes():
             _log.warning("Plugin %s declares api=%s but file not found", plugin["name"], api_file_name)
             continue
         try:
-            module_name = f"hermes_dashboard_plugin_{plugin['name']}"
+            module_name = f"chiper_dashboard_plugin_{plugin['name']}"
             spec = importlib.util.spec_from_file_location(module_name, api_path)
             if spec is None or spec.loader is None:
                 continue
@@ -12286,7 +12286,7 @@ def start_server(
             app.state.bound_port = actual_port
 
             print(f"CHIPER_DASHBOARD_READY port={actual_port}", flush=True)
-            print(f"  Hermes Web UI → http://{host}:{actual_port}")
+            print(f"  Chiper Web UI → http://{host}:{actual_port}")
             _maybe_open_browser(host, actual_port, open_browser, initial_profile)
 
             await server.main_loop()

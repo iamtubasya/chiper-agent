@@ -146,7 +146,7 @@ def cmd_setup(args: argparse.Namespace) -> int:
                 f"  [red]Non-interactive mode (no TTY) requires all setup flags.[/red]\n"
                 f"  Missing: {', '.join(missing)}\n\n"
                 "  Usage:\n"
-                "    hermes secrets bitwarden setup \\\n"
+                "    chiper secrets bitwarden setup \\\n"
                 "      --access-token '0.xxx' \\\n"
                 "      --server-url 'https://vault.bitwarden.com' \\\n"
                 "      --project-id 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'"
@@ -278,12 +278,12 @@ def cmd_setup(args: argparse.Namespace) -> int:
     console.print()
     console.print(
         "[green]✓ Bitwarden Secrets Manager is enabled.[/green]  "
-        "Secrets will be pulled at the start of every Hermes process."
+        "Secrets will be pulled at the start of every Chiper process."
     )
     console.print(
-        "  Status:  [cyan]hermes secrets bitwarden status[/cyan]\n"
-        "  Refresh: [cyan]hermes secrets bitwarden sync[/cyan]\n"
-        "  Disable: [cyan]hermes secrets bitwarden disable[/cyan]"
+        "  Status:  [cyan]chiper secrets bitwarden status[/cyan]\n"
+        "  Refresh: [cyan]chiper secrets bitwarden sync[/cyan]\n"
+        "  Disable: [cyan]chiper secrets bitwarden disable[/cyan]"
     )
     return 0
 
@@ -323,11 +323,11 @@ def cmd_status(args: argparse.Namespace) -> int:
     console.print(Panel(table, title="Bitwarden Secrets Manager", border_style="cyan"))
 
     if not enabled:
-        console.print("\n  Run [cyan]hermes secrets bitwarden setup[/cyan] to enable.")
+        console.print("\n  Run [cyan]chiper secrets bitwarden setup[/cyan] to enable.")
         return 0
     if not token_set:
         console.print(
-            f"\n  [yellow]Enabled but {token_env} is not set — Hermes will skip BSM "
+            f"\n  [yellow]Enabled but {token_env} is not set — Chiper will skip BSM "
             "and warn on next startup.[/yellow]"
         )
     if not project_id:
@@ -403,7 +403,7 @@ def cmd_sync(args: argparse.Namespace) -> int:
     if not args.apply:
         console.print(
             "\n  This was a dry-run — secrets are picked up automatically on the "
-            "next [cyan]hermes[/cyan] invocation.  Re-run with [cyan]--apply[/cyan] "
+            "next [cyan]chiper[/cyan] invocation.  Re-run with [cyan]--apply[/cyan] "
             "to export into the current shell instead."
         )
     else:
@@ -420,7 +420,7 @@ def cmd_disable(args: argparse.Namespace) -> int:
     save_config(cfg)
     console.print(
         "[green]Disabled.[/green]  Bitwarden secrets will NOT be pulled on the next "
-        "Hermes invocation.\n"
+        "Chiper invocation.\n"
         "  Your access token is left in .env — remove it manually if you also want "
         "to revoke the credential."
     )
@@ -491,7 +491,7 @@ def _list_projects(
             console.print(
                 "  [yellow]'invalid_client' from the US identity endpoint usually "
                 "means the token is for a different Bitwarden region.  Re-run "
-                "[cyan]hermes secrets bitwarden setup[/cyan] and pick EU or "
+                "[cyan]chiper secrets bitwarden setup[/cyan] and pick EU or "
                 "self-hosted at the region prompt, or set [cyan]secrets.bitwarden."
                 "server_url[/cyan] in config.yaml.[/yellow]"
             )

@@ -105,7 +105,7 @@ COMMAND_REGISTRY: list[CommandDef] = [
                aliases=("q",), args_hint="<prompt>"),
     CommandDef("steer", "Inject a message after the next tool call without interrupting", "Session",
                args_hint="<prompt>"),
-    CommandDef("goal", "Set a standing goal Hermes works on across turns until achieved", "Session",
+    CommandDef("goal", "Set a standing goal Chiper works on across turns until achieved", "Session",
                args_hint="[text | pause | resume | clear | status]"),
     CommandDef("subgoal", "Add or manage extra criteria on the active goal", "Session",
                args_hint="[text | remove N | clear]"),
@@ -465,7 +465,7 @@ def _iter_plugin_command_entries() -> list[tuple[str, str, str]]:
     Plugin commands are registered via
     :func:`chiper_cli.plugins.PluginContext.register_command`. They behave
     like ``CommandDef`` entries for gateway surfacing: they appear in the
-    Telegram command menu, in Slack's ``/hermes`` subcommand mapping, and
+    Telegram command menu, in Slack's ``/chiper`` subcommand mapping, and
     (via :func:`plugins.platforms.discord.adapter._register_slash_commands`) in
     Discord's native slash command picker.
 
@@ -556,7 +556,7 @@ _TELEGRAM_MENU_PRIORITY = (
 )
 """Built-in commands that should stay visible in Telegram's capped menu.
 
-Telegram only displays a small BotCommand menu in practice.  The full Hermes
+Telegram only displays a small BotCommand menu in practice.  The full Chiper
 registry is still dispatchable when typed manually, but operational commands
 need to survive the visible menu cap ahead of lower-priority built-ins.
 """
@@ -1035,26 +1035,26 @@ _SLACK_RESERVED_COMMANDS = frozenset({
 # registry fills up. Without this, adding a new canonical command silently
 # clamps off low-priority aliases (they're added in the second pass), so a
 # long-standing native slash like /btw could disappear just because an
-# unrelated command landed. These claim their slots right after /hermes,
+# unrelated command landed. These claim their slots right after /chiper,
 # ahead of both canonical names and the rest of the aliases. Anything not
-# listed here still degrades gracefully (reachable via /hermes <command>).
+# listed here still degrades gracefully (reachable via /chiper <command>).
 # Keep this list TIGHT: every pinned alias takes a slot a canonical command
 # would otherwise get, and the Telegram-parity test fails when a canonical
 # gets clamped ("reset" was unpinned for exactly that — /new keeps its
-# native slot, the alias spelling stays reachable via /hermes reset).
+# native slot, the alias spelling stays reachable via /chiper reset).
 _SLACK_PRIORITY_ALIASES = ("btw", "bg")
 
 # Canonical commands intentionally NOT given a native Slack slash slot. Slack
 # caps apps at 50 slash commands and the registry is at that ceiling; rather
 # than let the clamp silently drop whichever command sorts last (and break
 # Telegram parity), we explicitly route a few low-frequency commands through
-# ``/hermes <command>`` on Slack only. They remain native on every other
+# ``/chiper <command>`` on Slack only. They remain native on every other
 # surface (CLI, TUI, Telegram, Discord). Keep this list TIGHT and intentional —
 # the telegram-parity test reads it so an entry here is a deliberate
-# "Slack-via-/hermes" decision, not a silent clamp.
-#   - credits: the billing/top-up surface; reached via /hermes credits on Slack.
+# "Slack-via-/chiper" decision, not a silent clamp.
+#   - credits: the billing/top-up surface; reached via /chiper credits on Slack.
 #   - debug: the log/report upload surface; reached via /chiper debug on Slack.
-_SLACK_VIA_HERMES_ONLY = frozenset({"credits", "debug"})
+_SLACK_VIA_CHIPER_ONLY = frozenset({"credits", "debug"})
 
 
 def _sanitize_slack_name(raw: str) -> str:
@@ -1075,7 +1075,7 @@ def slack_native_slashes() -> list[tuple[str, str, str]]:
     Every gateway-available command in ``COMMAND_REGISTRY`` is surfaced as
     a standalone Slack slash command (e.g. ``/btw``, ``/stop``, ``/model``),
     matching Discord's and Telegram's model where every command is a
-    first-class slash and not a ``/hermes <verb>`` subcommand.
+    first-class slash and not a ``/chiper <verb>`` subcommand.
 
     Both canonical names and aliases are included so users can type any
     documented form (e.g. ``/background``, ``/bg``, and ``/btw`` all work).
@@ -1083,20 +1083,20 @@ def slack_native_slashes() -> list[tuple[str, str, str]]:
 
     Commands whose sanitized name collides with a Slack built-in
     (e.g. ``/status``, ``/me``, ``/join``) are silently skipped.  Users
-    can still reach them via ``/hermes <command>``.
+    can still reach them via ``/chiper <command>``.
 
     Results are clamped to Slack's 50-command limit with duplicate-name
-    avoidance. ``/hermes`` is always reserved as the first entry so the
-    legacy ``/hermes <subcommand>`` form keeps working for anything that
+    avoidance. ``/chiper`` is always reserved as the first entry so the
+    legacy ``/chiper <subcommand>`` form keeps working for anything that
     gets dropped by the clamp or for free-form questions.
     """
     overrides = _resolve_config_gates()
     entries: list[tuple[str, str, str]] = []
     seen: set[str] = set()
 
-    # Reserve /hermes as the catch-all top-level command.
-    entries.append(("hermes", "Talk to Chiper or run a subcommand", "[subcommand] [args]"))
-    seen.add("hermes")
+    # Reserve /chiper as the catch-all top-level command.
+    entries.append(("chiper", "Talk to Chiper or run a subcommand", "[subcommand] [args]"))
+    seen.add("chiper")
 
     def _add(name: str, desc: str, hint: str) -> None:
         slack_name = _sanitize_slack_name(name)
@@ -1104,8 +1104,8 @@ def slack_native_slashes() -> list[tuple[str, str, str]]:
             return
         if slack_name in _SLACK_RESERVED_COMMANDS:
             return
-        if slack_name in _SLACK_VIA_HERMES_ONLY:
-            # Intentionally Slack-via-/hermes only (see _SLACK_VIA_HERMES_ONLY).
+        if slack_name in _SLACK_VIA_CHIPER_ONLY:
+            # Intentionally Slack-via-/chiper only (see _SLACK_VIA_CHIPER_ONLY).
             return
         if len(entries) >= _SLACK_MAX_SLASH_COMMANDS:
             return
@@ -1114,7 +1114,7 @@ def slack_native_slashes() -> list[tuple[str, str, str]]:
         seen.add(slack_name)
 
     # Priority pass: pin high-value aliases (e.g. /btw, /bg, /reset) ahead of
-    # everything except /hermes, so a new canonical command can never silently
+    # everything except /chiper, so a new canonical command can never silently
     # clamp them off the 50-slash cap. Each alias borrows its parent command's
     # description and hint.
     _alias_to_cmd = {
@@ -1178,12 +1178,12 @@ def slack_app_manifest(request_url: str = "https://chiper-agent.local/slack/comm
 
 
 def slack_subcommand_map() -> dict[str, str]:
-    """Return subcommand -> /command mapping for Slack /hermes handler.
+    """Return subcommand -> /command mapping for Slack /chiper handler.
 
-    Maps both canonical names and aliases so /hermes bg do stuff works
-    the same as /hermes background do stuff.
+    Maps both canonical names and aliases so /chiper bg do stuff works
+    the same as /chiper background do stuff.
 
-    Plugin-registered slash commands are included so ``/hermes <plugin-cmd>``
+    Plugin-registered slash commands are included so ``/chiper <plugin-cmd>``
     routes through the plugin handler.
     """
     overrides = _resolve_config_gates()

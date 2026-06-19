@@ -1,10 +1,10 @@
 """chiper webhook — manage dynamic webhook subscriptions from the CLI.
 
 Usage:
-    hermes webhook subscribe <name> [options]
-    hermes webhook list
-    hermes webhook remove <name>
-    hermes webhook test <name> [--payload '{"key": "value"}']
+    chiper webhook subscribe <name> [options]
+    chiper webhook list
+    chiper webhook remove <name>
+    chiper webhook test <name> [--payload '{"key": "value"}']
 
 Subscriptions persist to ~/.chiperflux/webhook_subscriptions.json and are
 hot-reloaded by the webhook adapter without a gateway restart.
@@ -141,7 +141,7 @@ def webhook_command(args):
     sub = getattr(args, "webhook_action", None)
 
     if not sub:
-        print("Usage: hermes webhook {subscribe|list|remove|test}")
+        print("Usage: chiper webhook {subscribe|list|remove|test}")
         print("Run 'chiper webhook --help' for details.")
         return
 
@@ -221,7 +221,7 @@ def _cmd_list(args):
     subs = _load_subscriptions()
     if not subs:
         print("  No dynamic webhook subscriptions.")
-        print("  Create one with: hermes webhook subscribe <name>")
+        print("  Create one with: chiper webhook subscribe <name>")
         return
 
     base_url = _get_webhook_base_url()
@@ -269,7 +269,7 @@ def _cmd_test(args):
     base_url = _get_webhook_base_url()
     url = f"{base_url}/webhooks/{name}"
 
-    payload = args.payload or '{"test": true, "event_type": "test", "message": "Hello from hermes webhook test"}'
+    payload = args.payload or '{"test": true, "event_type": "test", "message": "Hello from chiper webhook test"}'
 
     import hmac
     import hashlib

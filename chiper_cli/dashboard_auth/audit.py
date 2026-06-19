@@ -5,7 +5,7 @@ Format: one JSON object per line. Token-like fields are stripped before
 serialisation to avoid leaking refresh tokens or JWTs to disk.
 
 This module deliberately keeps a minimal dependency surface — no imports
-from ``hermes_constants`` or other chiper_cli modules — so it can be
+from ``chiper_constants`` or other chiper_cli modules — so it can be
 imported safely from middleware code that loads early in the startup
 sequence.
 """
@@ -52,7 +52,7 @@ class AuditEvent(enum.Enum):
 def _resolve_log_path() -> Path:
     """``$CHIPER_HOME/logs/dashboard-auth.log`` with the standard fallback.
 
-    Mirrors ``hermes_constants.get_chiper_home`` semantics: env var wins,
+    Mirrors ``chiper_constants.get_chiper_home`` semantics: env var wins,
     else ``~/.chiperflux``. A local copy avoids an import cycle with the
     middleware which lives below ``chiper_cli``.
     """

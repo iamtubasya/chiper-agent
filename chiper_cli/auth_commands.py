@@ -224,7 +224,7 @@ def auth_add_command(args) -> None:
     if provider == "anthropic":
         from agent import anthropic_adapter as anthropic_mod
 
-        creds = anthropic_mod.run_hermes_oauth_login_pure()
+        creds = anthropic_mod.run_chiper_oauth_login_pure()
         if not creds:
             raise SystemExit("Anthropic OAuth login did not return credentials.")
         label = (getattr(args, "label", None) or "").strip() or label_from_token(
@@ -237,7 +237,7 @@ def auth_add_command(args) -> None:
             label=label,
             auth_type=AUTH_TYPE_OAUTH,
             priority=0,
-            source=f"{SOURCE_MANUAL}:hermes_pkce",
+            source=f"{SOURCE_MANUAL}:chiper_pkce",
             access_token=creds["access_token"],
             refresh_token=creds.get("refresh_token"),
             expires_at_ms=creds.get("expires_at_ms"),
@@ -249,7 +249,7 @@ def auth_add_command(args) -> None:
 
     if provider == "nous":
         # Codex-style auto-import: if a shared Nous credential lives at
-        # <hermes-root>/shared/nous_auth.json (written by any previous
+        # <chiper-root>/shared/nous_auth.json (written by any previous
         # successful login), offer to import it instead of running the
         # full device-code flow. This makes `chiper --profile <name>
         # auth add nous --type oauth` a one-tap operation for users who
@@ -475,7 +475,7 @@ def auth_remove_command(args) -> None:
         raise SystemExit(f'No credential matching "{target}" for provider {provider}.')
     print(f"Removed {provider} credential #{index} ({removed.label})")
 
-    # Unified removal dispatch.  Every credential source Hermes reads from
+    # Unified removal dispatch.  Every credential source Chiper reads from
     # (env vars, external OAuth files, auth.json blocks, custom config)
     # has a RemovalStep registered in agent.credential_sources.  The step
     # handles its source-specific cleanup and we centralise suppression +
