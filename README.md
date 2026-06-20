@@ -102,11 +102,11 @@ chiper-agent/
 
 ## Perbedaan dengan Chiper Agent
 
-| Aspek | Chiper Agent | ChiperFlux Agent |
+| Aspek | hermes Agent | ChiperFlux Agent |
 |-------|-------------|------------------|
-| Command | `chiper` | `chiper` |
-| Data Dir | `~/.chiper` | `~/.chiperflux` |
-| Code Dir | `/usr/local/lib/chiper-agent` | `/usr/local/lib/chiper-agent` |
+| Command | `hermes` | `chiper` |
+| Data Dir | `~/.hermes` | `~/.chiperflux` |
+| Code Dir | `/usr/local/lib/hermes-agent` | `/usr/local/lib/chiper-agent` |
 | Developer | Nous Research | ChiperFlux / Tubasya |
 
 ---
