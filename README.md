@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.png" alt="ChiperFlux Agent" width="100%">
+  <img src="assets/bannedsini.png" alt="ChiperFlux Agent" width="100%">
 </p>
 
 # ChiperFlux Agent ⚕️
