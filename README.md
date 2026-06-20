@@ -100,7 +100,7 @@ chiper-agent/
 
 ---
 
-## Perbedaan dengan Chiper Agent
+## Perbedaan dengan Hermes Agent
 
 | Aspek | hermes Agent | ChiperFlux Agent |
 |-------|-------------|------------------|
