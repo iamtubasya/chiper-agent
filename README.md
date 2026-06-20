@@ -113,11 +113,13 @@ chiper-agent/
 
 ## Credits
 
-- Original: [Chiper Agent](https://github.com/NousResearch/chiper-agent) oleh [Nous Research](https://nousresearch.com)
+- Original: [Hermes Agent](https://github.com/NousResearch/hermes-agent) oleh [Nous Research](https://nousresearch.com)
 - Fork & Customization: [ChiperFlux](https://github.com/iamtubasya)
 
 ---
 
 ## License
 
-[MIT License](LICENSE) — Copyright (c) 2025 ChiperFlux / Tubasya
+[MIT License](LICENSE) — Copyright (c) 2026 ChiperFlux / Tubasya
+
+Original : @NousResearch 👍
