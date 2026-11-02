@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@chiper/ink": ["src/types/chiper-ink.d.ts"]
+    }
+  }
+}

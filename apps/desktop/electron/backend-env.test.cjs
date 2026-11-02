@@ -1,0 +1,111 @@
+const test = require('node:test')
+const assert = require('node:assert/strict')
+const path = require('node:path')
+
+const {
+  POSIX_SANE_PATH_ENTRIES,
+  appendUniquePathEntries,
+  buildDesktopBackendEnv,
+  buildDesktopBackendPath,
+  normalizeChiperHomeRoot,
+  pathEnvKey
+} = require('./backend-env.cjs')
+
+test('desktop backend PATH adds Chiper-managed bins and missing POSIX sane entries', () => {
+  const result = buildDesktopBackendPath({
+    chiperHome: '/Users/test/.Chiper',
+    venvRoot: '/Users/test/.Chiper/chiper-agent/venv',
+    currentPath: '/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin',
+    platform: 'darwin',
+    pathModule: path.posix
+  })
+
+  const entries = result.split(':')
+  assert.equal(entries[0], '/Users/test/.Chiper/node/bin')
+  assert.equal(entries[1], '/Users/test/.Chiper/chiper-agent/venv/bin')
+  assert.ok(entries.includes('/opt/homebrew/bin'), 'Apple Silicon Homebrew bin is added')
+  assert.ok(entries.includes('/opt/homebrew/sbin'), 'Apple Silicon Homebrew sbin is added')
+  assert.ok(entries.includes('/usr/local/sbin'), 'missing standard sbin is added')
+
+  for (const expected of POSIX_SANE_PATH_ENTRIES) {
+    assert.ok(entries.includes(expected), `${expected} should be present`)
+  }
+})
+
+test('desktop backend PATH preserves first occurrence and avoids duplicates', () => {
+  const result = buildDesktopBackendPath({
+    chiperHome: '/Users/test/.Chiper',
+    venvRoot: '/Users/test/.Chiper/chiper-agent/venv',
+    currentPath: '/opt/homebrew/bin:/usr/bin:/opt/homebrew/bin:/bin',
+    platform: 'darwin',
+    pathModule: path.posix
+  })
+
+  const entries = result.split(':')
+  assert.equal(entries.filter(entry => entry === '/opt/homebrew/bin').length, 1)
+  assert.ok(
+    entries.indexOf('/opt/homebrew/bin') < entries.indexOf('/opt/homebrew/sbin'),
+    'existing Homebrew bin keeps its precedence over appended missing sane entries'
+  )
+})
+
+test('buildDesktopBackendEnv extends PYTHONPATH and backend PATH together', () => {
+  const env = buildDesktopBackendEnv({
+    chiperHome: '/Users/test/.Chiper',
+    pythonPathEntries: ['/repo/chiper-agent'],
+    venvRoot: '/Users/test/.Chiper/chiper-agent/venv',
+    currentEnv: {
+      PATH: '/usr/bin:/bin',
+      PYTHONPATH: '/existing/pythonpath'
+    },
+    platform: 'darwin',
+    pathModule: path.posix
+  })
+
+  assert.equal(env.PYTHONPATH, '/repo/chiper-agent:/existing/pythonpath')
+  assert.ok(env.PATH.startsWith('/Users/test/.Chiper/node/bin:/Users/test/.Chiper/chiper-agent/venv/bin:'))
+  assert.ok(env.PATH.includes('/opt/homebrew/bin'))
+})
+
+test('normalizeChiperHomeRoot maps profile homes back to the global Chiper root', () => {
+  assert.equal(
+    normalizeChiperHomeRoot('/Users/test/.Chiper/profiles/oracle', { pathModule: path.posix }),
+    '/Users/test/.Chiper'
+  )
+  assert.equal(
+    normalizeChiperHomeRoot('C:\\Users\\test\\AppData\\Local\\chiper\\profiles\\oracle', { pathModule: path.win32 }),
+    'C:\\Users\\test\\AppData\\Local\\chiper'
+  )
+  assert.equal(
+    normalizeChiperHomeRoot('/Users/test/.Chiper', { pathModule: path.posix }),
+    '/Users/test/.Chiper'
+  )
+})
+
+test('Windows PATH casing and delimiter are preserved without POSIX sane entries', () => {
+  const env = buildDesktopBackendEnv({
+    chiperHome: 'C:\\Users\\test\\AppData\\Local\\chiper',
+    pythonPathEntries: ['C:\\repo\\chiper-agent'],
+    venvRoot: 'C:\\Users\\test\\AppData\\Local\\chiper\\chiper-agent\\venv',
+    currentEnv: {
+      Path: 'C:\\Windows\\System32;C:\\Windows',
+      PYTHONPATH: 'C:\\existing\\pythonpath'
+    },
+    platform: 'win32',
+    pathModule: path.win32
+  })
+
+  assert.equal(pathEnvKey({ Path: 'x' }, 'win32'), 'Path')
+  assert.equal(env.PATH, undefined)
+  assert.ok(env.Path.startsWith('C:\\Users\\test\\AppData\\Local\\chiper\\node\\bin;'))
+  assert.ok(env.Path.includes('\\venv\\Scripts;'))
+  assert.ok(env.Path.includes(';C:\\Windows\\System32;C:\\Windows'))
+  assert.equal(env.Path.includes('/opt/homebrew/bin'), false)
+})
+
+test('appendUniquePathEntries drops empty entries and keeps first occurrence', () => {
+  assert.equal(
+    appendUniquePathEntries([':/a::/b', ['/a', '/c']], { delimiter: ':' }),
+    '/a:/b:/c'
+  )
+})

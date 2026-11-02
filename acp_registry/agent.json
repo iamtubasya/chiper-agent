@@ -1,0 +1,15 @@
+{
+  "id": "chiper-agent",
+  "name": "Chiper Agent",
+  "version": "0.16.0",
+  "description": "Self-improving open-source AI agent by Chiper with ACP editor integration, persistent memory, skills, and rich tool support.",
+  "repository": "https://github.com/iamtubasya/chiper-agent",
+  "authors": ["Chiper"],
+  "license": "MIT",
+  "distribution": {
+    "uvx": {
+      "package": "chiper-agent[acp]==0.16.0",
+      "args": ["chiper-acp"]
+    }
+  }
+}
