@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================================
-# Pre-commit hook: Reject stale "hermes" branding in staged files.
+# Pre-commit hook: Reject stale "chiper" branding in staged files.
 #
 # Install:
 #   cp scripts/hooks/pre-commit-branding-check.sh .git/hooks/pre-commit
@@ -18,7 +18,7 @@ YELLOW='\033[0;33m'
 NC='\033[0m'
 
 # Patterns to search for (case-sensitive)
-PATTERNS=("hermes" "Hermes" "HERMES")
+PATTERNS=("chiper" "Chiper" "HERMES")
 
 # Directories to exclude from scanning
 EXCLUDE_DIRS=(
@@ -54,18 +54,18 @@ done
 # Allowed exceptions (intentional references)
 # These are checked as exact line matches
 ALLOWED_EXCEPTIONS=(
-    "Perbedaan dengan Hermes Agent"
-    "Hermes Agent | Chiper"
-    "hermes Agent | Chiper"
-    "| Command | \`hermes\`"
-    "| Data Dir | \`~/.hermes\`"
-    "| Code Dir | \`/usr/local/lib/hermes-agent\`"
-    "Original: \[Hermes Agent\]"
-    "Chiper/hermes-agent"
-    "wikipedia.org/wiki/Hermes"
-    "hermes-parser"
-    "hermes-estree"
-    "@hermes/ink"
+    "Fitur Chiper Agent"
+    "Chiper Agent"
+    "chiper Agent | Chiper"
+    "| Command | \`chiper\`"
+    "| Data Dir | \`~/.chiper\`"
+    "| Code Dir | \`/usr/local/lib/chiper-agent\`"
+    "Original: \[Chiper Agent\]"
+    "Chiper/chiper-agent"
+    "wikipedia.org/wiki/Chiper"
+    "chiper-parser"
+    "chiper-estree"
+    "@chiper/ink"
 )
 
 # Get staged files (only added/modified content)
@@ -129,13 +129,13 @@ done
 if [ "$VIOLATION_COUNT" -gt 0 ]; then
     echo ""
     echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
-    echo -e "${RED}  BRANDING VIOLATION: 'hermes' found in staged files${NC}"
+    echo -e "${RED}  BRANDING VIOLATION: 'chiper' found in staged files${NC}"
     echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
     echo ""
     echo -e "$VIOLATIONS"
     echo -e "${YELLOW}Found ${VIOLATION_COUNT} violation(s).${NC}"
     echo ""
-    echo -e "Replace 'hermes' with 'chiper' before committing."
+    echo -e "Replace 'chiper' with 'chiper' before committing."
     echo -e "If this is an intentional reference (e.g. upstream comparison),"
     echo -e "add it to the ALLOWED_EXCEPTIONS list in this hook."
     echo ""

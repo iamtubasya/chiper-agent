@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Branding Lint Rule — Scan repository for stale "hermes" references.
+Branding Lint Rule — Scan repository for stale "chiper" references.
 
 Usage:
     python3 scripts/branding-lint.py              # Scan entire repo
@@ -38,14 +38,14 @@ SKIP_DIRS = {
     '.venv', 'venv', 'dist', 'build', '.cache',
 }
 
-# Files to skip (these tools intentionally reference "hermes" for detection)
+# Files to skip (these tools intentionally reference "chiper" for detection)
 SKIP_FILES = {
     'package-lock.json', 'pnpm-lock.yaml', 'bun.lock',
     'Cargo.lock', 'uv.lock',
 }
 
 # Files that are part of the branding check tooling itself
-# (they naturally contain "hermes" in detection patterns/messages)
+# (they naturally contain "chiper" in detection patterns/messages)
 SKIP_PATHS = {
     'scripts/branding-lint.py',
     'scripts/hooks/pre-commit-branding-check.sh',
@@ -54,18 +54,18 @@ SKIP_PATHS = {
 
 # Allowed exceptions — regex patterns for lines that are intentionally about upstream
 ALLOWED_EXCEPTIONS = [
-    r'Perbedaan dengan Hermes Agent',
-    r'Hermes Agent \| Chiper',
-    r'hermes Agent \| Chiper',
-    r'\| Command \| `hermes`',
-    r'\| Data Dir \| `~/.hermes`',
-    r'\| Code Dir \| `/usr/local/lib/hermes-agent`',
-    r'Original:.*Hermes Agent',
-    r'Chiper/hermes-agent',
-    r'wikipedia\.org/wiki/Hermes',
-    r'hermes-parser',
-    r'hermes-estree',
-    r'@hermes/ink',
+    r'Fitur Chiper Agent',
+    r'Chiper Agent \| Chiper',
+    r'chiper Agent \| Chiper',
+    r'\| Command \| `chiper`',
+    r'\| Data Dir \| `~/.chiper`',
+    r'\| Code Dir \| `/usr/local/lib/chiper-agent`',
+    r'Original:.*Chiper Agent',
+    r'Chiper/chiper-agent',
+    r'wikipedia\.org/wiki/Chiper',
+    r'chiper-parser',
+    r'chiper-estree',
+    r'@chiper/ink',
 ]
 
 # File extensions to scan
@@ -195,14 +195,14 @@ def print_report(violations: list, ci_mode: bool = False):
     """Print the violation report."""
     if not violations:
         if ci_mode:
-            print("✅ BRANDING CHECK PASSED — no 'hermes' references found")
+            print("✅ BRANDING CHECK PASSED — no 'chiper' references found")
         else:
             print("✅ Clean — no branding violations found")
         return
 
     print()
     print("=" * 60)
-    print("  BRANDING VIOLATION: 'hermes' found in source files")
+    print("  BRANDING VIOLATION: 'chiper' found in source files")
     print("=" * 60)
     print()
 
@@ -219,7 +219,7 @@ def print_report(violations: list, ci_mode: bool = False):
 
     print(f"  Total: {len(violations)} violation(s) in {len(by_file)} file(s)")
     print()
-    print("  Replace 'hermes' with 'chiper' before committing.")
+    print("  Replace 'chiper' with 'chiper' before committing.")
     print("  If intentional, add to ALLOWED_EXCEPTIONS in scripts/branding-lint.py")
     print()
 

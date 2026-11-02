@@ -8,7 +8,7 @@ on:
 
 jobs:
   branding-lint:
-    name: Reject stale "hermes" branding
+    name: Reject stale "chiper" branding
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

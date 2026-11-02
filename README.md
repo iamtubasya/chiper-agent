@@ -100,21 +100,20 @@ chiper-agent/
 
 ---
 
-## Perbedaan dengan Hermes Agent
+## Fitur Chiper Agent
 
-| Aspek | Hermes Agent | Chiper Agent |
+| Aspek | Chiper Agent Agent |
 |-------|-------------|------------------|
-| Command | `hermes` | `chiper` |
-| Data Dir | `~/.hermes` | `~/.Chiper` |
-| Code Dir | `/usr/local/lib/hermes-agent` | `/usr/local/lib/chiper-agent` |
+| Command | `chiper` |
+| Data Dir | `~/.chiper` | `~/.Chiper` |
+| Code Dir | `/usr/local/lib/chiper-agent` | `/usr/local/lib/chiper-agent` |
 | Developer | Chiper | Chiper / Tubasya |
 
 ---
 
 ## Credits
 
-- Original: [Hermes Agent](https://github.com/Chiper/hermes-agent) oleh [Chiper](https://Chiper.com)
-- Fork & Customization: [Chiper](https://github.com/iamtubasya)
+- - Fork & Customization: [Chiper](https://github.com/iamtubasya)
 
 ---
 
