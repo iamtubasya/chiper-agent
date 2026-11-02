@@ -1,7 +1,7 @@
 """Tests for inventory._apply_pricing — the pricing/tier enrichment that
 
 feeds the desktop GUI model picker (and onboarding) so it can show $/Mtok
-columns + Free/Pro badges and gate paid models on free Nous accounts, the
+columns + Free/Pro badges and gate paid models on free Chiper accounts, the
 same way the `chiper model` CLI picker does.
 """
 
@@ -43,19 +43,19 @@ def test_apply_pricing_formats_per_model_prices(monkeypatch):
 
 
 def test_apply_pricing_nous_free_tier_gates_paid_models(monkeypatch):
-    """A free-tier Nous account marks paid models unavailable and sets the flag."""
+    """A free-tier Chiper account marks paid models unavailable and sets the flag."""
     _patch_pricing(
         monkeypatch,
         free_tier=True,
         pricing={
-            "nous": {
+            "chiper": {
                 "free/model": {"prompt": "0", "completion": "0"},
                 "paid/model": {"prompt": "0.000005", "completion": "0.00001"},
             }
         },
         unavailable=["paid/model"],
     )
-    rows = [{"slug": "nous", "models": ["free/model", "paid/model"]}]
+    rows = [{"slug": "chiper", "models": ["free/model", "paid/model"]}]
     inv._apply_pricing(rows)
 
     assert rows[0]["free_tier"] is True
@@ -64,13 +64,13 @@ def test_apply_pricing_nous_free_tier_gates_paid_models(monkeypatch):
 
 
 def test_apply_pricing_nous_paid_tier_no_gating(monkeypatch):
-    """A paid Nous account gates nothing."""
+    """A paid Chiper account gates nothing."""
     _patch_pricing(
         monkeypatch,
         free_tier=False,
-        pricing={"nous": {"x/model": {"prompt": "0.000001", "completion": "0.000002"}}},
+        pricing={"chiper": {"x/model": {"prompt": "0.000001", "completion": "0.000002"}}},
     )
-    rows = [{"slug": "nous", "models": ["x/model"]}]
+    rows = [{"slug": "chiper", "models": ["x/model"]}]
     inv._apply_pricing(rows)
 
     assert rows[0]["free_tier"] is False

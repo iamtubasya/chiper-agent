@@ -2,7 +2,7 @@
 
 The Chiper docs site hosts a JSON manifest of curated models for providers
 we want to update without shipping a release (currently OpenRouter and
-Nous Portal). This module fetches, validates, and caches that manifest,
+Chiper Portal). This module fetches, validates, and caches that manifest,
 falling back to the in-repo hardcoded lists when the network is unavailable.
 
 Pipeline
@@ -33,7 +33,7 @@ Schema (version 1)
              "metadata": {...}}          # free-form, model-level
           ]
         },
-        "nous": {...}
+        "chiper": {...}
       }
     }
 
@@ -341,11 +341,11 @@ def get_curated_openrouter_models() -> list[tuple[str, str]] | None:
 
 
 def get_curated_nous_models() -> list[str] | None:
-    """Return Nous Portal's curated list of model ids from the manifest.
+    """Return Chiper Portal's curated list of model ids from the manifest.
 
     Returns ``None`` when the manifest is unavailable.
     """
-    block = _get_provider_block("nous")
+    block = _get_provider_block("chiper")
     if not block:
         return None
     out: list[str] = []

@@ -42,41 +42,41 @@ describe('model visibility', () => {
   })
 
   it('preserves hidden-provider sentinel without re-adding defaults', () => {
-    // User explicitly hid all models for "nous" — sentinel marks this choice.
-    const stored = new Set([emptyProviderSentinelKey('nous')])
+    // User explicitly hid all models for "chiper" — sentinel marks this choice.
+    const stored = new Set([emptyProviderSentinelKey('chiper')])
 
     const visible = effectiveVisibleKeys(stored, [
-      provider('nous', ['chiper-3-llama-3.1-70b', 'chiper-3-llama-3.1-8b']),
+      provider('chiper', ['chiper-3-llama-3.1-70b', 'chiper-3-llama-3.1-8b']),
       provider('ollama', ['qwen3:latest'])
     ])
 
-    expect(visible.has(modelVisibilityKey('nous', 'chiper-3-llama-3.1-70b'))).toBe(false)
-    expect(visible.has(modelVisibilityKey('nous', 'chiper-3-llama-3.1-8b'))).toBe(false)
+    expect(visible.has(modelVisibilityKey('chiper', 'chiper-3-llama-3.1-70b'))).toBe(false)
+    expect(visible.has(modelVisibilityKey('chiper', 'chiper-3-llama-3.1-8b'))).toBe(false)
     // Sentinel itself is stripped from the result.
-    expect(visible.has(emptyProviderSentinelKey('nous'))).toBe(false)
+    expect(visible.has(emptyProviderSentinelKey('chiper'))).toBe(false)
     // Other providers still get defaults.
     expect(visible.has(modelVisibilityKey('ollama', 'qwen3:latest'))).toBe(true)
   })
 
   it('restores model when toggling on after hiding all', () => {
-    // Simulates: user hid all "nous" models, then toggles one back on.
+    // Simulates: user hid all "chiper" models, then toggles one back on.
     const stored = new Set([
-      emptyProviderSentinelKey('nous'),
+      emptyProviderSentinelKey('chiper'),
       modelVisibilityKey('ollama', 'qwen3:latest')
     ])
 
     // After toggle: sentinel removed, one model added.
     const afterToggle = new Set(stored)
-    afterToggle.delete(emptyProviderSentinelKey('nous'))
-    afterToggle.add(modelVisibilityKey('nous', 'chiper-3-llama-3.1-70b'))
+    afterToggle.delete(emptyProviderSentinelKey('chiper'))
+    afterToggle.add(modelVisibilityKey('chiper', 'chiper-3-llama-3.1-70b'))
 
     const visible = effectiveVisibleKeys(afterToggle, [
-      provider('nous', ['chiper-3-llama-3.1-70b', 'chiper-3-llama-3.1-8b']),
+      provider('chiper', ['chiper-3-llama-3.1-70b', 'chiper-3-llama-3.1-8b']),
       provider('ollama', ['qwen3:latest'])
     ])
 
-    expect(visible.has(modelVisibilityKey('nous', 'chiper-3-llama-3.1-70b'))).toBe(true)
-    expect(visible.has(modelVisibilityKey('nous', 'chiper-3-llama-3.1-8b'))).toBe(false)
+    expect(visible.has(modelVisibilityKey('chiper', 'chiper-3-llama-3.1-70b'))).toBe(true)
+    expect(visible.has(modelVisibilityKey('chiper', 'chiper-3-llama-3.1-8b'))).toBe(false)
   })
 
   it('folds a date-pinned snapshot into its rolling alias when present', () => {

@@ -36,7 +36,7 @@ def cmd_proxy_start(args: Any) -> int:
         _print_aiohttp_missing()
         return 1
 
-    provider = getattr(args, "provider", None) or "nous"
+    provider = getattr(args, "provider", None) or "chiper"
     try:
         adapter = get_adapter(provider)
     except ValueError as exc:
@@ -123,7 +123,7 @@ def cmd_proxy(args: Any) -> int:
         "OAuth-authenticated provider credentials to outbound requests.\n"
         "\n"
         "Subcommands:\n"
-        "  chiper proxy start [--provider nous|xai] [--host 127.0.0.1] [--port 8645]\n"
+        "  chiper proxy start [--provider chiper|xai] [--host 127.0.0.1] [--port 8645]\n"
         "      Run the proxy in the foreground.\n"
         "  chiper proxy status\n"
         "      Show which upstream adapters are ready.\n"

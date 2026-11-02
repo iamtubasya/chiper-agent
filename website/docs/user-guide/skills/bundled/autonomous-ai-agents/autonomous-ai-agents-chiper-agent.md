@@ -98,7 +98,7 @@ chiper chat [flags]
   -q, --query TEXT          Single query, non-interactive
   -m, --model MODEL         Model (e.g. anthropic/claude-sonnet-4)
   -t, --toolsets LIST       Comma-separated toolsets
-  --provider PROVIDER       Force provider (openrouter, anthropic, nous, etc.)
+  --provider PROVIDER       Force provider (openrouter, anthropic, chiper, etc.)
   -v, --verbose             Verbose output
   -Q, --quiet               Suppress banner, spinner, tool previews
   --checkpoints             Enable filesystem checkpoints (/rollback)
@@ -118,7 +118,7 @@ chiper config env-path      Print .env path
 chiper config check         Check for missing/outdated config
 chiper config migrate       Update config with new options
 chiper auth                 Interactive credential manager
-chiper auth add PROVIDER    Add OAuth or API-key credential (e.g. nous, openai-codex, qwen-oauth)
+chiper auth add PROVIDER    Add OAuth or API-key credential (e.g. chiper, openai-codex, qwen-oauth)
 chiper auth list            List stored credentials
 chiper auth remove PROVIDER Remove a stored credential
 chiper doctor [--fix]       Check dependencies and config
@@ -399,7 +399,7 @@ Full config reference: https://chiper-agent.Chiper.com/docs/user-guide/configura
 |----------|------|-------------|
 | OpenRouter | API key | `OPENROUTER_API_KEY` |
 | Anthropic | API key | `ANTHROPIC_API_KEY` |
-| Nous Portal | OAuth | `chiper auth` |
+| Chiper Portal | OAuth | `chiper auth` |
 | OpenAI Codex | OAuth | `chiper auth` |
 | GitHub Copilot | Token | `COPILOT_GITHUB_TOKEN` |
 | Google Gemini | API key | `GOOGLE_API_KEY` or `GEMINI_API_KEY` |

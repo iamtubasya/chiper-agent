@@ -17,7 +17,7 @@ Quick answers and fixes for the most common questions and issues.
 Chiper Agent works with any OpenAI-compatible API. Supported providers include:
 
 - **[OpenRouter](https://openrouter.ai/)** — access hundreds of models through one API key (recommended for flexibility)
-- **[Nous Portal](/integrations/nous-portal)** — Chiper's subscription gateway — 300+ models plus web/image/TTS/browser through one OAuth login (recommended for newcomers)
+- **[Chiper Portal](/integrations/chiper-portal)** — Chiper's subscription gateway — 300+ models plus web/image/TTS/browser through one OAuth login (recommended for newcomers)
 - **OpenAI** — GPT-5.4, GPT-5-codex, GPT-4.1, GPT-4o, etc.
 - **Anthropic** — Claude models (direct API, OAuth via `chiper auth add anthropic`, OpenRouter, or any compatible proxy)
 - **Google** — Gemini models (direct API via `gemini` provider, the `google-gemini-cli` OAuth provider, OpenRouter, or compatible proxy)

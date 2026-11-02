@@ -25,7 +25,7 @@ chiper chat -q "Hello"
 chiper chat --model "anthropic/claude-sonnet-4"
 
 # 使用指定提供商
-chiper chat --provider nous        # 使用 Nous Portal
+chiper chat --provider chiper        # 使用 Chiper Portal
 chiper chat --provider openrouter  # 强制使用 OpenRouter
 
 # 使用指定工具集

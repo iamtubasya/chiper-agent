@@ -79,7 +79,7 @@ class TestResolveRuntimeAgentKwargsAuthFallback:
             "  - provider: openrouter\n"
             "    model: anthropic/claude-sonnet-4.6\n"
             "fallback_model:\n"
-            "  provider: nous\n"
+            "  provider: chiper\n"
             "  model: Chiper-4\n"
         )
 
@@ -93,9 +93,9 @@ class TestResolveRuntimeAgentKwargsAuthFallback:
             if requested == "openrouter":
                 raise RuntimeError("openrouter unavailable")
             return {
-                "api_key": "nous-key",
-                "base_url": "https://portal.Chiper.com/v1",
-                "provider": "nous",
+                "api_key": "chiper-key",
+                "base_url": "https://portal.chiper.local/v1",
+                "provider": "chiper",
                 "api_mode": "chat_completions",
                 "command": None,
                 "args": None,
@@ -110,6 +110,6 @@ class TestResolveRuntimeAgentKwargsAuthFallback:
 
             result = _try_resolve_fallback_provider()
 
-        assert calls == ["openrouter", "nous"]
-        assert result["provider"] == "nous"
+        assert calls == ["openrouter", "chiper"]
+        assert result["provider"] == "chiper"
         assert result["model"] == "Chiper-4"

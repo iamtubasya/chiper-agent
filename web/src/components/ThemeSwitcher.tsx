@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Palette, Check, Type } from "lucide-react";
-import { Button } from "@nous-research/ui/ui/components/button";
-import { ListItem } from "@nous-research/ui/ui/components/list-item";
-import { BottomSheet } from "@nous-research/ui/ui/components/bottom-sheet";
-import { Typography } from "@nous-research/ui/ui/components/typography/index";
-import { useBelowBreakpoint } from "@nous-research/ui/hooks/use-below-breakpoint";
+import { Button } from "@chiper-research/ui/ui/components/button";
+import { ListItem } from "@chiper-research/ui/ui/components/list-item";
+import { BottomSheet } from "@chiper-research/ui/ui/components/bottom-sheet";
+import { Typography } from "@chiper-research/ui/ui/components/typography/index";
+import { useBelowBreakpoint } from "@chiper-research/ui/hooks/use-below-breakpoint";
 import { BUILTIN_THEMES, THEME_DEFAULT_FONT_ID, useTheme } from "@/themes";
 import type { DashboardTheme, FontChoice, ThemeListEntry } from "@/themes";
 import { useI18n } from "@/i18n";
@@ -317,7 +317,7 @@ function FontSection({ fontChoices, fontId, setFont }: FontSectionProps) {
 }
 
 function ThemeSwatch({ theme }: { theme: DashboardTheme }) {
-  // Inverted themes (Nous Blue / future lens themes) author their palette
+  // Inverted themes (Chiper Blue / future lens themes) author their palette
   // pre-inversion — `#FFAC02` reads as `#0053FD` blue once the foreground-
   // difference layer flips the page. The picker can't replay that math
   // cheaply, so themes opt-in to an explicit `swatchColors` triplet that

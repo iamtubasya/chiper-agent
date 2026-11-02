@@ -3218,7 +3218,7 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
         Args:
             model: Model to use (default: from env or claude-sonnet)
             toolsets: List of toolsets to enable (default: all)
-            provider: Inference provider ("auto", "openrouter", "nous", "openai-codex", "zai", "kimi-coding", "minimax", "minimax-cn")
+            provider: Inference provider ("auto", "openrouter", "chiper", "openai-codex", "zai", "kimi-coding", "minimax", "minimax-cn")
             api_key: API key (default: from environment)
             base_url: API base URL (default: OpenRouter)
             max_turns: Maximum tool-calling iterations shared with subagents (default: 90)
@@ -5212,7 +5212,7 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
                     "[dim]   Fix: Set model.context_length in config.yaml, or increase your server's context setting[/]"
                 )
 
-        # Warn if the configured model is a Nous Chiper LLM (not agentic)
+        # Warn if the configured model is a Chiper Chiper LLM (not agentic)
         from chiper_cli.model_switch import is_nous_chiper_non_agentic
 
         model_name = getattr(self, "model", "") or ""
@@ -6761,7 +6761,7 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
         _cprint(f"    Provider: {provider_label}")
 
         # Context: always resolve via the provider-aware chain so Codex OAuth,
-        # Copilot, and Nous-enforced caps win over the raw models.dev entry
+        # Copilot, and Chiper-enforced caps win over the raw models.dev entry
         # (e.g. gpt-5.5 is 1.05M on openai but 272K on Codex OAuth).
         mi = result.model_info
         try:
@@ -7019,7 +7019,7 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
         _cprint(f"    Provider: {provider_label}")
 
         # Context: always resolve via the provider-aware chain so Codex OAuth,
-        # Copilot, and Nous-enforced caps win over the raw models.dev entry
+        # Copilot, and Chiper-enforced caps win over the raw models.dev entry
         # (e.g. gpt-5.5 is 1.05M on openai but 272K on Codex OAuth).
         mi = result.model_info
         from chiper_cli.model_switch import resolve_display_context_length
@@ -8256,9 +8256,9 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
 
 
     def _show_usage(self):
-        """Rate limits + session token usage (when a live agent exists) + Nous credits.
+        """Rate limits + session token usage (when a live agent exists) + Chiper credits.
 
-        The Nous credits block is agent-independent (a portal fetch), so it runs even
+        The Chiper credits block is agent-independent (a portal fetch), so it runs even
         with no live agent — important for the TUI, where /usage runs in a slash-worker
         subprocess that resumes the session WITHOUT building an agent (self.agent is None),
         which would otherwise early-return before any credits showed.
@@ -8367,7 +8367,7 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
             for line in account_lines:
                 print(line)
 
-        # Nous credits magnitudes + monthly-grant gauge (agent-independent — also
+        # Chiper credits magnitudes + monthly-grant gauge (agent-independent — also
         # runs at the no-agent / no-calls early-returns above). See the helper.
         self._print_nous_credits_block()
 
@@ -8386,20 +8386,20 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
             # installing a console StreamHandler in non-verbose mode.
 
     def _print_nous_credits_block(self) -> bool:
-        """Print the Nous credits magnitudes + monthly-grant gauge when a Nous account
+        """Print the Chiper credits magnitudes + monthly-grant gauge when a Chiper account
         is logged in. Returns True if it printed anything.
 
-        Delegates to the shared ``agent.account_usage.nous_credits_lines`` helper —
+        Delegates to the shared ``agent.account_usage.CHIPER_credits_lines`` helper —
         the single source for the /usage credits block across CLI, gateway, and TUI.
-        It's agent-independent (a portal fetch gated on "a Nous account is logged in",
+        It's agent-independent (a portal fetch gated on "a Chiper account is logged in",
         NOT the inference-provider string), so /usage shows the block even in the TUI
         slash-worker subprocess that resumes WITHOUT a live agent. Fail-open and
         wall-clock-bounded inside the helper; also honors CHIPER_DEV_CREDITS_FIXTURE
         for offline testing — same behavior as every other surface.
         """
-        from agent.account_usage import nous_credits_lines
+        from agent.account_usage import CHIPER_credits_lines
 
-        lines = nous_credits_lines()
+        lines = CHIPER_credits_lines()
         if not lines:
             return False
         print()
@@ -8408,7 +8408,7 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
         return True
 
     def _show_credits(self):
-        """`/credits` — focused Nous credit balance + top-up handoff.
+        """`/credits` — focused Chiper credit balance + top-up handoff.
 
         Interactive CLI: balance block + identity line + a 3-button panel
         (Open top-up / Copy link / Cancel). Non-interactive contexts — the TUI
@@ -8425,15 +8425,15 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
 
         if not view.logged_in:
             print()
-            print(f"  💳 {_DIM}Not logged into Nous Portal.{_RST}")
+            print(f"  💳 {_DIM}Not logged into Chiper Portal.{_RST}")
             print("  Run `chiper portal` to log in, then /credits.")
             return
 
         print()
-        print("  💳 Nous credits")
+        print("  💳 Chiper credits")
         print(f"  {'─' * 41}")
         for line in view.balance_lines:
-            # Drop the helper's own "📈 Nous credits" header — we print our own.
+            # Drop the helper's own "📈 Chiper credits" header — we print our own.
             if line.lstrip().startswith("📈"):
                 continue
             print(f"  {line}")
@@ -13526,7 +13526,7 @@ def main(
         toolsets: Comma-separated list of toolsets to enable (e.g., "web,terminal")
         skills: Comma-separated or repeated list of skills to preload for the session
         model: Model to use (default: anthropic/claude-opus-4-20250514)
-        provider: Inference provider ("auto", "openrouter", "nous", "openai-codex", "zai", "kimi-coding", "minimax", "minimax-cn")
+        provider: Inference provider ("auto", "openrouter", "chiper", "openai-codex", "zai", "kimi-coding", "minimax", "minimax-cn")
         api_key: API key for authentication
         base_url: Base URL for the API
         max_turns: Maximum tool-calling iterations (default: 60)

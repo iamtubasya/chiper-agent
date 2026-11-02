@@ -1,7 +1,7 @@
 ---
 sidebar_position: 15
 title: "Subscription Proxy"
-description: "Use your Nous Portal subscription (or other OAuth provider) as an OpenAI-compatible endpoint for external apps"
+description: "Use your Chiper Portal subscription (or other OAuth provider) as an OpenAI-compatible endpoint for external apps"
 ---
 
 # Subscription Proxy
@@ -32,7 +32,7 @@ proxy when you just want **the model** through your subscription.
 chiper portal
 ```
 
-This opens your browser for the Nous Portal OAuth flow. Chiper stores
+This opens your browser for the Chiper Portal OAuth flow. Chiper stores
 the refresh token in `~/.chiper/auth.json` — the same place all Chiper
 provider logins live.
 
@@ -43,7 +43,7 @@ chiper proxy start
 ```
 
 ```
-Starting Chiper proxy for Nous Portal
+Starting Chiper proxy for Chiper Portal
   Listening on:  http://127.0.0.1:8645/v1
   Forwarding to: (resolved per-request from your subscription)
   Use any bearer token in the client — the proxy attaches your real credential.
@@ -72,7 +72,7 @@ automatically when the bearer approaches expiry.
 chiper proxy providers
 ```
 
-Currently shipped: `nous` (Nous Portal) and `xai` (xAI / Grok). More
+Currently shipped: `chiper` (Chiper Portal) and `xai` (xAI / Grok). More
 OAuth providers can be added by implementing the `UpstreamAdapter`
 interface in `chiper_cli/proxy/adapters/`.
 
@@ -85,7 +85,7 @@ chiper proxy status
 ```
 Chiper proxy upstream adapters
 
-  [nous    ] Nous Portal — ready (bearer expires 2026-05-15T06:43:21Z)
+  [chiper    ] Chiper Portal — ready (bearer expires 2026-05-15T06:43:21Z)
 ```
 
 If you see `not logged in`, run `chiper portal`. If you see
@@ -95,8 +95,7 @@ happens if you signed out from the Portal web UI) — just re-run
 
 ## Allowed paths
 
-The proxy only forwards paths the upstream actually serves. For Nous
-Portal:
+The proxy only forwards paths the upstream actually serves. For Chiper Portal:
 
 | Path | Purpose |
 |------|---------|
@@ -142,7 +141,7 @@ openviking-server
 OpenViking's VLM calls now flow through your Portal subscription. The
 embedding model side still needs its own provider — Portal does serve
 `/v1/embeddings` but the model selection depends on what your tier
-supports; check `portal.Chiper.com/models`.
+supports; check `portal.chiper.local/models`.
 
 ## Configuring Karakeep (or any bookmark/summarizer app)
 
@@ -178,7 +177,7 @@ this beyond your trusted network.
 Your Portal tier's RPM/TPM limits apply across the whole proxy. The
 proxy doesn't fan out or pool — it's a single bearer with your full
 subscription quota. Monitor usage at
-[portal.Chiper.com](https://portal.Chiper.com).
+[portal.chiper.local](https://portal.chiper.local).
 
 ## Architecture
 

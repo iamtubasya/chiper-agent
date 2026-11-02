@@ -1234,10 +1234,10 @@ def test_resolve_model_strips_config_model(monkeypatch):
     monkeypatch.delenv("CHIPER_MODEL", raising=False)
     monkeypatch.delenv("CHIPER_INFERENCE_MODEL", raising=False)
     monkeypatch.setattr(
-        server, "_load_cfg", lambda: {"model": {"default": " nous/chiper-test "}}
+        server, "_load_cfg", lambda: {"model": {"default": " chiper/chiper-test "}}
     )
 
-    assert server._resolve_model() == "nous/chiper-test"
+    assert server._resolve_model() == "chiper/chiper-test"
 
 
 def _sync_test_session(**extra):
@@ -1259,8 +1259,8 @@ def _patch_config_model(monkeypatch, model, provider=""):
 
 
 def test_config_sync_switches_unpinned_session(monkeypatch):
-    _patch_config_model(monkeypatch, "new/model", provider="nous")
-    session = _sync_test_session(config_model_seen=("old/model", "nous"))
+    _patch_config_model(monkeypatch, "new/model", provider="chiper")
+    session = _sync_test_session(config_model_seen=("old/model", "chiper"))
     calls = []
     monkeypatch.setattr(
         server,
@@ -1273,11 +1273,11 @@ def test_config_sync_switches_unpinned_session(monkeypatch):
     assert calls == [
         (
             "sid",
-            "new/model --provider nous",
+            "new/model --provider chiper",
             {"confirm_expensive_model": True, "pin_session_override": False},
         )
     ]
-    assert session["config_model_seen"] == ("new/model", "nous")
+    assert session["config_model_seen"] == ("new/model", "chiper")
 
 
 def test_config_sync_treats_auto_provider_as_unset(monkeypatch):
@@ -1339,7 +1339,7 @@ def test_config_sync_adopts_baseline_when_agent_already_on_target(monkeypatch):
 
 
 def test_config_sync_switches_when_only_provider_differs(monkeypatch):
-    _patch_config_model(monkeypatch, "old/model", provider="nous")
+    _patch_config_model(monkeypatch, "old/model", provider="chiper")
     session = _sync_test_session(config_model_seen=("old/model", ""))
     calls = []
     monkeypatch.setattr(
@@ -1350,7 +1350,7 @@ def test_config_sync_switches_when_only_provider_differs(monkeypatch):
 
     server._sync_agent_model_with_config("sid", session)
 
-    assert calls == ["old/model --provider nous"]
+    assert calls == ["old/model --provider chiper"]
 
 
 def test_config_sync_failure_emits_error_once_per_edit(monkeypatch):
@@ -1395,23 +1395,23 @@ def test_config_sync_config_wins_over_env_seed(monkeypatch):
 
 
 def test_startup_runtime_uses_tui_provider_env(monkeypatch):
-    monkeypatch.setenv("CHIPER_MODEL", "nous/chiper-test")
-    monkeypatch.setenv("CHIPER_TUI_PROVIDER", "nous")
+    monkeypatch.setenv("CHIPER_MODEL", "chiper/chiper-test")
+    monkeypatch.setenv("CHIPER_TUI_PROVIDER", "chiper")
     monkeypatch.delenv("CHIPER_INFERENCE_PROVIDER", raising=False)
 
-    assert server._resolve_startup_runtime() == ("nous/chiper-test", "nous")
+    assert server._resolve_startup_runtime() == ("chiper/chiper-test", "chiper")
 
 
 def test_startup_runtime_does_not_treat_inference_provider_as_explicit(monkeypatch):
-    monkeypatch.setenv("CHIPER_MODEL", "nous/chiper-test")
+    monkeypatch.setenv("CHIPER_MODEL", "chiper/chiper-test")
     monkeypatch.delenv("CHIPER_TUI_PROVIDER", raising=False)
-    monkeypatch.setenv("CHIPER_INFERENCE_PROVIDER", "nous")
+    monkeypatch.setenv("CHIPER_INFERENCE_PROVIDER", "chiper")
     monkeypatch.setattr(
         "chiper_cli.models.detect_static_provider_for_model",
         lambda model, provider: None,
     )
 
-    assert server._resolve_startup_runtime() == ("nous/chiper-test", None)
+    assert server._resolve_startup_runtime() == ("chiper/chiper-test", None)
 
 
 def test_startup_runtime_detects_provider_for_model_env(monkeypatch):
@@ -5392,13 +5392,13 @@ def test_model_options_does_not_overwrite_curated_models(monkeypatch):
     Regression: earlier versions of this handler unconditionally replaced
     each provider's curated ``models`` field with ``provider_model_ids()``
     (live /models catalog).  That pulled in hundreds of non-agentic models
-    for providers like Nous whose /models endpoint returns image/video
+    for providers like Chiper whose /models endpoint returns image/video
     generators, rerankers, embeddings, and TTS models alongside chat models.
     """
     curated_providers = [
         {
-            "slug": "nous",
-            "name": "Nous",
+            "slug": "chiper",
+            "name": "Chiper",
             "models": ["moonshotai/kimi-k2.5", "anthropic/claude-opus-4.7"],
             "total_models": 30,
             "source": "built-in",
@@ -5425,13 +5425,13 @@ def test_model_options_does_not_overwrite_curated_models(monkeypatch):
 
     assert "result" in resp, resp
     providers = resp["result"]["providers"]
-    nous = next((p for p in providers if p.get("slug") == "nous"), None)
-    assert nous is not None
-    assert nous["models"] == [
+    chiper = next((p for p in providers if p.get("slug") == "chiper"), None)
+    assert chiper is not None
+    assert chiper["models"] == [
         "moonshotai/kimi-k2.5",
         "anthropic/claude-opus-4.7",
     ]
-    assert nous["total_models"] == 30
+    assert chiper["total_models"] == 30
     # Handler must not consult the live catalog — curated is the truth.
     live_fetch.assert_not_called()
     # list_authenticated_providers is the single source.

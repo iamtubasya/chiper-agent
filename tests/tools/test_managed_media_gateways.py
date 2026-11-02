@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from chiper_cli.nous_account import NousPortalAccountInfo
+from chiper_cli.CHIPER_account import Chiper PortalAccountInfo
 
 
 TOOLS_DIR = Path(__file__).resolve().parents[2] / "tools"
@@ -51,8 +51,8 @@ def _enable_managed_nous_tools(monkeypatch):
     """Patch the source modules so managed_nous_tools_enabled() returns True
     even after tool modules are dynamically reloaded."""
     monkeypatch.setattr(
-        "chiper_cli.nous_account.get_nous_portal_account_info",
-        lambda: NousPortalAccountInfo(
+        "chiper_cli.CHIPER_account.get_nous_portal_account_info",
+        lambda: Chiper PortalAccountInfo(
             logged_in=True,
             source="jwt",
             fresh=False,
@@ -179,7 +179,7 @@ def test_managed_fal_submit_uses_gateway_origin_and_nous_token(monkeypatch):
     _install_fake_fal_client(captured)
     monkeypatch.delenv("FAL_KEY", raising=False)
     monkeypatch.setenv("FAL_QUEUE_GATEWAY_URL", "http://127.0.0.1:3009")
-    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "nous-token")
+    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "chiper-token")
 
     image_generation_tool = _load_tool_module(
         "tools.image_generation_tool",
@@ -193,7 +193,7 @@ def test_managed_fal_submit_uses_gateway_origin_and_nous_token(monkeypatch):
     )
 
     assert captured["submit_via"] == "managed_client"
-    assert captured["client_key"] == "nous-token"
+    assert captured["client_key"] == "chiper-token"
     assert captured["submit_url"] == "http://127.0.0.1:3009/fal-ai/flux-2-pro"
     assert captured["method"] == "POST"
     assert captured["arguments"] == {"prompt": "test prompt", "num_images": 1}
@@ -207,7 +207,7 @@ def test_managed_fal_submit_reuses_cached_sync_client(monkeypatch):
     _install_fake_fal_client(captured)
     monkeypatch.delenv("FAL_KEY", raising=False)
     monkeypatch.setenv("FAL_QUEUE_GATEWAY_URL", "http://127.0.0.1:3009")
-    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "nous-token")
+    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "chiper-token")
 
     image_generation_tool = _load_tool_module(
         "tools.image_generation_tool",
@@ -229,14 +229,14 @@ def test_openai_tts_uses_managed_audio_gateway_when_direct_key_absent(monkeypatc
     monkeypatch.delenv("VOICE_TOOLS_OPENAI_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.setenv("TOOL_GATEWAY_DOMAIN", "Chiper.com")
-    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "nous-token")
+    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "chiper-token")
 
     tts_tool = _load_tool_module("tools.tts_tool", "tts_tool.py")
     monkeypatch.setattr(tts_tool.uuid, "uuid4", lambda: "tts-call-123")
     output_path = tmp_path / "speech.mp3"
     tts_tool._generate_openai_tts("hello world", str(output_path), {"openai": {}})
 
-    assert captured["api_key"] == "nous-token"
+    assert captured["api_key"] == "chiper-token"
     assert captured["base_url"] == "https://openai-audio-gateway.Chiper.com/v1"
     assert captured["speech_kwargs"]["model"] == "gpt-4o-mini-tts"
     assert captured["speech_kwargs"]["extra_headers"] == {"x-idempotency-key": "tts-call-123"}
@@ -251,7 +251,7 @@ def test_openai_tts_accepts_openai_api_key_as_direct_fallback(monkeypatch, tmp_p
     monkeypatch.delenv("VOICE_TOOLS_OPENAI_KEY", raising=False)
     monkeypatch.setenv("OPENAI_API_KEY", "openai-direct-key")
     monkeypatch.setenv("TOOL_GATEWAY_DOMAIN", "Chiper.com")
-    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "nous-token")
+    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "chiper-token")
 
     tts_tool = _load_tool_module("tools.tts_tool", "tts_tool.py")
     output_path = tmp_path / "speech.mp3"
@@ -271,7 +271,7 @@ def test_transcription_uses_model_specific_response_formats(monkeypatch, tmp_pat
     monkeypatch.delenv("VOICE_TOOLS_OPENAI_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.setenv("TOOL_GATEWAY_DOMAIN", "Chiper.com")
-    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "nous-token")
+    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "chiper-token")
 
     transcription_tools = _load_tool_module(
         "tools.transcription_tools",
@@ -341,7 +341,7 @@ def test_video_gen_managed_fal_submit_uses_gateway(monkeypatch):
     fake_fal = _install_fake_fal_client(captured)
     monkeypatch.delenv("FAL_KEY", raising=False)
     monkeypatch.setenv("FAL_QUEUE_GATEWAY_URL", "http://127.0.0.1:3009")
-    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "nous-video-token")
+    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "chiper-video-token")
 
     plugin = _load_video_gen_plugin(monkeypatch)
 
@@ -354,7 +354,7 @@ def test_video_gen_managed_fal_submit_uses_gateway(monkeypatch):
     )
 
     assert captured["submit_via"] == "managed_client"
-    assert captured["client_key"] == "nous-video-token"
+    assert captured["client_key"] == "chiper-video-token"
     assert captured["submit_url"] == "http://127.0.0.1:3009/fal-ai/pixverse/v6/text-to-video"
     assert captured["method"] == "POST"
     assert captured["arguments"] == {"prompt": "a cat riding a bicycle", "duration": "5"}
@@ -368,7 +368,7 @@ def test_video_gen_managed_client_reused_across_calls(monkeypatch):
     _install_fake_fal_client(captured)
     monkeypatch.delenv("FAL_KEY", raising=False)
     monkeypatch.setenv("FAL_QUEUE_GATEWAY_URL", "http://127.0.0.1:3009")
-    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "nous-video-token")
+    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "chiper-video-token")
 
     plugin = _load_video_gen_plugin(monkeypatch)
 
@@ -429,7 +429,7 @@ def test_video_gen_gateway_4xx_raises_actionable_valueerror(monkeypatch):
     _install_fake_fal_client(captured)
     monkeypatch.delenv("FAL_KEY", raising=False)
     monkeypatch.setenv("FAL_QUEUE_GATEWAY_URL", "http://127.0.0.1:3009")
-    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "nous-video-token")
+    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "chiper-video-token")
 
     plugin = _load_video_gen_plugin(monkeypatch)
 
@@ -461,7 +461,7 @@ def test_video_gen_is_available_true_via_gateway(monkeypatch):
     _install_fake_fal_client({})
     monkeypatch.delenv("FAL_KEY", raising=False)
     monkeypatch.setenv("FAL_QUEUE_GATEWAY_URL", "http://127.0.0.1:3009")
-    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "nous-video-token")
+    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "chiper-video-token")
 
     plugin = _load_video_gen_plugin(monkeypatch)
     provider = plugin.FALVideoGenProvider()
@@ -474,7 +474,7 @@ def test_video_gen_prefers_gateway_overrides_direct_key(monkeypatch):
     _install_fake_fal_client(captured)
     monkeypatch.setenv("FAL_KEY", "direct-key-present")
     monkeypatch.setenv("FAL_QUEUE_GATEWAY_URL", "http://127.0.0.1:3009")
-    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "nous-video-token")
+    monkeypatch.setenv("TOOL_GATEWAY_USER_TOKEN", "chiper-video-token")
 
     plugin = _load_video_gen_plugin(monkeypatch)
 
@@ -489,7 +489,7 @@ def test_video_gen_prefers_gateway_overrides_direct_key(monkeypatch):
     )
 
     assert captured["submit_via"] == "managed_client"
-    assert captured["client_key"] == "nous-video-token"
+    assert captured["client_key"] == "chiper-video-token"
 
 
 def test_video_gen_happy_horse_uses_alibaba_namespace():

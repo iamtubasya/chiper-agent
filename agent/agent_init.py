@@ -537,7 +537,7 @@ def init_agent(
     agent._rate_limit_state: Optional["RateLimitState"] = None
 
     # Credits tracking (dev-only, L0 usage-aware-credits) — updated from
-    # x-nous-credits-* response headers after each API call.  Session-start
+    # x-chiper-credits-* response headers after each API call.  Session-start
     # remaining is latched the first time a header is ever seen so we can
     # report cumulative micros spent.  Surfaced behind CHIPER_DEV_CREDITS.
     agent._credits_state = None

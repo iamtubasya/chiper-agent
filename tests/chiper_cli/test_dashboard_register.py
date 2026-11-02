@@ -8,7 +8,7 @@ Covers the CLI half of self-hosted dashboard registration:
   - portal-URL write logic (only when non-default and not already set)
   - portal HTTP error mapping (401/403)
 
-The portal HTTP call and the Nous token resolution are both mocked — this
+The portal HTTP call and the Chiper token resolution are both mocked — this
 file proves the CLI wiring + env-write behaviour. The live end-to-end token
 round-trip against the Vercel preview build is a separate manual step.
 """
@@ -46,7 +46,7 @@ class TestFastFails:
     def test_not_logged_in_exits_1_with_setup_hint(self, capsys):
         from chiper_cli.auth import AuthError
 
-        err = AuthError("not logged in", provider="nous", relogin_required=True)
+        err = AuthError("not logged in", provider="chiper", relogin_required=True)
         with patch.object(dr, "cmd_dashboard_register", dr.cmd_dashboard_register):
             with patch(
                 "chiper_cli.auth.resolve_nous_access_token", side_effect=err
@@ -55,7 +55,7 @@ class TestFastFails:
                     dr.cmd_dashboard_register(_ns())
         assert exc.value.code == 1
         out = capsys.readouterr().out
-        assert "not logged into Nous Portal" in out
+        assert "not logged into Chiper Portal" in out
         assert "chiper setup" in out
 
     def test_managed_install_refuses(self, capsys):
@@ -75,7 +75,7 @@ def _fake_http_ok(payload: dict):
 
 
 class TestHappyPath:
-    def _run(self, *, args, account_token="tok_abc", portal="https://portal.Chiper.com",
+    def _run(self, *, args, account_token="tok_abc", portal="https://portal.chiper.local",
              response=None, captured=None, existing_client_id=None):
         response = response or {
             "client_id": "agent:selfhost-1",
@@ -158,11 +158,11 @@ class TestHappyPath:
     def test_non_default_portal_is_persisted(self, capsys):
         saved = self._run(
             args=_ns(),
-            portal="https://nous-account-service-git-feat-x.vercel.app",
+            portal="https://chiper-account-service-git-feat-x.vercel.app",
         )
         assert (
             saved["CHIPER_DASHBOARD_PORTAL_URL"]
-            == "https://nous-account-service-git-feat-x.vercel.app"
+            == "https://chiper-account-service-git-feat-x.vercel.app"
         )
 
 
@@ -358,12 +358,12 @@ class TestCustomPortalPersistence:
         # User explicitly asked for the production portal — honour the explicit
         # request and persist it (the no-flag path would skip the default).
         saved = self._run(
-            args=_ns(portal_url="https://portal.Chiper.com"),
-            portal="https://portal.Chiper.com",
+            args=_ns(portal_url="https://portal.chiper.local"),
+            portal="https://portal.chiper.local",
             existing_portal=None,
         )
         assert (
-            saved["CHIPER_DASHBOARD_PORTAL_URL"] == "https://portal.Chiper.com"
+            saved["CHIPER_DASHBOARD_PORTAL_URL"] == "https://portal.chiper.local"
         )
 
     def test_explicit_custom_url_equal_to_existing_is_noop(self, capsys):
@@ -379,7 +379,7 @@ class TestCustomPortalPersistence:
         # No custom URL supplied, resolves to default → not written.
         saved = self._run(
             args=_ns(),
-            portal="https://portal.Chiper.com",
+            portal="https://portal.chiper.local",
             existing_portal=None,
         )
         assert "CHIPER_DASHBOARD_PORTAL_URL" not in saved
@@ -441,7 +441,7 @@ class TestPublicUrlPersistence:
         ), patch("chiper_cli.config.is_managed", return_value=False), patch.dict(
             dr.os.environ, {}, clear=False
         ), patch.object(
-            dr, "_resolve_portal_base_url", return_value="https://portal.Chiper.com"
+            dr, "_resolve_portal_base_url", return_value="https://portal.chiper.local"
         ), patch(
             "chiper_cli.config.get_env_value", side_effect=fake_get_env_value
         ), patch(
@@ -585,7 +585,7 @@ class TestPortalResolution:
 class TestPortalErrors:
     def _run_http_error(self, code, body):
         err = urllib.error.HTTPError(
-            url="https://portal.Chiper.com/api/oauth/self-hosted-client",
+            url="https://portal.chiper.local/api/oauth/self-hosted-client",
             code=code,
             msg="err",
             hdrs=None,
@@ -595,7 +595,7 @@ class TestPortalErrors:
         with patch(
             "chiper_cli.auth.resolve_nous_access_token", return_value="tok"
         ), patch("chiper_cli.config.is_managed", return_value=False), patch.object(
-            dr, "_resolve_portal_base_url", return_value="https://portal.Chiper.com"
+            dr, "_resolve_portal_base_url", return_value="https://portal.chiper.local"
         ), patch.object(dr.urllib.request, "urlopen", side_effect=err):
             with pytest.raises(SystemExit) as exc:
                 dr.cmd_dashboard_register(_ns())

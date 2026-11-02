@@ -45,9 +45,9 @@ def _fake_nous_device_data():
     return {
         "device_code": "device-code",
         "user_code": "NOUS-1234",
-        "verification_uri": "https://portal.Chiper.com/device",
+        "verification_uri": "https://portal.chiper.local/device",
         "verification_uri_complete": (
-            "https://portal.Chiper.com/device?user_code=NOUS-1234"
+            "https://portal.chiper.local/device?user_code=NOUS-1234"
         ),
         "expires_in": 600,
         "interval": 5,
@@ -55,7 +55,7 @@ def _fake_nous_device_data():
 
 
 def _invoke_scope_refusal():
-    request = httpx.Request("POST", "https://portal.Chiper.com/oauth/device/code")
+    request = httpx.Request("POST", "https://portal.chiper.local/oauth/device/code")
     response = httpx.Response(
         400,
         json={
@@ -121,7 +121,7 @@ def test_nous_dashboard_device_flow_ignores_legacy_scope_override(monkeypatch):
     monkeypatch.setattr(auth_mod, "_request_device_code", fake_request_device_code)
     monkeypatch.setattr(ws, "_nous_poller", lambda sid: None)
 
-    result = asyncio.run(ws._start_device_code_flow("nous"))
+    result = asyncio.run(ws._start_device_code_flow("chiper"))
     try:
         assert requested_scopes == [auth_mod.DEFAULT_NOUS_SCOPE]
         assert result["flow"] == "device_code"
@@ -210,7 +210,7 @@ def test_nous_dashboard_device_flow_does_not_retry_legacy_scope_on_invoke_refusa
     monkeypatch.setattr(ws, "_nous_poller", lambda sid: None)
 
     with pytest.raises(httpx.HTTPStatusError):
-        asyncio.run(ws._start_device_code_flow("nous"))
+        asyncio.run(ws._start_device_code_flow("chiper"))
     assert requested_scopes == [auth_mod.DEFAULT_NOUS_SCOPE]
 
 
@@ -344,15 +344,15 @@ def test_nous_dashboard_poller_preserves_effective_scope_when_token_omits_scope(
     from chiper_cli import auth as auth_mod
     from chiper_cli import web_server as ws
 
-    session_id = "nous-effective-scope-test"
+    session_id = "chiper-effective-scope-test"
     ws._oauth_sessions[session_id] = {
         "session_id": session_id,
-        "provider": "nous",
+        "provider": "chiper",
         "flow": "device_code",
         "created_at": time.time(),
         "status": "pending",
         "error_message": None,
-        "portal_base_url": "https://portal.Chiper.com",
+        "portal_base_url": "https://portal.chiper.local",
         "client_id": "chiper-cli",
         "device_code": "device-code",
         "interval": 5,

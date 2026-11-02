@@ -211,7 +211,7 @@ def test_nous_portal_pricing_preserves_vendor_prefixed_model_ids(monkeypatch):
         _fake_fetch_endpoint_model_metadata,
     )
 
-    entry = get_pricing_entry("openai/gpt-5.5-pro", provider="nous")
+    entry = get_pricing_entry("openai/gpt-5.5-pro", provider="chiper")
 
     assert seen["base_url"] == "https://inference-api.Chiper.com/v1"
     assert float(entry.input_cost_per_million) == 25.0

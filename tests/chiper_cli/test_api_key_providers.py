@@ -124,8 +124,8 @@ class TestProviderRegistry:
 
     def test_oauth_providers_unchanged(self):
         """Ensure we didn't break the existing OAuth providers."""
-        assert "nous" in PROVIDER_REGISTRY
-        assert PROVIDER_REGISTRY["nous"].auth_type == "oauth_device_code"
+        assert "chiper" in PROVIDER_REGISTRY
+        assert PROVIDER_REGISTRY["chiper"].auth_type == "oauth_device_code"
         assert "openai-codex" in PROVIDER_REGISTRY
         assert PROVIDER_REGISTRY["openai-codex"].auth_type == "oauth_external"
 
@@ -144,7 +144,7 @@ PROVIDER_ENV_VARS = (
     "KILOCODE_API_KEY", "KILOCODE_BASE_URL",
     "GMI_API_KEY", "GMI_BASE_URL",
     "DASHSCOPE_API_KEY", "OPENCODE_ZEN_API_KEY", "OPENCODE_GO_API_KEY",
-    "NOUS_API_KEY", "GITHUB_TOKEN", "GH_TOKEN",
+    "CHIPER_API_KEY", "GITHUB_TOKEN", "GH_TOKEN",
     "OPENAI_BASE_URL", "CHIPER_COPILOT_ACP_COMMAND", "COPILOT_CLI_PATH",
     "CHIPER_COPILOT_ACP_ARGS", "COPILOT_ACP_BASE_URL",
 )
@@ -382,7 +382,7 @@ class TestApiKeyProviderStatus:
         assert status["provider"] == "copilot-acp"
 
     def test_non_api_key_provider(self):
-        status = get_api_key_provider_status("nous")
+        status = get_api_key_provider_status("chiper")
         assert status["configured"] is False
 
 
@@ -552,7 +552,7 @@ class TestResolveApiKeyProviderCredentials:
 
     def test_resolve_invalid_provider_raises(self):
         with pytest.raises(AuthError):
-            resolve_api_key_provider_credentials("nous")
+            resolve_api_key_provider_credentials("chiper")
 
     def test_glm_key_priority(self, monkeypatch):
         """GLM_API_KEY takes priority over ZAI_API_KEY."""

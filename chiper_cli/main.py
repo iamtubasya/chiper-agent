@@ -833,7 +833,7 @@ def _has_any_provider_configured() -> bool:
     except Exception:
         pass
 
-    # Check for Nous Portal OAuth credentials
+    # Check for Chiper Portal OAuth credentials
     auth_file = get_chiper_home() / "auth.json"
     if auth_file.exists():
         try:
@@ -2984,7 +2984,7 @@ def select_provider_and_model(args=None):
     # Step 2: Provider-specific setup + model selection
     if selected_provider == "openrouter":
         _model_flow_openrouter(config, current_model)
-    elif selected_provider == "nous":
+    elif selected_provider == "chiper":
         _model_flow_nous(config, current_model, args=args)
     elif selected_provider == "openai-codex":
         _model_flow_openai_codex(config, current_model)
@@ -3244,7 +3244,7 @@ def _aux_config_menu() -> None:
         print("  Side tasks (vision, compression, web extraction, etc.) default")
         print('  to your main chat model.  "auto" means "use my main model" —')
         print("  Chiper only falls back to a lightweight backend (OpenRouter,")
-        print("  Nous Portal) if the main model is unavailable.  Override a")
+        print("  Chiper Portal) if the main model is unavailable.  Override a")
         print("  task below if you want it pinned to a specific provider/model.")
         print()
 
@@ -10988,7 +10988,7 @@ def cmd_dashboard(args):
         print(f"→ Skipping web UI build (--skip-build); using dist at {_dist_root}")
 
     # Discover and load plugins so any DashboardAuthProvider plugin
-    # (e.g. plugins/dashboard_auth/nous) registers BEFORE start_server's
+    # (e.g. plugins/dashboard_auth/chiper) registers BEFORE start_server's
     # fail-closed gate check runs. The top-level argparse setup skips
     # plugin discovery for built-in subcommands like ``dashboard`` to
     # save ~500ms startup; we have to trigger it explicitly here because
@@ -11038,7 +11038,7 @@ def cmd_dashboard(args):
 
 
 def cmd_dashboard_register(args):
-    """Register a self-hosted dashboard OAuth client with Nous Portal."""
+    """Register a self-hosted dashboard OAuth client with Chiper Portal."""
     from chiper_cli.dashboard_register import cmd_dashboard_register as _impl
 
     _impl(args)
@@ -11830,7 +11830,7 @@ def main():
     build_webhook_parser(subparsers, cmd_webhook=cmd_webhook)
 
     # =========================================================================
-    # portal command — Nous Portal status + Tool Gateway routing
+    # portal command — Chiper Portal status + Tool Gateway routing
     # =========================================================================
     from chiper_cli.portal_cli import add_parser as _add_portal_parser
     _add_portal_parser(subparsers)

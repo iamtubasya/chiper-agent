@@ -167,7 +167,7 @@ describe('OAuth onboarding', () => {
     installApiMock(async ({ body, path }: { body?: unknown; path: string }) => {
       calls.push({ body, path })
 
-      if (path === '/api/providers/oauth/nous/submit') {
+      if (path === '/api/providers/oauth/chiper/submit') {
         return { ok: true, status: 'approved' }
       }
 
@@ -175,8 +175,8 @@ describe('OAuth onboarding', () => {
         return {
           providers: [
             {
-              name: 'Nous Portal',
-              slug: 'nous',
+              name: 'Chiper Portal',
+              slug: 'chiper',
               models: [model]
             }
           ]
@@ -184,11 +184,11 @@ describe('OAuth onboarding', () => {
       }
 
       if (path.startsWith('/api/model/recommended-default?')) {
-        return { provider: 'nous', model, free_tier: false }
+        return { provider: 'chiper', model, free_tier: false }
       }
 
       if (path === '/api/model/set') {
-        return { ok: true, provider: 'nous', model, gateway_tools: [] }
+        return { ok: true, provider: 'chiper', model, gateway_tools: [] }
       }
 
       throw new Error(`unexpected api path: ${path}`)
@@ -214,7 +214,7 @@ describe('OAuth onboarding', () => {
       baseState({
         flow: {
           status: 'awaiting_user',
-          provider: provider('nous', 'Nous Portal'),
+          provider: provider('chiper', 'Chiper Portal'),
           start: {
             auth_url: 'https://portal.example/auth',
             expires_in: 600,
@@ -224,7 +224,7 @@ describe('OAuth onboarding', () => {
           code: 'fresh-code'
         },
         reason:
-          'No access token found for Nous Portal login. setup.status reports configured credentials, but runtime resolution still failed.',
+          'No access token found for Chiper Portal login. setup.status reports configured credentials, but runtime resolution still failed.',
         requested: true
       })
     )
@@ -236,7 +236,7 @@ describe('OAuth onboarding', () => {
     expect(state.flow.status).toBe('confirming_model')
 
     if (state.flow.status === 'confirming_model') {
-      expect(state.flow.label).toBe('Nous Portal')
+      expect(state.flow.label).toBe('Chiper Portal')
       expect(state.flow.currentModel).toBe(model)
     }
 

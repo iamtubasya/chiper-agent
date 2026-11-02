@@ -22,7 +22,7 @@ const buildView = (overrides: Partial<CreditsViewResponse> = {}): CreditsViewRes
   depleted: false,
   identity_line: 'Signed in as ada@example.com',
   logged_in: true,
-  topup_url: 'https://portal.Chiper.com/billing/topup',
+  topup_url: 'https://portal.chiper.local/billing/topup',
   ...overrides
 })
 
@@ -81,7 +81,7 @@ describe('/credits slash command', () => {
 
     // (a) sys received the balance text including the topup_url
     const printed = sys.mock.calls.map(call => call[0]).join('\n')
-    expect(printed).toContain('💳 Nous credits')
+    expect(printed).toContain('💳 Chiper credits')
     expect(printed).toContain('Grant: $9.50 left')
     expect(printed).toContain('Signed in as ada@example.com')
     expect(printed).toContain(view.topup_url)
@@ -122,7 +122,7 @@ describe('/credits slash command', () => {
     await run()
 
     const printed = sys.mock.calls.map(call => call[0]).join('\n')
-    expect(printed).toContain('💳 Nous credits')
+    expect(printed).toContain('💳 Chiper credits')
     expect(getOverlayState().confirm).toBeNull()
   })
 
@@ -137,7 +137,7 @@ describe('/credits slash command', () => {
 
     await run()
 
-    expect(sys).toHaveBeenCalledWith('💳 Not logged into Nous Portal — run /portal to log in.')
+    expect(sys).toHaveBeenCalledWith('💳 Not logged into Chiper Portal — run /portal to log in.')
     expect(getOverlayState().confirm).toBeNull()
     expect(openExternalUrlMock).not.toHaveBeenCalled()
   })

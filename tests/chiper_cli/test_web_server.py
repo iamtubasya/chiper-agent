@@ -1223,7 +1223,7 @@ class TestWebServerEndpoints:
             "/api/model/set",
             json={
                 "scope": "main",
-                "provider": "nous",
+                "provider": "chiper",
                 "model": "openai/gpt-5.5-pro",
             },
         )
@@ -1238,7 +1238,7 @@ class TestWebServerEndpoints:
             "/api/model/set",
             json={
                 "scope": "main",
-                "provider": "nous",
+                "provider": "chiper",
                 "model": "openai/gpt-5.5-pro",
                 "confirm_expensive_model": True,
             },
@@ -1981,10 +1981,10 @@ class TestWebServerEndpoints:
         assert seen_encodings == {"index": "utf-8", "css": "utf-8"}
 
     def test_set_model_main_nous_applies_gateway_defaults(self, monkeypatch):
-        """Switching the main provider to Nous calls apply_nous_managed_defaults
+        """Switching the main provider to Chiper calls apply_nous_managed_defaults
         (mirroring the CLI's post-model-selection Tool Gateway routing) and
         surfaces the routed tools in the response."""
-        import chiper_cli.nous_subscription as ns
+        import chiper_cli.CHIPER_subscription as ns
 
         called = {}
 
@@ -2000,21 +2000,21 @@ class TestWebServerEndpoints:
 
         resp = self.client.post(
             "/api/model/set",
-            json={"scope": "main", "provider": "nous", "model": "chiper-4"},
+            json={"scope": "main", "provider": "chiper", "model": "chiper-4"},
         )
         assert resp.status_code == 200
         data = resp.json()
         assert data["ok"] is True
-        assert data["provider"] == "nous"
+        assert data["provider"] == "chiper"
         assert data["gateway_tools"] == ["web"]
         assert called["force_fresh"] is True
 
     def test_set_model_main_non_nous_skips_gateway_defaults(self, monkeypatch):
-        """Non-Nous providers must NOT trigger Tool Gateway auto-routing."""
-        import chiper_cli.nous_subscription as ns
+        """Non-Chiper providers must NOT trigger Tool Gateway auto-routing."""
+        import chiper_cli.CHIPER_subscription as ns
 
         def boom(*args, **kwargs):  # pragma: no cover - must not be called
-            raise AssertionError("apply_nous_managed_defaults called for non-nous provider")
+            raise AssertionError("apply_nous_managed_defaults called for non-chiper provider")
 
         monkeypatch.setattr(ns, "apply_nous_managed_defaults", boom)
 
@@ -2256,10 +2256,10 @@ class TestWebServerEndpoints:
         from chiper_cli.config import load_config, save_config
 
         cfg = load_config()
-        cfg["model"] = {"provider": "nous", "default": "chiper-4"}
+        cfg["model"] = {"provider": "chiper", "default": "chiper-4"}
         cfg["auxiliary"] = {
-            # Pinned to nous — same as the OLD main, becomes stale after switch.
-            "compression": {"provider": "nous", "model": "anthropic/claude-sonnet-4.6"},
+            # Pinned to chiper — same as the OLD main, becomes stale after switch.
+            "compression": {"provider": "chiper", "model": "anthropic/claude-sonnet-4.6"},
             # Auto — follows main, never stale.
             "vision": {"provider": "auto", "model": ""},
             # Pinned to a third provider — also stale vs the new main.
@@ -2279,7 +2279,7 @@ class TestWebServerEndpoints:
         assert "vision" not in stale_tasks
         # Provider/model echoed back for the UI label.
         comp = next(e for e in stale if e["task"] == "compression")
-        assert comp["provider"] == "nous"
+        assert comp["provider"] == "chiper"
         assert comp["model"] == "anthropic/claude-sonnet-4.6"
 
     def test_set_model_main_no_stale_when_aux_matches_new_provider(self):
@@ -2287,7 +2287,7 @@ class TestWebServerEndpoints:
         from chiper_cli.config import load_config, save_config
 
         cfg = load_config()
-        cfg["model"] = {"provider": "nous", "default": "chiper-4"}
+        cfg["model"] = {"provider": "chiper", "default": "chiper-4"}
         cfg["auxiliary"] = {
             "compression": {"provider": "openrouter", "model": "google/gemini-2.5-flash"},
             "vision": {"provider": "auto", "model": ""},
@@ -2307,7 +2307,7 @@ class TestWebServerEndpoints:
 
     def test_set_model_main_gateway_failure_does_not_block_save(self, monkeypatch):
         """A Portal/gateway hiccup must never prevent saving the model."""
-        import chiper_cli.nous_subscription as ns
+        import chiper_cli.CHIPER_subscription as ns
 
         def boom(*args, **kwargs):
             raise RuntimeError("portal unreachable")
@@ -2316,7 +2316,7 @@ class TestWebServerEndpoints:
 
         resp = self.client.post(
             "/api/model/set",
-            json={"scope": "main", "provider": "nous", "model": "chiper-4"},
+            json={"scope": "main", "provider": "chiper", "model": "chiper-4"},
         )
         assert resp.status_code == 200
         data = resp.json()
@@ -2324,7 +2324,7 @@ class TestWebServerEndpoints:
         assert data.get("gateway_tools", []) == []
 
     def test_recommended_default_nous_honors_free_tier(self, monkeypatch):
-        """For a free-tier Nous user, the recommended default must be a free
+        """For a free-tier Chiper user, the recommended default must be a free
         model (mirroring `chiper model`), not the first curated paid entry."""
         import chiper_cli.models as models_mod
 
@@ -2344,15 +2344,15 @@ class TestWebServerEndpoints:
             lambda ids, pricing, free_tier: (["free/cheap"], ["paid/expensive"]),
         )
 
-        resp = self.client.get("/api/model/recommended-default?provider=nous")
+        resp = self.client.get("/api/model/recommended-default?provider=chiper")
         assert resp.status_code == 200
         data = resp.json()
-        assert data["provider"] == "nous"
+        assert data["provider"] == "chiper"
         assert data["model"] == "free/cheap"
         assert data["free_tier"] is True
 
     def test_recommended_default_nous_paid_uses_curated_default(self, monkeypatch):
-        """A paid Nous user gets the first curated/paid-augmented model."""
+        """A paid Chiper user gets the first curated/paid-augmented model."""
         import chiper_cli.models as models_mod
 
         monkeypatch.setattr(models_mod, "get_curated_nous_model_ids", lambda: ["top/model", "other/model"])
@@ -2363,10 +2363,10 @@ class TestWebServerEndpoints:
             lambda ids, pricing, url: (ids, pricing),
         )
 
-        resp = self.client.get("/api/model/recommended-default?provider=nous")
+        resp = self.client.get("/api/model/recommended-default?provider=chiper")
         assert resp.status_code == 200
         data = resp.json()
-        assert data["provider"] == "nous"
+        assert data["provider"] == "chiper"
         assert data["model"] == "top/model"
         assert data["free_tier"] is False
 
@@ -2379,7 +2379,7 @@ class TestWebServerEndpoints:
 
         monkeypatch.setattr(models_mod, "get_curated_nous_model_ids", boom)
 
-        resp = self.client.get("/api/model/recommended-default?provider=nous")
+        resp = self.client.get("/api/model/recommended-default?provider=chiper")
         assert resp.status_code == 200
         data = resp.json()
         assert data["model"] == ""

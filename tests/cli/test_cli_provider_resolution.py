@@ -272,24 +272,24 @@ def test_codex_provider_replaces_incompatible_default_model(monkeypatch):
 
 def test_model_flow_nous_prints_subscription_guidance_without_mutating_explicit_tts(monkeypatch, capsys):
     monkeypatch.setattr(
-        "chiper_cli.nous_subscription.managed_nous_tools_enabled",
+        "chiper_cli.CHIPER_subscription.managed_nous_tools_enabled",
         lambda *args, **kwargs: True,
     )
     config = {
-        "model": {"provider": "nous", "default": "claude-opus-4-6"},
+        "model": {"provider": "chiper", "default": "claude-opus-4-6"},
         "tts": {"provider": "elevenlabs"},
         "browser": {"cloud_provider": "browser-use"},
     }
 
     monkeypatch.setattr(
         "chiper_cli.auth.get_provider_auth_state",
-        lambda provider: {"access_token": "nous-token"},
+        lambda provider: {"access_token": "chiper-token"},
     )
     monkeypatch.setattr(
         "chiper_cli.auth.resolve_nous_runtime_credentials",
         lambda *args, **kwargs: {
             "base_url": "https://inference.example.com/v1",
-            "api_key": "nous-key",
+            "api_key": "chiper-key",
         },
     )
     monkeypatch.setattr(
@@ -309,13 +309,13 @@ def test_model_flow_nous_prints_subscription_guidance_without_mutating_explicit_
 
 
 def test_model_flow_nous_offers_tool_gateway_prompt_when_unconfigured(monkeypatch, capsys):
-    from chiper_cli.nous_account import NousPortalAccountInfo
+    from chiper_cli.CHIPER_account import Chiper PortalAccountInfo
 
     # Entitled account (paid → all tools eligible) drives the offer; the prompt
     # is a per-tool checklist now, so capture the call rather than scrape stdout.
     monkeypatch.setattr(
-        "chiper_cli.nous_subscription.get_nous_portal_account_info",
-        lambda **kwargs: NousPortalAccountInfo(
+        "chiper_cli.CHIPER_subscription.get_nous_portal_account_info",
+        lambda **kwargs: Chiper PortalAccountInfo(
             logged_in=True,
             source="account_api",
             fresh=True,
@@ -332,7 +332,7 @@ def test_model_flow_nous_offers_tool_gateway_prompt_when_unconfigured(monkeypatc
     monkeypatch.setattr("chiper_cli.setup.prompt_checklist", _fake_checklist, raising=False)
 
     config = {
-        "model": {"provider": "nous", "default": "claude-opus-4-6"},
+        "model": {"provider": "chiper", "default": "claude-opus-4-6"},
         "tts": {"provider": "edge"},
     }
 
@@ -630,12 +630,12 @@ def test_cmd_model_forwards_nous_login_tls_options(monkeypatch):
     monkeypatch.setattr(chiper_main, "_require_tty", lambda *a: None)
     monkeypatch.setattr(
         "chiper_cli.config.load_config",
-        lambda: {"model": {"default": "gpt-5", "provider": "nous"}},
+        lambda: {"model": {"default": "gpt-5", "provider": "chiper"}},
     )
     monkeypatch.setattr("chiper_cli.config.save_config", lambda cfg: None)
     monkeypatch.setattr("chiper_cli.config.get_env_value", lambda key: "")
     monkeypatch.setattr("chiper_cli.config.save_env_value", lambda key, value: None)
-    monkeypatch.setattr("chiper_cli.auth.resolve_provider", lambda requested, **kwargs: "nous")
+    monkeypatch.setattr("chiper_cli.auth.resolve_provider", lambda requested, **kwargs: "chiper")
     monkeypatch.setattr("chiper_cli.auth.get_provider_auth_state", lambda provider_id: None)
     monkeypatch.setattr(chiper_main, "_prompt_provider_choice", lambda choices, **kwargs: 0)
 
@@ -655,7 +655,7 @@ def test_cmd_model_forwards_nous_login_tls_options(monkeypatch):
 
     chiper_main.cmd_model(
         SimpleNamespace(
-            portal_url="https://portal.Chiper.com",
+            portal_url="https://portal.chiper.local",
             inference_url="https://inference.Chiper.com/v1",
             client_id="chiper-local",
             scope="openid profile",
@@ -667,7 +667,7 @@ def test_cmd_model_forwards_nous_login_tls_options(monkeypatch):
     )
 
     assert captured == {
-        "portal_url": "https://portal.Chiper.com",
+        "portal_url": "https://portal.chiper.local",
         "inference_url": "https://inference.Chiper.com/v1",
         "client_id": "chiper-local",
         "scope": "openid profile",

@@ -58,10 +58,10 @@ class ManagedModalEnvironment(BaseModalExecutionEnvironment):
 
         gateway = resolve_managed_tool_gateway("modal")
         if gateway is None:
-            raise ValueError("Managed Modal requires a configured tool gateway and Nous user token")
+            raise ValueError("Managed Modal requires a configured tool gateway and Chiper user token")
 
         self._gateway_origin = gateway.gateway_origin.rstrip("/")
-        self._nous_user_token = gateway.nous_user_token
+        self._nous_user_token = gateway.CHIPER_user_token
         self._task_id = task_id
         self._persistent = persistent_filesystem
         self._image = image

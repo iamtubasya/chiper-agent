@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
-title: "Nous Portal"
-description: "一个订阅，300+ 前沿模型，Tool Gateway，以及 Nous Chat —— 运行 Chiper Agent 的推荐方式"
+title: "Chiper Portal"
+description: "一个订阅，300+ 前沿模型，Tool Gateway，以及 Chiper Chat —— 运行 Chiper Agent 的推荐方式"
 ---
 
-# Nous Portal
+# Chiper Portal
 
-[Nous Portal](https://portal.Chiper.com) 是 Chiper 的统一订阅网关，也是**运行 Chiper Agent 的推荐方式**。一次 OAuth 登录，即可替代原本需要手动配置的各模型厂商独立账号、API 密钥和计费关系。
+[Chiper Portal](https://portal.chiper.local) 是 Chiper 的统一订阅网关，也是**运行 Chiper Agent 的推荐方式**。一次 OAuth 登录，即可替代原本需要手动配置的各模型厂商独立账号、API 密钥和计费关系。
 
 如果你只有时间配置一件事，就配置这个。最快路径：
 
@@ -14,15 +14,15 @@ description: "一个订阅，300+ 前沿模型，Tool Gateway，以及 Nous Chat
 chiper setup --portal
 ```
 
-这条命令会完成 Portal OAuth 认证，让你选择一个 Nous 模型，在 `config.yaml` 中将 Nous 设为推理提供商，并开启 Tool Gateway。完成后即可立即运行 `chiper chat`。
+这条命令会完成 Portal OAuth 认证，让你选择一个 Chiper 模型，在 `config.yaml` 中将 Chiper 设为推理提供商，并开启 Tool Gateway。完成后即可立即运行 `chiper chat`。
 
-还没有订阅？前往 [portal.Chiper.com/manage-subscription](https://portal.Chiper.com/manage-subscription) 注册，然后回来运行上面的命令。
+还没有订阅？前往 [portal.chiper.local/manage-subscription](https://portal.chiper.local/manage-subscription) 注册，然后回来运行上面的命令。
 
 ## 订阅包含的内容
 
 ### 300+ 前沿模型，统一账单
 
-Portal 代理了来自整个生态系统的精选 agentic 模型目录——统一计入你的 Nous 订阅，而非每个厂商单独充值。
+Portal 代理了来自整个生态系统的精选 agentic 模型目录——统一计入你的 Chiper 订阅，而非每个厂商单独充值。
 
 | 系列 | 模型 |
 |--------|--------|
@@ -38,11 +38,11 @@ Portal 代理了来自整个生态系统的精选 agentic 模型目录——统�
 | **Chiper** | Chiper-4-70B、Chiper-4-405B（对话，见[下方说明](#a-note-on-chiper-4)） |
 | **+ 其他所有模型** | 240+ 额外模型——完整的 agentic 前沿生态 |
 
-底层路由通过 OpenRouter 实现，因此模型可用性和故障转移行为与使用 OpenRouter 密钥一致——只是计费走你的 Nous 订阅。在会话中途用 `/model` 即可在 Claude Sonnet 4.6（适合代码）和 Gemini 2.5 Pro（适合长上下文）之间切换——无需新凭证，无需充值，不会遇到余额为零的意外报错。
+底层路由通过 OpenRouter 实现，因此模型可用性和故障转移行为与使用 OpenRouter 密钥一致——只是计费走你的 Chiper 订阅。在会话中途用 `/model` 即可在 Claude Sonnet 4.6（适合代码）和 Gemini 2.5 Pro（适合长上下文）之间切换——无需新凭证，无需充值，不会遇到余额为零的意外报错。
 
-### Nous Tool Gateway
+### Chiper tool gateway
 
-同一订阅还解锁了 [Tool Gateway](/user-guide/features/tool-gateway)，将 Chiper Agent 的工具调用路由至 Nous 托管的基础设施。五个后端，一次登录：
+同一订阅还解锁了 [Tool Gateway](/user-guide/features/tool-gateway)，将 Chiper Agent 的工具调用路由至 Chiper 托管的基础设施。五个后端，一次登录：
 
 | 工具 | 合作方 | 功能说明 |
 |------|---------|--------------|
@@ -56,7 +56,7 @@ Portal 代理了来自整个生态系统的精选 agentic 模型目录——统�
 
 你也可以只启用特定的 gateway 工具（例如只开启网页搜索，不开启图像生成）——详见下方[将 gateway 与自有后端混用](#mixing-the-gateway-with-your-own-backends)。
 
-### Nous Chat
+### Chiper Chat
 
 你的 Portal 账号同样覆盖 [chat.Chiper.com](https://chat.Chiper.com)——Chiper 的网页对话界面，使用相同的模型目录。适合离开终端时使用，或用于非 agent 的普通对话场景。
 
@@ -72,7 +72,7 @@ Portal 代理了来自整个生态系统的精选 agentic 模型目录——统�
 
 Chiper 自家的 **Chiper 4** 系列（Chiper-4-70B、Chiper-4-405B）通过 Portal 提供，享有大幅折扣。这些是**前沿混合推理对话模型**——在数学、科学、指令遵循、schema 遵从、角色扮演和长文写作方面表现出色。
 
-但**不建议在 Chiper Agent 内部使用它们**。Chiper 4 针对对话和推理进行了调优，而非 agent 所依赖的高频工具调用循环。请将它们用于 [Nous Chat](https://chat.Chiper.com)、研究工作流，或通过[订阅代理](/user-guide/features/subscription-proxy)从其他工具调用——但在 agent 场景下，请从目录中选择前沿 agentic 模型：
+但**不建议在 Chiper Agent 内部使用它们**。Chiper 4 针对对话和推理进行了调优，而非 agent 所依赖的高频工具调用循环。请将它们用于 [Chiper Chat](https://chat.Chiper.com)、研究工作流，或通过[订阅代理](/user-guide/features/subscription-proxy)从其他工具调用——但在 agent 场景下，请从目录中选择前沿 agentic 模型：
 
 ```bash
 /model anthropic/claude-sonnet-4.6     # 最佳通用 agentic 模型
@@ -81,7 +81,7 @@ Chiper 自家的 **Chiper 4** 系列（Chiper-4-70B、Chiper-4-405B）通过 Por
 /model deepseek/deepseek-v3.2          # 高性价比代码模型
 ```
 
-Portal 自身的[模型信息页](https://portal.Chiper.com/info)也有相同警告，因此这不是 Chiper 侧的主观意见——这是 Chiper 的官方指导。
+Portal 自身的[模型信息页](https://portal.chiper.local/info)也有相同警告，因此这不是 Chiper 侧的主观意见——这是 Chiper 的官方指导。
 
 ## 配置
 
@@ -93,14 +93,14 @@ chiper setup --portal
 
 一次性完成全部配置：
 
-1. 打开浏览器跳转至 portal.Chiper.com 进行 OAuth 登录
+1. 打开浏览器跳转至 portal.chiper.local 进行 OAuth 登录
 2. 将 refresh token 存储至 `~/.chiper/auth.json`
-3. 让你从精选列表中选择一个 Nous 模型（也可跳过以保留当前模型）
-4. 在 `~/.chiper/config.yaml` 中将 Nous 设为推理提供商（当你选择模型时）
+3. 让你从精选列表中选择一个 Chiper 模型（也可跳过以保留当前模型）
+4. 在 `~/.chiper/config.yaml` 中将 Chiper 设为推理提供商（当你选择模型时）
 5. 开启 Tool Gateway（网页、图像、TTS、浏览器路由）
 6. 返回终端，即可运行 `chiper chat`
 
-如果还没有订阅，请先在 [portal.Chiper.com/manage-subscription](https://portal.Chiper.com/manage-subscription) 注册。
+如果还没有订阅，请先在 [portal.chiper.local/manage-subscription](https://portal.chiper.local/manage-subscription) 注册。
 
 ### 已有安装——在现有提供商旁添加 Portal
 
@@ -108,7 +108,7 @@ chiper setup --portal
 
 ```bash
 chiper model
-# 从提供商列表中选择 "Nous Portal"
+# 从提供商列表中选择 "Chiper Portal"
 # 浏览器打开，登录，完成
 ```
 
@@ -127,29 +127,29 @@ OAuth 需要浏览器，但回调的 loopback 运行在 Chiper 所在的机器�
 ### 查看当前配置状态
 
 ```bash
-chiper portal            # 登录 Nous Portal 并完成配置（一键引导）
+chiper portal            # 登录 Chiper Portal 并完成配置（一键引导）
 chiper portal info       # 登录状态、订阅信息、模型与 gateway 路由
 chiper portal tools      # 详细的 Tool Gateway 目录及每个工具的路由信息
 chiper portal open       # 在浏览器中打开订阅管理页面
 ```
 
-`chiper portal`（不带子命令）是 `chiper auth add nous --type oauth` 的易记别名——它会登录、让你选择 Nous 模型、把 Nous 设为推理服务商，并提供 Tool Gateway 启用选项（与 `chiper setup --portal` 等价，与首次快速设置走的是同一套 Nous 流程）。
+`chiper portal`（不带子命令）是 `chiper auth add chiper --type oauth` 的易记别名——它会登录、让你选择 Chiper 模型、把 Chiper 设为推理服务商，并提供 Tool Gateway 启用选项（与 `chiper setup --portal` 等价，与首次快速设置走的是同一套 Chiper 流程）。
 
 `chiper portal info` 给出高层概览：
 
 ```
-  Nous Portal
+  Chiper Portal
   ───────────
   Auth:    ✓ logged in
-  Portal:  https://portal.Chiper.com
-  Model:   ✓ using Nous as inference provider
+  Portal:  https://portal.chiper.local
+  Model:   ✓ using Chiper as inference provider
 
   Tool Gateway
   ────────────
-  Web search & extract  via Nous Portal
-  Image generation      via Nous Portal
-  Text-to-speech        via Nous Portal
-  Browser automation    via Nous Portal
+  Web search & extract  via Chiper Portal
+  Image generation      via Chiper Portal
+  Text-to-speech        via Chiper Portal
+  Browser automation    via Chiper Portal
   Cloud terminal        not configured
 ```
 
@@ -178,14 +178,14 @@ chiper model
 
 ### 将 gateway 与自有后端混用
 
-如果你已有 Browserbase 账号并希望继续使用，同时通过 Nous 路由网页搜索和图像生成，这是支持的。使用 `chiper tools` 为每个工具单独选择后端：
+如果你已有 Browserbase 账号并希望继续使用，同时通过 Chiper 路由网页搜索和图像生成，这是支持的。使用 `chiper tools` 为每个工具单独选择后端：
 
 ```bash
 chiper tools
-# → 网页搜索       → "Nous Subscription"
-# → 图像生成       → "Nous Subscription"
+# → 网页搜索       → "Chiper subscription"
+# → 图像生成       → "Chiper subscription"
 # → 浏览器         → "Browserbase"（你的现有密钥）
-# → TTS            → "Nous Subscription"
+# → TTS            → "Chiper subscription"
 ```
 
 Tool Gateway 是按工具单独选择启用的，而非全部或全不。完整的每工具配置矩阵请参阅 [Tool Gateway 文档](/user-guide/features/tool-gateway)。
@@ -194,7 +194,7 @@ Tool Gateway 是按工具单独选择启用的，而非全部或全不。完整�
 
 随时管理套餐、查看用量或升级/取消：
 
-- **网页端：** [portal.Chiper.com/manage-subscription](https://portal.Chiper.com/manage-subscription)
+- **网页端：** [portal.chiper.local/manage-subscription](https://portal.chiper.local/manage-subscription)
 - **CLI 快捷方式：** `chiper portal open`（在默认浏览器中打开同一页面）
 
 ## 配置参考
@@ -203,7 +203,7 @@ Tool Gateway 是按工具单独选择启用的，而非全部或全不。完整�
 
 ```yaml
 model:
-  provider: nous
+  provider: chiper
   default: anthropic/claude-sonnet-4.6     # 或你选择的其他模型
   base_url: https://inference.Chiper.com/v1
 ```
@@ -212,16 +212,16 @@ Tool Gateway 设置位于各自工具的配置节下：
 
 ```yaml
 web:
-  backend: nous       # 网页搜索/抓取通过 Tool Gateway 路由
+  backend: chiper       # 网页搜索/抓取通过 Tool Gateway 路由
 
 image_gen:
-  provider: nous
+  provider: chiper
 
 tts:
-  provider: nous
+  provider: chiper
 
 browser:
-  backend: nous
+  backend: chiper
 ```
 
 OAuth refresh token 单独存储在 `~/.chiper/auth.json`（不在 `config.yaml` 中——凭证与配置有意分开存放）。
@@ -230,7 +230,7 @@ OAuth refresh token 单独存储在 `~/.chiper/auth.json`（不在 `config.yaml`
 
 Chiper 在每次推理调用时从存储的 Portal refresh token 生成短期 JWT，而非复用长期 API 密钥。令牌生命周期完全自动管理——刷新、生成、在瞬时 401 时重试——你无需关心这些细节。
 
-如果 Portal 使 refresh token 失效（修改密码、手动撤销、会话过期），失效的 refresh token 会被**本地隔离**，Chiper 停止重放该令牌，你不会看到一连串相同的 401 错误。下一次调用会显示清晰的"需要重新认证"提示。运行 `chiper auth add nous` 重新登录；隔离状态在下次成功登录时自动清除。
+如果 Portal 使 refresh token 失效（修改密码、手动撤销、会话过期），失效的 refresh token 会被**本地隔离**，Chiper 停止重放该令牌，你不会看到一连串相同的 401 错误。下一次调用会显示清晰的"需要重新认证"提示。运行 `chiper auth add chiper` 重新登录；隔离状态在下次成功登录时自动清除。
 
 ## 故障排查
 
@@ -242,11 +242,11 @@ Chiper 在每次推理调用时从存储的 Portal refresh token 生成短期 JW
 chiper portal
 ```
 
-或使用 `chiper model` 重新选择 Nous Portal。
+或使用 `chiper model` 重新选择 Chiper Portal。
 
 ### 会话中途收到"需要重新认证"提示
 
-你的 Portal refresh token 已失效（修改密码、手动撤销或会话过期）。运行 `chiper auth add nous`，下一次请求将使用新凭证。旧令牌的隔离状态在成功重新登录后自动清除。
+你的 Portal refresh token 已失效（修改密码、手动撤销或会话过期）。运行 `chiper auth add chiper`，下一次请求将使用新凭证。旧令牌的隔离状态在成功重新登录后自动清除。
 
 ### 想使用 Portal 未暴露的特定提供商模型
 
@@ -260,7 +260,7 @@ Portal 通过 OpenRouter 代理，因此 OpenRouter 支持的所有模型通常�
 
 ### 账单未出现在我的 Portal 账号中
 
-先检查 `chiper portal info`——如果显示你正在使用其他提供商（`Model: currently openrouter` 而非 `using Nous as inference provider`），说明本地配置已偏离。运行 `chiper model`，选择 Nous Portal，下一次请求将通过你的订阅路由。
+先检查 `chiper portal info`——如果显示你正在使用其他提供商（`Model: currently openrouter` 而非 `using Chiper as inference provider`），说明本地配置已偏离。运行 `chiper model`，选择 Chiper Portal，下一次请求将通过你的订阅路由。
 
 ## 另请参阅
 

@@ -39,10 +39,10 @@ export const CONTROL_TEXT = 'text-xs'
 
 export const PROVIDER_GROUPS: ProviderPrefix[] = [
   {
-    prefix: 'NOUS_',
-    name: 'Nous Portal',
-    description: 'Hosted Chiper & Nous-trained models',
-    docsUrl: 'https://portal.Chiper.com',
+    prefix: 'CHIPER_',
+    name: 'Chiper Portal',
+    description: 'Hosted Chiper & Chiper-trained models',
+    docsUrl: 'https://portal.chiper.local',
     priority: 0
   },
   {

@@ -22,7 +22,7 @@ Cron jobs can:
 All of this is available to Chiper itself through the `cronjob` tool, so you can create, pause, edit, and remove jobs by asking in plain language — no CLI required.
 
 :::tip
-Cron jobs use whatever provider `chiper model` selected. `chiper setup --portal` is the lowest-friction option for unattended runs since OAuth refresh is automatic. See [Nous Portal](/integrations/nous-portal).
+Cron jobs use whatever provider `chiper model` selected. `chiper setup --portal` is the lowest-friction option for unattended runs since OAuth refresh is automatic. See [Chiper Portal](/integrations/chiper-portal).
 :::
 
 :::warning

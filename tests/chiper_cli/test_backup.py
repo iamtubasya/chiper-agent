@@ -549,7 +549,7 @@ class TestImport:
         The backup carries the *source* machine's gateway run/desired state.
         Restoring it onto a hosted container drives the boot reconciler off
         stale/foreign state and leaves the gateway stuck "starting",
-        disconnecting it from the Nous portal (NS-508). The live file wins.
+        disconnecting it from the Chiper Portal (NS-508). The live file wins.
         """
         chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
@@ -730,7 +730,7 @@ class TestImport:
         self._make_backup_zip(zip_path, {
             "config.yaml": "model: openrouter\n",
             ".env": "OPENROUTER_API_KEY=sk-secret\n",
-            "auth.json": '{"providers": {"nous": "token"}}',
+            "auth.json": '{"providers": {"chiper": "token"}}',
             "state.db": b"SQLite format 3\x00",
             "profiles/coder/.env": "ANTHROPIC_API_KEY=sk-ant-secret\n",
         })

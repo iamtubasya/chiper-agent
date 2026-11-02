@@ -216,7 +216,7 @@ tool_prefix: "▏"
 
 [Chiper Mod](https://github.com/cocktailpeanut/chiper-mod) is a community-built web UI for creating and managing skins visually. Instead of writing YAML by hand, you get a point-and-click editor with live preview.
 
-![Chiper Mod skin editor](https://raw.githubusercontent.com/cocktailpeanut/chiper-mod/master/nous.png)
+![Chiper Mod skin editor](https://raw.githubusercontent.com/cocktailpeanut/chiper-mod/master/chiper.png)
 
 **What it does:**
 

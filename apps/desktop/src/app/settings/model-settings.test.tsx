@@ -36,12 +36,12 @@ vi.mock('@/store/onboarding', () => ({
 }))
 
 beforeEach(() => {
-  getGlobalModelInfo.mockResolvedValue({ provider: 'nous', model: 'chiper-4' })
+  getGlobalModelInfo.mockResolvedValue({ provider: 'chiper', model: 'chiper-4' })
   getGlobalModelOptions.mockResolvedValue({
     providers: [
       {
-        name: 'Nous',
-        slug: 'nous',
+        name: 'Chiper',
+        slug: 'chiper',
         models: ['chiper-4', 'chiper-4-mini'],
         authenticated: true,
         capabilities: { 'chiper-4': { reasoning: true, fast: true } }
@@ -51,10 +51,10 @@ beforeEach(() => {
     ]
   })
   getAuxiliaryModels.mockResolvedValue({
-    main: { provider: 'nous', model: 'chiper-4' },
+    main: { provider: 'chiper', model: 'chiper-4' },
     tasks: [{ task: 'vision', provider: 'auto', model: '', base_url: '' }]
   })
-  setModelAssignment.mockResolvedValue({ provider: 'nous', model: 'chiper-4', gateway_tools: [] })
+  setModelAssignment.mockResolvedValue({ provider: 'chiper', model: 'chiper-4', gateway_tools: [] })
   getRecommendedDefaultModel.mockResolvedValue({ provider: 'deepseek', model: 'deepseek-chat', free_tier: null })
   setEnvVar.mockResolvedValue({ ok: true })
   getChiperConfigRecord.mockResolvedValue({ agent: { reasoning_effort: 'medium', service_tier: 'normal' } })
@@ -84,9 +84,9 @@ describe('ModelSettings', () => {
     const triggers = await screen.findAllByRole('combobox')
     fireEvent.click(triggers[0])
 
-    // "Nous" shows in both the trigger and the open list; the unconfigured
+    // "Chiper" shows in both the trigger and the open list; the unconfigured
     // provider + its setup hint are the unique signal of the full universe.
-    expect((await screen.findAllByText('Nous')).length).toBeGreaterThan(0)
+    expect((await screen.findAllByText('Chiper')).length).toBeGreaterThan(0)
     expect(await screen.findByText(/DeepSeek/)).toBeTruthy()
     expect(await screen.findByText(/set up/)).toBeTruthy()
   })
@@ -128,7 +128,7 @@ describe('ModelSettings', () => {
 
   it('hides the reasoning/speed defaults when the main model reports no capabilities', async () => {
     getGlobalModelOptions.mockResolvedValueOnce({
-      providers: [{ name: 'Nous', slug: 'nous', models: ['chiper-4'], authenticated: true, capabilities: { 'chiper-4': { reasoning: false, fast: false } } }]
+      providers: [{ name: 'Chiper', slug: 'chiper', models: ['chiper-4'], authenticated: true, capabilities: { 'chiper-4': { reasoning: false, fast: false } } }]
     })
 
     await renderModelSettings()
@@ -154,7 +154,7 @@ describe('ModelSettings', () => {
     await waitFor(() =>
       expect(setModelAssignment).toHaveBeenCalledWith({
         model: 'chiper-4',
-        provider: 'nous',
+        provider: 'chiper',
         scope: 'auxiliary',
         task: 'vision'
       })
@@ -166,7 +166,7 @@ describe('ModelSettings', () => {
       provider: 'openrouter',
       model: 'anthropic/claude-opus-4.7',
       gateway_tools: [],
-      stale_aux: [{ task: 'compression', provider: 'nous', model: 'chiper-4' }]
+      stale_aux: [{ task: 'compression', provider: 'chiper', model: 'chiper-4' }]
     })
 
     await renderModelSettings()
@@ -177,12 +177,12 @@ describe('ModelSettings', () => {
 
     // The switch-time notice names the pinned provider and offers a reset.
     expect(await screen.findByText(/still run on/)).toBeTruthy()
-    expect(screen.getByText('nous')).toBeTruthy()
+    expect(screen.getByText('chiper')).toBeTruthy()
   })
 
   it('shows a persistent banner when a loaded aux slot mismatches the main provider', async () => {
     getAuxiliaryModels.mockResolvedValueOnce({
-      main: { provider: 'nous', model: 'chiper-4' },
+      main: { provider: 'chiper', model: 'chiper-4' },
       tasks: [{ task: 'curator', provider: 'openrouter', model: 'anthropic/claude-opus-4.7', base_url: '' }]
     })
 

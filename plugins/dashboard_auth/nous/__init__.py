@@ -1,6 +1,6 @@
-"""NousDashboardAuthProvider — Nous Portal OAuth (authorization-code + PKCE).
+"""NousDashboardAuthProvider — Chiper Portal OAuth (authorization-code + PKCE).
 
-Implements ``nous-account-service/docs/agent-dashboard-oauth-contract.md``
+Implements ``chiper-account-service/docs/agent-dashboard-oauth-contract.md``
 (PR #180). The plugin auto-loads (bundled, kind=backend) but only registers
 its provider when a client_id is configured — either via ``config.yaml`` or
 via the Portal-injected env var — so loopback / ``--insecure`` operators
@@ -20,7 +20,7 @@ Configuration surfaces (env wins over config.yaml when set non-empty):
 
       CHIPER_DASHBOARD_OAUTH_CLIENT_ID  — shape ``agent:{agent_instance_id}``
       CHIPER_DASHBOARD_PORTAL_URL       — defaults to
-                                          ``https://portal.Chiper.com``
+                                          ``https://portal.chiper.local``
                                           (production Portal). Override only
                                           for staging (``portal.rewbs.uk``)
                                           or a custom deployment.
@@ -98,7 +98,7 @@ logger = logging.getLogger(__name__)
 # Production Portal URL. Override via CHIPER_DASHBOARD_PORTAL_URL for
 # staging (portal.rewbs.uk) or a custom deployment. Contract docs name
 # this as the production issuer.
-_DEFAULT_PORTAL_URL = "https://portal.Chiper.com"
+_DEFAULT_PORTAL_URL = "https://portal.chiper.local"
 
 
 # ---------------------------------------------------------------------------
@@ -151,9 +151,9 @@ def _b64url_no_pad(raw: bytes) -> str:
 
 
 class NousDashboardAuthProvider(DashboardAuthProvider):
-    """Nous Portal OAuth via authorization-code + PKCE (S256)."""
+    """Chiper Portal OAuth via authorization-code + PKCE (S256)."""
 
-    name = "nous"
+    name = "chiper"
     display_name = "Chiper"
 
     def __init__(self, *, client_id: str, portal_url: str) -> None:
@@ -214,7 +214,7 @@ class NousDashboardAuthProvider(DashboardAuthProvider):
     ) -> Session:
         # ``state`` is verified by the auth-route layer before this call
         # (it checks the cookie-stashed state matches the query-param state);
-        # we just receive it for symmetry with the protocol. Nous Portal
+        # we just receive it for symmetry with the protocol. Chiper Portal
         # doesn't re-check state at the token endpoint, so we ignore it here.
         _ = state
 
@@ -269,13 +269,13 @@ class NousDashboardAuthProvider(DashboardAuthProvider):
             response = httpx.post(
                 self._token_url,
                 # The refresh token goes in BOTH the body and the
-                # ``x-nous-refresh-token`` header. Portal's token endpoint
+                # ``x-chiper-refresh-token`` header. Portal's token endpoint
                 # requires ``refresh_token`` in the body (its request schema
                 # rejects a header-only request as ``invalid_request``), and
                 # additionally reconciles the header against the body — sending
                 # both lets Portal keep the value out of body-access-logs while
                 # still satisfying the schema. The header name must match
-                # Portal's ``REFRESH_TOKEN_HEADER`` exactly (``x-nous-refresh-
+                # Portal's ``REFRESH_TOKEN_HEADER`` exactly (``x-chiper-refresh-
                 # token``); any other name is silently ignored. (Verified
                 # against the NAS #293 preview deploy: header-only → 400
                 # invalid_request; body → accepted.)
@@ -286,7 +286,7 @@ class NousDashboardAuthProvider(DashboardAuthProvider):
                 },
                 headers={
                     "Accept": "application/json",
-                    "x-nous-refresh-token": refresh_token,
+                    "x-chiper-refresh-token": refresh_token,
                 },
                 timeout=_TOKEN_ENDPOINT_TIMEOUT_SEC,
             )
@@ -499,7 +499,7 @@ class NousDashboardAuthProvider(DashboardAuthProvider):
         contract_version = claims.get("oauth_contract_version")
         if contract_version is None:
             logger.warning(
-                "Nous Portal token missing oauth_contract_version claim "
+                "Chiper Portal token missing oauth_contract_version claim "
                 "(contract says it should be %d); proceeding anyway.",
                 _EXPECTED_CONTRACT_VERSION,
             )
@@ -554,7 +554,7 @@ def _load_config_oauth_section() -> dict:
         cfg = load_config()
     except Exception as exc:  # noqa: BLE001 — broad catch is intentional
         logger.debug(
-            "dashboard-auth-nous: load_config() raised %s; "
+            "dashboard-auth-chiper: load_config() raised %s; "
             "falling back to env-only configuration",
             exc,
         )
@@ -630,24 +630,24 @@ def register(ctx) -> None:
         LAST_SKIP_REASON = (
             "CHIPER_DASHBOARD_OAUTH_CLIENT_ID is not set (and "
             "dashboard.oauth.client_id in config.yaml is empty). The "
-            "Nous Portal provisions this env var (shape "
+            "Chiper Portal provisions this env var (shape "
             "'agent:{instance_id}') when it deploys a Chiper Agent "
             "instance — set it to your provisioned client id (either "
             "as an env var or under dashboard.oauth.client_id in "
             "config.yaml), or pass --insecure to skip the OAuth gate "
             "entirely."
         )
-        logger.debug("dashboard-auth-nous: %s", LAST_SKIP_REASON)
+        logger.debug("dashboard-auth-chiper: %s", LAST_SKIP_REASON)
         return
 
     if not client_id.startswith("agent:"):
         LAST_SKIP_REASON = (
             f"CHIPER_DASHBOARD_OAUTH_CLIENT_ID={client_id!r} doesn't match "
-            f"the contract shape 'agent:{{instance_id}}'. The Nous Portal "
+            f"the contract shape 'agent:{{instance_id}}'. The Chiper Portal "
             f"provisions this value at deploy time; check your Fly app's "
             f"secrets or override with the value from the Portal admin UI."
         )
-        logger.warning("dashboard-auth-nous: %s", LAST_SKIP_REASON)
+        logger.warning("dashboard-auth-chiper: %s", LAST_SKIP_REASON)
         return
 
     try:
@@ -656,12 +656,12 @@ def register(ctx) -> None:
         )
     except ValueError as exc:
         LAST_SKIP_REASON = f"NousDashboardAuthProvider construction failed: {exc}"
-        logger.warning("dashboard-auth-nous: %s", LAST_SKIP_REASON)
+        logger.warning("dashboard-auth-chiper: %s", LAST_SKIP_REASON)
         return
 
     ctx.register_dashboard_auth_provider(provider)
     logger.info(
-        "dashboard-auth-nous: registered provider (client_id=%s, portal=%s)",
+        "dashboard-auth-chiper: registered provider (client_id=%s, portal=%s)",
         client_id,
         portal_url,
     )

@@ -1,9 +1,9 @@
-import { Button } from "@nous-research/ui/ui/components/button";
-import { Checkbox } from "@nous-research/ui/ui/components/checkbox";
-import { ListItem } from "@nous-research/ui/ui/components/list-item";
-import { Spinner } from "@nous-research/ui/ui/components/spinner";
-import { Input } from "@nous-research/ui/ui/components/input";
-import { Label } from "@nous-research/ui/ui/components/label";
+import { Button } from "@chiper-research/ui/ui/components/button";
+import { Checkbox } from "@chiper-research/ui/ui/components/checkbox";
+import { ListItem } from "@chiper-research/ui/ui/components/list-item";
+import { Spinner } from "@chiper-research/ui/ui/components/spinner";
+import { Input } from "@chiper-research/ui/ui/components/input";
+import { Label } from "@chiper-research/ui/ui/components/label";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import type { GatewayClient } from "@/lib/gatewayClient";
 import { Check, Search, X } from "lucide-react";

@@ -1,4 +1,4 @@
-"""Tests for the Nous-Chiper-3/4 non-agentic warning detector.
+"""Tests for the Chiper-Chiper-3/4 non-agentic warning detector.
 
 Prior to this check, the warning fired on any model whose name contained
 ``"chiper"`` anywhere (case-insensitive). That false-positived on unrelated
@@ -38,7 +38,7 @@ from chiper_cli.model_switch import (
 )
 def test_matches_real_nous_chiper_chat_models(model_name: str) -> None:
     assert is_nous_chiper_non_agentic(model_name), (
-        f"expected {model_name!r} to be flagged as Nous Chiper 3/4"
+        f"expected {model_name!r} to be flagged as Chiper Chiper 3/4"
     )
     assert _check_chiper_model_warning(model_name) == _CHIPER_MODEL_WARNING
 
@@ -63,7 +63,7 @@ def test_matches_real_nous_chiper_chat_models(model_name: str) -> None:
         # Non-chat Chiper models we don't warn about
         "chiper-llm-2",
         "chiper2-pro",
-        "nous-chiper-2-mistral",
+        "chiper-chiper-2-mistral",
         # Edge cases
         "",
         "chiper",  # bare "chiper" isn't the 3/4 family
@@ -73,7 +73,7 @@ def test_matches_real_nous_chiper_chat_models(model_name: str) -> None:
 )
 def test_does_not_match_unrelated_models(model_name: str) -> None:
     assert not is_nous_chiper_non_agentic(model_name), (
-        f"expected {model_name!r} NOT to be flagged as Nous Chiper 3/4"
+        f"expected {model_name!r} NOT to be flagged as Chiper Chiper 3/4"
     )
     assert _check_chiper_model_warning(model_name) == ""
 

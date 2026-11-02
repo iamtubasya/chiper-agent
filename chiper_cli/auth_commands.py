@@ -34,7 +34,7 @@ from chiper_cli.secret_prompt import masked_secret_prompt
 
 
 # Providers that support OAuth login in addition to API keys.
-_OAUTH_CAPABLE_PROVIDERS = {"anthropic", "nous", "openai-codex", "xai-oauth", "qwen-oauth", "google-gemini-cli", "minimax-oauth"}
+_OAUTH_CAPABLE_PROVIDERS = {"anthropic", "chiper", "openai-codex", "xai-oauth", "qwen-oauth", "google-gemini-cli", "minimax-oauth"}
 
 
 def _get_custom_provider_names() -> list:
@@ -247,12 +247,12 @@ def auth_add_command(args) -> None:
         print(f'Added {provider} OAuth credential #{len(pool.entries())}: "{entry.label}"')
         return
 
-    if provider == "nous":
-        # Codex-style auto-import: if a shared Nous credential lives at
-        # <chiper-root>/shared/nous_auth.json (written by any previous
+    if provider == "chiper":
+        # Codex-style auto-import: if a shared Chiper credential lives at
+        # <chiper-root>/shared/CHIPER_auth.json (written by any previous
         # successful login), offer to import it instead of running the
         # full device-code flow. This makes `chiper --profile <name>
-        # auth add nous --type oauth` a one-tap operation for users who
+        # auth add chiper --type oauth` a one-tap operation for users who
         # run multiple profiles.
         shared = auth_mod._read_shared_nous_state()
         if shared:
@@ -262,15 +262,15 @@ def auth_add_command(args) -> None:
                 path = None
             print()
             if path:
-                print(f"Found existing Nous OAuth credentials at {path}")
+                print(f"Found existing Chiper OAuth credentials at {path}")
             else:
-                print("Found existing shared Nous OAuth credentials")
+                print("Found existing shared Chiper OAuth credentials")
             try:
                 do_import = input("Import these credentials? [Y/n]: ").strip().lower()
             except (EOFError, KeyboardInterrupt):
                 do_import = "y"
             if do_import in {"", "y", "yes"}:
-                print("Rehydrating Nous session from shared credentials...")
+                print("Rehydrating Chiper session from shared credentials...")
                 rehydrated = auth_mod._try_import_shared_nous_state(
                     timeout_seconds=getattr(args, "timeout", None) or 15.0,
                 )
@@ -296,9 +296,9 @@ def auth_add_command(args) -> None:
             insecure=bool(getattr(args, "insecure", False)),
             ca_bundle=getattr(args, "ca_bundle", None),
         )
-        # Honor `--label <name>` so nous matches other providers' UX.  The
-        # helper embeds this into providers.nous so that label_from_token
-        # doesn't overwrite it on every subsequent load_pool("nous").
+        # Honor `--label <name>` so chiper matches other providers' UX.  The
+        # helper embeds this into providers.chiper so that label_from_token
+        # doesn't overwrite it on every subsequent load_pool("chiper").
         custom_label = (getattr(args, "label", None) or "").strip() or None
         entry = auth_mod.persist_nous_credentials(creds, label=custom_label)
         shown_label = entry.label if entry is not None else label_from_token(

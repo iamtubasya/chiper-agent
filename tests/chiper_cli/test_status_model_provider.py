@@ -2,8 +2,8 @@
 
 from types import SimpleNamespace
 
-from chiper_cli.nous_account import NousPaidServiceAccessInfo, NousPortalAccountInfo
-from chiper_cli.nous_subscription import NousFeatureState, NousSubscriptionFeatures
+from chiper_cli.CHIPER_account import NousPaidServiceAccessInfo, Chiper PortalAccountInfo
+from chiper_cli.CHIPER_subscription import NousFeatureState, Chiper subscriptionFeatures
 
 
 def _patch_common_status_deps(monkeypatch, status_mod, tmp_path, *, openai_base_url=""):
@@ -72,22 +72,22 @@ def test_show_status_reports_managed_nous_features(monkeypatch, capsys, tmp_path
     monkeypatch.setattr(
         status_mod,
         "load_config",
-        lambda: {"model": {"default": "claude-opus-4-6", "provider": "nous"}},
+        lambda: {"model": {"default": "claude-opus-4-6", "provider": "chiper"}},
         raising=False,
     )
-    monkeypatch.setattr(status_mod, "resolve_requested_provider", lambda requested=None: "nous", raising=False)
-    monkeypatch.setattr(status_mod, "resolve_provider", lambda requested=None, **kwargs: "nous", raising=False)
-    monkeypatch.setattr(status_mod, "provider_label", lambda provider: "Nous Portal", raising=False)
+    monkeypatch.setattr(status_mod, "resolve_requested_provider", lambda requested=None: "chiper", raising=False)
+    monkeypatch.setattr(status_mod, "resolve_provider", lambda requested=None, **kwargs: "chiper", raising=False)
+    monkeypatch.setattr(status_mod, "provider_label", lambda provider: "Chiper Portal", raising=False)
     monkeypatch.setattr(
         status_mod,
         "get_nous_subscription_features",
-        lambda config: NousSubscriptionFeatures(
+        lambda config: Chiper subscriptionFeatures(
             subscribed=True,
-            nous_auth_present=True,
+            CHIPER_auth_present=True,
             provider_is_nous=True,
             features={
                 "web": NousFeatureState("web", "Web tools", True, True, True, True, False, True, "firecrawl"),
-                "image_gen": NousFeatureState("image_gen", "Image generation", True, True, True, True, False, True, "Nous Subscription"),
+                "image_gen": NousFeatureState("image_gen", "Image generation", True, True, True, True, False, True, "Chiper subscription"),
                 "video_gen": NousFeatureState("video_gen", "Video generation", False, False, False, False, False, False, ""),
                 "tts": NousFeatureState("tts", "OpenAI TTS", True, True, True, True, False, True, "OpenAI TTS"),
                 "stt": NousFeatureState("stt", "Speech-to-text", True, True, True, True, False, True, "OpenAI Whisper"),
@@ -101,9 +101,9 @@ def test_show_status_reports_managed_nous_features(monkeypatch, capsys, tmp_path
     status_mod.show_status(SimpleNamespace(all=False, deep=False))
 
     out = capsys.readouterr().out
-    assert "Nous Tool Gateway" in out
+    assert "Chiper tool gateway" in out
     assert "Browser automation" in out
-    assert "active via Nous subscription" in out
+    assert "active via Chiper subscription" in out
 
 
 def test_show_status_hides_nous_subscription_section_when_feature_flag_is_off(monkeypatch, capsys, tmp_path):
@@ -114,17 +114,17 @@ def test_show_status_hides_nous_subscription_section_when_feature_flag_is_off(mo
     monkeypatch.setattr(
         status_mod,
         "load_config",
-        lambda: {"model": {"default": "claude-opus-4-6", "provider": "nous"}},
+        lambda: {"model": {"default": "claude-opus-4-6", "provider": "chiper"}},
         raising=False,
     )
-    monkeypatch.setattr(status_mod, "resolve_requested_provider", lambda requested=None: "nous", raising=False)
-    monkeypatch.setattr(status_mod, "resolve_provider", lambda requested=None, **kwargs: "nous", raising=False)
-    monkeypatch.setattr(status_mod, "provider_label", lambda provider: "Nous Portal", raising=False)
+    monkeypatch.setattr(status_mod, "resolve_requested_provider", lambda requested=None: "chiper", raising=False)
+    monkeypatch.setattr(status_mod, "resolve_provider", lambda requested=None, **kwargs: "chiper", raising=False)
+    monkeypatch.setattr(status_mod, "provider_label", lambda provider: "Chiper Portal", raising=False)
 
     status_mod.show_status(SimpleNamespace(all=False, deep=False))
 
     out = capsys.readouterr().out
-    assert "Nous Tool Gateway" not in out
+    assert "Chiper tool gateway" not in out
 
 
 def test_show_status_reports_exhausted_nous_credits(monkeypatch, capsys, tmp_path):
@@ -148,7 +148,7 @@ def test_show_status_reports_exhausted_nous_credits(monkeypatch, capsys, tmp_pat
     monkeypatch.setattr(
         status_mod,
         "get_nous_portal_account_info",
-        lambda: NousPortalAccountInfo(
+        lambda: Chiper PortalAccountInfo(
             logged_in=True,
             source="account_api",
             fresh=True,
@@ -166,18 +166,18 @@ def test_show_status_reports_exhausted_nous_credits(monkeypatch, capsys, tmp_pat
         ),
         raising=False,
     )
-    monkeypatch.setattr(status_mod, "load_config", lambda: {"model": {"provider": "nous"}}, raising=False)
-    monkeypatch.setattr(status_mod, "resolve_requested_provider", lambda requested=None: "nous", raising=False)
-    monkeypatch.setattr(status_mod, "resolve_provider", lambda requested=None, **kwargs: "nous", raising=False)
-    monkeypatch.setattr(status_mod, "provider_label", lambda provider: "Nous Portal", raising=False)
+    monkeypatch.setattr(status_mod, "load_config", lambda: {"model": {"provider": "chiper"}}, raising=False)
+    monkeypatch.setattr(status_mod, "resolve_requested_provider", lambda requested=None: "chiper", raising=False)
+    monkeypatch.setattr(status_mod, "resolve_provider", lambda requested=None, **kwargs: "chiper", raising=False)
+    monkeypatch.setattr(status_mod, "provider_label", lambda provider: "Chiper Portal", raising=False)
 
     status_mod.show_status(SimpleNamespace(all=False, deep=False))
 
     out = capsys.readouterr().out
-    assert "Nous Tool Gateway" in out
+    assert "Chiper tool gateway" in out
     assert "credits are exhausted" in out
     assert "https://portal.example.test/billing" in out
-    assert "free-tier Nous account" not in out
+    assert "free-tier Chiper account" not in out
 
 
 def test_show_status_reports_empty_lmstudio_listing_as_reachable(monkeypatch, capsys, tmp_path):

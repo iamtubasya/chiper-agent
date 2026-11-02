@@ -15,9 +15,9 @@ _VALID_MODAL_MODES = {"auto", "direct", "managed"}
 
 
 def managed_nous_tools_enabled(*, force_fresh: bool = False) -> bool:
-    """Return True when the user is entitled to the Nous Tool Gateway.
+    """Return True when the user is entitled to the Chiper tool gateway.
 
-    Entitlement is paid Nous Portal service access OR a live free tool pool
+    Entitlement is paid Chiper Portal service access OR a live free tool pool
     (``tool_gateway_entitled``). Per-category coverage (the pool funds image but
     not video, etc.) is narrowed by callers via ``tool_gateway_entitled_for``;
     this coarse gate only answers "is any managed tool usable at all".
@@ -28,7 +28,7 @@ def managed_nous_tools_enabled(*, force_fresh: bool = False) -> bool:
     reflect a just-purchased subscription, credits, or pool grant immediately.
     """
     try:
-        from chiper_cli.nous_account import get_nous_portal_account_info
+        from chiper_cli.CHIPER_account import get_nous_portal_account_info
 
         if force_fresh:
             account_info = get_nous_portal_account_info(force_fresh=True)
@@ -41,14 +41,14 @@ def managed_nous_tools_enabled(*, force_fresh: bool = False) -> bool:
         return False
 
 
-def nous_tool_gateway_unavailable_message(
-    capability: str = "the Nous Tool Gateway",
+def CHIPER_tool_gateway_unavailable_message(
+    capability: str = "the Chiper tool gateway",
     *,
     force_fresh: bool = False,
 ) -> str:
-    """Return account-aware guidance for an unavailable Nous Tool Gateway path."""
+    """Return account-aware guidance for an unavailable Chiper tool gateway path."""
     try:
-        from chiper_cli.nous_account import (
+        from chiper_cli.CHIPER_account import (
             format_nous_portal_entitlement_message,
             get_nous_portal_account_info,
         )
@@ -64,7 +64,7 @@ def nous_tool_gateway_unavailable_message(
         pass
     return (
         f"{capability} is unavailable. Run `chiper model` to refresh your "
-        "Nous Portal login and billing status."
+        "Chiper Portal login and billing status."
     )
 
 

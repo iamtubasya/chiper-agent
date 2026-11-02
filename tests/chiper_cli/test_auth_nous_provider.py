@@ -1,4 +1,4 @@
-"""Regression tests for Nous OAuth refresh and inference JWT interactions."""
+"""Regression tests for Chiper OAuth refresh and inference JWT interactions."""
 
 import base64
 import json
@@ -138,9 +138,9 @@ def _setup_nous_auth(
     chiper_home.mkdir(parents=True, exist_ok=True)
     auth_store = {
         "version": 1,
-        "active_provider": "nous",
+        "active_provider": "chiper",
         "providers": {
-            "nous": {
+            "chiper": {
                 "portal_base_url": "https://portal.example.com",
                 "inference_base_url": "https://inference.example.com/v1",
                 "client_id": "chiper-cli",
@@ -203,18 +203,18 @@ def test_resolve_nous_runtime_credentials_prefers_invoke_jwt_and_mirrors(
     creds = auth_mod.resolve_nous_runtime_credentials()
 
     assert creds["api_key"] == token
-    assert creds["source"] == auth_mod.NOUS_AUTH_PATH_INVOKE_JWT
-    assert creds["auth_path"] == auth_mod.NOUS_AUTH_PATH_INVOKE_JWT
+    assert creds["source"] == auth_mod.CHIPER_AUTH_PATH_INVOKE_JWT
+    assert creds["auth_path"] == auth_mod.CHIPER_AUTH_PATH_INVOKE_JWT
 
     payload = json.loads((chiper_home / "auth.json").read_text())
-    singleton = payload["providers"]["nous"]
+    singleton = payload["providers"]["chiper"]
     assert singleton["agent_key"] == token
     assert datetime.fromisoformat(singleton["agent_key_expires_at"]).timestamp() > time.time() + 300
 
-    pool_entries = payload["credential_pool"]["nous"]
+    pool_entries = payload["credential_pool"]["chiper"]
     assert len(pool_entries) == 1
     assert pool_entries[0]["agent_key"] == token
-    assert pool_entries[0]["source"] == auth_mod.NOUS_DEVICE_CODE_SOURCE
+    assert pool_entries[0]["source"] == auth_mod.CHIPER_DEVICE_CODE_SOURCE
 
 
 def test_resolve_nous_runtime_credentials_invoke_jwt_is_idempotent(
@@ -235,9 +235,9 @@ def test_resolve_nous_runtime_credentials_invoke_jwt_is_idempotent(
     original_obtained_at = "2026-04-17T22:00:10+00:00"
     auth_store = {
         "version": 1,
-        "active_provider": "nous",
+        "active_provider": "chiper",
         "providers": {
-            "nous": {
+            "chiper": {
                 "portal_base_url": "https://portal.example.com",
                 "inference_base_url": "https://inference.example.com/v1",
                 "client_id": "chiper-cli",
@@ -279,13 +279,13 @@ def test_resolve_nous_runtime_credentials_invoke_jwt_is_idempotent(
     creds = auth_mod.resolve_nous_runtime_credentials()
 
     assert creds["api_key"] == token
-    assert creds["source"] == auth_mod.NOUS_AUTH_PATH_INVOKE_JWT
+    assert creds["source"] == auth_mod.CHIPER_AUTH_PATH_INVOKE_JWT
     assert auth_path.read_text() == before_content
     assert auth_path.stat().st_mtime_ns == before_mtime
     assert sync_calls == []
     payload = json.loads(auth_path.read_text())
     assert (
-        payload["providers"]["nous"]["agent_key_obtained_at"]
+        payload["providers"]["chiper"]["agent_key_obtained_at"]
         == original_obtained_at
     )
 
@@ -317,9 +317,9 @@ def test_resolve_nous_runtime_credentials_trusts_invoke_jwt_exp_over_stale_metad
     creds = auth_mod.resolve_nous_runtime_credentials()
 
     assert creds["api_key"] == token
-    assert creds["source"] == auth_mod.NOUS_AUTH_PATH_INVOKE_JWT
+    assert creds["source"] == auth_mod.CHIPER_AUTH_PATH_INVOKE_JWT
     payload = json.loads((chiper_home / "auth.json").read_text())
-    singleton = payload["providers"]["nous"]
+    singleton = payload["providers"]["chiper"]
     assert singleton["agent_key"] == token
     assert datetime.fromisoformat(singleton["expires_at"]).timestamp() > time.time() + 300
     assert datetime.fromisoformat(singleton["agent_key_expires_at"]).timestamp() > time.time() + 300
@@ -345,10 +345,10 @@ def test_resolve_nous_runtime_credentials_does_not_apply_agent_key_ttl_to_invoke
     creds = auth_mod.resolve_nous_runtime_credentials()
 
     assert creds["api_key"] == token
-    assert creds["source"] == auth_mod.NOUS_AUTH_PATH_INVOKE_JWT
+    assert creds["source"] == auth_mod.CHIPER_AUTH_PATH_INVOKE_JWT
     payload = json.loads((chiper_home / "auth.json").read_text())
-    assert payload["providers"]["nous"]["agent_key"] == token
-    assert payload["credential_pool"]["nous"][0]["agent_key"] == token
+    assert payload["providers"]["chiper"]["agent_key"] == token
+    assert payload["credential_pool"]["chiper"][0]["agent_key"] == token
 
 
 def test_resolve_nous_runtime_credentials_refreshes_legacy_agent_key_to_invoke_jwt(
@@ -390,14 +390,14 @@ def test_resolve_nous_runtime_credentials_refreshes_legacy_agent_key_to_invoke_j
 
     assert refresh_calls == ["refresh-old"]
     assert creds["api_key"] == refreshed_token
-    assert creds["source"] == auth_mod.NOUS_AUTH_PATH_INVOKE_JWT
+    assert creds["source"] == auth_mod.CHIPER_AUTH_PATH_INVOKE_JWT
     payload = json.loads((chiper_home / "auth.json").read_text())
-    singleton = payload["providers"]["nous"]
+    singleton = payload["providers"]["chiper"]
     assert singleton["access_token"] == refreshed_token
     assert singleton["refresh_token"] == "refresh-new"
     assert singleton["agent_key"] == refreshed_token
     assert singleton["agent_key_id"] is None
-    assert payload["credential_pool"]["nous"][0]["agent_key"] == refreshed_token
+    assert payload["credential_pool"]["chiper"][0]["agent_key"] == refreshed_token
 
 
 def test_resolve_nous_runtime_credentials_reauths_when_invoke_scope_missing(
@@ -428,8 +428,8 @@ def test_resolve_nous_runtime_credentials_reauths_when_invoke_scope_missing(
     assert exc.value.code == "missing_inference_invoke_scope"
     assert exc.value.relogin_required is True
     payload = json.loads((chiper_home / "auth.json").read_text())
-    assert payload["providers"]["nous"]["agent_key"] is None
-    assert "credential_pool" not in payload or not payload["credential_pool"].get("nous")
+    assert payload["providers"]["chiper"]["agent_key"] is None
+    assert "credential_pool" not in payload or not payload["credential_pool"].get("chiper")
 
 
 def test_nous_device_code_login_does_not_retry_legacy_scope_when_invoke_refused(monkeypatch):
@@ -483,7 +483,7 @@ def test_removed_legacy_session_env_var_does_not_change_jwt_auth(tmp_path, monke
 
     assert creds["api_key"] == token
     payload = json.loads((chiper_home / "auth.json").read_text())
-    assert payload["providers"]["nous"]["agent_key"] == token
+    assert payload["providers"]["chiper"]["agent_key"] == token
 
     requested_scopes = []
     login_token = _invoke_jwt(seconds=3600)
@@ -569,8 +569,8 @@ def test_nous_inference_auth_logs_do_not_include_secret_values(
 
 
 def test_get_nous_auth_status_checks_credential_pool(tmp_path, monkeypatch):
-    """get_nous_auth_status() should find Nous credentials in the pool
-    even when the auth store has no Nous provider entry — this is the
+    """get_nous_auth_status() should find Chiper credentials in the pool
+    even when the auth store has no Chiper provider entry — this is the
     case when login happened via the dashboard device-code flow which
     saves to the pool only.
     """
@@ -578,18 +578,18 @@ def test_get_nous_auth_status_checks_credential_pool(tmp_path, monkeypatch):
 
     chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
-    # Empty auth store — no Nous provider entry
+    # Empty auth store — no Chiper provider entry
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1, "providers": {},
     }))
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
-    # Seed the credential pool with a Nous entry
+    # Seed the credential pool with a Chiper entry
     from agent.credential_pool import PooledCredential, load_pool
-    pool = load_pool("nous")
+    pool = load_pool("chiper")
     token = _invoke_jwt(seconds=3600)
     expires_at = _future_iso(3600)
-    entry = PooledCredential.from_dict("nous", {
+    entry = PooledCredential.from_dict("chiper", {
         "access_token": token,
         "refresh_token": "test-refresh-token",
         "portal_base_url": "https://portal.example.com",
@@ -621,8 +621,8 @@ def test_get_nous_auth_status_pool_opaque_key_is_not_inference_credential(tmp_pa
     invalidate_nous_auth_status_cache()
 
     from agent.credential_pool import PooledCredential, load_pool
-    pool = load_pool("nous")
-    entry = PooledCredential.from_dict("nous", {
+    pool = load_pool("chiper")
+    entry = PooledCredential.from_dict("chiper", {
         "access_token": "",
         "agent_key": "opaque-agent-key",
         "agent_key_expires_at": "2099-01-01T00:00:00+00:00",
@@ -677,8 +677,8 @@ def test_get_nous_auth_status_prefers_runtime_auth_store_over_stale_pool(tmp_pat
     _setup_nous_auth(chiper_home, access_token="at-fresh")
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
-    pool = load_pool("nous")
-    stale = PooledCredential.from_dict("nous", {
+    pool = load_pool("chiper")
+    stale = PooledCredential.from_dict("chiper", {
         "access_token": "at-stale",
         "refresh_token": "rt-stale",
         "portal_base_url": "https://portal.stale.example.com",
@@ -719,7 +719,7 @@ def test_get_nous_auth_status_reports_revoked_refresh_session(tmp_path, monkeypa
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
     def _boom(**kwargs):
-        raise AuthError("Refresh session has been revoked", provider="nous", relogin_required=True)
+        raise AuthError("Refresh session has been revoked", provider="chiper", relogin_required=True)
 
     monkeypatch.setattr("chiper_cli.auth.resolve_nous_runtime_credentials", _boom)
 
@@ -784,7 +784,7 @@ def test_refresh_token_persisted_when_refreshed_jwt_lacks_invoke_scope(tmp_path,
         resolve_nous_runtime_credentials()
     assert exc.value.code == "missing_inference_invoke_scope"
 
-    state_after_failure = get_provider_auth_state("nous")
+    state_after_failure = get_provider_auth_state("chiper")
     assert state_after_failure is not None
     assert state_after_failure["refresh_token"] == "refresh-1"
     assert state_after_failure["access_token"] == bad_jwt
@@ -817,7 +817,7 @@ def test_refresh_token_persisted_when_refreshed_token_is_not_jwt(tmp_path, monke
         resolve_nous_runtime_credentials()
     assert exc.value.code == "access_token_not_jwt"
 
-    state_after_failure = get_provider_auth_state("nous")
+    state_after_failure = get_provider_auth_state("chiper")
     assert state_after_failure is not None
     assert state_after_failure["refresh_token"] == "refresh-1"
     assert state_after_failure["access_token"] == "access-1"
@@ -826,7 +826,7 @@ def test_refresh_token_persisted_when_refreshed_token_is_not_jwt(tmp_path, monke
 def test_terminal_refresh_failure_quarantines_tokens(
     tmp_path, monkeypatch, shared_store_env,
 ):
-    """A revoked/invalid Nous refresh token must not be replayed forever."""
+    """A revoked/invalid Chiper refresh token must not be replayed forever."""
     from chiper_cli import auth as auth_mod
 
     chiper_home = tmp_path / "chiper"
@@ -838,7 +838,7 @@ def test_terminal_refresh_failure_quarantines_tokens(
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     from agent.credential_pool import load_pool
 
-    assert load_pool("nous").select() is not None
+    assert load_pool("chiper").select() is not None
 
     shared_state = _full_state_fixture()
     shared_state["access_token"] = "access-old"
@@ -852,7 +852,7 @@ def test_terminal_refresh_failure_quarantines_tokens(
         refresh_calls.append(refresh_token)
         raise AuthError(
             "Refresh session has been revoked",
-            provider="nous",
+            provider="chiper",
             code="invalid_grant",
             relogin_required=True,
         )
@@ -862,7 +862,7 @@ def test_terminal_refresh_failure_quarantines_tokens(
     with pytest.raises(AuthError, match="Refresh session has been revoked"):
         auth_mod.resolve_nous_runtime_credentials()
 
-    state_after_failure = auth_mod.get_provider_auth_state("nous")
+    state_after_failure = auth_mod.get_provider_auth_state("chiper")
     assert state_after_failure is not None
     assert not state_after_failure.get("refresh_token")
     assert not state_after_failure.get("access_token")
@@ -870,7 +870,7 @@ def test_terminal_refresh_failure_quarantines_tokens(
     assert state_after_failure["last_auth_error"]["code"] == "invalid_grant"
     assert auth_mod._read_shared_nous_state() is None
     payload = json.loads((chiper_home / "auth.json").read_text())
-    assert payload.get("credential_pool", {}).get("nous") == []
+    assert payload.get("credential_pool", {}).get("chiper") == []
 
     with pytest.raises(AuthError, match="No access token found"):
         auth_mod.resolve_nous_runtime_credentials()
@@ -888,7 +888,7 @@ def test_managed_access_token_refresh_failure_quarantines_tokens(
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
     from agent.credential_pool import load_pool
 
-    assert load_pool("nous").select() is not None
+    assert load_pool("chiper").select() is not None
 
     refresh_calls: list[str] = []
 
@@ -896,7 +896,7 @@ def test_managed_access_token_refresh_failure_quarantines_tokens(
         refresh_calls.append(refresh_token)
         raise AuthError(
             "Invalid refresh token",
-            provider="nous",
+            provider="chiper",
             code="invalid_grant",
             relogin_required=True,
         )
@@ -906,13 +906,13 @@ def test_managed_access_token_refresh_failure_quarantines_tokens(
     with pytest.raises(AuthError, match="Invalid refresh token"):
         auth_mod.resolve_nous_access_token()
 
-    state_after_failure = auth_mod.get_provider_auth_state("nous")
+    state_after_failure = auth_mod.get_provider_auth_state("chiper")
     assert state_after_failure is not None
     assert not state_after_failure.get("refresh_token")
     assert not state_after_failure.get("access_token")
     assert state_after_failure["last_auth_error"]["message"] == "Invalid refresh token"
     payload = json.loads((chiper_home / "auth.json").read_text())
-    assert payload.get("credential_pool", {}).get("nous") == []
+    assert payload.get("credential_pool", {}).get("chiper") == []
 
     with pytest.raises(AuthError, match="No access token found"):
         auth_mod.resolve_nous_access_token()
@@ -959,11 +959,11 @@ def test_unusable_access_token_refresh_uses_latest_rotated_refresh_token(tmp_pat
 
 
 class TestLoginNousSkipKeepsCurrent:
-    """When a user runs `chiper model` → Nous Portal → Skip (keep current) after
+    """When a user runs `chiper model` → Chiper Portal → Skip (keep current) after
     a successful OAuth login, the prior provider and model MUST be preserved.
 
     Regression: previously, _update_config_for_provider was called
-    unconditionally after login, which flipped model.provider to "nous" while
+    unconditionally after login, which flipped model.provider to "chiper" while
     keeping the old model.default (e.g. anthropic/claude-opus-4.6 from
     OpenRouter), leaving the user with a mismatched provider/model pair.
     """
@@ -994,13 +994,13 @@ class TestLoginNousSkipKeepsCurrent:
         """Patch OAuth + model-list + prompt so _login_nous doesn't hit network."""
         import chiper_cli.auth as auth_mod
         import chiper_cli.models as models_mod
-        import chiper_cli.nous_subscription as ns
+        import chiper_cli.CHIPER_subscription as ns
 
         fake_auth_state = {
-            "access_token": "fake-nous-token",
+            "access_token": "fake-chiper-token",
             "agent_key": "fake-agent-key",
             "inference_base_url": "https://inference-api.Chiper.com",
-            "portal_base_url": "https://portal.Chiper.com",
+            "portal_base_url": "https://portal.chiper.local",
             "refresh_token": "fake-refresh",
             "token_expires_at": 9999999999,
         }
@@ -1028,7 +1028,7 @@ class TestLoginNousSkipKeepsCurrent:
         return free_tier_calls
 
     def test_skip_keep_current_preserves_provider_and_model(self, tmp_path, monkeypatch):
-        """User picks Skip → config.yaml untouched, Nous creds still saved."""
+        """User picks Skip → config.yaml untouched, Chiper creds still saved."""
         import argparse
         import yaml
         from chiper_cli.auth import PROVIDER_REGISTRY, _login_nous
@@ -1042,7 +1042,7 @@ class TestLoginNousSkipKeepsCurrent:
             portal_url=None, inference_url=None, client_id=None, scope=None,
             no_browser=True, timeout=15.0, ca_bundle=None, insecure=False,
         )
-        _login_nous(args, PROVIDER_REGISTRY["nous"])
+        _login_nous(args, PROVIDER_REGISTRY["chiper"])
 
         # config.yaml model section must be unchanged
         cfg_after = yaml.safe_load(config_path.read_text())
@@ -1050,16 +1050,16 @@ class TestLoginNousSkipKeepsCurrent:
         assert cfg_after["model"]["default"] == "anthropic/claude-opus-4.6"
         assert "base_url" not in cfg_after["model"]
 
-        # auth.json: active_provider restored to openrouter, but Nous creds saved
+        # auth.json: active_provider restored to openrouter, but Chiper creds saved
         auth_after = json.loads(auth_path.read_text())
         assert auth_after["active_provider"] == "openrouter"
-        assert "nous" in auth_after["providers"]
-        assert auth_after["providers"]["nous"]["access_token"] == "fake-nous-token"
+        assert "chiper" in auth_after["providers"]
+        assert auth_after["providers"]["chiper"]["access_token"] == "fake-chiper-token"
         # Existing openrouter creds still intact
         assert auth_after["providers"]["openrouter"]["api_key"] == "sk-or-fake"
 
     def test_picking_model_switches_to_nous(self, tmp_path, monkeypatch):
-        """User picks a Nous model → provider flips to nous with that model."""
+        """User picks a Chiper model → provider flips to chiper with that model."""
         import argparse
         import yaml
         from chiper_cli.auth import PROVIDER_REGISTRY, _login_nous
@@ -1075,19 +1075,19 @@ class TestLoginNousSkipKeepsCurrent:
             portal_url=None, inference_url=None, client_id=None, scope=None,
             no_browser=True, timeout=15.0, ca_bundle=None, insecure=False,
         )
-        _login_nous(args, PROVIDER_REGISTRY["nous"])
+        _login_nous(args, PROVIDER_REGISTRY["chiper"])
 
         cfg_after = yaml.safe_load(config_path.read_text())
-        assert cfg_after["model"]["provider"] == "nous"
+        assert cfg_after["model"]["provider"] == "chiper"
         assert cfg_after["model"]["default"] == "xiaomi/mimo-v2-pro"
         assert free_tier_calls == [{"force_fresh": True}]
 
         auth_after = json.loads(auth_path.read_text())
-        assert auth_after["active_provider"] == "nous"
+        assert auth_after["active_provider"] == "chiper"
 
     def test_skip_with_no_prior_active_provider_clears_it(self, tmp_path, monkeypatch):
         """Fresh install (no prior active_provider) → Skip clears active_provider
-        instead of leaving it as nous."""
+        instead of leaving it as chiper."""
         import argparse
         import yaml
         from chiper_cli.auth import PROVIDER_REGISTRY, _login_nous
@@ -1106,14 +1106,14 @@ class TestLoginNousSkipKeepsCurrent:
             portal_url=None, inference_url=None, client_id=None, scope=None,
             no_browser=True, timeout=15.0, ca_bundle=None, insecure=False,
         )
-        _login_nous(args, PROVIDER_REGISTRY["nous"])
+        _login_nous(args, PROVIDER_REGISTRY["chiper"])
 
         auth_path = chiper_home / "auth.json"
         auth_after = json.loads(auth_path.read_text())
-        # active_provider should NOT be set to "nous" after Skip
+        # active_provider should NOT be set to "chiper" after Skip
         assert auth_after.get("active_provider") in {None, ""}
-        # But Nous creds are still saved
-        assert "nous" in auth_after.get("providers", {})
+        # But Chiper creds are still saved
+        assert "chiper" in auth_after.get("providers", {})
 
 
 # =============================================================================
@@ -1148,16 +1148,16 @@ def _full_state_fixture() -> dict:
 
 
 def test_persist_nous_credentials_writes_both_pool_and_providers(tmp_path, monkeypatch):
-    """Helper must populate BOTH credential_pool.nous AND providers.nous.
+    """Helper must populate BOTH credential_pool.chiper AND providers.chiper.
 
-    Regression guard: before this helper existed, `chiper auth add nous`
-    wrote only the pool. After the Nous agent_key's 24h TTL expired, the
+    Regression guard: before this helper existed, `chiper auth add chiper`
+    wrote only the pool. After the Chiper agent_key's 24h TTL expired, the
     401-recovery path in run_agent.py called resolve_nous_runtime_credentials
-    which reads providers.nous, found it empty, raised AuthError, and the
+    which reads providers.chiper, found it empty, raised AuthError, and the
     agent failed with "Non-retryable client error". Both stores must stay
     in sync at write time.
     """
-    from chiper_cli.auth import persist_nous_credentials, NOUS_DEVICE_CODE_SOURCE
+    from chiper_cli.auth import persist_nous_credentials, CHIPER_DEVICE_CODE_SOURCE
 
     chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
@@ -1170,34 +1170,34 @@ def test_persist_nous_credentials_writes_both_pool_and_providers(tmp_path, monke
     entry = persist_nous_credentials(state)
 
     assert entry is not None
-    assert entry.provider == "nous"
-    assert entry.source == NOUS_DEVICE_CODE_SOURCE
+    assert entry.provider == "chiper"
+    assert entry.source == CHIPER_DEVICE_CODE_SOURCE
 
     payload = json.loads((chiper_home / "auth.json").read_text())
 
-    # providers.nous populated with the full state (new behaviour)
-    singleton = payload["providers"]["nous"]
+    # providers.chiper populated with the full state (new behaviour)
+    singleton = payload["providers"]["chiper"]
     assert singleton["access_token"] == state["access_token"]
     assert singleton["refresh_token"] == "refresh-tok"
     assert singleton["agent_key"] == state["agent_key"]
     assert singleton["agent_key_expires_at"] == state["agent_key_expires_at"]
 
-    # credential_pool.nous has exactly one canonical device_code entry
-    pool_entries = payload["credential_pool"]["nous"]
+    # credential_pool.chiper has exactly one canonical device_code entry
+    pool_entries = payload["credential_pool"]["chiper"]
     assert len(pool_entries) == 1, pool_entries
     pool_entry = pool_entries[0]
-    assert pool_entry["source"] == NOUS_DEVICE_CODE_SOURCE
+    assert pool_entry["source"] == CHIPER_DEVICE_CODE_SOURCE
     assert pool_entry["agent_key"] == state["agent_key"]
     assert pool_entry["inference_base_url"] == "https://inference.example.com/v1"
 
 
 def test_persist_nous_credentials_allows_recovery_from_401(tmp_path, monkeypatch):
     """End-to-end: after persisting via the helper, resolve_nous_runtime_credentials
-    must succeed (not raise "Chiper is not logged into Nous Portal").
+    must succeed (not raise "Chiper is not logged into Chiper Portal").
 
     This is the exact path that run_agent.py's `_try_refresh_nous_client_credentials`
-    calls after a Nous 401 — before the fix it would raise AuthError because
-    providers.nous was empty.
+    calls after a Chiper 401 — before the fix it would raise AuthError because
+    providers.chiper was empty.
     """
     from chiper_cli.auth import (
         persist_nous_credentials,
@@ -1216,7 +1216,7 @@ def test_persist_nous_credentials_allows_recovery_from_401(tmp_path, monkeypatch
 
     # Stub the network-touching steps so we don't actually contact the
     # portal — the point of this test is that state lookup succeeds and
-    # doesn't raise "Chiper is not logged into Nous Portal".
+    # doesn't raise "Chiper is not logged into Chiper Portal".
     def _fake_refresh_access_token(*, client, portal_base_url, client_id, refresh_token):
         return {
             "access_token": new_jwt,
@@ -1240,11 +1240,11 @@ def test_persist_nous_credentials_idempotent_no_duplicate_pool_entries(tmp_path,
     Regression guard for the review comment on PR #11858: before normalisation,
     the helper wrote `manual:device_code` while `_seed_from_singletons` wrote
     `device_code`, so the pool grew a second duplicate entry on every
-    ``load_pool()``. The helper now writes providers.nous and lets seeding
+    ``load_pool()``. The helper now writes providers.chiper and lets seeding
     materialise the pool entry under the canonical ``device_code`` source, so
     two persists still leave the pool with exactly one row.
     """
-    from chiper_cli.auth import persist_nous_credentials, NOUS_DEVICE_CODE_SOURCE
+    from chiper_cli.auth import persist_nous_credentials, CHIPER_DEVICE_CODE_SOURCE
 
     chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
@@ -1265,14 +1265,14 @@ def test_persist_nous_credentials_idempotent_no_duplicate_pool_entries(tmp_path,
 
     payload = json.loads((chiper_home / "auth.json").read_text())
 
-    # providers.nous reflects the latest write (singleton semantics)
-    assert payload["providers"]["nous"]["access_token"] == second_token
-    assert payload["providers"]["nous"]["agent_key"] == second_token
+    # providers.chiper reflects the latest write (singleton semantics)
+    assert payload["providers"]["chiper"]["access_token"] == second_token
+    assert payload["providers"]["chiper"]["agent_key"] == second_token
 
-    # credential_pool.nous has exactly one entry, carrying the latest agent_key
-    pool_entries = payload["credential_pool"]["nous"]
+    # credential_pool.chiper has exactly one entry, carrying the latest agent_key
+    pool_entries = payload["credential_pool"]["chiper"]
     assert len(pool_entries) == 1, pool_entries
-    assert pool_entries[0]["source"] == NOUS_DEVICE_CODE_SOURCE
+    assert pool_entries[0]["source"] == CHIPER_DEVICE_CODE_SOURCE
     assert pool_entries[0]["agent_key"] == second_token
     # And no stray `manual:device_code` / `manual:dashboard_device_code` rows
     assert not any(
@@ -1285,7 +1285,7 @@ def test_persist_nous_credentials_reloads_pool_after_singleton_write(tmp_path, m
     callers observe the canonical seeded state, including any legacy entries
     that ``_seed_from_singletons`` pruned or upserted.
     """
-    from chiper_cli.auth import persist_nous_credentials, NOUS_DEVICE_CODE_SOURCE
+    from chiper_cli.auth import persist_nous_credentials, CHIPER_DEVICE_CODE_SOURCE
 
     chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
@@ -1297,7 +1297,7 @@ def test_persist_nous_credentials_reloads_pool_after_singleton_write(tmp_path, m
     state = _full_state_fixture()
     entry = persist_nous_credentials(state)
     assert entry is not None
-    assert entry.source == NOUS_DEVICE_CODE_SOURCE
+    assert entry.source == CHIPER_DEVICE_CODE_SOURCE
     # Label derived by _seed_from_singletons via label_from_token; we don't
     # assert its exact value, just that the helper returned a real entry.
     assert entry.access_token == state["access_token"]
@@ -1305,14 +1305,14 @@ def test_persist_nous_credentials_reloads_pool_after_singleton_write(tmp_path, m
 
 
 def test_persist_nous_credentials_embeds_custom_label(tmp_path, monkeypatch):
-    """User-supplied ``--label`` round-trips through providers.nous and the pool.
+    """User-supplied ``--label`` round-trips through providers.chiper and the pool.
 
-    Previously `chiper auth add nous --type oauth --label <name>` silently
+    Previously `chiper auth add chiper --type oauth --label <name>` silently
     dropped the label because persist_nous_credentials() ignored it and
     _seed_from_singletons always auto-derived via label_from_token().  The
-    fix stashes the label inside providers.nous so seeding prefers it.
+    fix stashes the label inside providers.chiper so seeding prefers it.
     """
-    from chiper_cli.auth import persist_nous_credentials, NOUS_DEVICE_CODE_SOURCE
+    from chiper_cli.auth import persist_nous_credentials, CHIPER_DEVICE_CODE_SOURCE
 
     chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
@@ -1323,13 +1323,13 @@ def test_persist_nous_credentials_embeds_custom_label(tmp_path, monkeypatch):
 
     entry = persist_nous_credentials(_full_state_fixture(), label="my-personal")
     assert entry is not None
-    assert entry.source == NOUS_DEVICE_CODE_SOURCE
+    assert entry.source == CHIPER_DEVICE_CODE_SOURCE
     assert entry.label == "my-personal"
 
-    # providers.nous carries the label so re-seeding on the next load_pool
+    # providers.chiper carries the label so re-seeding on the next load_pool
     # doesn't overwrite it with the auto-derived fingerprint.
     payload = json.loads((chiper_home / "auth.json").read_text())
-    assert payload["providers"]["nous"]["label"] == "my-personal"
+    assert payload["providers"]["chiper"]["label"] == "my-personal"
 
 
 def test_persist_nous_credentials_custom_label_survives_reseed(tmp_path, monkeypatch):
@@ -1350,7 +1350,7 @@ def test_persist_nous_credentials_custom_label_survives_reseed(tmp_path, monkeyp
 
     # Second load_pool triggers _seed_from_singletons again.  Without the
     # fix, this call overwrote the label with label_from_token(access_token).
-    pool = load_pool("nous")
+    pool = load_pool("chiper")
     entries = pool.entries()
     assert len(entries) == 1
     assert entries[0].label == "work-acct"
@@ -1377,15 +1377,15 @@ def test_persist_nous_credentials_no_label_uses_auto_derived(tmp_path, monkeypat
     assert entry.label
     assert entry.label != "my-personal"
 
-    # No "label" key embedded in providers.nous when the caller didn't supply one.
+    # No "label" key embedded in providers.chiper when the caller didn't supply one.
     payload = json.loads((chiper_home / "auth.json").read_text())
-    assert "label" not in payload["providers"]["nous"]
+    assert "label" not in payload["providers"]["chiper"]
 
 
 def test_refresh_token_reuse_detection_surfaces_actionable_message():
     """Regression for #15099.
 
-    When the Nous Portal server returns ``invalid_grant`` with
+    When the Chiper Portal server returns ``invalid_grant`` with
     ``error_description`` containing "reuse detected", Chiper must surface an
     actionable message explaining that an external process consumed the
     refresh token.  The default opaque "Refresh token reuse detected; please
@@ -1411,7 +1411,7 @@ def test_refresh_token_reuse_detection_surfaces_actionable_message():
     with pytest.raises(AuthError) as exc_info:
         _refresh_access_token(
             client=_FakeClient(),
-            portal_base_url="https://portal.Chiper.com",
+            portal_base_url="https://portal.chiper.local",
             client_id="chiper-cli",
             refresh_token="rt_consumed_elsewhere",
         )
@@ -1420,14 +1420,14 @@ def test_refresh_token_reuse_detection_surfaces_actionable_message():
     assert "refresh-token reuse" in message.lower() or "refresh token reuse" in message.lower()
     # The message must mention the external-process cause and give next steps.
     assert "external process" in message.lower() or "monitoring script" in message.lower()
-    assert "chiper auth add nous" in message.lower()
+    assert "chiper auth add chiper" in message.lower()
     # Must still be classified as invalid_grant + relogin_required.
     assert exc_info.value.code == "invalid_grant"
     assert exc_info.value.relogin_required is True
 
 
 def test_refresh_token_reuse_error_code_is_terminal():
-    """Nous may return refresh_token_reused as the OAuth error code itself."""
+    """Chiper may return refresh_token_reused as the OAuth error code itself."""
     from chiper_cli import auth as auth_mod
 
     class _FakeResponse:
@@ -1446,7 +1446,7 @@ def test_refresh_token_reuse_error_code_is_terminal():
     with pytest.raises(AuthError) as exc_info:
         auth_mod._refresh_access_token(
             client=_FakeClient(),
-            portal_base_url="https://portal.Chiper.com",
+            portal_base_url="https://portal.chiper.local",
             client_id="chiper-cli",
             refresh_token="rt_consumed_elsewhere",
         )
@@ -1457,7 +1457,7 @@ def test_refresh_token_reuse_error_code_is_terminal():
 
 
 def test_refresh_token_exchange_sends_refresh_token_header():
-    """Nous refresh tokens must be sent in a header so sandbox proxies can
+    """Chiper refresh tokens must be sent in a header so sandbox proxies can
     substitute placeholder credentials without parsing form bodies.
     """
     from chiper_cli.auth import _refresh_access_token
@@ -1481,7 +1481,7 @@ def test_refresh_token_exchange_sends_refresh_token_header():
 
     payload = _refresh_access_token(
         client=client,
-        portal_base_url="https://portal.Chiper.com",
+        portal_base_url="https://portal.chiper.local",
         client_id="chiper-cli",
         refresh_token="refresh-1",
     )
@@ -1489,7 +1489,7 @@ def test_refresh_token_exchange_sends_refresh_token_header():
     assert payload["access_token"] == "access-2"
     assert payload["refresh_token"] == "refresh-2"
     assert client.kwargs is not None
-    assert client.kwargs["headers"]["x-nous-refresh-token"] == "refresh-1"
+    assert client.kwargs["headers"]["x-chiper-refresh-token"] == "refresh-1"
     assert client.kwargs["data"] == {
         "grant_type": "refresh_token",
         "client_id": "chiper-cli",
@@ -1522,7 +1522,7 @@ def test_refresh_non_reuse_error_keeps_original_description():
     with pytest.raises(AuthError) as exc_info:
         _refresh_access_token(
             client=_FakeClient(),
-            portal_base_url="https://portal.Chiper.com",
+            portal_base_url="https://portal.chiper.local",
             client_id="chiper-cli",
             refresh_token="rt_anything",
         )
@@ -1533,7 +1533,7 @@ def test_refresh_non_reuse_error_keeps_original_description():
 
 
 # =============================================================================
-# Shared Nous token store — cross-profile persistence (Codex-style auto-import)
+# Shared Chiper token store — cross-profile persistence (Codex-style auto-import)
 # =============================================================================
 
 
@@ -1541,7 +1541,7 @@ def test_refresh_non_reuse_error_keeps_original_description():
 def shared_store_env(tmp_path, monkeypatch):
     """Redirect CHIPER_SHARED_AUTH_DIR to a tmp_path.
 
-    Required for every test that exercises the shared Nous store — the
+    Required for every test that exercises the shared Chiper store — the
     in-auth.py seat belt refuses to touch the real user's shared store
     under pytest, so tests that forget this fixture fail loudly instead
     of corrupting real state.
@@ -1562,19 +1562,19 @@ def test_shared_store_seat_belt_refuses_real_home_under_pytest(monkeypatch):
 
     monkeypatch.delenv("CHIPER_SHARED_AUTH_DIR", raising=False)
 
-    with pytest.raises(RuntimeError, match="shared Nous auth store"):
+    with pytest.raises(RuntimeError, match="shared Chiper auth store"):
         _nous_shared_store_path()
 
 
 def test_shared_store_honors_env_override(tmp_path, monkeypatch):
     """CHIPER_SHARED_AUTH_DIR must redirect the path."""
-    from chiper_cli.auth import _nous_shared_store_path, NOUS_SHARED_STORE_FILENAME
+    from chiper_cli.auth import _nous_shared_store_path, CHIPER_SHARED_STORE_FILENAME
 
     custom_dir = tmp_path / "custom_shared"
     monkeypatch.setenv("CHIPER_SHARED_AUTH_DIR", str(custom_dir))
 
     path = _nous_shared_store_path()
-    assert path == custom_dir / NOUS_SHARED_STORE_FILENAME
+    assert path == custom_dir / CHIPER_SHARED_STORE_FILENAME
 
 
 def test_shared_store_read_missing_returns_none(shared_store_env):
@@ -1652,7 +1652,7 @@ def test_persist_nous_credentials_mirrors_to_shared_store(
     tmp_path, monkeypatch, shared_store_env,
 ):
     """persist_nous_credentials must populate BOTH per-profile auth.json
-    AND the shared store, so a future profile's `chiper auth add nous
+    AND the shared store, so a future profile's `chiper auth add chiper
     --type oauth` can one-tap import instead of redoing device-code.
     """
     from chiper_cli.auth import (
@@ -1672,7 +1672,7 @@ def test_persist_nous_credentials_mirrors_to_shared_store(
 
     # Per-profile auth.json populated
     payload = json.loads((chiper_home / "auth.json").read_text())
-    assert "nous" in payload.get("providers", {})
+    assert "chiper" in payload.get("providers", {})
 
     # Shared store populated with the same refresh_token
     shared = _read_shared_nous_state()
@@ -1706,7 +1706,7 @@ def test_try_import_shared_returns_none_on_refresh_failure(
     def _boom(*_args, **_kwargs):
         raise AuthError(
             "Refresh session has been revoked",
-            provider="nous",
+            provider="chiper",
             code="invalid_grant",
             relogin_required=True,
         )
@@ -1804,9 +1804,9 @@ def test_shared_store_survives_across_profile_switch(
     monkeypatch.setenv("CHIPER_HOME", str(profile_a))
     auth_mod.persist_nous_credentials(_full_state_fixture())
 
-    # Profile A's auth.json has nous
+    # Profile A's auth.json has chiper
     a_payload = json.loads((profile_a / "auth.json").read_text())
-    assert "nous" in a_payload.get("providers", {})
+    assert "chiper" in a_payload.get("providers", {})
 
     # Profile B: fresh CHIPER_HOME, no auth yet, but the shared store
     # persists — _read_shared_nous_state() must still return the tokens.
@@ -1817,16 +1817,16 @@ def test_shared_store_survives_across_profile_switch(
     )
     monkeypatch.setenv("CHIPER_HOME", str(profile_b))
 
-    # B's own auth.json has no nous
+    # B's own auth.json has no chiper
     b_payload = json.loads((profile_b / "auth.json").read_text())
-    assert "nous" not in b_payload.get("providers", {})
+    assert "chiper" not in b_payload.get("providers", {})
 
     # But the shared store is visible
     shared = auth_mod._read_shared_nous_state()
     assert shared is not None
     assert shared["refresh_token"] == "refresh-tok"
 
-    # And a successful rehydrate + persist lands nous into profile B
+    # And a successful rehydrate + persist lands chiper into profile B
     b_jwt = _invoke_jwt(seconds=7200)
 
     def _fake_refresh(state, **kwargs):
@@ -1845,8 +1845,8 @@ def test_shared_store_survives_across_profile_switch(
     auth_mod.persist_nous_credentials(result)
 
     b_payload = json.loads((profile_b / "auth.json").read_text())
-    assert "nous" in b_payload.get("providers", {})
-    assert b_payload["providers"]["nous"]["refresh_token"] == "b-refresh-tok"
+    assert "chiper" in b_payload.get("providers", {})
+    assert b_payload["providers"]["chiper"]["refresh_token"] == "b-refresh-tok"
 
     # Shared store was updated with the rotated refresh_token too
     shared_after = auth_mod._read_shared_nous_state()
@@ -1857,7 +1857,7 @@ def test_shared_store_survives_across_profile_switch(
 def test_runtime_refresh_uses_newer_shared_token_before_local_stale_token(
     tmp_path, monkeypatch, shared_store_env,
 ):
-    """A sibling profile may rotate the single-use Nous refresh token.
+    """A sibling profile may rotate the single-use Chiper refresh token.
 
     When this profile later wakes with an expired local token, runtime
     resolution must adopt the shared token before refreshing. Otherwise it
@@ -1891,7 +1891,7 @@ def test_runtime_refresh_uses_newer_shared_token_before_local_stale_token(
 
     assert creds["api_key"] == shared_token
 
-    profile_state = auth_mod.get_provider_auth_state("nous")
+    profile_state = auth_mod.get_provider_auth_state("chiper")
     assert profile_state is not None
     assert profile_state["refresh_token"] == "shared-fresh-refresh"
     assert profile_state["access_token"] == shared_token
@@ -1924,6 +1924,6 @@ def test_managed_gateway_access_token_uses_newer_shared_token(
 
     assert auth_mod.resolve_nous_access_token() == "shared-fresh-access"
 
-    profile_state = auth_mod.get_provider_auth_state("nous")
+    profile_state = auth_mod.get_provider_auth_state("chiper")
     assert profile_state is not None
     assert profile_state["refresh_token"] == "shared-fresh-refresh"

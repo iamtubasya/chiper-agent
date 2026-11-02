@@ -46,7 +46,7 @@ def _resolve_requests_verify() -> bool | str:
 # Only these are stripped — Ollama-style "model:tag" colons (e.g. "qwen3.5:27b")
 # are preserved so the full model name reaches cache lookups and server queries.
 _PROVIDER_PREFIXES: frozenset[str] = frozenset({
-    "openrouter", "nous", "openai-codex", "copilot", "copilot-acp",
+    "openrouter", "chiper", "openai-codex", "copilot", "copilot-acp",
     "gemini", "ollama-cloud", "zai", "kimi-coding", "kimi-coding-cn", "stepfun", "minimax", "minimax-oauth", "minimax-cn", "anthropic", "deepseek",
     "opencode-zen", "opencode-go", "kilocode", "alibaba", "novita",
     "qwen-oauth",
@@ -257,7 +257,7 @@ DEFAULT_CONTEXT_LENGTHS = {
     # MiniMax — M3 is 1M context (max output 512K); M2.x series is 204,800.
     # Keys use substring matching (longest-first), so "minimax-m3" wins over
     # the generic "minimax" catch-all for the M3 slug on every surface
-    # (native MiniMax-M3, OpenRouter/Nous minimax/minimax-m3).
+    # (native MiniMax-M3, OpenRouter/Chiper minimax/minimax-m3).
     # https://platform.minimax.io/docs/api-reference/text-chat-openai
     "minimax-m3": 1000000,
     "minimax": 204800,
@@ -426,7 +426,7 @@ _URL_TO_PROVIDER: Dict[str, str] = {
     "portal.qwen.ai": "qwen-oauth",
     "openrouter.ai": "openrouter",
     "generativelanguage.googleapis.com": "gemini",
-    "inference-api.Chiper.com": "nous",
+    "inference-api.Chiper.com": "chiper",
     "api.deepseek.com": "deepseek",
     "api.githubcopilot.com": "copilot",
     "models.github.ai": "copilot",
@@ -1051,7 +1051,7 @@ def parse_available_output_tokens_from_error(error_msg: str) -> Optional[int]:
         "max_tokens" in error_lower
         and ("available_tokens" in error_lower or "available tokens" in error_lower)
     ) or (
-        # OpenRouter/Nous phrasing of the same condition.
+        # OpenRouter/Chiper phrasing of the same condition.
         "in the output" in error_lower
         and "maximum context length" in error_lower
     ) or (
@@ -1083,7 +1083,7 @@ def parse_available_output_tokens_from_error(error_msg: str) -> Optional[int]:
             if tokens >= 1:
                 return tokens
 
-    # OpenRouter/Nous format: "maximum context length is N … (A of text input,
+    # OpenRouter/Chiper format: "maximum context length is N … (A of text input,
     # B of tool input, C in the output)". Available output = ctx - text - tool.
     _m_ctx = re.search(r'maximum context length is (\d+)', error_lower)
     _m_parts = re.search(
@@ -1265,7 +1265,7 @@ def _model_name_suggests_minimax_m3(model: str) -> bool:
     """Return True if the model name looks like MiniMax M3.
 
     Catches ``MiniMax-M3``, ``minimax/minimax-m3``, and similar variants
-    across surfaces (native MiniMax-M3, OpenRouter/Nous minimax/minimax-m3).
+    across surfaces (native MiniMax-M3, OpenRouter/Chiper minimax/minimax-m3).
     Used as a guard against stale cache entries seeded by pre-catalog builds
     that resolved M3 via the generic ``minimax`` catch-all (204,800) before
     the ``minimax-m3`` (1M) entry existed in DEFAULT_CONTEXT_LENGTHS.
@@ -1382,7 +1382,7 @@ def _query_local_context_length(model: str, base_url: str, api_key: str = "") ->
 def _normalize_model_version(model: str) -> str:
     """Normalize version separators for matching.
 
-    Nous uses dashes: claude-opus-4-6, claude-sonnet-4-5
+    Chiper uses dashes: claude-opus-4-6, claude-sonnet-4-5
     OpenRouter uses dots: claude-opus-4.6, claude-sonnet-4.5
     Normalize both to dashes for comparison.
     """
@@ -1541,12 +1541,12 @@ def _resolve_nous_context_length(
     base_url: str = "",
     api_key: str = "",
 ) -> Tuple[Optional[int], str]:
-    """Resolve Nous Portal model context length.
+    """Resolve Chiper Portal model context length.
 
-    Tries the live Nous inference endpoint first (authoritative), then falls
+    Tries the live Chiper inference endpoint first (authoritative), then falls
     back to OpenRouter metadata with suffix/version matching.
 
-    Nous model IDs are bare after prefix-stripping (e.g. 'qwen3.6-plus',
+    Chiper model IDs are bare after prefix-stripping (e.g. 'qwen3.6-plus',
     'claude-opus-4-6') while OpenRouter uses prefixed IDs (e.g.
     'qwen/qwen3.6-plus', 'anthropic/claude-opus-4.6').  Version
     normalization (dot↔dash) is applied to handle name drifts.
@@ -1558,7 +1558,7 @@ def _resolve_nous_context_length(
         portal blip will freeze the wrong value in forever)
       - ``""``           — could not resolve
     """
-    # Portal first — the Nous /models endpoint is authoritative for what our
+    # Portal first — the Chiper /models endpoint is authoritative for what our
     # infrastructure enforces and may differ from OR (e.g. OR reports 1M for
     # qwen3.6-plus; the portal correctly says 262144).  Fall back to the OR
     # catalog only if the portal doesn't list the model.
@@ -1576,7 +1576,7 @@ def _resolve_nous_context_length(
         if ctx <= 32768 and _model_name_suggests_kimi(or_id):
             logger.info(
                 "Rejecting OpenRouter metadata context=%s for %r "
-                "(Kimi-family underreport, Nous path); falling through to hardcoded defaults",
+                "(Kimi-family underreport, Chiper path); falling through to hardcoded defaults",
                 ctx, or_id,
             )
             return None
@@ -1622,7 +1622,7 @@ def get_model_context_length(
 
     Resolution order:
     0. Explicit config override (model.context_length or custom_providers per-model)
-    1. Persistent cache (previously discovered via probing).  Nous URLs
+    1. Persistent cache (previously discovered via probing).  Chiper URLs
        bypass the cache here so step 5b can always reconcile against
        the authoritative portal /v1/models response.
     1b. AWS Bedrock static table (must precede custom-endpoint probe)
@@ -1631,7 +1631,7 @@ def get_model_context_length(
     4. Anthropic /v1/models API (API-key users only, not OAuth)
     5. Provider-aware lookups (before generic OpenRouter cache):
        a. Copilot live /models API
-       b. Nous: live /v1/models probe first (authoritative), then OR
+       b. Chiper: live /v1/models probe first (authoritative), then OR
           cache fallback with suffix/version normalisation.  Only
           portal-derived values are persisted to disk.
        c. Codex OAuth /models probe
@@ -1722,7 +1722,7 @@ def get_model_context_length(
                     model, base_url, f"{cached:,}",
                 )
                 _invalidate_cached_context_length(model, base_url)
-            # Nous Portal: the portal /v1/models endpoint is authoritative.
+            # Chiper Portal: the portal /v1/models endpoint is authoritative.
             # Bypass the persistent cache so step 5b can always reconcile
             # against it — this corrects pre-fix entries seeded from the
             # OR catalog (the same OR underreport class that the Kimi/Qwen
@@ -1730,9 +1730,9 @@ def get_model_context_length(
             # touching the on-disk file when the portal is unreachable.
             # The in-memory 300s endpoint metadata cache makes the per-call
             # cost amortise to ~0 within a process.
-            elif _infer_provider_from_url(base_url) == "nous":
+            elif _infer_provider_from_url(base_url) == "chiper":
                 logger.debug(
-                    "Bypassing persistent cache for %s@%s (Nous portal authoritative)",
+                    "Bypassing persistent cache for %s@%s (Chiper Portal authoritative)",
                     model, base_url,
                 )
                 # Fall through; step 5b reconciles and overwrites if portal responds.
@@ -1853,7 +1853,7 @@ def get_model_context_length(
         except Exception:
             pass  # Fall through to models.dev
 
-    if effective_provider == "nous":
+    if effective_provider == "chiper":
         ctx, source = _resolve_nous_context_length(
             model, base_url=base_url or "", api_key=api_key or ""
         )
@@ -1863,7 +1863,7 @@ def get_model_context_length(
             # blip / auth glitch and step-1 would short-circuit it forever.
             # OR's catalog is community-maintained and is precisely why the
             # Kimi/Qwen DEFAULT_CONTEXT_LENGTHS overrides exist — we don't
-            # want it leaking into the persistent cache for Nous URLs.
+            # want it leaking into the persistent cache for Chiper URLs.
             if base_url and source == "portal":
                 save_context_length(model, base_url, ctx)
             return ctx
@@ -1905,7 +1905,7 @@ def get_model_context_length(
     # brand-new slugs and (b) skipped the step-6 OR fallback (gated on `not
     # effective_provider`), so a fresh slug like claude-fable-5 fell through to
     # the generic "claude": 200K entry and under-reported a 1M window. Mirrors
-    # the dedicated Nous/Copilot/GMI branches above.
+    # the dedicated Chiper/Copilot/GMI branches above.
     if effective_provider == "openrouter":
         metadata = fetch_model_metadata()
         entry = metadata.get(model)

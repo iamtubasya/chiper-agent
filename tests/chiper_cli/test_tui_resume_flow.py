@@ -879,14 +879,14 @@ def test_launch_tui_exports_model_provider_and_toolsets(monkeypatch, main_mod):
 
     with pytest.raises(SystemExit):
         main_mod._launch_tui(
-            model="nous/chiper-test", provider="nous", toolsets="web, terminal"
+            model="chiper/chiper-test", provider="chiper", toolsets="web, terminal"
         )
 
     env = captured["env"]
-    assert env["CHIPER_MODEL"] == "nous/chiper-test"
-    assert env["CHIPER_INFERENCE_MODEL"] == "nous/chiper-test"
-    assert env["CHIPER_TUI_PROVIDER"] == "nous"
-    assert env["CHIPER_INFERENCE_PROVIDER"] == "nous"
+    assert env["CHIPER_MODEL"] == "chiper/chiper-test"
+    assert env["CHIPER_INFERENCE_MODEL"] == "chiper/chiper-test"
+    assert env["CHIPER_TUI_PROVIDER"] == "chiper"
+    assert env["CHIPER_INFERENCE_PROVIDER"] == "chiper"
     assert env["CHIPER_TUI_TOOLSETS"] == "web,terminal"
     active_path = Path(env["CHIPER_TUI_ACTIVE_SESSION_FILE"])
     assert active_path.name.startswith("chiper-tui-active-session-")

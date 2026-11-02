@@ -74,12 +74,12 @@ class TestFirecrawlClientConfig:
     def test_tool_gateway_domain_builds_firecrawl_gateway_origin(self):
         """Shared gateway domain should derive the Firecrawl vendor hostname."""
         with patch.dict(os.environ, {"TOOL_GATEWAY_DOMAIN": "Chiper.com"}):
-            with patch("tools.web_tools._read_nous_access_token", return_value="nous-token"):
+            with patch("tools.web_tools._read_nous_access_token", return_value="chiper-token"):
                 with patch("tools.web_tools.Firecrawl") as mock_fc:
                     from tools.web_tools import _get_firecrawl_client
                     result = _get_firecrawl_client()
                     mock_fc.assert_called_once_with(
-                        api_key="nous-token",
+                        api_key="chiper-token",
                         api_url="https://firecrawl-gateway.Chiper.com",
                     )
                     assert result is mock_fc.return_value
@@ -90,12 +90,12 @@ class TestFirecrawlClientConfig:
             "TOOL_GATEWAY_DOMAIN": "Chiper.com",
             "TOOL_GATEWAY_SCHEME": "http",
         }):
-            with patch("tools.web_tools._read_nous_access_token", return_value="nous-token"):
+            with patch("tools.web_tools._read_nous_access_token", return_value="chiper-token"):
                 with patch("tools.web_tools.Firecrawl") as mock_fc:
                     from tools.web_tools import _get_firecrawl_client
                     result = _get_firecrawl_client()
                     mock_fc.assert_called_once_with(
-                        api_key="nous-token",
+                        api_key="chiper-token",
                         api_url="http://firecrawl-gateway.Chiper.com",
                     )
                     assert result is mock_fc.return_value
@@ -106,7 +106,7 @@ class TestFirecrawlClientConfig:
             "TOOL_GATEWAY_DOMAIN": "Chiper.com",
             "TOOL_GATEWAY_SCHEME": "ftp",
         }):
-            with patch("tools.web_tools._read_nous_access_token", return_value="nous-token"):
+            with patch("tools.web_tools._read_nous_access_token", return_value="chiper-token"):
                 from tools.web_tools import _get_firecrawl_client
                 with pytest.raises(ValueError, match="TOOL_GATEWAY_SCHEME"):
                     _get_firecrawl_client()
@@ -117,23 +117,23 @@ class TestFirecrawlClientConfig:
             "FIRECRAWL_GATEWAY_URL": "https://firecrawl-gateway.localhost:3009/",
             "TOOL_GATEWAY_DOMAIN": "Chiper.com",
         }):
-            with patch("tools.web_tools._read_nous_access_token", return_value="nous-token"):
+            with patch("tools.web_tools._read_nous_access_token", return_value="chiper-token"):
                 with patch("tools.web_tools.Firecrawl") as mock_fc:
                     from tools.web_tools import _get_firecrawl_client
                     _get_firecrawl_client()
                     mock_fc.assert_called_once_with(
-                        api_key="nous-token",
+                        api_key="chiper-token",
                         api_url="https://firecrawl-gateway.localhost:3009",
                     )
 
     def test_default_gateway_domain_targets_nous_production_origin(self):
         """Default gateway origin should point at the Firecrawl vendor hostname."""
-        with patch("tools.web_tools._read_nous_access_token", return_value="nous-token"):
+        with patch("tools.web_tools._read_nous_access_token", return_value="chiper-token"):
             with patch("tools.web_tools.Firecrawl") as mock_fc:
                 from tools.web_tools import _get_firecrawl_client
                 _get_firecrawl_client()
                 mock_fc.assert_called_once_with(
-                    api_key="nous-token",
+                    api_key="chiper-token",
                     api_url="https://firecrawl-gateway.Chiper.com",
                 )
 
@@ -146,8 +146,8 @@ class TestFirecrawlClientConfig:
         chiper_home.mkdir()
         (chiper_home / "auth.json").write_text(json.dumps({
             "providers": {
-                "nous": {
-                    "access_token": "nous-token",
+                "chiper": {
+                    "access_token": "chiper-token",
                 }
             }
         }))
@@ -158,7 +158,7 @@ class TestFirecrawlClientConfig:
         }, clear=False):
             import tools.web_tools
             importlib.reload(tools.web_tools)
-            assert tools.web_tools._read_nous_access_token() == "nous-token"
+            assert tools.web_tools._read_nous_access_token() == "chiper-token"
 
     def test_check_auxiliary_model_re_resolves_backend_each_call(self):
         """Availability checks should not be pinned to module import state."""
@@ -399,9 +399,9 @@ class TestBackendSelection:
             assert _get_backend() == "parallel"
 
     def test_managed_gateway_does_not_preempt_explicit_tavily(self):
-        """Regression: a Nous OAuth token (managed gateway "ready") must NOT
+        """Regression: a Chiper OAuth token (managed gateway "ready") must NOT
         beat an explicitly configured TAVILY_API_KEY in the fallback path.
-        Free Nous tiers don't include web search, so the user's deliberate
+        Free Chiper tiers don't include web search, so the user's deliberate
         Tavily setup would fail at runtime with "no subscription" if the
         gateway pre-empted it."""
         from tools.web_tools import _get_backend
@@ -411,7 +411,7 @@ class TestBackendSelection:
             assert _get_backend() == "tavily"
 
     def test_managed_gateway_only_falls_through_to_firecrawl(self):
-        """When no explicit-credential backend is configured, a Nous-managed
+        """When no explicit-credential backend is configured, a Chiper-managed
         gateway token still selects firecrawl — the convenience path is
         preserved, just no longer pre-empts."""
         from tools.web_tools import _get_backend
@@ -647,7 +647,7 @@ class TestCheckWebApiKey:
             assert check_web_api_key() is True
 
     def test_tool_gateway_returns_true(self):
-        with patch("tools.web_tools._peek_nous_access_token", return_value="nous-token"):
+        with patch("tools.web_tools._peek_nous_access_token", return_value="chiper-token"):
             from tools.web_tools import check_web_api_key
             assert check_web_api_key() is True
 
@@ -661,7 +661,7 @@ class TestCheckWebApiKey:
         expired_at = "2000-01-01T00:00:00+00:00"
         (tmp_path / "auth.json").write_text(json.dumps({
             "providers": {
-                "nous": {
+                "chiper": {
                     "access_token": "expired-token",
                     "refresh_token": "refresh-token",
                     "expires_at": expired_at,
@@ -692,14 +692,14 @@ class TestCheckWebApiKey:
 
     def test_configured_backend_must_match_available_provider(self):
         with patch("tools.web_tools._load_web_config", return_value={"backend": "parallel"}):
-            with patch("tools.web_tools._read_nous_access_token", return_value="nous-token"):
+            with patch("tools.web_tools._read_nous_access_token", return_value="chiper-token"):
                 with patch.dict(os.environ, {"FIRECRAWL_GATEWAY_URL": "http://127.0.0.1:3002"}, clear=False):
                     from tools.web_tools import check_web_api_key
                     assert check_web_api_key() is False
 
     def test_configured_firecrawl_backend_accepts_managed_gateway(self):
         with patch("tools.web_tools._load_web_config", return_value={"backend": "firecrawl"}):
-            with patch("tools.web_tools._peek_nous_access_token", return_value="nous-token"):
+            with patch("tools.web_tools._peek_nous_access_token", return_value="chiper-token"):
                 with patch.dict(os.environ, {"FIRECRAWL_GATEWAY_URL": "http://127.0.0.1:3002"}, clear=False):
                     from tools.web_tools import check_web_api_key
                     assert check_web_api_key() is True

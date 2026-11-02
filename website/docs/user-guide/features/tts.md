@@ -8,8 +8,8 @@ description: "Text-to-speech and voice message transcription across all platform
 
 Chiper Agent supports both text-to-speech output and voice message transcription across all messaging platforms.
 
-:::tip Nous Subscribers
-If you have a paid [Nous Portal](https://portal.Chiper.com) subscription, OpenAI TTS is available through the **[Tool Gateway](tool-gateway.md)** without a separate OpenAI API key. New installs can run `chiper setup --portal` to log in and turn on every gateway tool at once; existing installs can pick **Nous Subscription** for just TTS via `chiper model` or `chiper tools`.
+:::tip Chiper Subscribers
+If you have a paid [Chiper Portal](https://portal.chiper.local) subscription, OpenAI TTS is available through the **[Tool Gateway](tool-gateway.md)** without a separate OpenAI API key. New installs can run `chiper setup --portal` to log in and turn on every gateway tool at once; existing installs can pick **Chiper subscription** for just TTS via `chiper model` or `chiper tools`.
 :::
 
 ## Text-to-Speech

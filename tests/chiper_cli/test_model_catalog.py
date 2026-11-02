@@ -41,8 +41,8 @@ def _valid_manifest() -> dict:
                     {"id": "openrouter/elephant-alpha", "description": "free"},
                 ],
             },
-            "nous": {
-                "metadata": {"display_name": "Nous Portal"},
+            "chiper": {
+                "metadata": {"display_name": "Chiper Portal"},
                 "models": [
                     {"id": "anthropic/claude-opus-4.7"},
                     {"id": "moonshotai/kimi-k2.6"},
@@ -355,7 +355,7 @@ class TestIntegrationWithModelsModule:
         with patch.object(model_catalog, "_fetch_manifest", return_value=None):
             result = get_curated_nous_model_ids()
 
-        assert result == list(_PROVIDER_MODELS["nous"])
+        assert result == list(_PROVIDER_MODELS["chiper"])
 
     def test_curated_nous_ids_prefers_manifest(self, isolated_home):
         from chiper_cli import model_catalog
@@ -369,7 +369,7 @@ class TestIntegrationWithModelsModule:
         assert result == ["anthropic/claude-opus-4.7", "moonshotai/kimi-k2.6"]
 
     def test_picker_nous_row_uses_curated_list(self, tmp_path, monkeypatch):
-        """The /model picker surfaces the curated ``_PROVIDER_MODELS["nous"]``
+        """The /model picker surfaces the curated ``_PROVIDER_MODELS["chiper"]``
         list in curated order — matching the ``chiper model`` CLI — not the live
         ``/v1/models`` catalog or the manifest. Portal free/paid recommendations
         are unioned in when reachable; offline (as here, with the Portal calls
@@ -392,7 +392,7 @@ class TestIntegrationWithModelsModule:
             (active_home / "auth.json").write_text(
                 json.dumps(
                     {
-                        "providers": {"nous": {"access_token": "fake"}},
+                        "providers": {"chiper": {"access_token": "fake"}},
                         "credential_pool": {},
                     }
                 )
@@ -401,7 +401,7 @@ class TestIntegrationWithModelsModule:
             # Stub the Portal recommendation union so the row is deterministic
             # (the curated list alone) and never touches the network. ``expected``
             # is computed from the same source the picker uses internally
-            # (``curated["nous"] = get_curated_nous_model_ids()``), so the test
+            # (``curated["chiper"] = get_curated_nous_model_ids()``), so the test
             # stays an invariant — it can't rot as the curated/manifest list grows.
             with patch.object(
                 model_catalog, "_fetch_manifest", return_value=_valid_manifest()
@@ -414,21 +414,21 @@ class TestIntegrationWithModelsModule:
             ):
                 expected = get_curated_nous_model_ids()
                 picker = list_picker_providers(
-                    current_provider="nous", max_models=99
+                    current_provider="chiper", max_models=99
                 )
         finally:
             model_catalog.reset_cache()
 
-        nous_row = next((r for r in picker if r["slug"] == "nous"), None)
-        assert nous_row is not None, "nous row must appear when authed"
-        assert nous_row["models"] == expected
+        CHIPER_row = next((r for r in picker if r["slug"] == "chiper"), None)
+        assert CHIPER_row is not None, "chiper row must appear when authed"
+        assert CHIPER_row["models"] == expected
 
 
 # -----------------------------------------------------------------------------
 # Drift guard — prevent the in-repo curated lists from going out of sync with
 # the docs-hosted manifest at website/static/api/model-catalog.json.
 #
-# History: qwen/qwen3.6-plus was added to _PROVIDER_MODELS["nous"] in commit
+# History: qwen/qwen3.6-plus was added to _PROVIDER_MODELS["chiper"] in commit
 # 9dd6e5510 but website/static/api/model-catalog.json was not regenerated for
 # weeks, so free-tier users on a new install fetched a stale manifest and the
 # free-tier picker showed "No free models currently available." even though
@@ -473,7 +473,7 @@ class TestManifestMatchesInRepoLists:
 
         assert self._strip_volatile(actual) == self._strip_volatile(expected), (
             "website/static/api/model-catalog.json is out of sync with "
-            "_PROVIDER_MODELS['nous'] / OPENROUTER_MODELS. "
+            "_PROVIDER_MODELS['chiper'] / OPENROUTER_MODELS. "
             "Run: python scripts/build_model_catalog.py && "
             "git add website/static/api/model-catalog.json"
         )

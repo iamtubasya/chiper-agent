@@ -71,7 +71,7 @@ from tools.tool_backend_helpers import (
     coerce_modal_mode,
     has_direct_modal_credentials,
     managed_nous_tools_enabled,
-    nous_tool_gateway_unavailable_message,
+    CHIPER_tool_gateway_unavailable_message,
     resolve_modal_backend_state,
 )
 
@@ -1313,9 +1313,9 @@ def _create_environment(env_type: str, image: str, cwd: str, timeout: int,
             if modal_state["managed_mode_blocked"]:
                 raise ValueError(
                     "Modal backend is configured for managed mode, but "
-                    "Nous Tool Gateway access is not currently available and no direct "
+                    "Chiper tool gateway access is not currently available and no direct "
                     "Modal credentials/config were found. "
-                    + nous_tool_gateway_unavailable_message(
+                    + CHIPER_tool_gateway_unavailable_message(
                         "managed Modal execution",
                     )
                     + " Choose TERMINAL_MODAL_MODE=direct/auto to use direct Modal credentials."
@@ -1323,7 +1323,7 @@ def _create_environment(env_type: str, image: str, cwd: str, timeout: int,
             if modal_state["mode"] == "managed":
                 raise ValueError(
                     "Modal backend is configured for managed mode, but the managed tool gateway is unavailable. "
-                    + nous_tool_gateway_unavailable_message(
+                    + CHIPER_tool_gateway_unavailable_message(
                         "managed Modal execution",
                     )
                 )
@@ -2508,10 +2508,10 @@ def check_terminal_requirements() -> bool:
                 if modal_state["managed_mode_blocked"]:
                     logger.error(
                         "Modal backend selected with TERMINAL_MODAL_MODE=managed, but "
-                        "Nous Tool Gateway access is not currently available and no direct "
+                        "Chiper tool gateway access is not currently available and no direct "
                         "Modal credentials/config were found. %s Choose "
                         "TERMINAL_MODAL_MODE=direct/auto to use direct Modal credentials.",
-                        nous_tool_gateway_unavailable_message(
+                        CHIPER_tool_gateway_unavailable_message(
                             "managed Modal execution",
                         ),
                     )
@@ -2520,7 +2520,7 @@ def check_terminal_requirements() -> bool:
                     logger.error(
                         "Modal backend selected with TERMINAL_MODAL_MODE=managed, but the managed "
                         "tool gateway is unavailable. %s",
-                        nous_tool_gateway_unavailable_message(
+                        CHIPER_tool_gateway_unavailable_message(
                             "managed Modal execution",
                         ),
                     )

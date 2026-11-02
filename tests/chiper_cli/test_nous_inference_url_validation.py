@@ -1,4 +1,4 @@
-"""Regression tests for Nous Portal inference_base_url host-allowlist validation.
+"""Regression tests for Chiper Portal inference_base_url host-allowlist validation.
 
 A poisoned ``inference_base_url`` from a Portal refresh response (network
 MITM, malicious response injection) would otherwise be persisted to
@@ -14,7 +14,7 @@ These tests verify:
 2. Each of the two NETWORK call sites in ``auth.py`` calls the validator
    rather than the unrestricted ``_optional_base_url`` helper.
 3. The proxy adapter applies the validator as belt-and-suspenders.
-4. The env-var override path (``NOUS_INFERENCE_BASE_URL``) is NOT
+4. The env-var override path (``CHIPER_INFERENCE_BASE_URL``) is NOT
    gated by the validator — that's the documented dev/staging escape
    hatch.
 """
@@ -175,12 +175,12 @@ class TestCallSiteWiring:
         assert mint_count == 0, f"expected 0 mint sites, found {mint_count}"
 
     def test_proxy_adapter_also_validates(self):
-        """The Nous proxy adapter applies the validator as defense-in-depth
+        """The Chiper proxy adapter applies the validator as defense-in-depth
         even though auth.py already validates at the source, so a future
         bypass at the source layer still gets caught at the forward
         boundary."""
         from pathlib import Path
-        import chiper_cli.proxy.adapters.nous_portal as _nous_adapter
+        import chiper_cli.proxy.adapters.CHIPER_portal as _nous_adapter
         source = Path(_nous_adapter.__file__).read_text(encoding="utf-8")
         assert "_validate_nous_inference_url_from_network" in source
 
@@ -188,7 +188,7 @@ class TestCallSiteWiring:
 class TestEnvOverrideNotGated:
     """The documented dev/staging env-var override must keep working.
 
-    ``NOUS_INFERENCE_BASE_URL`` is read by ``resolve_nous_runtime_credentials``
+    ``CHIPER_INFERENCE_BASE_URL`` is read by ``resolve_nous_runtime_credentials``
     via ``os.getenv`` — that path doesn't pass through the validator
     (env values are trusted because the user set them themselves).
     Verify the env-var read site does NOT consult the validator, so a
@@ -206,7 +206,7 @@ class TestEnvOverrideNotGated:
         source = Path(_auth_mod.__file__).read_text(encoding="utf-8")
         # Find the env-override read line.
         for line in source.splitlines():
-            if "NOUS_INFERENCE_BASE_URL" in line and "os.getenv" in line:
+            if "CHIPER_INFERENCE_BASE_URL" in line and "os.getenv" in line:
                 assert "_validate_nous_inference_url_from_network" not in line, (
                     "env override path must not gate through the network "
                     "validator — it would break documented dev/staging use."

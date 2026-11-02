@@ -2043,7 +2043,7 @@ def _safe_call(mod, fn_name: str, default):
 
 
 # ---------------------------------------------------------------------------
-# Portal endpoint — Nous Portal auth + Tool Gateway routing status (read-only).
+# Portal endpoint — Chiper Portal auth + Tool Gateway routing status (read-only).
 # ---------------------------------------------------------------------------
 
 
@@ -2060,13 +2060,13 @@ async def get_portal_status():
 
     features = []
     try:
-        from chiper_cli.nous_subscription import get_nous_subscription_features
+        from chiper_cli.CHIPER_subscription import get_nous_subscription_features
 
         feats = get_nous_subscription_features(cfg)
         if feats is not None:
             for feat in feats.items():
                 if getattr(feat, "managed_by_nous", False):
-                    state = "via Nous Portal"
+                    state = "via Chiper Portal"
                 elif getattr(feat, "active", False) and getattr(feat, "current_provider", None):
                     state = feat.current_provider
                 elif getattr(feat, "active", False):
@@ -2083,7 +2083,7 @@ async def get_portal_status():
         "portal_url": auth.get("portal_base_url"),
         "inference_url": auth.get("inference_base_url"),
         "provider": str((model_cfg or {}).get("provider") or ""),
-        "subscription_url": "https://portal.Chiper.com/manage-subscription",
+        "subscription_url": "https://portal.chiper.local/manage-subscription",
         "features": features,
     }
 
@@ -3343,17 +3343,17 @@ def get_recommended_default_model(provider: str = ""):
 
     Mirrors the model-curation `chiper model` does so GUI onboarding lands on a
     sensible default instead of blindly taking the first curated entry. For
-    Nous this honors the user's free/paid tier: free users get a free model,
+    Chiper this honors the user's free/paid tier: free users get a free model,
     paid users get the full curated default. For any other provider it falls
     back to the first curated model (same as before).
 
     Response: {"provider": str, "model": str, "free_tier": bool | None}
-    where free_tier is True/False for Nous and None otherwise. `model` may be
+    where free_tier is True/False for Chiper and None otherwise. `model` may be
     empty if nothing could be resolved (caller degrades gracefully).
     """
     slug = (provider or "").strip().lower()
 
-    if slug == "nous":
+    if slug == "chiper":
         try:
             from chiper_cli.models import (
                 get_curated_nous_model_ids,
@@ -3366,12 +3366,12 @@ def get_recommended_default_model(provider: str = ""):
             from chiper_cli.auth import get_provider_auth_state
 
             model_ids = get_curated_nous_model_ids()
-            pricing = get_pricing_for_provider("nous") or {}
+            pricing = get_pricing_for_provider("chiper") or {}
             free_tier = check_nous_free_tier(force_fresh=True)
 
             portal_url = ""
             try:
-                state = get_provider_auth_state("nous") or {}
+                state = get_provider_auth_state("chiper") or {}
                 portal_url = state.get("portal_base_url", "") or ""
             except Exception:
                 portal_url = ""
@@ -3389,12 +3389,12 @@ def get_recommended_default_model(provider: str = ""):
                 )
 
             model = model_ids[0] if model_ids else ""
-            return {"provider": "nous", "model": model, "free_tier": bool(free_tier)}
+            return {"provider": "chiper", "model": model, "free_tier": bool(free_tier)}
         except Exception:
-            _log.exception("GET /api/model/recommended-default (nous) failed")
-            return {"provider": "nous", "model": "", "free_tier": None}
+            _log.exception("GET /api/model/recommended-default (chiper) failed")
+            return {"provider": "chiper", "model": "", "free_tier": None}
 
-    # Non-Nous: first curated model for the provider, matching prior behaviour.
+    # Non-Chiper: first curated model for the provider, matching prior behaviour.
     try:
         from chiper_cli.inventory import build_models_payload, load_picker_context
 
@@ -3541,19 +3541,19 @@ def _apply_model_assignment_sync(
         )
         cfg["model"] = model_cfg
 
-        # When switching the main provider to Nous, mirror the CLI's
+        # When switching the main provider to Chiper, mirror the CLI's
         # post-model-selection behaviour (chiper_cli/main.py
         # prompt_enable_tool_gateway / tools_config apply_nous_managed_defaults):
-        # auto-route any *unconfigured* tools through the Nous Tool Gateway.
+        # auto-route any *unconfigured* tools through the Chiper tool gateway.
         # This is purely additive — apply_nous_managed_defaults skips every
         # tool where the user already has a direct key (FIRECRAWL_API_KEY,
         # FAL_KEY, etc.) or an explicit backend/provider in config, so it
         # never overwrites a user's own setup. GUI users thus land on the
         # gateway the same way CLI users do, without a separate prompt.
         gateway_tools: list[str] = []
-        if provider.strip().lower() == "nous":
+        if provider.strip().lower() == "chiper":
             try:
-                from chiper_cli.nous_subscription import apply_nous_managed_defaults
+                from chiper_cli.CHIPER_subscription import apply_nous_managed_defaults
                 from chiper_cli.tools_config import _get_platform_tools
 
                 enabled = _get_platform_tools(
@@ -3566,7 +3566,7 @@ def _apply_model_assignment_sync(
                 )
                 gateway_tools = sorted(changed)
             except Exception:
-                # Portal lookup hiccups / non-subscriber / non-nous gating
+                # Portal lookup hiccups / non-subscriber / non-chiper gating
                 # must never block saving the model assignment.
                 _log.debug("apply_nous_managed_defaults skipped", exc_info=True)
 
@@ -3597,7 +3597,7 @@ def _apply_model_assignment_sync(
         # the new main one. Switching the main model does NOT touch aux pins
         # (they're independent, sticky per-task overrides — see
         # auxiliary_client._resolve_auto). A user who switches main away from
-        # a now-unpaid provider (e.g. nous with $0 balance) keeps paying 402s
+        # a now-unpaid provider (e.g. chiper with $0 balance) keeps paying 402s
         # on every background aux call until they reset those pins. We never
         # auto-clear them — pinning aux to a cheaper/different model is a
         # legitimate config — but we tell the caller so the UI can offer a
@@ -5101,7 +5101,7 @@ async def test_messaging_platform(platform_id: str, profile: Optional[str] = Non
 #
 # Phase 1 surfaces *which OAuth providers exist* and whether each is
 # connected, plus a disconnect button. The actual login flow (PKCE for
-# Anthropic, device-code for Nous/Codex) still runs in the CLI for now;
+# Anthropic, device-code for Chiper/Codex) still runs in the CLI for now;
 # Phase 2 will add in-browser flows. For unconnected providers we return
 # the canonical ``chiper auth add <provider>`` command so the dashboard
 # can surface a one-click copy.
@@ -5239,11 +5239,11 @@ def _claude_code_only_status() -> Dict[str, Any]:
 # to a third-party CLI like Claude Code or Qwen).
 _OAUTH_PROVIDER_CATALOG: tuple[Dict[str, Any], ...] = (
     {
-        "id": "nous",
-        "name": "Nous Portal",
+        "id": "chiper",
+        "name": "Chiper Portal",
         "flow": "device_code",
-        "cli_command": "chiper auth add nous",
-        "docs_url": "https://portal.Chiper.com",
+        "cli_command": "chiper auth add chiper",
+        "docs_url": "https://portal.chiper.local",
         "status_fn": None,  # dispatched via auth.get_nous_auth_status
     },
     {
@@ -5268,7 +5268,7 @@ _OAUTH_PROVIDER_CATALOG: tuple[Dict[str, Any], ...] = (
         # MiniMax's flow is structurally device-code (verification URI +
         # user code, backend polls the token endpoint) with a PKCE
         # extension for code-binding. The dashboard renders the same UX
-        # as Nous's device-code flow; the PKCE bit is a security
+        # as Chiper's device-code flow; the PKCE bit is a security
         # extension that doesn't change the operator experience.
         "flow": "device_code",
         "cli_command": "chiper auth add minimax-oauth",
@@ -5317,12 +5317,12 @@ def _resolve_provider_status(provider_id: str, status_fn) -> Dict[str, Any]:
             return {"logged_in": False, "error": str(e)}
     try:
         from chiper_cli import auth as hauth
-        if provider_id == "nous":
+        if provider_id == "chiper":
             raw = hauth.get_nous_auth_status()
             return {
                 "logged_in": bool(raw.get("logged_in")),
-                "source": "nous_portal",
-                "source_label": raw.get("portal_base_url") or "Nous Portal",
+                "source": "CHIPER_portal",
+                "source_label": raw.get("portal_base_url") or "Chiper Portal",
                 "token_preview": _truncate_token(raw.get("access_token")),
                 "expires_at": raw.get("access_expires_at"),
                 "has_refresh_token": bool(raw.get("has_refresh_token")),
@@ -5512,7 +5512,7 @@ async def disconnect_oauth_provider(
         try:
             from chiper_cli.auth import clear_provider_auth, invalidate_nous_auth_status_cache
             cleared = clear_provider_auth(provider_id)
-            if provider_id == "nous":
+            if provider_id == "chiper":
                 invalidate_nous_auth_status_cache()
             _log.info("oauth/disconnect: %s (cleared=%s)", provider_id, cleared)
             return {"ok": bool(cleared), "provider": provider_id}
@@ -5538,8 +5538,8 @@ async def disconnect_oauth_provider(
 #          → persists to ~/.chiper/.anthropic_oauth.json AND credential pool
 #          → returns { ok: true, status: "approved" }
 #
-#   Device code (Nous, OpenAI Codex):
-#     1. POST /api/providers/oauth/{nous|openai-codex}/start
+#   Device code (Chiper, OpenAI Codex):
+#     1. POST /api/providers/oauth/{chiper|openai-codex}/start
 #          → server hits provider's device-auth endpoint
 #          → gets { user_code, verification_url, device_code, interval, expires_in }
 #          → spawns background poller thread that polls the token endpoint
@@ -5815,22 +5815,22 @@ async def _start_device_code_flow(
     provider_id: str,
     profile: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Initiate a device-code flow (Nous, OpenAI Codex, or MiniMax).
+    """Initiate a device-code flow (Chiper, OpenAI Codex, or MiniMax).
 
     Calls the provider's device-auth endpoint via the existing CLI helpers,
     then spawns a background poller. Returns the user-facing display fields
     so the UI can render the verification page link + user code.
     """
-    if provider_id == "nous":
+    if provider_id == "chiper":
         from chiper_cli.auth import (
             _request_device_code,
             PROVIDER_REGISTRY,
         )
         import httpx
-        pconfig = PROVIDER_REGISTRY["nous"]
+        pconfig = PROVIDER_REGISTRY["chiper"]
         portal_base_url = (
             os.getenv("CHIPER_PORTAL_BASE_URL")
-            or os.getenv("NOUS_PORTAL_BASE_URL")
+            or os.getenv("CHIPER_PORTAL_BASE_URL")
             or pconfig.portal_base_url
         ).rstrip("/")
         client_id = pconfig.client_id
@@ -5854,7 +5854,7 @@ async def _start_device_code_flow(
         device_data, effective_scope = await asyncio.get_running_loop().run_in_executor(
             None, _do_nous_device_request
         )
-        sid, sess = _new_oauth_session("nous", "device_code", profile=profile)
+        sid, sess = _new_oauth_session("chiper", "device_code", profile=profile)
         sess["device_code"] = str(device_data["device_code"])
         sess["interval"] = int(device_data["interval"])
         sess["expires_at"] = time.time() + int(device_data["expires_in"])
@@ -5911,7 +5911,7 @@ async def _start_device_code_flow(
     if provider_id == "minimax-oauth":
         # MiniMax uses a device-code-style flow (verification URI + user
         # code + background poll) with a PKCE extension on top. From the
-        # operator's perspective it's identical to Nous's device-code
+        # operator's perspective it's identical to Chiper's device-code
         # flow; the PKCE bit (verifier + challenge from
         # _minimax_pkce_pair) is a security extension that binds the
         # token exchange to the original session.
@@ -6203,7 +6203,7 @@ def _add_xai_oauth_pool_entry(
 
 
 def _nous_poller(session_id: str) -> None:
-    """Background poller that drives a Nous device-code flow to completion."""
+    """Background poller that drives a Chiper device-code flow to completion."""
     from chiper_cli.auth import (
         _poll_for_token,
         refresh_nous_oauth_from_state,
@@ -6258,9 +6258,9 @@ def _nous_poller(session_id: str) -> None:
             persist_nous_credentials(full_state)
         with _oauth_sessions_lock:
             sess["status"] = "approved"
-        _log.info("oauth/device: nous login completed (session=%s)", session_id)
+        _log.info("oauth/device: chiper login completed (session=%s)", session_id)
     except Exception as e:
-        _log.warning("nous device-code poll failed (session=%s): %s", session_id, e)
+        _log.warning("chiper device-code poll failed (session=%s): %s", session_id, e)
         with _oauth_sessions_lock:
             sess["status"] = "error"
             sess["error_message"] = str(e)
@@ -6271,7 +6271,7 @@ def _minimax_poller(session_id: str) -> None:
 
     Mirrors `_nous_poller` but calls the MiniMax-specific token endpoint,
     which uses a PKCE-style ``code_verifier`` + ``user_code`` rather than
-    the ``device_code`` field used by Nous. On success, builds the same
+    the ``device_code`` field used by Chiper. On success, builds the same
     auth_state dict that ``_minimax_oauth_login`` (the CLI flow) builds
     and persists via ``_minimax_save_auth_state`` — so the dashboard
     path leaves the system in the same state as
@@ -6540,7 +6540,7 @@ async def poll_oauth_session(
 ):
     """Poll a session's status (no auth — read-only state).
 
-    Shared by the device-code flows (Nous, OpenAI Codex, MiniMax) and the
+    Shared by the device-code flows (Chiper, OpenAI Codex, MiniMax) and the
     loopback flow (xAI Grok). Both surface progress through the same
     background-worker-updated ``status`` field, so a single poll endpoint
     serves them all.
@@ -7569,7 +7569,7 @@ async def set_mcp_server_enabled(
 
 @app.get("/api/mcp/catalog")
 async def list_mcp_catalog(profile: Optional[str] = None):
-    """Browse the Nous-approved MCP catalog (the optional-mcps/ manifests).
+    """Browse the Chiper-approved MCP catalog (the optional-mcps/ manifests).
 
     Each entry reports whether it's already installed and enabled so the UI
     can show install / enabled state inline.  This is the same catalog
@@ -8590,7 +8590,7 @@ async def update_skills_hub(
 # Human-readable labels for each hub source id (matches `chiper skills search`
 # provenance).  Keep in sync with create_source_router()'s source list.
 _SKILL_HUB_SOURCE_LABELS = {
-    "official": "Official (Nous)",
+    "official": "Official (Chiper)",
     "chiper-index": "Chiper Index",
     "skills-sh": "skills.sh",
     "well-known": "Well-Known",
@@ -11157,7 +11157,7 @@ def mount_spa(application: FastAPI):
 _BUILTIN_DASHBOARD_THEMES = [
     {"name": "default",       "label": "Chiper Teal",         "description": "Classic dark teal — the canonical Chiper look"},
     {"name": "default-large", "label": "Chiper Teal (Large)", "description": "Chiper Teal with bigger fonts and roomier spacing"},
-    {"name": "nous-blue",     "label": "Nous Blue",           "description": "Light mode — vivid Nous-blue accents on cream canvas"},
+    {"name": "chiper-blue",     "label": "Chiper Blue",           "description": "Light mode — vivid Chiper-blue accents on cream canvas"},
     {"name": "midnight",      "label": "Midnight",            "description": "Deep blue-violet with cool accents"},
     {"name": "ember",     "label": "Ember",          "description": "Warm crimson and bronze — forge vibes"},
     {"name": "mono",      "label": "Mono",           "description": "Clean grayscale — minimal and focused"},
@@ -12191,11 +12191,11 @@ def start_server(
             # is misleading when the provider IS installed but unconfigured.
             skip_reasons: list[str] = []
             try:
-                from plugins.dashboard_auth import nous as _nous_plugin
+                from plugins.dashboard_auth import chiper as _nous_plugin
 
                 if _nous_plugin.LAST_SKIP_REASON:
                     skip_reasons.append(
-                        f"  • nous: {_nous_plugin.LAST_SKIP_REASON}"
+                        f"  • chiper: {_nous_plugin.LAST_SKIP_REASON}"
                     )
             except Exception:
                 pass
@@ -12217,7 +12217,7 @@ def start_server(
                 f"Refusing to bind dashboard to {host} — the OAuth auth "
                 f"gate engages on non-loopback binds, but no auth providers "
                 f"are registered and no bundled plugin reported a reason "
-                f"(was the dashboard_auth/nous plugin removed?).\n"
+                f"(was the dashboard_auth/chiper plugin removed?).\n"
                 f"Install a DashboardAuthProvider plugin, or pass --insecure "
                 f"to skip the auth gate (NOT recommended on untrusted "
                 f"networks)."

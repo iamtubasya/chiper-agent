@@ -32,8 +32,8 @@ High-level categories:
 
 For the authoritative code-derived registry, see [Built-in Tools Reference](/reference/tools-reference) and [Toolsets Reference](/reference/toolsets-reference).
 
-:::tip Nous Tool Gateway
-Paid [Nous Portal](https://portal.Chiper.com) subscribers can use web search, image generation, TTS, and browser automation through the **[Tool Gateway](tool-gateway.md)** — no separate API keys needed. Run `chiper model` to enable it, or configure individual tools with `chiper tools`.
+:::tip Chiper tool gateway
+Paid [Chiper Portal](https://portal.chiper.local) subscribers can use web search, image generation, TTS, and browser automation through the **[Tool Gateway](tool-gateway.md)** — no separate API keys needed. Run `chiper model` to enable it, or configure individual tools with `chiper tools`.
 :::
 
 ## Using Toolsets

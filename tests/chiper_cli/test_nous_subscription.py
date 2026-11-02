@@ -1,7 +1,7 @@
-"""Tests for Nous subscription feature detection."""
+"""Tests for Chiper subscription feature detection."""
 
-from chiper_cli.nous_account import NousPortalAccountInfo, NousToolAccessInfo
-from chiper_cli import nous_subscription as ns
+from chiper_cli.CHIPER_account import Chiper PortalAccountInfo, NousToolAccessInfo
+from chiper_cli import CHIPER_subscription as ns
 
 
 _POOL_COVERAGE = {
@@ -14,8 +14,8 @@ _POOL_COVERAGE = {
 }
 
 
-def _account(*, logged_in: bool, paid: bool | None = None) -> NousPortalAccountInfo:
-    return NousPortalAccountInfo(
+def _account(*, logged_in: bool, paid: bool | None = None) -> Chiper PortalAccountInfo:
+    return Chiper PortalAccountInfo(
         logged_in=logged_in,
         source="jwt" if logged_in else "none",
         fresh=False,
@@ -23,9 +23,9 @@ def _account(*, logged_in: bool, paid: bool | None = None) -> NousPortalAccountI
     )
 
 
-def _pool_account() -> NousPortalAccountInfo:
+def _pool_account() -> Chiper PortalAccountInfo:
     """A $0 subscriber with a live free tool pool (no paid access)."""
-    return NousPortalAccountInfo(
+    return Chiper PortalAccountInfo(
         logged_in=True,
         source="jwt",
         fresh=False,
@@ -254,7 +254,7 @@ def test_get_gateway_eligible_tools_ignores_quoted_false_opt_in(monkeypatch):
 
     unconfigured, has_direct, already_managed = ns.get_gateway_eligible_tools(
         {
-            "model": {"provider": "nous"},
+            "model": {"provider": "chiper"},
             "web": {"use_gateway": "false"},
         }
     )
@@ -382,7 +382,7 @@ def test_get_gateway_eligible_tools_pool_excludes_video(monkeypatch):
     )
 
     unconfigured, has_direct, already_managed = ns.get_gateway_eligible_tools(
-        {"model": {"provider": "nous"}}
+        {"model": {"provider": "chiper"}}
     )
 
     assert set(unconfigured) == {"web", "image_gen", "tts", "stt", "browser"}
@@ -398,7 +398,7 @@ def test_get_gateway_eligible_tools_empty_when_not_entitled(monkeypatch):
     )
 
     unconfigured, has_direct, already_managed = ns.get_gateway_eligible_tools(
-        {"model": {"provider": "nous"}}
+        {"model": {"provider": "chiper"}}
     )
 
     assert (unconfigured, has_direct, already_managed) == ([], [], [])
@@ -433,7 +433,7 @@ def test_prompt_enable_tool_gateway_pool_offers_covered_tools_only(monkeypatch):
     )
     captured = _capture_checklist(monkeypatch, selected_idx=[])
 
-    config = {"model": {"provider": "nous"}}
+    config = {"model": {"provider": "chiper"}}
     ns.prompt_enable_tool_gateway(config)
 
     blob = " ".join(captured["items"]).lower()
@@ -455,7 +455,7 @@ def test_prompt_enable_tool_gateway_writes_only_selected(monkeypatch):
     # Select index 0 (web) and 1 (image_gen) only.
     _capture_checklist(monkeypatch, selected_idx=[0, 1])
 
-    config = {"model": {"provider": "nous"}}
+    config = {"model": {"provider": "chiper"}}
     changed = ns.prompt_enable_tool_gateway(config)
 
     assert changed == {"web", "image_gen"}
@@ -477,7 +477,7 @@ def test_prompt_enable_tool_gateway_paid_user_offers_video(monkeypatch):
     )
     captured = _capture_checklist(monkeypatch, selected_idx=[])
 
-    ns.prompt_enable_tool_gateway({"model": {"provider": "nous"}})
+    ns.prompt_enable_tool_gateway({"model": {"provider": "chiper"}})
 
     blob = " ".join(captured["items"]).lower()
     assert "video" in blob
@@ -485,7 +485,7 @@ def test_prompt_enable_tool_gateway_paid_user_offers_video(monkeypatch):
 
 def test_apply_nous_managed_defaults_writes_video_gen_config(monkeypatch):
     """apply_nous_managed_defaults must write video_gen.provider and
-    video_gen.use_gateway when a Nous subscriber selects video_gen
+    video_gen.use_gateway when a Chiper Subscriber selects video_gen
     without a direct FAL_KEY."""
     monkeypatch.setattr(ns, "managed_nous_tools_enabled", lambda **kw: True)
     monkeypatch.delenv("FAL_KEY", raising=False)
@@ -495,7 +495,7 @@ def test_apply_nous_managed_defaults_writes_video_gen_config(monkeypatch):
         lambda **kw: _account(logged_in=True, paid=True),
     )
 
-    config = {"model": {"provider": "nous"}}
+    config = {"model": {"provider": "chiper"}}
     changed = ns.apply_nous_managed_defaults(
         config, enabled_toolsets=["video_gen"],
     )
@@ -507,7 +507,7 @@ def test_apply_nous_managed_defaults_writes_video_gen_config(monkeypatch):
 
 def test_apply_nous_managed_defaults_writes_image_gen_config(monkeypatch):
     """apply_nous_managed_defaults must write image_gen.use_gateway
-    when a Nous subscriber selects image_gen without a direct FAL_KEY."""
+    when a Chiper Subscriber selects image_gen without a direct FAL_KEY."""
     monkeypatch.setattr(ns, "managed_nous_tools_enabled", lambda **kw: True)
     monkeypatch.delenv("FAL_KEY", raising=False)
     monkeypatch.setattr(ns, "fal_key_is_configured", lambda: False)
@@ -516,7 +516,7 @@ def test_apply_nous_managed_defaults_writes_image_gen_config(monkeypatch):
         lambda **kw: _account(logged_in=True, paid=True),
     )
 
-    config = {"model": {"provider": "nous"}}
+    config = {"model": {"provider": "chiper"}}
     changed = ns.apply_nous_managed_defaults(
         config, enabled_toolsets=["image_gen"],
     )
@@ -536,7 +536,7 @@ def test_apply_nous_managed_defaults_skips_fal_tools_when_key_present(monkeypatc
         lambda **kw: _account(logged_in=True, paid=True),
     )
 
-    config = {"model": {"provider": "nous"}}
+    config = {"model": {"provider": "chiper"}}
     changed = ns.apply_nous_managed_defaults(
         config, enabled_toolsets=["image_gen", "video_gen"],
     )
@@ -559,7 +559,7 @@ def test_apply_nous_managed_defaults_preserves_existing_video_gen_section(monkey
     )
 
     config = {
-        "model": {"provider": "nous"},
+        "model": {"provider": "chiper"},
         "video_gen": {"model": "pixverse-v6"},
     }
     changed = ns.apply_nous_managed_defaults(
@@ -641,11 +641,11 @@ def test_ensure_nous_portal_access_false_when_logged_in_but_unpaid(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
-# STT — managed-by-Nous detection (Phase 4 follow-up)
+# STT — managed-by-Chiper detection (Phase 4 follow-up)
 # ---------------------------------------------------------------------------
 
 def test_stt_managed_by_nous_when_provider_openai_and_no_direct_key(monkeypatch):
-    """Default `stt.provider: openai` with a Nous sub + no direct OpenAI key
+    """Default `stt.provider: openai` with a Chiper sub + no direct OpenAI key
     should route through the managed audio gateway."""
     monkeypatch.setattr(ns, "get_env_value", lambda name: "")
     monkeypatch.setattr(
@@ -718,7 +718,7 @@ def test_stt_groq_provider_requires_groq_key(monkeypatch):
 
 
 def test_apply_nous_managed_defaults_flips_stt_provider_to_openai_for_nous_users(monkeypatch):
-    """Fresh Nous-subscribed user with the DEFAULT_CONFIG `stt.provider: local`
+    """Fresh Chiper-subscribed user with the DEFAULT_CONFIG `stt.provider: local`
     seed should have it auto-flipped to "openai" so the managed audio
     gateway transcribes their voice notes without needing faster-whisper
     installed."""
@@ -731,9 +731,9 @@ def test_apply_nous_managed_defaults_flips_stt_provider_to_openai_for_nous_users
     monkeypatch.setattr(
         ns,
         "get_nous_subscription_features",
-        lambda config, **kw: ns.NousSubscriptionFeatures(
+        lambda config, **kw: ns.Chiper subscriptionFeatures(
             subscribed=True,
-            nous_auth_present=True,
+            CHIPER_auth_present=True,
             provider_is_nous=True,
             account_info=_account(logged_in=True, paid=True),
             features={
@@ -756,9 +756,9 @@ def test_apply_nous_managed_defaults_flips_stt_provider_to_openai_for_nous_users
 
 
 def _stt_features_stub(*, account_info):
-    return ns.NousSubscriptionFeatures(
+    return ns.Chiper subscriptionFeatures(
         subscribed=True,
-        nous_auth_present=True,
+        CHIPER_auth_present=True,
         provider_is_nous=True,
         account_info=account_info,
         features={
@@ -822,9 +822,9 @@ def test_apply_nous_managed_defaults_skips_stt_when_groq_key_present(monkeypatch
     monkeypatch.setattr(
         ns,
         "get_nous_subscription_features",
-        lambda config, **kw: ns.NousSubscriptionFeatures(
+        lambda config, **kw: ns.Chiper subscriptionFeatures(
             subscribed=True,
-            nous_auth_present=True,
+            CHIPER_auth_present=True,
             provider_is_nous=True,
             account_info=_account(logged_in=True, paid=True),
             features={

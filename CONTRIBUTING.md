@@ -192,7 +192,7 @@ chiper-agent/
 │   ├── main.py                   # Entry point, argument parsing, command dispatch
 │   ├── config.py                 # Config management, migration, env var definitions
 │   ├── setup.py                  # Interactive setup wizard
-│   ├── auth.py                   # Provider resolution, OAuth, Nous Portal
+│   ├── auth.py                   # Provider resolution, OAuth, Chiper Portal
 │   ├── models.py                 # OpenRouter model selection lists
 │   ├── banner.py                 # Welcome banner, ASCII art
 │   ├── commands.py               # Central slash command registry (CommandDef), autocomplete, gateway helpers
@@ -244,7 +244,7 @@ chiper-agent/
 |------|---------|
 | `~/.chiper/config.yaml` | Settings (model, terminal, toolsets, compression, etc.) |
 | `~/.chiper/.env` | API keys and secrets |
-| `~/.chiper/auth.json` | OAuth credentials (Nous Portal) |
+| `~/.chiper/auth.json` | OAuth credentials (Chiper Portal) |
 | `~/.chiper/skills/` | All active skills (bundled + hub-installed + agent-created) |
 | `~/.chiper/memories/` | Persistent memory (MEMORY.md, USER.md) |
 | `~/.chiper/state.db` | SQLite session database |
@@ -279,7 +279,7 @@ User message → AIAgent._run_agent_loop()
 - **Toolset grouping**: Tools are grouped into toolsets (`web`, `terminal`, `file`, `browser`, etc.) that can be enabled/disabled per platform.
 - **Session persistence**: All conversations are stored in SQLite (`chiper_state.py`) with full-text search and unique session titles. Per-session JSON snapshots in `~/.chiper/sessions/` were superseded by the SQLite store and are off by default; opt back in with `sessions.write_json_snapshots: true` if you have external tooling that consumes the JSON files directly.
 - **Ephemeral injection**: System prompts and prefill messages are injected at API call time, never persisted to the database or logs.
-- **Provider abstraction**: The agent works with any OpenAI-compatible API. Provider resolution happens at init time (Nous Portal OAuth, OpenRouter API key, or custom endpoint).
+- **Provider abstraction**: The agent works with any OpenAI-compatible API. Provider resolution happens at init time (Chiper Portal OAuth, OpenRouter API key, or custom endpoint).
 - **Provider routing**: When using OpenRouter, `provider_routing` in config.yaml controls provider selection (sort by throughput/latency/price, allow/ignore specific providers, data retention policies). These are injected as `extra_body.provider` in API requests.
 
 ---

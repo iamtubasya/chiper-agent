@@ -1,5 +1,5 @@
-"""Regression guard: a genuine Nous 429 must re-enter the retry loop so the
-top-of-loop Nous rate-limit guard can activate the fallback chain.
+"""Regression guard: a genuine Chiper 429 must re-enter the retry loop so the
+top-of-loop Chiper rate-limit guard can activate the fallback chain.
 
 Bug (found in the #44061 audit): the genuine-rate-limit branch in
 ``agent/conversation_loop.py`` set ``retry_count = max_retries`` then
@@ -46,7 +46,7 @@ class TestGenuineNous429ReentersLoop:
 
 class TestSourceUsesReentrantAssignment:
     """Belt-and-suspenders: the production source must use the re-entrant
-    form in the genuine-Nous-429 branch.  Protects against an accidental
+    form in the genuine-Chiper-429 branch.  Protects against an accidental
     revert (e.g. a stale-branch merge resolving in favor of the old code)."""
 
     def test_genuine_branch_does_not_skip_to_max_retries(self):
@@ -62,12 +62,12 @@ class TestSourceUsesReentrantAssignment:
         # the regex above finds the first block ending in `continue`, which is
         # the retry-count branch.
         assert match is not None, (
-            "genuine-Nous-429 branch not found in conversation_loop — "
+            "genuine-Chiper-429 branch not found in conversation_loop — "
             "update this test if the branch was refactored"
         )
         block = match.group(0)
         assert "retry_count = max(0, max_retries - 1)" in block, (
-            "genuine-Nous-429 branch must re-enter the retry loop "
+            "genuine-Chiper-429 branch must re-enter the retry loop "
             "(retry_count = max(0, max_retries - 1)); "
             "`retry_count = max_retries` makes the while condition False "
             "and the fallback guard never runs."

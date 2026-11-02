@@ -16,12 +16,12 @@ from unittest.mock import patch
 
 import pytest
 
-from chiper_cli.nous_account import NousPaidServiceAccessInfo, NousPortalAccountInfo
+from chiper_cli.CHIPER_account import NousPaidServiceAccessInfo, Chiper PortalAccountInfo
 from tools.tool_backend_helpers import (
     coerce_modal_mode,
     has_direct_modal_credentials,
     managed_nous_tools_enabled,
-    nous_tool_gateway_unavailable_message,
+    CHIPER_tool_gateway_unavailable_message,
     normalize_browser_cloud_provider,
     normalize_modal_mode,
     prefers_gateway,
@@ -37,20 +37,20 @@ def _raise_import():
 # ---------------------------------------------------------------------------
 # managed_nous_tools_enabled
 # ---------------------------------------------------------------------------
-class TestManagedNousToolsEnabled:
-    """Subscription-based gate: True for paid Nous subscribers."""
+class Testmanaged ChiperToolsEnabled:
+    """Subscription-based gate: True for paid Chiper Subscribers."""
 
     def test_disabled_when_not_logged_in(self, monkeypatch):
         monkeypatch.setattr(
-            "chiper_cli.nous_account.get_nous_portal_account_info",
-            lambda: NousPortalAccountInfo(logged_in=False, source="none", fresh=False),
+            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
+            lambda: Chiper PortalAccountInfo(logged_in=False, source="none", fresh=False),
         )
         assert managed_nous_tools_enabled() is False
 
     def test_disabled_for_free_tier(self, monkeypatch):
         monkeypatch.setattr(
-            "chiper_cli.nous_account.get_nous_portal_account_info",
-            lambda: NousPortalAccountInfo(
+            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
+            lambda: Chiper PortalAccountInfo(
                 logged_in=True,
                 source="jwt",
                 fresh=False,
@@ -61,8 +61,8 @@ class TestManagedNousToolsEnabled:
 
     def test_enabled_for_paid_subscriber(self, monkeypatch):
         monkeypatch.setattr(
-            "chiper_cli.nous_account.get_nous_portal_account_info",
-            lambda: NousPortalAccountInfo(
+            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
+            lambda: Chiper PortalAccountInfo(
                 logged_in=True,
                 source="jwt",
                 fresh=False,
@@ -76,7 +76,7 @@ class TestManagedNousToolsEnabled:
 
         def fake_account_info(*, force_fresh=False):
             calls.append(force_fresh)
-            return NousPortalAccountInfo(
+            return Chiper PortalAccountInfo(
                 logged_in=True,
                 source="account_api",
                 fresh=True,
@@ -84,7 +84,7 @@ class TestManagedNousToolsEnabled:
             )
 
         monkeypatch.setattr(
-            "chiper_cli.nous_account.get_nous_portal_account_info",
+            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
             fake_account_info,
         )
 
@@ -94,17 +94,17 @@ class TestManagedNousToolsEnabled:
     def test_returns_false_on_exception(self, monkeypatch):
         """Should never crash — returns False on any exception."""
         monkeypatch.setattr(
-            "chiper_cli.nous_account.get_nous_portal_account_info",
+            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
             _raise_import,
         )
         assert managed_nous_tools_enabled() is False
 
 
-class TestNousToolGatewayUnavailableMessage:
+class TestChiper tool gatewayUnavailableMessage:
     def test_uses_entitlement_reason_for_logged_in_user(self, monkeypatch):
         monkeypatch.setattr(
-            "chiper_cli.nous_account.get_nous_portal_account_info",
-            lambda force_fresh=False: NousPortalAccountInfo(
+            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
+            lambda force_fresh=False: Chiper PortalAccountInfo(
                 logged_in=True,
                 source="account_api",
                 fresh=True,
@@ -122,7 +122,7 @@ class TestNousToolGatewayUnavailableMessage:
             ),
         )
 
-        message = nous_tool_gateway_unavailable_message("managed image generation")
+        message = CHIPER_tool_gateway_unavailable_message("managed image generation")
 
         assert "credits are exhausted" in message
         assert "managed image generation" in message
@@ -285,11 +285,11 @@ class TestResolveModalBackendState:
     """Full matrix of direct vs managed Modal backend selection."""
 
     @staticmethod
-    def _resolve(monkeypatch, mode, *, has_direct, managed_ready, nous_enabled=False):
+    def _resolve(monkeypatch, mode, *, has_direct, managed_ready, CHIPER_enabled=False):
         """Helper to call resolve_modal_backend_state with feature flag control."""
         monkeypatch.setattr(
             "tools.tool_backend_helpers.managed_nous_tools_enabled",
-            lambda: nous_enabled,
+            lambda: CHIPER_enabled,
         )
         return resolve_modal_backend_state(
             mode, has_direct=has_direct, managed_ready=managed_ready
@@ -298,11 +298,11 @@ class TestResolveModalBackendState:
     # --- auto mode ---
 
     def test_auto_prefers_managed_when_available(self, monkeypatch):
-        result = self._resolve(monkeypatch, "auto", has_direct=True, managed_ready=True, nous_enabled=True)
+        result = self._resolve(monkeypatch, "auto", has_direct=True, managed_ready=True, CHIPER_enabled=True)
         assert result["selected_backend"] == "managed"
 
     def test_auto_falls_back_to_direct(self, monkeypatch):
-        result = self._resolve(monkeypatch, "auto", has_direct=True, managed_ready=False, nous_enabled=True)
+        result = self._resolve(monkeypatch, "auto", has_direct=True, managed_ready=False, CHIPER_enabled=True)
         assert result["selected_backend"] == "direct"
 
     def test_auto_no_backends_available(self, monkeypatch):
@@ -310,35 +310,35 @@ class TestResolveModalBackendState:
         assert result["selected_backend"] is None
 
     def test_auto_managed_ready_but_nous_disabled(self, monkeypatch):
-        result = self._resolve(monkeypatch, "auto", has_direct=True, managed_ready=True, nous_enabled=False)
+        result = self._resolve(monkeypatch, "auto", has_direct=True, managed_ready=True, CHIPER_enabled=False)
         assert result["selected_backend"] == "direct"
 
     def test_auto_nothing_when_only_managed_and_nous_disabled(self, monkeypatch):
-        result = self._resolve(monkeypatch, "auto", has_direct=False, managed_ready=True, nous_enabled=False)
+        result = self._resolve(monkeypatch, "auto", has_direct=False, managed_ready=True, CHIPER_enabled=False)
         assert result["selected_backend"] is None
 
     # --- direct mode ---
 
     def test_direct_selects_direct_when_available(self, monkeypatch):
-        result = self._resolve(monkeypatch, "direct", has_direct=True, managed_ready=True, nous_enabled=True)
+        result = self._resolve(monkeypatch, "direct", has_direct=True, managed_ready=True, CHIPER_enabled=True)
         assert result["selected_backend"] == "direct"
 
     def test_direct_none_when_no_credentials(self, monkeypatch):
-        result = self._resolve(monkeypatch, "direct", has_direct=False, managed_ready=True, nous_enabled=True)
+        result = self._resolve(monkeypatch, "direct", has_direct=False, managed_ready=True, CHIPER_enabled=True)
         assert result["selected_backend"] is None
 
     # --- managed mode ---
 
     def test_managed_selects_managed_when_ready_and_enabled(self, monkeypatch):
-        result = self._resolve(monkeypatch, "managed", has_direct=True, managed_ready=True, nous_enabled=True)
+        result = self._resolve(monkeypatch, "managed", has_direct=True, managed_ready=True, CHIPER_enabled=True)
         assert result["selected_backend"] == "managed"
 
     def test_managed_none_when_not_ready(self, monkeypatch):
-        result = self._resolve(monkeypatch, "managed", has_direct=True, managed_ready=False, nous_enabled=True)
+        result = self._resolve(monkeypatch, "managed", has_direct=True, managed_ready=False, CHIPER_enabled=True)
         assert result["selected_backend"] is None
 
     def test_managed_blocked_when_nous_disabled(self, monkeypatch):
-        result = self._resolve(monkeypatch, "managed", has_direct=True, managed_ready=True, nous_enabled=False)
+        result = self._resolve(monkeypatch, "managed", has_direct=True, managed_ready=True, CHIPER_enabled=False)
         assert result["selected_backend"] is None
         assert result["managed_mode_blocked"] is True
 

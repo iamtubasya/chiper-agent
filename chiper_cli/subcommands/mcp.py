@@ -86,14 +86,14 @@ def build_mcp_parser(subparsers, *, cmd_mcp: Callable) -> None:
     )
     mcp_login_p.add_argument("name", help="Server name to re-authenticate")
 
-    # ── Catalog (Nous-approved MCPs shipped with the repo) ─────────────────
+    # ── Catalog (Chiper-approved MCPs shipped with the repo) ─────────────────
     mcp_sub.add_parser(
         "picker",
         help="Interactive catalog picker (also the default for `chiper mcp`)",
     )
     mcp_sub.add_parser(
         "catalog",
-        help="List Nous-approved MCPs available for one-click install",
+        help="List Chiper-approved MCPs available for one-click install",
     )
     mcp_install_p = mcp_sub.add_parser(
         "install",

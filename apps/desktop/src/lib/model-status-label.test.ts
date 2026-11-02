@@ -38,7 +38,7 @@ describe('model-status-label', () => {
 
   describe('currentPickerSelection', () => {
     const store = { model: 'opus', provider: 'anthropic' }
-    const options = { model: 'chiper-4', provider: 'nous' }
+    const options = { model: 'chiper-4', provider: 'chiper' }
 
     it('prefers the sticky composer pick over the profile default pre-session', () => {
       expect(currentPickerSelection(false, store, options)).toEqual(store)

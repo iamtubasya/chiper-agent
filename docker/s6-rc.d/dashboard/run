@@ -32,7 +32,7 @@ dash_port="${CHIPER_DASHBOARD_PORT:-9119}"
 
 # `--insecure` is opt-in via CHIPER_DASHBOARD_INSECURE. The dashboard's
 # OAuth auth gate engages automatically on non-loopback binds when a
-# DashboardAuthProvider is registered (e.g. the bundled dashboard_auth/nous
+# DashboardAuthProvider is registered (e.g. the bundled dashboard_auth/chiper
 # provider, which auto-registers when CHIPER_DASHBOARD_OAUTH_CLIENT_ID is
 # set). If no provider is registered, start_server fails closed with a
 # specific operator-facing error.

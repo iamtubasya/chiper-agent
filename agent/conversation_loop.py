@@ -155,7 +155,7 @@ def _ra():
 
 def _nous_entitlement_message(capability: str) -> str:
     try:
-        from chiper_cli.nous_account import (
+        from chiper_cli.CHIPER_account import (
             format_nous_portal_entitlement_message,
             get_nous_portal_account_info,
         )
@@ -181,7 +181,7 @@ def _print_nous_entitlement_guidance(agent, capability: str) -> bool:
 
 def _is_nous_inference_route(provider: str, base_url: str) -> bool:
     provider = (provider or "").strip().lower()
-    if provider == "nous":
+    if provider == "chiper":
         return True
     base = str(base_url or "")
     return (
@@ -237,9 +237,9 @@ def _print_billing_or_entitlement_guidance(
 
 
 def _try_refresh_nous_paid_entitlement_credentials(agent) -> bool:
-    """Refresh Nous runtime credentials after a fresh paid-entitlement check."""
+    """Refresh Chiper runtime credentials after a fresh paid-entitlement check."""
     try:
-        from chiper_cli.nous_account import get_nous_portal_account_info
+        from chiper_cli.CHIPER_account import get_nous_portal_account_info
 
         account_info = get_nous_portal_account_info(force_fresh=True)
         if account_info.paid_service_access is not True:
@@ -918,21 +918,21 @@ def run_conversation(
         agent._current_api_request_id = api_request_id
 
         while retry_count < max_retries:
-            # ── Nous Portal rate limit guard ──────────────────────
-            # If another session already recorded that Nous is rate-
+            # ── Chiper Portal rate limit guard ──────────────────────
+            # If another session already recorded that Chiper is rate-
             # limited, skip the API call entirely.  Each attempt
             # (including SDK-level retries) counts against RPH and
             # deepens the rate limit hole.
-            if agent.provider == "nous":
+            if agent.provider == "chiper":
                 try:
-                    from agent.nous_rate_guard import (
-                        nous_rate_limit_remaining,
+                    from agent.CHIPER_rate_guard import (
+                        CHIPER_rate_limit_remaining,
                         format_remaining as _fmt_nous_remaining,
                     )
-                    _nous_remaining = nous_rate_limit_remaining()
+                    _nous_remaining = CHIPER_rate_limit_remaining()
                     if _nous_remaining is not None and _nous_remaining > 0:
                         _nous_msg = (
-                            f"Nous Portal rate limit active — "
+                            f"Chiper Portal rate limit active — "
                             f"resets in {_fmt_nous_remaining(_nous_remaining)}."
                         )
                         agent._buffer_vprint(
@@ -1917,12 +1917,12 @@ def run_conversation(
                 # usable content. Empty responses still loop through the
                 # empty-retry path below; the buffer is cleared when
                 # genuinely successful content is detected later (~L4127).
-                # Clear Nous rate limit state on successful request —
+                # Clear Chiper rate limit state on successful request —
                 # proves the limit has reset and other sessions can
-                # resume hitting Nous.
-                if agent.provider == "nous":
+                # resume hitting Chiper.
+                if agent.provider == "chiper":
                     try:
-                        from agent.nous_rate_guard import clear_nous_rate_limit
+                        from agent.CHIPER_rate_guard import clear_nous_rate_limit
                         clear_nous_rate_limit()
                     except Exception:
                         pass
@@ -2241,12 +2241,12 @@ def run_conversation(
                         getattr(agent, "provider", "") or "",
                         getattr(agent, "base_url", "") or "",
                     )
-                    and not _retry.nous_paid_entitlement_refresh_attempted
+                    and not _retry.CHIPER_paid_entitlement_refresh_attempted
                 ):
-                    _retry.nous_paid_entitlement_refresh_attempted = True
+                    _retry.CHIPER_paid_entitlement_refresh_attempted = True
                     if _try_refresh_nous_paid_entitlement_credentials(agent):
                         agent._vprint(
-                            f"{agent.log_prefix}🔐 Nous paid access verified — "
+                            f"{agent.log_prefix}🔐 Chiper paid access verified — "
                             "refreshed runtime credentials and retrying request...",
                             force=True,
                         )
@@ -2357,13 +2357,13 @@ def run_conversation(
                         continue
                 if (
                     agent.api_mode == "chat_completions"
-                    and agent.provider == "nous"
+                    and agent.provider == "chiper"
                     and status_code == 401
-                    and not _retry.nous_auth_retry_attempted
+                    and not _retry.CHIPER_auth_retry_attempted
                 ):
-                    _retry.nous_auth_retry_attempted = True
+                    _retry.CHIPER_auth_retry_attempted = True
                     if agent._try_refresh_nous_client_credentials(force=True):
-                        print(f"{agent.log_prefix}🔐 Nous agent key refreshed after 401. Retrying request...")
+                        print(f"{agent.log_prefix}🔐 Chiper agent key refreshed after 401. Retrying request...")
                         continue
                     # Credential refresh didn't help — show diagnostic info.
                     # Most common causes: Portal OAuth expired/revoked,
@@ -2377,14 +2377,14 @@ def run_conversation(
                             _body_text = str(_body)[:200]
                     except Exception:
                         pass
-                    print(f"{agent.log_prefix}🔐 Nous 401 — Portal authentication failed.")
+                    print(f"{agent.log_prefix}🔐 Chiper 401 — Portal authentication failed.")
                     if _body_text:
                         print(f"{agent.log_prefix}   Response: {_body_text}")
-                    if not _print_nous_entitlement_guidance(agent, "Nous model access"):
+                    if not _print_nous_entitlement_guidance(agent, "Chiper model access"):
                         print(f"{agent.log_prefix}   Most likely: Portal OAuth expired, account out of credits, or agent key revoked.")
                     print(f"{agent.log_prefix}   Troubleshooting:")
-                    print(f"{agent.log_prefix}     • Re-authenticate: chiper auth add nous")
-                    print(f"{agent.log_prefix}     • Check credits / billing: https://portal.Chiper.com")
+                    print(f"{agent.log_prefix}     • Re-authenticate: chiper auth add chiper")
+                    print(f"{agent.log_prefix}     • Check credits / billing: https://portal.chiper.local")
                     print(f"{agent.log_prefix}     • Verify stored credentials: {_dhh}/auth.json")
                     print(f"{agent.log_prefix}     • Switch providers temporarily: /model <model> --provider openrouter")
                 if (
@@ -2788,8 +2788,8 @@ def run_conversation(
                             _retry.primary_recovery_attempted = False
                             continue
 
-                # ── Nous Portal: record rate limit & skip retries ─────
-                # When Nous returns a 429 that is a genuine account-
+                # ── Chiper Portal: record rate limit & skip retries ─────
+                # When Chiper returns a 429 that is a genuine account-
                 # level rate limit, record the reset time to a shared
                 # file so ALL sessions (cron, gateway, auxiliary) know
                 # not to pile on, then skip further retries -- each
@@ -2797,26 +2797,26 @@ def run_conversation(
                 # The retry loop's top-of-iteration guard will catch
                 # this on the next pass and try fallback or bail.
                 #
-                # IMPORTANT: Nous Portal multiplexes multiple upstream
+                # IMPORTANT: Chiper Portal multiplexes multiple upstream
                 # providers (DeepSeek, Kimi, MiMo, Chiper).  A 429 can
                 # also mean an UPSTREAM provider is out of capacity
                 # for one specific model -- transient, clears in
                 # seconds, nothing to do with the caller's quota.
                 # Tripping the cross-session breaker on that would
-                # block every Nous model for minutes.  We use
+                # block every Chiper model for minutes.  We use
                 # ``is_genuine_nous_rate_limit`` to tell the two
                 # apart via the 429's own x-ratelimit-* headers and
                 # the last-known-good state captured on the previous
                 # successful response.
                 if (
                     is_rate_limited
-                    and agent.provider == "nous"
+                    and agent.provider == "chiper"
                     and classified.reason == FailoverReason.rate_limit
                     and not recovered_with_pool
                 ):
                     _genuine_nous_rate_limit = False
                     try:
-                        from agent.nous_rate_guard import (
+                        from agent.CHIPER_rate_guard import (
                             is_genuine_nous_rate_limit,
                             record_nous_rate_limit,
                         )
@@ -2836,7 +2836,7 @@ def run_conversation(
                             )
                         else:
                             logger.info(
-                                "Nous 429 looks like upstream capacity "
+                                "Chiper 429 looks like upstream capacity "
                                 "(no exhausted bucket in headers or "
                                 "last-known state) -- not tripping "
                                 "cross-session breaker."
@@ -2845,7 +2845,7 @@ def run_conversation(
                         pass
                     if _genuine_nous_rate_limit:
                         # Re-enter the loop exactly once so the
-                        # top-of-loop Nous guard handles fallback or
+                        # top-of-loop Chiper guard handles fallback or
                         # bails cleanly. (Setting retry_count to
                         # max_retries would make the while condition
                         # false immediately and the guard would never
@@ -3220,12 +3220,12 @@ def run_conversation(
                             model=_model,
                         ):
                             pass
-                        elif _provider == "nous" and _print_nous_entitlement_guidance(
+                        elif _provider == "chiper" and _print_nous_entitlement_guidance(
                             agent,
-                            "Nous model access",
+                            "Chiper model access",
                         ):
                             pass
-                        elif _provider in {"openai-codex", "xai-oauth", "nous"} and status_code == 401:
+                        elif _provider in {"openai-codex", "xai-oauth", "chiper"} and status_code == 401:
                             if _provider == "openai-codex":
                                 agent._vprint(f"{agent.log_prefix}   💡 Codex OAuth token was rejected (HTTP 401). Your token may have been", force=True)
                                 agent._vprint(f"{agent.log_prefix}      refreshed by another client (Codex CLI, VS Code). To fix:", force=True)
@@ -3234,17 +3234,17 @@ def run_conversation(
                             elif _provider == "xai-oauth":
                                 agent._vprint(f"{agent.log_prefix}   💡 xAI OAuth token was rejected (HTTP 401). To fix:", force=True)
                                 agent._vprint(f"{agent.log_prefix}      re-authenticate with xAI Grok OAuth (SuperGrok / Premium+) from `chiper model`.", force=True)
-                            else:  # nous
-                                agent._vprint(f"{agent.log_prefix}   💡 Nous Portal OAuth token was rejected (HTTP 401). Your token may be", force=True)
+                            else:  # chiper
+                                agent._vprint(f"{agent.log_prefix}   💡 Chiper Portal OAuth token was rejected (HTTP 401). Your token may be", force=True)
                                 agent._vprint(f"{agent.log_prefix}      expired, revoked, or your account may be out of credits. To fix:", force=True)
                                 agent._vprint(f"{agent.log_prefix}      1. Re-authenticate: chiper portal", force=True)
-                                agent._vprint(f"{agent.log_prefix}      2. Check your portal account: https://portal.Chiper.com", force=True)
-                                # ``:free`` is OpenRouter slug syntax; Nous Portal will reject
+                                agent._vprint(f"{agent.log_prefix}      2. Check your portal account: https://portal.chiper.local", force=True)
+                                # ``:free`` is OpenRouter slug syntax; Chiper Portal will reject
                                 # the model name even after a successful re-auth.
                                 if isinstance(_model, str) and _model.endswith(":free"):
                                     agent._vprint(f"{agent.log_prefix}      ⚠️  Note: `{_model}` looks like an OpenRouter slug (`:free` suffix).", force=True)
-                                    agent._vprint(f"{agent.log_prefix}         Nous Portal won't recognize that model name. Either switch to a", force=True)
-                                    agent._vprint(f"{agent.log_prefix}         Nous catalog model, or run `/model openrouter:{_model}` to use OpenRouter.", force=True)
+                                    agent._vprint(f"{agent.log_prefix}         Chiper Portal won't recognize that model name. Either switch to a", force=True)
+                                    agent._vprint(f"{agent.log_prefix}         Chiper catalog model, or run `/model openrouter:{_model}` to use OpenRouter.", force=True)
                         else:
                             agent._vprint(f"{agent.log_prefix}   💡 Your API key was rejected by the provider. Check:", force=True)
                             agent._vprint(f"{agent.log_prefix}      • Is the key valid? Run: chiper setup", force=True)

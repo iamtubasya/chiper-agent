@@ -243,7 +243,7 @@ def self_provision_if_managed() -> bool:
 
     Fires only on a MANAGED boot (``is_managed()``) with relay configured
     (``relay_url()`` set) and NO per-gateway secret already present. In that case
-    the runtime resolves the agent's own Nous access token (the same
+    the runtime resolves the agent's own Chiper access token (the same
     ``resolve_nous_access_token()`` the enroll CLI / dashboard register use),
     POSTs ``/relay/provision`` asserting its own endpoint + route keys, and sets
     ``GATEWAY_RELAY_ID`` / ``GATEWAY_RELAY_SECRET`` / ``GATEWAY_RELAY_DELIVERY_KEY``
@@ -289,7 +289,7 @@ def self_provision_if_managed() -> bool:
 
         access_token = resolve_nous_access_token()
     except Exception as exc:  # noqa: BLE001 - boot must survive a token failure
-        logger.warning("relay self-provision skipped: could not resolve Nous token (%s)", exc)
+        logger.warning("relay self-provision skipped: could not resolve Chiper token (%s)", exc)
         return False
 
     platform, bot_id = relay_platform_identity()

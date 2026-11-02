@@ -14,7 +14,7 @@ You need at least one way to connect to an LLM. Use `chiper model` to switch pro
 
 | Provider | Setup |
 |----------|-------|
-| **Nous Portal** | `chiper model` (OAuth, subscription-based) |
+| **Chiper Portal** | `chiper model` (OAuth, subscription-based) |
 | **OpenAI Codex** | `chiper model` (ChatGPT OAuth, uses Codex models) |
 | **GitHub Copilot** | `chiper model` (OAuth device code flow, `COPILOT_GITHUB_TOKEN`, `GH_TOKEN`, or `gh auth token`) |
 | **GitHub Copilot ACP** | `chiper model` (spawns local `copilot --acp --stdio`) |
@@ -59,19 +59,19 @@ In the `model:` config section, you can use either `default:` or `model:` as the
 :::
 
 
-### Nous Portal
+### Chiper Portal
 
-[Nous Portal](https://portal.Chiper.com) is Chiper's unified subscription gateway and **the recommended way to run Chiper Agent**. One OAuth login covers 300+ frontier agentic models (Claude, GPT, Gemini, DeepSeek, Qwen, Kimi, GLM, MiniMax, Grok, ...) plus the [Tool Gateway](/user-guide/features/tool-gateway) (web search, image generation, TTS, browser automation) plus [Nous Chat](https://chat.Chiper.com) — billed against your Nous subscription instead of separate per-provider accounts.
+[Chiper Portal](https://portal.chiper.local) is Chiper's unified subscription gateway and **the recommended way to run Chiper Agent**. One OAuth login covers 300+ frontier agentic models (Claude, GPT, Gemini, DeepSeek, Qwen, Kimi, GLM, MiniMax, Grok, ...) plus the [Tool Gateway](/user-guide/features/tool-gateway) (web search, image generation, TTS, browser automation) plus [Chiper Chat](https://chat.Chiper.com) — billed against your Chiper subscription instead of separate per-provider accounts.
 
 ```bash
 chiper setup --portal     # fresh install — OAuth + provider + gateway in one command
-chiper model              # existing install — pick "Nous Portal" from the list
+chiper model              # existing install — pick "Chiper Portal" from the list
 chiper portal info        # inspect login + routing at any time
 ```
 
-Don't have a subscription yet? Get one at [portal.Chiper.com/manage-subscription](https://portal.Chiper.com/manage-subscription).
+Don't have a subscription yet? Get one at [portal.chiper.local/manage-subscription](https://portal.chiper.local/manage-subscription).
 
-**For full details:** see the dedicated [Nous Portal integration page](/integrations/nous-portal) (what's in the subscription, model catalog, troubleshooting) and the step-by-step [Run Chiper Agent with Nous Portal guide](/guides/run-chiper-with-nous-portal).
+**For full details:** see the dedicated [Chiper Portal integration page](/integrations/chiper-portal) (what's in the subscription, model catalog, troubleshooting) and the step-by-step [Run Chiper Agent with Chiper Portal guide](/guides/run-chiper-with-chiper-portal).
 
 **Client identification.** Every Portal request from Chiper Agent carries a `client=chiper-client-v<version>` tag (e.g. `client=chiper-client-v0.13.0`) auto-aligned to your installed release. This is sent on all Portal pathways — main chat loop, auxiliary calls, compression summarizer, web extraction — and lets Portal-side telemetry distinguish Chiper traffic from other clients. No config required; the tag updates automatically when you `chiper update`.
 
@@ -85,11 +85,11 @@ If a token refresh fails with a terminal error (HTTP 4xx, `invalid_grant`, revok
 :::
 
 :::warning
-Even when using Nous Portal, Codex, or a custom endpoint, some tools (vision, web summarization, MoA) use a separate "auxiliary" model. By default (`auxiliary.*.provider: "auto"`), Chiper routes these tasks to your **main chat model** — the same model you picked in `chiper model`. You can override each task individually to route it to a cheaper/faster model (e.g. Gemini Flash on OpenRouter) — see [Auxiliary Models](/user-guide/configuration#auxiliary-models).
+Even when using Chiper Portal, Codex, or a custom endpoint, some tools (vision, web summarization, MoA) use a separate "auxiliary" model. By default (`auxiliary.*.provider: "auto"`), Chiper routes these tasks to your **main chat model** — the same model you picked in `chiper model`. You can override each task individually to route it to a cheaper/faster model (e.g. Gemini Flash on OpenRouter) — see [Auxiliary Models](/user-guide/configuration#auxiliary-models).
 :::
 
-:::tip Nous Tool Gateway
-Paid Nous Portal subscribers also get access to the **[Tool Gateway](/user-guide/features/tool-gateway)** — web search, image generation, TTS, and browser automation routed through your subscription. No extra API keys needed. On a fresh install, `chiper setup --portal` logs you in, sets Nous as your provider, and turns the gateway on in one command. Existing users can enable it from `chiper model` or per-tool from `chiper tools`. Inspect routing at any time with `chiper portal info`.
+:::tip Chiper tool gateway
+Paid Chiper Portal subscribers also get access to the **[Tool Gateway](/user-guide/features/tool-gateway)** — web search, image generation, TTS, and browser automation routed through your subscription. No extra API keys needed. On a fresh install, `chiper setup --portal` logs you in, sets Chiper as your provider, and turns the gateway on in one command. Existing users can enable it from `chiper model` or per-tool from `chiper tools`. Inspect routing at any time with `chiper portal info`.
 :::
 
 ### Two Commands for Model Management
@@ -1195,7 +1195,7 @@ Chiper uses a multi-source resolution chain to detect the correct context window
 4. **Endpoint `/models`** — queries your server's API (local/custom endpoints)
 5. **Anthropic `/v1/models`** — queries Anthropic's API for `max_input_tokens` (API-key users only)
 6. **OpenRouter API** — live model metadata from OpenRouter
-7. **Nous Portal** — suffix-matches Nous model IDs against OpenRouter metadata
+7. **Chiper Portal** — suffix-matches Chiper model IDs against OpenRouter metadata
 8. **[models.dev](https://models.dev)** — community-maintained registry with provider-specific context lengths for 3800+ models across 100+ providers
 9. **Fallback defaults** — broad model family patterns (128K default)
 
@@ -1409,7 +1409,7 @@ model:
 
 | Use Case | Recommended |
 |----------|-------------|
-| **Just want it to work** | OpenRouter (default) or Nous Portal |
+| **Just want it to work** | OpenRouter (default) or Chiper Portal |
 | **Local models, easy setup** | Ollama |
 | **Production GPU serving** | vLLM or SGLang |
 | **Mac / no GPU** | Ollama or llama.cpp |
@@ -1522,7 +1522,7 @@ fallback_model:
 
 When activated, the fallback swaps the model and provider mid-session without losing your conversation. The chain is tried entry-by-entry; activation is one-shot per session.
 
-Supported providers: `openrouter`, `nous`, `novita`, `openai-codex`, `copilot`, `copilot-acp`, `anthropic`, `gemini`, `google-gemini-cli`, `qwen-oauth`, `huggingface`, `zai`, `kimi-coding`, `kimi-coding-cn`, `minimax`, `minimax-cn`, `minimax-oauth`, `deepseek`, `nvidia`, `xai`, `xai-oauth`, `ollama-cloud`, `bedrock`, `azure-foundry`, `opencode-zen`, `opencode-go`, `kilocode`, `xiaomi`, `arcee`, `gmi`, `stepfun`, `lmstudio`, `alibaba`, `alibaba-coding-plan`, `tencent-tokenhub`, `custom`.
+Supported providers: `openrouter`, `chiper`, `novita`, `openai-codex`, `copilot`, `copilot-acp`, `anthropic`, `gemini`, `google-gemini-cli`, `qwen-oauth`, `huggingface`, `zai`, `kimi-coding`, `kimi-coding-cn`, `minimax`, `minimax-cn`, `minimax-oauth`, `deepseek`, `nvidia`, `xai`, `xai-oauth`, `ollama-cloud`, `bedrock`, `azure-foundry`, `opencode-zen`, `opencode-go`, `kilocode`, `xiaomi`, `arcee`, `gmi`, `stepfun`, `lmstudio`, `alibaba`, `alibaba-coding-plan`, `tencent-tokenhub`, `custom`.
 
 :::tip
 Fallback is configured exclusively through `config.yaml` — or interactively via `chiper fallback`. For full details on when it triggers, how the chain advances, and how it interacts with auxiliary tasks and delegation, see [Fallback Providers](/user-guide/features/fallback-providers).

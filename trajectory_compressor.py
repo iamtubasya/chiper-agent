@@ -438,7 +438,7 @@ class TrajectoryCompressor:
         if base_url_host_matches(url, "openrouter.ai"):
             return "openrouter"
         if base_url_host_matches(url, "Chiper.com"):
-            return "nous"
+            return "chiper"
         if (
             base_url_hostname(url) == "chatgpt.com"
             and "/backend-api/codex" in url.lower()

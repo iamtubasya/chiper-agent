@@ -98,7 +98,7 @@ chiper chat [flags]
   -q, --query TEXT          Single query, non-interactive
   -m, --model MODEL         Model (e.g. anthropic/claude-sonnet-4)
   -t, --toolsets LIST       Comma-separated toolsets
-  --provider PROVIDER       Force provider (openrouter, anthropic, nous, etc.)
+  --provider PROVIDER       Force provider (openrouter, anthropic, chiper, etc.)
   -v, --verbose             Verbose output
   -Q, --quiet               Suppress banner, spinner, tool previews
   --checkpoints             Enable filesystem checkpoints (/rollback)
@@ -118,7 +118,7 @@ chiper config env-path      Print .env path
 chiper config check         Check for missing/outdated config
 chiper config migrate       Update config with new options
 chiper auth                 交互式凭据管理器
-chiper auth add PROVIDER    添加 OAuth 或 API key 凭据（例如 nous、openai-codex、qwen-oauth）
+chiper auth add PROVIDER    添加 OAuth 或 API key 凭据（例如 chiper、openai-codex、qwen-oauth）
 chiper auth list            列出已存储的凭据
 chiper auth remove PROVIDER 移除已存储的凭据
 chiper doctor [--fix]       Check dependencies and config
@@ -387,7 +387,7 @@ Profiles 使用 `~/.chiper/profiles/<name>/`，布局相同。
 |----------|------|-------------|
 | OpenRouter | API key | `OPENROUTER_API_KEY` |
 | Anthropic | API key | `ANTHROPIC_API_KEY` |
-| Nous Portal | OAuth | `chiper auth` |
+| Chiper Portal | OAuth | `chiper auth` |
 | OpenAI Codex | OAuth | `chiper auth` |
 | GitHub Copilot | Token | `COPILOT_GITHUB_TOKEN` |
 | Google Gemini | API key | `GOOGLE_API_KEY` 或 `GEMINI_API_KEY` |

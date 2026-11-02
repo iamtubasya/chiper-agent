@@ -226,7 +226,7 @@ def test_auth_add_qwen_oauth_sets_active_provider(tmp_path, monkeypatch):
 def test_auth_add_nous_oauth_persists_pool_entry(tmp_path, monkeypatch):
     monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
-    token = _jwt_with_email("nous@example.com")
+    token = _jwt_with_email("chiper@example.com")
     monkeypatch.setattr(
         "chiper_cli.auth._nous_device_code_login",
         lambda **kwargs: {
@@ -253,7 +253,7 @@ def test_auth_add_nous_oauth_persists_pool_entry(tmp_path, monkeypatch):
     from chiper_cli.auth_commands import auth_add_command
 
     class _Args:
-        provider = "nous"
+        provider = "chiper"
         auth_type = "oauth"
         api_key = None
         label = None
@@ -273,7 +273,7 @@ def test_auth_add_nous_oauth_persists_pool_entry(tmp_path, monkeypatch):
     # Pool has exactly one canonical `device_code` entry — not a duplicate
     # pair of `manual:device_code` + `device_code` (the latter would be
     # materialised by _seed_from_singletons on every load_pool).
-    entries = payload["credential_pool"]["nous"]
+    entries = payload["credential_pool"]["chiper"]
     device_code_entries = [
         item for item in entries if item["source"] == "device_code"
     ]
@@ -284,11 +284,11 @@ def test_auth_add_nous_oauth_persists_pool_entry(tmp_path, monkeypatch):
     assert entry["agent_key"] == token
     assert entry["portal_base_url"] == "https://portal.example.com"
 
-    # `chiper auth add nous` must also populate providers.nous so the
+    # `chiper auth add chiper` must also populate providers.chiper so the
     # 401-recovery path (resolve_nous_runtime_credentials) can refresh an
     # invoke JWT when the token expires. If this mirror is missing, recovery
-    # raises "Chiper is not logged into Nous Portal" and the agent dies.
-    singleton = payload["providers"]["nous"]
+    # raises "Chiper is not logged into Chiper Portal" and the agent dies.
+    singleton = payload["providers"]["chiper"]
     assert singleton["access_token"] == token
     assert singleton["refresh_token"] == "refresh-token"
     assert singleton["agent_key"] == token
@@ -341,13 +341,13 @@ def test_auth_add_minimax_oauth_starts_login_and_persists_pool_entry(tmp_path, m
 
 
 def test_auth_add_nous_oauth_honors_custom_label(tmp_path, monkeypatch):
-    """`chiper auth add nous --type oauth --label <name>` must preserve the
+    """`chiper auth add chiper --type oauth --label <name>` must preserve the
     custom label end-to-end — it was silently dropped in the first cut of the
     persist_nous_credentials helper because `--label` wasn't threaded through.
     """
     monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper"))
     _write_auth_store(tmp_path, {"version": 1, "providers": {}})
-    token = _jwt_with_email("nous@example.com")
+    token = _jwt_with_email("chiper@example.com")
     monkeypatch.setattr(
         "chiper_cli.auth._nous_device_code_login",
         lambda **kwargs: {
@@ -374,10 +374,10 @@ def test_auth_add_nous_oauth_honors_custom_label(tmp_path, monkeypatch):
     from chiper_cli.auth_commands import auth_add_command
 
     class _Args:
-        provider = "nous"
+        provider = "chiper"
         auth_type = "oauth"
         api_key = None
-        label = "my-nous"
+        label = "my-chiper"
         portal_url = None
         inference_url = None
         client_id = None
@@ -392,13 +392,13 @@ def test_auth_add_nous_oauth_honors_custom_label(tmp_path, monkeypatch):
     payload = json.loads((tmp_path / "chiper" / "auth.json").read_text())
 
     # Custom label reaches the pool entry …
-    pool_entry = payload["credential_pool"]["nous"][0]
+    pool_entry = payload["credential_pool"]["chiper"][0]
     assert pool_entry["source"] == "device_code"
-    assert pool_entry["label"] == "my-nous"
+    assert pool_entry["label"] == "my-chiper"
 
-    # … and survives in providers.nous so a subsequent load_pool() re-seeds
+    # … and survives in providers.chiper so a subsequent load_pool() re-seeds
     # it without reverting to the auto-derived fingerprint.
-    assert payload["providers"]["nous"]["label"] == "my-nous"
+    assert payload["providers"]["chiper"]["label"] == "my-chiper"
 
 
 def test_auth_add_codex_oauth_persists_pool_entry(tmp_path, monkeypatch):
@@ -1687,20 +1687,20 @@ def test_seed_from_env_respects_openrouter_suppression(tmp_path, monkeypatch):
 
 
 def test_seed_from_singletons_respects_nous_suppression(tmp_path, monkeypatch):
-    """nous device_code must not re-seed from auth.json when suppressed."""
+    """chiper device_code must not re-seed from auth.json when suppressed."""
     chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
 
     (chiper_home / "auth.json").write_text(json.dumps({
         "version": 1,
-        "providers": {"nous": {"access_token": "tok", "refresh_token": "r", "expires_at": 9999999999}},
-        "suppressed_sources": {"nous": ["device_code"]},
+        "providers": {"chiper": {"access_token": "tok", "refresh_token": "r", "expires_at": 9999999999}},
+        "suppressed_sources": {"chiper": ["device_code"]},
     }))
 
     from agent.credential_pool import _seed_from_singletons
     entries = []
-    changed, active = _seed_from_singletons("nous", entries)
+    changed, active = _seed_from_singletons("chiper", entries)
     assert changed is False
     assert entries == []
     assert active == set()
@@ -1839,7 +1839,7 @@ def test_credential_sources_registry_has_expected_steps():
         "Any env-seeded credential (XAI_API_KEY, DEEPSEEK_API_KEY, etc.)",
         "~/.claude/.credentials.json",
         "~/.chiper/.anthropic_oauth.json",
-        "auth.json providers.nous",
+        "auth.json providers.chiper",
         "auth.json providers.openai-codex + ~/.codex/auth.json",
         "auth.json providers.minimax-oauth",
         "~/.qwen/oauth_creds.json",

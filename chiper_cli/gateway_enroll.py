@@ -5,9 +5,9 @@ customer-managed and internet-exposed). This command is the gateway half of the
 zero-touch enrollment in the connector repo's
 ``docs/connector-gateway-auth-design.md``:
 
-  1. Resolve a fresh Nous Portal access token from the existing login
+  1. Resolve a fresh Chiper Portal access token from the existing login
      (``~/.chiper/auth.json``) — the same path ``chiper dashboard register``
-     uses (``resolve_nous_access_token``). This proves *which Nous org (tenant)*
+     uses (``resolve_nous_access_token``). This proves *which Chiper org (tenant)*
      the caller owns; the connector derives the authoritative tenant from it via
      ``GET /api/oauth/account`` (never from anything the gateway asserts).
   2. POST ``{enrollmentToken, gatewayId}`` to the connector's ``/relay/enroll``
@@ -122,8 +122,8 @@ def _post_enroll(
             pass
         if exc.code == 401:
             raise RuntimeError(
-                "Connector rejected the caller identity (401). Your Nous Portal "
-                "token could not be verified — try `chiper auth login nous` and retry."
+                "Connector rejected the caller identity (401). Your Chiper Portal "
+                "token could not be verified — try `chiper auth login chiper` and retry."
             ) from exc
         if exc.code == 403:
             raise RuntimeError(
@@ -179,18 +179,18 @@ def cmd_gateway_enroll(args) -> None:
 
     gateway_id = (getattr(args, "gateway_id", None) or _default_gateway_id()).strip()
 
-    # 1. Resolve a fresh Nous access token (the tenant-proving identity).
+    # 1. Resolve a fresh Chiper access token (the tenant-proving identity).
     try:
         access_token = resolve_nous_access_token()
     except AuthError as exc:
         if getattr(exc, "relogin_required", False):
-            print("✗ You're not logged into Nous Portal.")
-            print("  Run `chiper setup` (or `chiper auth login nous`) first, then retry.")
+            print("✗ You're not logged into Chiper Portal.")
+            print("  Run `chiper setup` (or `chiper auth login chiper`) first, then retry.")
         else:
-            print(f"✗ Could not resolve a Nous Portal access token: {exc}")
+            print(f"✗ Could not resolve a Chiper Portal access token: {exc}")
         sys.exit(1)
     except Exception as exc:
-        print(f"✗ Could not resolve a Nous Portal access token: {exc}")
+        print(f"✗ Could not resolve a Chiper Portal access token: {exc}")
         sys.exit(1)
 
     # 2-3. Redeem the enrollment token at the connector.

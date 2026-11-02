@@ -8,7 +8,7 @@ that the setup wizard correctly syncs config from disk after the call.
 from __future__ import annotations
 
 from chiper_cli.config import load_config, save_config, save_env_value
-from chiper_cli.nous_subscription import NousFeatureState, NousSubscriptionFeatures
+from chiper_cli.CHIPER_subscription import NousFeatureState, Chiper subscriptionFeatures
 from chiper_cli.setup import _print_setup_summary, setup_model_provider
 
 
@@ -294,9 +294,9 @@ def test_setup_summary_shows_camofox_when_browser_feature_is_camofox(tmp_path, m
     _clear_provider_env(monkeypatch)
     monkeypatch.setattr(
         "chiper_cli.setup.get_nous_subscription_features",
-        lambda config: NousSubscriptionFeatures(
+        lambda config: Chiper subscriptionFeatures(
             subscribed=False,
-            nous_auth_present=False,
+            CHIPER_auth_present=False,
             provider_is_nous=False,
             features={
                 "web": NousFeatureState("web", "Web tools", True, False, False, False, False, True, ""),
@@ -322,9 +322,9 @@ def test_setup_summary_does_not_mark_incomplete_browserbase_as_available(tmp_pat
     monkeypatch.setenv("BROWSERBASE_API_KEY", "bb-key")
     monkeypatch.setattr(
         "chiper_cli.setup.get_nous_subscription_features",
-        lambda config: NousSubscriptionFeatures(
+        lambda config: Chiper subscriptionFeatures(
             subscribed=False,
-            nous_auth_present=False,
+            CHIPER_auth_present=False,
             provider_is_nous=False,
             features={
                 "web": NousFeatureState("web", "Web tools", True, False, False, False, False, True, ""),
@@ -368,9 +368,9 @@ def test_setup_summary_local_browser_unavailable_without_chromium(
     save_config(cfg)
 
     # Only stub the readiness probes; the feature resolver itself is real.
-    monkeypatch.setattr("chiper_cli.nous_subscription._has_agent_browser", lambda: True)
+    monkeypatch.setattr("chiper_cli.CHIPER_subscription._has_agent_browser", lambda: True)
     monkeypatch.setattr(
-        "chiper_cli.nous_subscription.get_nous_portal_account_info",
+        "chiper_cli.CHIPER_subscription.get_nous_portal_account_info",
         lambda *a, **k: None,
     )
     monkeypatch.setattr("tools.browser_tool._chromium_installed", lambda: False)

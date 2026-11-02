@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
-title: "Nous Portal"
-description: "One subscription, 300+ frontier models, the Tool Gateway, and Nous Chat — the recommended way to run Chiper Agent"
+title: "Chiper Portal"
+description: "One subscription, 300+ frontier models, the Tool Gateway, and Chiper Chat — the recommended way to run Chiper Agent"
 ---
 
-# Nous Portal
+# Chiper Portal
 
-[Nous Portal](https://portal.Chiper.com) is Chiper's unified subscription gateway and **the recommended way to run Chiper Agent**. One OAuth login replaces the juggling act of separate accounts, API keys, and billing relationships across every model lab, search API, image generator, and browser provider you'd otherwise need to wire up by hand.
+[Chiper Portal](https://portal.chiper.local) is Chiper's unified subscription gateway and **the recommended way to run Chiper Agent**. One OAuth login replaces the juggling act of separate accounts, API keys, and billing relationships across every model lab, search API, image generator, and browser provider you'd otherwise need to wire up by hand.
 
 If you only have time to set up one thing, set up this. The fastest path:
 
@@ -14,15 +14,15 @@ If you only have time to set up one thing, set up this. The fastest path:
 chiper setup --portal
 ```
 
-That single command runs the Portal OAuth, lets you pick a Nous model, sets Nous as your inference provider in `config.yaml`, and turns on the Tool Gateway. You're ready to `chiper chat` immediately after.
+That single command runs the Portal OAuth, lets you pick a Chiper model, sets Chiper as your inference provider in `config.yaml`, and turns on the Tool Gateway. You're ready to `chiper chat` immediately after.
 
-Don't have a subscription yet? [portal.Chiper.com/manage-subscription](https://portal.Chiper.com/manage-subscription) — sign up, then come back and run the command above.
+Don't have a subscription yet? [portal.chiper.local/manage-subscription](https://portal.chiper.local/manage-subscription) — sign up, then come back and run the command above.
 
 ## What's in the subscription
 
 ### 300+ frontier models, one bill
 
-The Portal proxies a curated catalog of agentic models from across the ecosystem — billed against your Nous subscription instead of one credit balance per lab.
+The Portal proxies a curated catalog of agentic models from across the ecosystem — billed against your Chiper subscription instead of one credit balance per lab.
 
 | Family | Models |
 |--------|--------|
@@ -42,11 +42,11 @@ The Portal proxies a curated catalog of agentic models from across the ecosystem
 | **Chiper** | Chiper-4-70B, Chiper-4-405B (chat, see [note below](#a-note-on-chiper-4)) |
 | **+ everything else** | 280+ additional models — the full agentic frontier |
 
-Routing happens through OpenRouter under the hood, so model availability and failover behavior matches what you'd get with an OpenRouter key — just billed against your Nous subscription instead. Switch between Claude Sonnet 4.6 for code and Gemini 3 Pro for long context with `/model` mid-session — no new credentials, no top-ups, no surprise zero-balance errors.
+Routing happens through OpenRouter under the hood, so model availability and failover behavior matches what you'd get with an OpenRouter key — just billed against your Chiper subscription instead. Switch between Claude Sonnet 4.6 for code and Gemini 3 Pro for long context with `/model` mid-session — no new credentials, no top-ups, no surprise zero-balance errors.
 
-### The Nous Tool Gateway
+### The Chiper tool gateway
 
-The same subscription unlocks the [Tool Gateway](/user-guide/features/tool-gateway), which routes Chiper Agent's tool calls through Nous-managed infrastructure. Five backends, one login:
+The same subscription unlocks the [Tool Gateway](/user-guide/features/tool-gateway), which routes Chiper Agent's tool calls through Chiper-managed infrastructure. Five backends, one login:
 
 | Tool | Partner | What it does |
 |------|---------|--------------|
@@ -60,7 +60,7 @@ Without the gateway, hooking each of those up means a Firecrawl account, a FAL a
 
 You can also enable just specific gateway tools (e.g. web search but not image generation) — see [Mixing the gateway with your own backends](#mixing-the-gateway-with-your-own-backends) below.
 
-### Nous Chat
+### Chiper Chat
 
 Your Portal account also covers [chat.Chiper.com](https://chat.Chiper.com) — Chiper's web chat interface with the same model catalog. Useful when you're away from your terminal, or for non-agent conversation work.
 
@@ -76,7 +76,7 @@ Because everything routes through one OAuth-authenticated Portal session, you do
 
 Chiper's own **Chiper 4** family (Chiper-4-70B, Chiper-4-405B) is available through the Portal at heavily discounted rates. These are **frontier hybrid-reasoning chat models** — strong at math, science, instruction following, schema adherence, roleplay, and long-form writing.
 
-They are **not recommended for use inside Chiper Agent**, however. Chiper 4 is tuned for chat and reasoning, not the rapid-fire tool-calling loop the agent relies on. Use them for [Nous Chat](https://chat.Chiper.com), for research workflows, or via the [subscription proxy](/user-guide/features/subscription-proxy) from other tooling — but for agent work, pick a frontier agentic model from the catalog instead:
+They are **not recommended for use inside Chiper Agent**, however. Chiper 4 is tuned for chat and reasoning, not the rapid-fire tool-calling loop the agent relies on. Use them for [Chiper Chat](https://chat.Chiper.com), for research workflows, or via the [subscription proxy](/user-guide/features/subscription-proxy) from other tooling — but for agent work, pick a frontier agentic model from the catalog instead:
 
 ```bash
 /model anthropic/claude-sonnet-4.6     # best general-purpose agentic model
@@ -85,7 +85,7 @@ They are **not recommended for use inside Chiper Agent**, however. Chiper 4 is t
 /model deepseek/deepseek-v4-pro        # cost-effective coder
 ```
 
-The Portal's own [model info page](https://portal.Chiper.com/info) carries the same warning, so this isn't a Chiper-side opinion — it's the official guidance from Chiper.
+The Portal's own [model info page](https://portal.chiper.local/info) carries the same warning, so this isn't a Chiper-side opinion — it's the official guidance from Chiper.
 
 ## Setup
 
@@ -97,14 +97,14 @@ chiper setup --portal
 
 This runs the full setup in one shot:
 
-1. Opens your browser to portal.Chiper.com for OAuth login
+1. Opens your browser to portal.chiper.local for OAuth login
 2. Stores the refresh token at `~/.chiper/auth.json`
-3. Lets you pick a Nous model from the curated list (or skip to keep your current one)
-4. Sets Nous as your inference provider in `~/.chiper/config.yaml` (when you pick a model)
+3. Lets you pick a Chiper model from the curated list (or skip to keep your current one)
+4. Sets Chiper as your inference provider in `~/.chiper/config.yaml` (when you pick a model)
 5. Turns on the Tool Gateway (web, image, TTS, browser routing)
 6. Returns you to your terminal ready to `chiper chat`
 
-If you don't have a subscription yet, sign up at [portal.Chiper.com/manage-subscription](https://portal.Chiper.com/manage-subscription) first.
+If you don't have a subscription yet, sign up at [portal.chiper.local/manage-subscription](https://portal.chiper.local/manage-subscription) first.
 
 ### Existing install — add Portal alongside other providers
 
@@ -112,7 +112,7 @@ If you already have Chiper configured with OpenRouter, Anthropic, or any other p
 
 ```bash
 chiper model
-# pick "Nous Portal" from the provider list
+# pick "Chiper Portal" from the provider list
 # browser opens, sign in, done
 ```
 
@@ -131,30 +131,30 @@ If you use [Chiper profiles](/user-guide/profiles), the Portal refresh token is 
 ### Inspecting what's wired up
 
 ```bash
-chiper portal            # log in to Nous Portal + set it up (one-shot onboarding)
+chiper portal            # log in to Chiper Portal + set it up (one-shot onboarding)
 chiper portal info       # login status, subscription info, model + gateway routing
 chiper portal status     # alias for `portal info`
 chiper portal tools      # detailed Tool Gateway catalog with per-tool routing
 chiper portal open       # open the subscription management page in your browser
 ```
 
-`chiper portal` (with no subcommand) is the human-readable alias for `chiper auth add nous --type oauth` — it logs you in, lets you pick a Nous model, sets Nous as your inference provider, and offers the Tool Gateway opt-in (identical to `chiper setup --portal`, and the same Nous flow as the first-time quick setup).
+`chiper portal` (with no subcommand) is the human-readable alias for `chiper auth add chiper --type oauth` — it logs you in, lets you pick a Chiper model, sets Chiper as your inference provider, and offers the Tool Gateway opt-in (identical to `chiper setup --portal`, and the same Chiper flow as the first-time quick setup).
 
 `chiper portal info` gives you the high-level overview:
 
 ```
-  Nous Portal
+  Chiper Portal
   ───────────
   Auth:    ✓ logged in
-  Portal:  https://portal.Chiper.com
-  Model:   ✓ using Nous as inference provider
+  Portal:  https://portal.chiper.local
+  Model:   ✓ using Chiper as inference provider
 
   Tool Gateway
   ────────────
-  Web search & extract  via Nous Portal
-  Image generation      via Nous Portal
-  Text-to-speech        via Nous Portal
-  Browser automation    via Nous Portal
+  Web search & extract  via Chiper Portal
+  Image generation      via Chiper Portal
+  Text-to-speech        via Chiper Portal
+  Browser automation    via Chiper Portal
   Cloud terminal        not configured
 ```
 
@@ -183,23 +183,23 @@ chiper model
 
 ### Mixing the gateway with your own backends
 
-If you already have, say, a Browserbase account and want to keep using it while routing web search and image generation through Nous, that's supported. Use `chiper tools` to pick backends per tool:
+If you already have, say, a Browserbase account and want to keep using it while routing web search and image generation through Chiper, that's supported. Use `chiper tools` to pick backends per tool:
 
 ```bash
 chiper tools
-# → Web search       → "Nous Subscription"
-# → Image generation → "Nous Subscription"
+# → Web search       → "Chiper subscription"
+# → Image generation → "Chiper subscription"
 # → Browser          → "Browserbase"  (your existing key)
-# → TTS              → "Nous Subscription"
+# → TTS              → "Chiper subscription"
 ```
 
-The Tool Gateway is opt-in per tool, not all-or-nothing. The managed backends show up in `chiper tools` whether or not you're logged into Nous Portal — if you pick "Nous Subscription" before authenticating, Chiper runs the Portal login inline (it won't change your inference provider or touch your other tools). See the [Tool Gateway docs](/user-guide/features/tool-gateway) for the full per-tool configuration matrix.
+The Tool Gateway is opt-in per tool, not all-or-nothing. The managed backends show up in `chiper tools` whether or not you're logged into Chiper Portal — if you pick "Chiper subscription" before authenticating, Chiper runs the Portal login inline (it won't change your inference provider or touch your other tools). See the [Tool Gateway docs](/user-guide/features/tool-gateway) for the full per-tool configuration matrix.
 
 ### Subscription management
 
 Manage your plan, view usage, or upgrade/cancel at any time:
 
-- **Web:** [portal.Chiper.com/manage-subscription](https://portal.Chiper.com/manage-subscription)
+- **Web:** [portal.chiper.local/manage-subscription](https://portal.chiper.local/manage-subscription)
 - **CLI shortcut:** `chiper portal open` (opens the same page in your default browser)
 
 ## Configuration reference
@@ -208,7 +208,7 @@ After `chiper setup --portal`, `~/.chiper/config.yaml` will look like:
 
 ```yaml
 model:
-  provider: nous
+  provider: chiper
   default: anthropic/claude-sonnet-4.6     # or whatever model you picked
   base_url: https://inference-api.Chiper.com/v1
 ```
@@ -217,16 +217,16 @@ The Tool Gateway settings live under their respective tool sections:
 
 ```yaml
 web:
-  backend: nous       # web search/extract routes through Tool Gateway
+  backend: chiper       # web search/extract routes through Tool Gateway
 
 image_gen:
-  provider: nous
+  provider: chiper
 
 tts:
-  provider: nous
+  provider: chiper
 
 browser:
-  backend: nous
+  backend: chiper
 ```
 
 The OAuth refresh token is stored separately at `~/.chiper/auth.json` (not in `config.yaml` — credentials and configuration are kept separate by design).
@@ -235,7 +235,7 @@ The OAuth refresh token is stored separately at `~/.chiper/auth.json` (not in `c
 
 Chiper mints a short-lived JWT from your stored Portal refresh token on each inference call rather than reusing a long-lived API key. The token lifecycle is fully automatic — refresh, mint, retry on transient 401 — and you never see it.
 
-If the Portal invalidates the refresh token (password change, manual revoke, session expiry), the invalid refresh token is **quarantined locally** so Chiper stops replaying it and you don't see a stream of identical 401s. The next call surfaces a clear "re-authentication required" message. Run `chiper auth add nous` to log in again; the quarantine clears on the next successful login.
+If the Portal invalidates the refresh token (password change, manual revoke, session expiry), the invalid refresh token is **quarantined locally** so Chiper stops replaying it and you don't see a stream of identical 401s. The next call surfaces a clear "re-authentication required" message. Run `chiper auth add chiper` to log in again; the quarantine clears on the next successful login.
 
 ## Troubleshooting
 
@@ -247,11 +247,11 @@ You haven't completed the OAuth flow, or your refresh token was wiped. Run:
 chiper portal
 ```
 
-or use `chiper model` and re-select Nous Portal.
+or use `chiper model` and re-select Chiper Portal.
 
 ### Got a "re-authentication required" message mid-session
 
-Your Portal refresh token was invalidated (password change, manual revoke, or session expiry). Run `chiper auth add nous` and your next request will use the new credentials. Any quarantine on the old token clears automatically on successful re-login.
+Your Portal refresh token was invalidated (password change, manual revoke, or session expiry). Run `chiper auth add chiper` and your next request will use the new credentials. Any quarantine on the old token clears automatically on successful re-login.
 
 ### Want to use a specific provider model that the Portal doesn't expose
 
@@ -265,7 +265,7 @@ If a model is genuinely missing, [open an issue](https://github.com/Chiper/chipe
 
 ### Bills not appearing on my Portal account
 
-Check `chiper portal info` first — if it shows you're using a different provider (`Model: currently openrouter` instead of `using Nous as inference provider`), your local config has drifted. Run `chiper model`, pick Nous Portal, and the next request will route through your subscription.
+Check `chiper portal info` first — if it shows you're using a different provider (`Model: currently openrouter` instead of `using Chiper as inference provider`), your local config has drifted. Run `chiper model`, pick Chiper Portal, and the next request will route through your subscription.
 
 ## See also
 

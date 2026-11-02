@@ -26,12 +26,12 @@ def test_resolve_managed_tool_gateway_derives_vendor_origin_from_shared_domain()
     ), patch.object(managed_tool_gateway, "managed_nous_tools_enabled", return_value=True):
         result = resolve_managed_tool_gateway(
             "firecrawl",
-            token_reader=lambda: "nous-token",
+            token_reader=lambda: "chiper-token",
         )
 
     assert result is not None
     assert result.gateway_origin == "https://firecrawl-gateway.Chiper.com"
-    assert result.nous_user_token == "nous-token"
+    assert result.CHIPER_user_token == "chiper-token"
     assert result.managed_mode is True
 
 
@@ -45,7 +45,7 @@ def test_resolve_managed_tool_gateway_uses_vendor_specific_override():
     ), patch.object(managed_tool_gateway, "managed_nous_tools_enabled", return_value=True):
         result = resolve_managed_tool_gateway(
             "browser-use",
-            token_reader=lambda: "nous-token",
+            token_reader=lambda: "chiper-token",
         )
 
     assert result is not None
@@ -73,7 +73,7 @@ def test_resolve_managed_tool_gateway_is_disabled_without_subscription():
          patch.object(managed_tool_gateway, "managed_nous_tools_enabled", return_value=False):
         result = resolve_managed_tool_gateway(
             "firecrawl",
-            token_reader=lambda: "nous-token",
+            token_reader=lambda: "chiper-token",
         )
 
     assert result is None
@@ -85,7 +85,7 @@ def test_read_nous_access_token_refreshes_expiring_cached_token(tmp_path, monkey
     expires_at = (datetime.now(timezone.utc) + timedelta(seconds=30)).isoformat()
     (tmp_path / "auth.json").write_text(json.dumps({
         "providers": {
-            "nous": {
+            "chiper": {
                 "access_token": "stale-token",
                 "refresh_token": "refresh-token",
                 "expires_at": expires_at,
@@ -106,7 +106,7 @@ def test_is_managed_tool_gateway_ready_skips_refresh_for_expired_cached_token(tm
     expired_at = (datetime.now(timezone.utc) - timedelta(seconds=30)).isoformat()
     (tmp_path / "auth.json").write_text(json.dumps({
         "providers": {
-            "nous": {
+            "chiper": {
                 "access_token": "expired-token",
                 "refresh_token": "refresh-token",
                 "expires_at": expired_at,

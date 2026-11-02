@@ -670,7 +670,7 @@ const sidebars: SidebarsConfig = {
       collapsed: true,
       items: [
         'integrations/index',
-        'integrations/nous-portal',
+        'integrations/chiper-portal',
         'integrations/providers',
         'user-guide/features/mcp',
         'user-guide/features/acp',
@@ -685,7 +685,7 @@ const sidebars: SidebarsConfig = {
       collapsed: true,
       items: [
         'guides/run-nemotron-3-ultra-free',
-        'guides/run-chiper-with-nous-portal',
+        'guides/run-chiper-with-chiper-portal',
         'guides/tips',
         'guides/local-llm-on-mac',
         'guides/daily-briefing-bot',

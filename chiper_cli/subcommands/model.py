@@ -26,24 +26,24 @@ def build_model_parser(subparsers, *, cmd_model: Callable) -> None:
     )
     model_parser.add_argument(
         "--portal-url",
-        help="Portal base URL for Nous login (default: production portal)",
+        help="Portal base URL for Chiper login (default: production portal)",
     )
     model_parser.add_argument(
         "--inference-url",
-        help="Inference API base URL for Nous login (default: production inference API)",
+        help="Inference API base URL for Chiper login (default: production inference API)",
     )
     model_parser.add_argument(
         "--client-id",
         default=None,
-        help="OAuth client id to use for Nous login (default: chiper-cli)",
+        help="OAuth client id to use for Chiper login (default: chiper-cli)",
     )
     model_parser.add_argument(
-        "--scope", default=None, help="OAuth scope to request for Nous login"
+        "--scope", default=None, help="OAuth scope to request for Chiper login"
     )
     model_parser.add_argument(
         "--no-browser",
         action="store_true",
-        help="Do not attempt to open the browser automatically during Nous login",
+        help="Do not attempt to open the browser automatically during Chiper login",
     )
     model_parser.add_argument(
         "--manual-paste",
@@ -59,14 +59,14 @@ def build_model_parser(subparsers, *, cmd_model: Callable) -> None:
         "--timeout",
         type=float,
         default=15.0,
-        help="HTTP request timeout in seconds for Nous login (default: 15)",
+        help="HTTP request timeout in seconds for Chiper login (default: 15)",
     )
     model_parser.add_argument(
-        "--ca-bundle", help="Path to CA bundle PEM file for Nous TLS verification"
+        "--ca-bundle", help="Path to CA bundle PEM file for Chiper TLS verification"
     )
     model_parser.add_argument(
         "--insecure",
         action="store_true",
-        help="Disable TLS verification for Nous login (testing only)",
+        help="Disable TLS verification for Chiper login (testing only)",
     )
     model_parser.set_defaults(func=cmd_model)

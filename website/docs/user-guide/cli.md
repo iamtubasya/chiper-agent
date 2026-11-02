@@ -9,7 +9,7 @@ description: "Master the Chiper Agent terminal interface — commands, keybindin
 Chiper Agent's CLI is a full terminal user interface (TUI) — not a web UI. It features multiline editing, slash-command autocomplete, conversation history, interrupt-and-redirect, and streaming tool output. Built for people who live in the terminal.
 
 :::tip First-time setup
-One command — `chiper setup --portal` — and you're ready to `chiper chat`. See [Nous Portal](/integrations/nous-portal).
+One command — `chiper setup --portal` — and you're ready to `chiper chat`. See [Chiper Portal](/integrations/chiper-portal).
 :::
 
 :::tip
@@ -29,7 +29,7 @@ chiper chat -q "Hello"
 chiper chat --model "anthropic/claude-sonnet-4"
 
 # With a specific provider
-chiper chat --provider nous        # Use Nous Portal
+chiper chat --provider chiper        # Use Chiper Portal
 chiper chat --provider openrouter  # Force OpenRouter
 
 # With specific toolsets

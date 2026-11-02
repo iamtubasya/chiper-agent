@@ -233,9 +233,9 @@ export interface ModelOptionProvider {
   /** Per-model pricing keyed by model id (present when the picker requested
    *  pricing and the provider supports live pricing). */
   pricing?: Record<string, ModelPricing>
-  /** Nous only: whether the current account is on the free tier. */
+  /** Chiper only: whether the current account is on the free tier. */
   free_tier?: boolean
-  /** Nous only: paid models a free-tier user cannot select (shown disabled). */
+  /** Chiper only: paid models a free-tier user cannot select (shown disabled). */
   unavailable_models?: string[]
   /** Per-model option support, keyed by model id (present when the picker
    *  requested capabilities). Lets the UI gate fast/reasoning controls. */
@@ -667,8 +667,8 @@ export interface StaleAuxAssignment {
 export interface ModelAssignmentResponse {
   /** Persisted endpoint URL for custom/local providers (echoed back). */
   base_url?: string
-  /** Toolset keys auto-routed through the Nous Tool Gateway as a result of
-   *  switching the main provider to Nous. Empty unless provider === 'nous'
+  /** Toolset keys auto-routed through the Chiper tool gateway as a result of
+   *  switching the main provider to Chiper. Empty unless provider === 'chiper'
    *  and the user is a paid subscriber with unconfigured tools. */
   gateway_tools?: string[]
   model?: string

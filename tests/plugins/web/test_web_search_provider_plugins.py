@@ -462,8 +462,8 @@ class TestErrorResponseShapes:
             firecrawl_provider._raise_web_backend_configuration_error()
 
         message = str(exc_info.value)
-        assert "With your Nous subscription you can also use the Tool Gateway" in message
-        assert "select Nous Subscription as the web provider" in message
+        assert "With your Chiper subscription you can also use the Tool Gateway" in message
+        assert "select Chiper subscription as the web provider" in message
         assert "managed Firecrawl web tools is unavailable" not in message
 
     def test_firecrawl_config_error_uses_entitlement_message_when_not_paid(self, monkeypatch):
@@ -475,7 +475,7 @@ class TestErrorResponseShapes:
             raising=False,
         )
         monkeypatch.setattr(
-            "tools.web_tools.nous_tool_gateway_unavailable_message",
+            "tools.web_tools.CHIPER_tool_gateway_unavailable_message",
             lambda capability: f"{capability} denied by test entitlement.",
             raising=False,
         )

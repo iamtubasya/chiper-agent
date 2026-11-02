@@ -258,7 +258,7 @@ class TestDefaults:
 
 class TestGptQualityPinnedToMedium:
     """GPT-Image quality is baked into the FAL_MODELS defaults at 'medium'
-    and cannot be overridden via config. Pinning keeps Nous Portal billing
+    and cannot be overridden via config. Pinning keeps Chiper Portal billing
     predictable across all users."""
 
     def test_gpt_payload_always_has_medium_quality(self, image_tool):
@@ -415,7 +415,7 @@ class TestExtractHttpStatus:
 
 
 class TestManagedGatewayErrorTranslation:
-    """4xx from the Nous managed gateway should be translated to a user-actionable message."""
+    """4xx from the Chiper managed gateway should be translated to a user-actionable message."""
 
     def test_4xx_translates_to_value_error_with_remediation(self, image_tool, monkeypatch):
         """403 from managed gateway → ValueError mentioning FAL_KEY + chiper tools."""
@@ -424,7 +424,7 @@ class TestManagedGatewayErrorTranslation:
         # Simulate: managed mode active, managed submit raises 4xx.
         managed_gateway = MagicMock()
         managed_gateway.gateway_origin = "https://fal-queue-gateway.example.com"
-        managed_gateway.nous_user_token = "test-token"
+        managed_gateway.CHIPER_user_token = "test-token"
         monkeypatch.setattr(image_tool, "_resolve_managed_fal_gateway",
                             lambda: managed_gateway)
 

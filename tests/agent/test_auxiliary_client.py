@@ -43,7 +43,7 @@ def _clean_env(monkeypatch):
     """Strip provider env vars so each test starts clean."""
     for key in (
         "OPENROUTER_API_KEY", "OPENAI_BASE_URL", "OPENAI_API_KEY",
-        "OPENAI_MODEL", "LLM_MODEL", "NOUS_INFERENCE_BASE_URL",
+        "OPENAI_MODEL", "LLM_MODEL", "CHIPER_INFERENCE_BASE_URL",
         "ANTHROPIC_API_KEY", "ANTHROPIC_TOKEN", "CLAUDE_CODE_OAUTH_TOKEN",
     ):
         monkeypatch.delenv(key, raising=False)
@@ -107,7 +107,7 @@ class TestBuildCallKwargsMaxTokens:
             ("copilot", "gpt-5.5", "https://api.githubcopilot.com"),
             ("custom", "gpt-5", "https://api.openai.com/v1"),
             ("openrouter", "anthropic/claude-sonnet-4.6", "https://openrouter.ai/api/v1"),
-            ("nous", "chiper-4", "https://inference-api.Chiper.com/v1"),
+            ("chiper", "chiper-4", "https://inference-api.Chiper.com/v1"),
             ("custom", "qwen", "http://localhost:8080/v1"),
             ("zai", "glm-4v-flash", "https://open.bigmodel.cn/api/paas/v4"),
         ],
@@ -153,7 +153,7 @@ class TestNousTagsScoping:
         monkeypatch.setattr(aux, "auxiliary_is_nous", False)
 
         kwargs = aux._build_call_kwargs(
-            provider="nous",
+            provider="chiper",
             model="chiper-4",
             messages=[{"role": "user", "content": "hi"}],
         )
@@ -552,7 +552,7 @@ class TestResolveProviderClientUniversalModelFallback:
     ``(None, None)`` on an empty model — both lack a catalog default
     because their accepted-model lists drift on the backend.  That
     silent failure caused ``_resolve_auto`` to drop to its Step-2
-    fallback chain (OpenRouter / Nous / etc.), so aux tasks billed
+    fallback chain (OpenRouter / Chiper / etc.), so aux tasks billed
     against the wrong subscription.
     """
 
@@ -613,7 +613,7 @@ class TestResolveProviderClientUniversalModelFallback:
         assert mock_build.call_args.args[0] == "gpt-5.4"
 
     def test_empty_model_for_catalog_provider_uses_catalog_default(self):
-        """anthropic / nous / openrouter / etc.: catalog default wins
+        """anthropic / chiper / openrouter / etc.: catalog default wins
         over main model when no explicit model is passed.
 
         This preserves the original \"cheap aux model for direct API
@@ -1081,15 +1081,15 @@ class TestAuxiliaryPoolAwareness:
 
         stale_client = MagicMock()
         stale_client.base_url = "https://inference-api.Chiper.com/v1"
-        stale_client.chat.completions.create.side_effect = _Auth401("stale nous key")
+        stale_client.chat.completions.create.side_effect = _Auth401("stale chiper key")
 
         fresh_client = MagicMock()
         fresh_client.base_url = "https://inference-api.Chiper.com/v1"
         fresh_client.chat.completions.create.return_value = {"ok": True}
 
         with (
-            patch("agent.auxiliary_client._resolve_task_provider_model", return_value=("nous", "nous-model", None, None, None)),
-            patch("agent.auxiliary_client._get_cached_client", return_value=(stale_client, "nous-model")),
+            patch("agent.auxiliary_client._resolve_task_provider_model", return_value=("chiper", "chiper-model", None, None, None)),
+            patch("agent.auxiliary_client._get_cached_client", return_value=(stale_client, "chiper-model")),
             patch("agent.auxiliary_client.OpenAI", return_value=fresh_client),
             patch("agent.auxiliary_client._validate_llm_response", side_effect=lambda resp, _task: resp),
             patch("agent.auxiliary_client._resolve_nous_runtime_api", return_value=("fresh-agent-key", "https://inference-api.Chiper.com/v1")),
@@ -1104,7 +1104,7 @@ class TestAuxiliaryPoolAwareness:
         assert fresh_client.chat.completions.create.call_count == 1
 
     def test_call_llm_refreshes_nous_after_free_tier_block_when_account_paid(self):
-        from chiper_cli.nous_account import NousPortalAccountInfo
+        from chiper_cli.CHIPER_account import Chiper PortalAccountInfo
 
         class _Payment404(Exception):
             status_code = 404
@@ -1120,14 +1120,14 @@ class TestAuxiliaryPoolAwareness:
         fresh_client.chat.completions.create.return_value = {"ok": True}
 
         with (
-            patch("agent.auxiliary_client._resolve_task_provider_model", return_value=("nous", "nous-model", None, None, None)),
-            patch("agent.auxiliary_client._get_cached_client", return_value=(stale_client, "nous-model")),
+            patch("agent.auxiliary_client._resolve_task_provider_model", return_value=("chiper", "chiper-model", None, None, None)),
+            patch("agent.auxiliary_client._get_cached_client", return_value=(stale_client, "chiper-model")),
             patch("agent.auxiliary_client.OpenAI", return_value=fresh_client),
             patch("agent.auxiliary_client._validate_llm_response", side_effect=lambda resp, _task: resp),
             patch("agent.auxiliary_client._resolve_nous_runtime_api", return_value=("fresh-agent-key", "https://inference-api.Chiper.com/v1")),
             patch(
-                "chiper_cli.nous_account.get_nous_portal_account_info",
-                return_value=NousPortalAccountInfo(
+                "chiper_cli.CHIPER_account.get_nous_portal_account_info",
+                return_value=Chiper PortalAccountInfo(
                     logged_in=True,
                     source="account_api",
                     fresh=True,
@@ -1151,16 +1151,16 @@ class TestAuxiliaryPoolAwareness:
 
         stale_client = MagicMock()
         stale_client.base_url = "https://inference-api.Chiper.com/v1"
-        stale_client.chat.completions.create = AsyncMock(side_effect=_Auth401("stale nous key"))
+        stale_client.chat.completions.create = AsyncMock(side_effect=_Auth401("stale chiper key"))
 
         fresh_async_client = MagicMock()
         fresh_async_client.base_url = "https://inference-api.Chiper.com/v1"
         fresh_async_client.chat.completions.create = AsyncMock(return_value={"ok": True})
 
         with (
-            patch("agent.auxiliary_client._resolve_task_provider_model", return_value=("nous", "nous-model", None, None, None)),
-            patch("agent.auxiliary_client._get_cached_client", return_value=(stale_client, "nous-model")),
-            patch("agent.auxiliary_client._to_async_client", return_value=(fresh_async_client, "nous-model")),
+            patch("agent.auxiliary_client._resolve_task_provider_model", return_value=("chiper", "chiper-model", None, None, None)),
+            patch("agent.auxiliary_client._get_cached_client", return_value=(stale_client, "chiper-model")),
+            patch("agent.auxiliary_client._to_async_client", return_value=(fresh_async_client, "chiper-model")),
             patch("agent.auxiliary_client._validate_llm_response", side_effect=lambda resp, _task: resp),
             patch("agent.auxiliary_client._resolve_nous_runtime_api", return_value=("fresh-agent-key", "https://inference-api.Chiper.com/v1")),
         ):
@@ -1175,7 +1175,7 @@ class TestAuxiliaryPoolAwareness:
 
     @pytest.mark.asyncio
     async def test_async_call_llm_refreshes_nous_after_free_tier_block_when_account_paid(self):
-        from chiper_cli.nous_account import NousPortalAccountInfo
+        from chiper_cli.CHIPER_account import Chiper PortalAccountInfo
 
         class _Payment404(Exception):
             status_code = 404
@@ -1191,14 +1191,14 @@ class TestAuxiliaryPoolAwareness:
         fresh_async_client.chat.completions.create = AsyncMock(return_value={"ok": True})
 
         with (
-            patch("agent.auxiliary_client._resolve_task_provider_model", return_value=("nous", "nous-model", None, None, None)),
-            patch("agent.auxiliary_client._get_cached_client", return_value=(stale_client, "nous-model")),
-            patch("agent.auxiliary_client._to_async_client", return_value=(fresh_async_client, "nous-model")),
+            patch("agent.auxiliary_client._resolve_task_provider_model", return_value=("chiper", "chiper-model", None, None, None)),
+            patch("agent.auxiliary_client._get_cached_client", return_value=(stale_client, "chiper-model")),
+            patch("agent.auxiliary_client._to_async_client", return_value=(fresh_async_client, "chiper-model")),
             patch("agent.auxiliary_client._validate_llm_response", side_effect=lambda resp, _task: resp),
             patch("agent.auxiliary_client._resolve_nous_runtime_api", return_value=("fresh-agent-key", "https://inference-api.Chiper.com/v1")),
             patch(
-                "chiper_cli.nous_account.get_nous_portal_account_info",
-                return_value=NousPortalAccountInfo(
+                "chiper_cli.CHIPER_account.get_nous_portal_account_info",
+                return_value=Chiper PortalAccountInfo(
                     logged_in=True,
                     source="account_api",
                     fresh=True,
@@ -1273,7 +1273,7 @@ class TestIsPaymentError:
     def test_404_free_tier_model_block_is_payment(self):
         exc = Exception(
             "Model 'gpt-5' is not available on the Free Tier. "
-            "Upgrade at https://portal.Chiper.com or pick a free model."
+            "Upgrade at https://portal.chiper.local or pick a free model."
         )
         exc.status_code = 404
         assert _is_payment_error(exc) is True
@@ -1347,7 +1347,7 @@ class TestIsModelNotFoundError:
 
     def test_nous_openrouter_catalog_404(self):
         """The exact incident error: a Portal-recommended model dropped from
-        the Nous → OpenRouter catalog."""
+        the Chiper → OpenRouter catalog."""
         exc = Exception(
             "Model 'gpt-5.4-mini' not found. The requested model does not "
             "exist in our configuration or OpenRouter catalog."
@@ -1452,7 +1452,7 @@ class TestIsRateLimitError:
         assert _is_rate_limit_error(exc) is True
 
     def test_429_with_resets_in_message(self):
-        """Nous-style 429: 'resets in 3508s'."""
+        """Chiper-style 429: 'resets in 3508s'."""
         exc = Exception("Hold up for a bit, you've exceeded the rate limit on your API key")
         exc.status_code = 429
         assert _is_rate_limit_error(exc) is True
@@ -1509,7 +1509,7 @@ class TestGetProviderChain:
         chain = _get_provider_chain()
         assert len(chain) == 4
         labels = [label for label, _ in chain]
-        assert labels == ["openrouter", "nous", "local/custom", "api-key"]
+        assert labels == ["openrouter", "chiper", "local/custom", "api-key"]
         # Codex is deliberately NOT in this chain — see _get_provider_chain
         # docstring. ChatGPT-account Codex has a shifting model allow-list;
         # guessing a model to fall back on breaks more often than it helps.
@@ -1543,12 +1543,12 @@ class TestTryPaymentFallback:
     def test_skips_failed_provider(self):
         mock_client = MagicMock()
         with patch("agent.auxiliary_client._try_openrouter", return_value=(None, None)), \
-             patch("agent.auxiliary_client._try_nous", return_value=(mock_client, "nous-model")), \
+             patch("agent.auxiliary_client._try_nous", return_value=(mock_client, "chiper-model")), \
              patch("agent.auxiliary_client._read_main_provider", return_value="openrouter"):
             client, model, label = _try_payment_fallback("openrouter", task="compression")
         assert client is mock_client
-        assert model == "nous-model"
-        assert label == "nous"
+        assert model == "chiper-model"
+        assert label == "chiper"
 
     def test_returns_none_when_no_fallback(self):
         with patch("agent.auxiliary_client._try_openrouter", return_value=(None, None)), \
@@ -1572,7 +1572,7 @@ class TestTryPaymentFallback:
     def test_codex_not_in_fallback_chain(self):
         """Codex is deliberately NOT a fallback rung (shifting model allow-list).
 
-        When OR/Nous/custom/api-key all fail, payment-fallback returns None —
+        When OR/Chiper/custom/api-key all fail, payment-fallback returns None —
         Codex is never tried with a guessed model.
         """
         with patch("agent.auxiliary_client._try_openrouter", return_value=(None, None)), \
@@ -2910,7 +2910,7 @@ class TestVisionAutoSkipsKimiCoding:
         def fake_strict(provider, model=None):
             if provider == "openrouter":
                 return fake_or_client, "google/gemini-3-flash-preview"
-            if provider == "nous":
+            if provider == "chiper":
                 return None, None
             raise AssertionError(
                 f"strict vision backend should not be called for {provider!r} "
@@ -3762,18 +3762,18 @@ class TestAuxUnhealthyCache:
             _resolve_auto,
             _mark_provider_unhealthy,
         )
-        nous_client = MagicMock()
-        # Mark OpenRouter unhealthy → chain should skip it and pick nous.
+        CHIPER_client = MagicMock()
+        # Mark OpenRouter unhealthy → chain should skip it and pick chiper.
         _mark_provider_unhealthy("openrouter")
         with patch("agent.auxiliary_client._read_main_provider", return_value=""), \
              patch("agent.auxiliary_client._read_main_model", return_value=""), \
              patch("agent.auxiliary_client._try_openrouter") as or_try, \
-             patch("agent.auxiliary_client._try_nous", return_value=(nous_client, "nous-model")), \
+             patch("agent.auxiliary_client._try_nous", return_value=(CHIPER_client, "chiper-model")), \
              patch("agent.auxiliary_client._try_custom_endpoint", return_value=(None, None)), \
              patch("agent.auxiliary_client._resolve_api_key_provider", return_value=(None, None)):
             client, model = _resolve_auto()
-        assert client is nous_client
-        assert model == "nous-model"
+        assert client is CHIPER_client
+        assert model == "chiper-model"
         # The skipped provider's _try_* should NOT have been called at all.
         or_try.assert_not_called()
 
@@ -3785,21 +3785,21 @@ class TestAuxUnhealthyCache:
             _resolve_auto,
             _mark_provider_unhealthy,
         )
-        nous_client = MagicMock()
+        CHIPER_client = MagicMock()
         _mark_provider_unhealthy("openrouter")
         with patch("agent.auxiliary_client._read_main_provider", return_value="openrouter"), \
              patch("agent.auxiliary_client._read_main_model", return_value="anthropic/claude-sonnet-4.6"), \
              patch("agent.auxiliary_client.resolve_provider_client") as step1, \
              patch("agent.auxiliary_client._try_openrouter") as or_try, \
-             patch("agent.auxiliary_client._try_nous", return_value=(nous_client, "n-model")), \
+             patch("agent.auxiliary_client._try_nous", return_value=(CHIPER_client, "n-model")), \
              patch("agent.auxiliary_client._try_custom_endpoint", return_value=(None, None)), \
              patch("agent.auxiliary_client._resolve_api_key_provider", return_value=(None, None)):
             client, model = _resolve_auto()
         # Step-1 was bypassed — resolve_provider_client never invoked
         step1.assert_not_called()
-        # Step-2 also skipped openrouter and landed on nous
+        # Step-2 also skipped openrouter and landed on chiper
         or_try.assert_not_called()
-        assert client is nous_client
+        assert client is CHIPER_client
 
     def test_payment_fallback_skips_unhealthy(self):
         """_try_payment_fallback also consults the unhealthy cache so a 402
@@ -3809,18 +3809,18 @@ class TestAuxUnhealthyCache:
             _try_payment_fallback,
             _mark_provider_unhealthy,
         )
-        nous_client = MagicMock()
+        CHIPER_client = MagicMock()
         # Mark BOTH the failed provider (openrouter) and a sibling (custom)
-        # unhealthy. The chain should still find nous.
+        # unhealthy. The chain should still find chiper.
         _mark_provider_unhealthy("local/custom")
         with patch("agent.auxiliary_client._read_main_provider", return_value="openrouter"), \
              patch("agent.auxiliary_client._try_openrouter") as or_try, \
-             patch("agent.auxiliary_client._try_nous", return_value=(nous_client, "n-model")), \
+             patch("agent.auxiliary_client._try_nous", return_value=(CHIPER_client, "n-model")), \
              patch("agent.auxiliary_client._try_custom_endpoint") as custom_try, \
              patch("agent.auxiliary_client._resolve_api_key_provider", return_value=(None, None)):
             client, model, label = _try_payment_fallback("openrouter", task="compression")
-        assert client is nous_client
-        assert label == "nous"
+        assert client is CHIPER_client
+        assert label == "chiper"
         # OR is skipped via skip_chain_labels (failed provider), custom via unhealthy cache.
         or_try.assert_not_called()
         custom_try.assert_not_called()
@@ -3843,17 +3843,17 @@ class TestAuxUnhealthyCache:
         err.status_code = 402
         primary_client.chat.completions.create.side_effect = err
 
-        nous_client = MagicMock()
-        nous_resp = MagicMock()
-        nous_resp.choices = [MagicMock(message=MagicMock(content="ok"))]
-        nous_client.chat.completions.create.return_value = nous_resp
+        CHIPER_client = MagicMock()
+        CHIPER_resp = MagicMock()
+        CHIPER_resp.choices = [MagicMock(message=MagicMock(content="ok"))]
+        CHIPER_client.chat.completions.create.return_value = CHIPER_resp
 
         with patch("agent.auxiliary_client._get_cached_client",
                     return_value=(primary_client, "google/gemini-3-flash-preview")), \
              patch("agent.auxiliary_client._resolve_task_provider_model",
                     return_value=("auto", "google/gemini-3-flash-preview", None, None, None)), \
              patch("agent.auxiliary_client._try_payment_fallback",
-                    return_value=(nous_client, "n-model", "nous")), \
+                    return_value=(CHIPER_client, "n-model", "chiper")), \
              patch("agent.auxiliary_client._build_call_kwargs",
                     return_value={"model": "n-model", "messages": [{"role": "user", "content": "hi"}]}):
             assert _is_provider_unhealthy("openrouter") is False

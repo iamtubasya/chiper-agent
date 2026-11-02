@@ -1,4 +1,4 @@
-"""Helpers for Nous subscription managed-tool capabilities."""
+"""Helpers for Chiper subscription managed-tool capabilities."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Dict, Iterable, Optional, Set
 
 from chiper_cli.config import get_env_value, load_config
-from chiper_cli.nous_account import (
-    NousPortalAccountInfo,
+from chiper_cli.CHIPER_account import (
+    Chiper PortalAccountInfo,
     format_nous_portal_entitlement_message,
     get_nous_portal_account_info,
 )
@@ -30,7 +30,7 @@ _DEFAULT_PLATFORM_TOOLSETS = {
 }
 
 # Maps a tools_config provider's ``managed_nous_feature`` to the tool-pool
-# coverage category (chiper_cli.nous_account.TOOL_COVERAGE_CATEGORIES). Lets the
+# coverage category (chiper_cli.CHIPER_account.TOOL_COVERAGE_CATEGORIES). Lets the
 # `chiper tools` picker scope its entitlement gate to the selected backend, so a
 # free-tool-pool user is allowed image gen but denied video gen at select time —
 # consistent with the per-category feature gates in get_nous_subscription_features.
@@ -69,12 +69,12 @@ class NousFeatureState:
 
 
 @dataclass(frozen=True)
-class NousSubscriptionFeatures:
+class Chiper subscriptionFeatures:
     subscribed: bool
-    nous_auth_present: bool
+    CHIPER_auth_present: bool
     provider_is_nous: bool
     features: Dict[str, NousFeatureState]
-    account_info: Optional[NousPortalAccountInfo] = None
+    account_info: Optional[Chiper PortalAccountInfo] = None
 
     @property
     def web(self) -> NousFeatureState:
@@ -324,12 +324,12 @@ def get_nous_subscription_features(
     config: Optional[Dict[str, object]] = None,
     *,
     force_fresh: bool = False,
-) -> NousSubscriptionFeatures:
+) -> Chiper subscriptionFeatures:
     if config is None:
         config = load_config() or {}
     config = dict(config)
     model_cfg = _model_config_dict(config)
-    provider_is_nous = str(model_cfg.get("provider") or "").strip().lower() == "nous"
+    provider_is_nous = str(model_cfg.get("provider") or "").strip().lower() == "chiper"
 
     try:
         if force_fresh:
@@ -347,11 +347,11 @@ def get_nous_subscription_features(
         and account_info.logged_in
         and account_info.tool_gateway_entitled
     )
-    nous_auth_present = bool(account_info and account_info.logged_in)
+    CHIPER_auth_present = bool(account_info and account_info.logged_in)
 
     def _entitled_for(category: str) -> bool:
         return bool(account_info and account_info.tool_gateway_entitled_for(category))
-    subscribed = provider_is_nous or nous_auth_present
+    subscribed = provider_is_nous or CHIPER_auth_present
 
     web_tool_enabled = _toolset_enabled(config, "web")
     image_tool_enabled = _toolset_enabled(config, "image_gen")
@@ -373,7 +373,7 @@ def get_nous_subscription_features(
     web_extract_backend = str(web_cfg.get("extract_backend") or "").strip().lower()
     tts_provider = str(tts_cfg.get("provider") or "edge").strip().lower()
     # STT default is "local" (faster-whisper) per DEFAULT_CONFIG, which
-    # requires `pip install faster-whisper`. For Nous subscribers we'd
+    # requires `pip install faster-whisper`. For Chiper Subscribers we'd
     # rather route through the managed OpenAI audio gateway — see
     # apply_nous_managed_defaults below.
     stt_provider = str(stt_cfg.get("provider") or "local").strip().lower()
@@ -454,13 +454,13 @@ def get_nous_subscription_features(
 
     managed_web_available = (
         managed_tools_flag
-        and nous_auth_present
+        and CHIPER_auth_present
         and is_managed_tool_gateway_ready("firecrawl")
         and _entitled_for("firecrawl")
     )
     managed_image_available = (
         managed_tools_flag
-        and nous_auth_present
+        and CHIPER_auth_present
         and is_managed_tool_gateway_ready("fal-queue")
         and _entitled_for("fal")
     )
@@ -469,13 +469,13 @@ def get_nous_subscription_features(
     # rather than aliasing it to image. (Paid users are entitled to both.)
     managed_video_available = (
         managed_tools_flag
-        and nous_auth_present
+        and CHIPER_auth_present
         and is_managed_tool_gateway_ready("fal-queue")
         and _entitled_for("fal-video")
     )
     managed_tts_available = (
         managed_tools_flag
-        and nous_auth_present
+        and CHIPER_auth_present
         and is_managed_tool_gateway_ready("openai-audio")
         and _entitled_for("openai-audio")
     )
@@ -485,13 +485,13 @@ def get_nous_subscription_features(
     managed_stt_available = managed_tts_available
     managed_browser_available = (
         managed_tools_flag
-        and nous_auth_present
+        and CHIPER_auth_present
         and is_managed_tool_gateway_ready("browser-use")
         and _entitled_for("browser-use")
     )
     managed_modal_available = (
         managed_tools_flag
-        and nous_auth_present
+        and CHIPER_auth_present
         and is_managed_tool_gateway_ready("modal")
         and _entitled_for("modal")
     )
@@ -651,7 +651,7 @@ def get_nous_subscription_features(
             managed_by_nous=image_managed,
             direct_override=image_active and not image_managed,
             toolset_enabled=image_tool_enabled,
-            current_provider="FAL" if direct_fal else ("Nous Subscription" if image_managed else ""),
+            current_provider="FAL" if direct_fal else ("Chiper subscription" if image_managed else ""),
             explicit_configured=direct_fal,
         ),
         "video_gen": NousFeatureState(
@@ -663,7 +663,7 @@ def get_nous_subscription_features(
             managed_by_nous=video_managed,
             direct_override=video_active and not video_managed,
             toolset_enabled=video_tool_enabled,
-            current_provider="FAL" if direct_fal_video else ("Nous Subscription" if video_managed else ""),
+            current_provider="FAL" if direct_fal_video else ("Chiper subscription" if video_managed else ""),
             explicit_configured=direct_fal_video,
         ),
         "tts": NousFeatureState(
@@ -719,9 +719,9 @@ def get_nous_subscription_features(
         ),
     }
 
-    return NousSubscriptionFeatures(
+    return Chiper subscriptionFeatures(
         subscribed=subscribed,
-        nous_auth_present=nous_auth_present,
+        CHIPER_auth_present=CHIPER_auth_present,
         provider_is_nous=provider_is_nous,
         features=features,
         account_info=account_info,
@@ -787,7 +787,7 @@ def apply_nous_managed_defaults(
         changed.add("tts")
 
     # STT: same pattern as TTS. The DEFAULT_CONFIG seed is "local"
-    # (requires `pip install faster-whisper`); for Nous subscribers we
+    # (requires `pip install faster-whisper`); for Chiper Subscribers we
     # flip it to "openai" so the managed audio gateway handles transcription
     # via the same auth as TTS. Skipped when the user has explicitly
     # configured STT, has direct credentials for a non-managed provider,
@@ -913,8 +913,8 @@ def get_gateway_eligible_tools(
     - has_direct: tools where the user has their own API keys
     - already_managed: tools already routed through the gateway
 
-    All lists are empty when the user is not a paid Nous subscriber or
-    is not using Nous as their provider.
+    All lists are empty when the user is not a paid Chiper Subscriber or
+    is not using Chiper as their provider.
     """
     # Fetch entitlement once: it gates the offer (paid access OR a live free tool
     # pool) AND tells us which categories are covered (the pool funds image but
@@ -931,7 +931,7 @@ def get_gateway_eligible_tools(
 
     # Quick provider check without the heavy get_nous_subscription_features call
     model_cfg = config.get("model")
-    if not isinstance(model_cfg, dict) or str(model_cfg.get("provider") or "").strip().lower() != "nous":
+    if not isinstance(model_cfg, dict) or str(model_cfg.get("provider") or "").strip().lower() != "chiper":
         return [], [], []
 
     direct = _get_gateway_direct_credentials()
@@ -1083,7 +1083,7 @@ def prompt_enable_tool_gateway(
         and account_info.tool_access is not None
         and account_info.tool_access.enabled
     )
-    source_label = "free tool pool" if pool_only else "Nous subscription"
+    source_label = "free tool pool" if pool_only else "Chiper subscription"
 
     # Per-tool checklist: unconfigured tools first (pre-checked for new users),
     # then tools where the user already has their own key (left unchecked so we
@@ -1097,10 +1097,10 @@ def prompt_enable_tool_gateway(
     pre_selected = list(range(len(unconfigured)))
 
     if pool_only:
-        title = "Your free Nous tool pool — pick the tools to enable:"
+        title = "Your free Chiper tool pool — pick the tools to enable:"
     else:
         title = (
-            "Your Nous subscription includes the Tool Gateway — "
+            "Your Chiper subscription includes the Tool Gateway — "
             "pick the tools to enable:"
         )
 
@@ -1125,27 +1125,27 @@ def prompt_enable_tool_gateway(
 
 
 # ---------------------------------------------------------------------------
-# Inline Nous Portal login for the Tool Gateway picker (`chiper tools`)
+# Inline Chiper Portal login for the Tool Gateway picker (`chiper tools`)
 # ---------------------------------------------------------------------------
 
 
 def ensure_nous_portal_access(
     *,
-    capability: str = "the Nous Tool Gateway",
+    capability: str = "the Chiper tool gateway",
     coverage_category: Optional[str] = None,
 ) -> bool:
-    """Make sure the user is entitled to the Nous Tool Gateway, logging in if
+    """Make sure the user is entitled to the Chiper tool gateway, logging in if
     needed.
 
-    Used by ``chiper tools`` when a user selects a Nous-managed Tool Gateway
-    backend (e.g. "Firecrawl (Nous Portal)").  Unlike ``chiper model``'s Nous
+    Used by ``chiper tools`` when a user selects a Chiper-managed Tool Gateway
+    backend (e.g. "Firecrawl (Chiper Portal)").  Unlike ``chiper model``'s Chiper
     login, this:
 
     - does NOT change the inference provider (``model.provider`` is untouched),
     - does NOT run model selection, and
     - does NOT offer the bulk "enable for all tools" Tool Gateway prompt.
 
-    It only performs the Nous Portal device-code OAuth (when the user isn't
+    It only performs the Chiper Portal device-code OAuth (when the user isn't
     already logged in) and refreshes entitlement, so the caller can enable the
     single tool the user picked.
 
@@ -1198,7 +1198,7 @@ def ensure_nous_portal_access(
 
 
 def _run_nous_portal_login_only(*, capability: str) -> bool:
-    """Run the Nous Portal device-code OAuth and persist credentials only.
+    """Run the Chiper Portal device-code OAuth and persist credentials only.
 
     No model selection, no provider switch, no Tool Gateway bulk prompt.
     Returns ``True`` on a successful login, ``False`` if the user declined or
@@ -1217,23 +1217,23 @@ def _run_nous_portal_login_only(*, capability: str) -> bool:
             _write_shared_nous_state,
         )
     except Exception as exc:  # pragma: no cover - defensive
-        print(f"  Could not start Nous Portal login: {exc}")
+        print(f"  Could not start Chiper Portal login: {exc}")
         return False
 
     print()
-    print(f"  {capability} requires a Nous Portal login.")
+    print(f"  {capability} requires a Chiper Portal login.")
     try:
-        proceed = input("  Log in to Nous Portal now? [Y/n]: ").strip().lower()
+        proceed = input("  Log in to Chiper Portal now? [Y/n]: ").strip().lower()
     except (EOFError, KeyboardInterrupt):
         print()
         return False
     if proceed not in {"", "y", "yes"}:
-        print("  Skipped Nous Portal login.")
+        print("  Skipped Chiper Portal login.")
         return False
 
     try:
         # Snapshot the active_provider so a tool-config login never silently
-        # switches the user's inference provider to Nous.
+        # switches the user's inference provider to Chiper.
         with _auth_store_lock():
             prior_active_provider = _load_auth_store().get("active_provider")
 
@@ -1242,7 +1242,7 @@ def _run_nous_portal_login_only(*, capability: str) -> bool:
         if shared:
             try:
                 do_import = input(
-                    "  Found existing Nous OAuth credentials. Import them? [Y/n]: "
+                    "  Found existing Chiper OAuth credentials. Import them? [Y/n]: "
                 ).strip().lower()
             except (EOFError, KeyboardInterrupt):
                 do_import = "y"
@@ -1254,7 +1254,7 @@ def _run_nous_portal_login_only(*, capability: str) -> bool:
 
         with _auth_store_lock():
             auth_store = _load_auth_store()
-            _save_provider_state(auth_store, "nous", auth_state)
+            _save_provider_state(auth_store, "chiper", auth_state)
             # Preserve the user's existing inference provider — this login is
             # for tool entitlement only, not a provider switch.
             if prior_active_provider:
@@ -1265,7 +1265,7 @@ def _run_nous_portal_login_only(*, capability: str) -> bool:
 
         _write_shared_nous_state(auth_state)
         _sync_nous_pool_from_auth_store()
-        print("  Nous Portal login successful.")
+        print("  Chiper Portal login successful.")
         return True
     except KeyboardInterrupt:
         print("\n  Login cancelled.")
@@ -1275,5 +1275,5 @@ def _run_nous_portal_login_only(*, capability: str) -> bool:
         # it already printed billing guidance.
         return False
     except Exception as exc:
-        print(f"  Nous Portal login failed: {exc}")
+        print(f"  Chiper Portal login failed: {exc}")
         return False

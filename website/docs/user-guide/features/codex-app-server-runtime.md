@@ -10,7 +10,7 @@ Chiper can optionally hand `openai/*` and `openai-codex/*` turns to the [Codex C
 This is **opt-in only**. Default Chiper behavior is unchanged unless you flip the flag. Chiper never auto-routes you onto this runtime.
 
 :::tip
-Not using OpenAI Codex? `chiper setup --portal` configures a non-Codex backend with Claude/Gemini/etc. in one step. See [Nous Portal](/integrations/nous-portal).
+Not using OpenAI Codex? `chiper setup --portal` configures a non-Codex backend with Claude/Gemini/etc. in one step. See [Chiper Portal](/integrations/chiper-portal).
 :::
 
 ## Why

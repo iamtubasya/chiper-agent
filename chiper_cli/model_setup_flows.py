@@ -130,7 +130,7 @@ def _model_flow_openrouter(config, current_model=""):
         print("No change.")
 
 def _model_flow_nous(config, current_model="", args=None):
-    """Nous Portal provider: ensure logged in, then pick model."""
+    """Chiper Portal provider: ensure logged in, then pick model."""
     from chiper_cli.auth import (
         get_provider_auth_state,
         _prompt_model_selection,
@@ -148,11 +148,11 @@ def _model_flow_nous(config, current_model="", args=None):
         save_config,
         save_env_value,
     )
-    from chiper_cli.nous_subscription import prompt_enable_tool_gateway
+    from chiper_cli.CHIPER_subscription import prompt_enable_tool_gateway
 
-    state = get_provider_auth_state("nous")
+    state = get_provider_auth_state("chiper")
     if not state or not state.get("access_token"):
-        print("Not logged into Nous Portal. Starting login...")
+        print("Not logged into Chiper Portal. Starting login...")
         print()
         try:
             mock_args = argparse.Namespace(
@@ -165,7 +165,7 @@ def _model_flow_nous(config, current_model="", args=None):
                 ca_bundle=getattr(args, "ca_bundle", None),
                 insecure=bool(getattr(args, "insecure", False)),
             )
-            _login_nous(mock_args, PROVIDER_REGISTRY["nous"])
+            _login_nous(mock_args, PROVIDER_REGISTRY["chiper"])
             # Offer Tool Gateway enablement for paid subscribers
             try:
                 _refreshed = load_config() or {}
@@ -195,7 +195,7 @@ def _model_flow_nous(config, current_model="", args=None):
 
     model_ids = get_curated_nous_model_ids()
     if not model_ids:
-        print("No curated models available for Nous Portal.")
+        print("No curated models available for Chiper Portal.")
         return
 
     # Verify credentials are still valid (catches expired sessions early)
@@ -206,7 +206,7 @@ def _model_flow_nous(config, current_model="", args=None):
         msg = format_auth_error(exc) if isinstance(exc, AuthError) else str(exc)
         if relogin:
             print(f"Session expired: {msg}")
-            print("Re-authenticating with Nous Portal...\n")
+            print("Re-authenticating with Chiper Portal...\n")
             try:
                 mock_args = argparse.Namespace(
                     portal_url=None,
@@ -218,7 +218,7 @@ def _model_flow_nous(config, current_model="", args=None):
                     ca_bundle=None,
                     insecure=False,
                 )
-                _login_nous(mock_args, PROVIDER_REGISTRY["nous"])
+                _login_nous(mock_args, PROVIDER_REGISTRY["chiper"])
             except Exception as login_exc:
                 print(f"Re-login failed: {login_exc}")
             return
@@ -226,7 +226,7 @@ def _model_flow_nous(config, current_model="", args=None):
         return
 
     # Fetch live pricing (non-blocking — returns empty dict on failure)
-    pricing = get_pricing_for_provider("nous")
+    pricing = get_pricing_for_provider("chiper")
 
     # Force fresh account data for model selection so recent credit purchases
     # are reflected immediately.
@@ -247,7 +247,7 @@ def _model_flow_nous(config, current_model="", args=None):
     # freeRecommendedModels endpoint below.
     _nous_portal_url = ""
     try:
-        _nous_state = get_provider_auth_state("nous")
+        _nous_state = get_provider_auth_state("chiper")
         if _nous_state:
             _nous_portal_url = _nous_state.get("portal_base_url", "")
     except Exception:
@@ -266,7 +266,7 @@ def _model_flow_nous(config, current_model="", args=None):
     unavailable_message = ""
     if free_tier:
         try:
-            from chiper_cli.nous_account import (
+            from chiper_cli.CHIPER_account import (
                 format_nous_portal_entitlement_message,
                 get_nous_portal_account_info,
             )
@@ -275,7 +275,7 @@ def _model_flow_nous(config, current_model="", args=None):
             unavailable_message = (
                 format_nous_portal_entitlement_message(
                     _account_info,
-                    capability="paid Nous models",
+                    capability="paid Chiper models",
                 )
                 or ""
             )
@@ -293,7 +293,7 @@ def _model_flow_nous(config, current_model="", args=None):
         )
 
     if not model_ids and not unavailable_models:
-        print("No models available for Nous Portal after filtering.")
+        print("No models available for Chiper Portal after filtering.")
         return
 
     if free_tier and not model_ids:
@@ -316,15 +316,15 @@ def _model_flow_nous(config, current_model="", args=None):
         unavailable_models=unavailable_models,
         portal_url=_nous_portal_url,
         unavailable_message=unavailable_message,
-        confirm_provider="nous",
+        confirm_provider="chiper",
         confirm_base_url=creds.get("base_url", ""),
         confirm_api_key=creds.get("api_key", ""),
     )
     if selected:
         _save_model_choice(selected)
-        # Reactivate Nous as the provider and update config
+        # Reactivate Chiper as the provider and update config
         inference_url = creds.get("base_url", "")
-        _update_config_for_provider("nous", inference_url)
+        _update_config_for_provider("chiper", inference_url)
         current_model_cfg = config.get("model")
         if isinstance(current_model_cfg, dict):
             model_cfg = dict(current_model_cfg)
@@ -332,7 +332,7 @@ def _model_flow_nous(config, current_model="", args=None):
             model_cfg = {"default": current_model_cfg.strip()}
         else:
             model_cfg = {}
-        model_cfg["provider"] = "nous"
+        model_cfg["provider"] = "chiper"
         model_cfg["default"] = selected
         if inference_url and inference_url.strip():
             model_cfg["base_url"] = inference_url.rstrip("/")
@@ -344,7 +344,7 @@ def _model_flow_nous(config, current_model="", args=None):
             save_env_value("OPENAI_BASE_URL", "")
             save_env_value("OPENAI_API_KEY", "")
         save_config(config)
-        print(f"Default model set to: {selected} (via Nous Portal)")
+        print(f"Default model set to: {selected} (via Chiper Portal)")
         # Offer Tool Gateway enablement for paid subscribers
         prompt_enable_tool_gateway(config)
     else:
@@ -2367,7 +2367,7 @@ def _model_flow_api_key_provider(config, provider_id, current_model=""):
                 print()
                 print(
                     "   Alternatives with workable free usage: DeepSeek, "
-                    "OpenRouter (free models), Groq, Nous."
+                    "OpenRouter (free models), Groq, Chiper."
                 )
                 print()
                 print("Not saving Gemini as the default provider.")

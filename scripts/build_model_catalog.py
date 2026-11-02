@@ -2,7 +2,7 @@
 """Build the Chiper Model Catalog — a centralized JSON manifest of curated models.
 
 This script reads the in-repo hardcoded curated lists (``OPENROUTER_MODELS``,
-``_PROVIDER_MODELS["nous"]``) and writes them to a JSON manifest that the
+``_PROVIDER_MODELS["chiper"]``) and writes them to a JSON manifest that the
 Chiper CLI fetches at runtime. Publishing the catalog through the docs site
 lets maintainers update model lists without shipping a Chiper release.
 
@@ -61,9 +61,9 @@ def build_catalog() -> dict:
                     for mid, desc in OPENROUTER_MODELS
                 ],
             },
-            "nous": {
+            "chiper": {
                 "metadata": {
-                    "display_name": "Nous Portal",
+                    "display_name": "Chiper Portal",
                     "note": (
                         "Free-tier gating is determined live via Portal pricing "
                         "(partition_nous_models_by_tier), not this manifest."
@@ -71,7 +71,7 @@ def build_catalog() -> dict:
                 },
                 "models": [
                     {"id": mid}
-                    for mid in _PROVIDER_MODELS.get("nous", [])
+                    for mid in _PROVIDER_MODELS.get("chiper", [])
                 ],
             },
         },

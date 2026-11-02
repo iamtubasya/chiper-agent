@@ -34,7 +34,7 @@ from agent.prompt_builder import (
     PLATFORM_HINTS,
     WSL_ENVIRONMENT_HINT,
 )
-from chiper_cli.nous_subscription import NousFeatureState, NousSubscriptionFeatures
+from chiper_cli.CHIPER_subscription import NousFeatureState, Chiper subscriptionFeatures
 
 
 # =========================================================================
@@ -626,18 +626,18 @@ class TestBuildSkillsSystemPrompt:
         assert "backend-skill" in result
 
 
-class TestBuildNousSubscriptionPrompt:
+class TestBuildChiper subscriptionPrompt:
     def test_includes_active_subscription_features(self, monkeypatch):
         monkeypatch.setattr("tools.tool_backend_helpers.managed_nous_tools_enabled", lambda: True)
         monkeypatch.setattr(
-            "chiper_cli.nous_subscription.get_nous_subscription_features",
-            lambda config=None: NousSubscriptionFeatures(
+            "chiper_cli.CHIPER_subscription.get_nous_subscription_features",
+            lambda config=None: Chiper subscriptionFeatures(
                 subscribed=True,
-                nous_auth_present=True,
+                CHIPER_auth_present=True,
                 provider_is_nous=True,
                 features={
                     "web": NousFeatureState("web", "Web tools", True, True, True, True, False, True, "firecrawl"),
-                    "image_gen": NousFeatureState("image_gen", "Image generation", True, True, True, True, False, True, "Nous Subscription"),
+                    "image_gen": NousFeatureState("image_gen", "Image generation", True, True, True, True, False, True, "Chiper subscription"),
                     "video_gen": NousFeatureState("video_gen", "Video generation", False, False, False, False, False, False, ""),
                     "tts": NousFeatureState("tts", "OpenAI TTS", True, True, True, True, False, True, "OpenAI TTS"),
                     "stt": NousFeatureState("stt", "Speech-to-text", True, True, True, True, False, True, "OpenAI Whisper"),
@@ -656,10 +656,10 @@ class TestBuildNousSubscriptionPrompt:
     def test_non_subscriber_prompt_includes_relevant_upgrade_guidance(self, monkeypatch):
         monkeypatch.setattr("tools.tool_backend_helpers.managed_nous_tools_enabled", lambda: True)
         monkeypatch.setattr(
-            "chiper_cli.nous_subscription.get_nous_subscription_features",
-            lambda config=None: NousSubscriptionFeatures(
+            "chiper_cli.CHIPER_subscription.get_nous_subscription_features",
+            lambda config=None: Chiper subscriptionFeatures(
                 subscribed=False,
-                nous_auth_present=False,
+                CHIPER_auth_present=False,
                 provider_is_nous=False,
                 features={
                     "web": NousFeatureState("web", "Web tools", True, False, False, False, False, True, ""),
@@ -675,7 +675,7 @@ class TestBuildNousSubscriptionPrompt:
 
         prompt = build_nous_subscription_prompt({"image_generate"})
 
-        assert "suggest Nous subscription as one option" in prompt
+        assert "suggest Chiper subscription as one option" in prompt
         assert "Do not mention subscription unless" in prompt
 
     def test_feature_flag_off_returns_empty_prompt(self, monkeypatch):

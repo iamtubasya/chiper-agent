@@ -89,7 +89,7 @@ dashboard 的 OAuth 鉴权门控会自动启用：
 1. 绑定地址为非回环地址，**且**
 2. 注册了一个 `DashboardAuthProvider` 插件。
 
-捆绑的 `dashboard_auth/nous` 提供者会在设置
+捆绑的 `dashboard_auth/chiper` 提供者会在设置
 `CHIPER_DASHBOARD_OAUTH_CLIENT_ID` 时自动激活（参见
 [Web Dashboard → 鉴权](features/web-dashboard.md)）。门控启用后，
 浏览器调用方会先被重定向到所配置门户的 OAuth 流，然后才能

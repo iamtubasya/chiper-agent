@@ -1,4 +1,4 @@
-"""Tests for agent.portal_tags — Nous Portal request tag contract."""
+"""Tests for agent.portal_tags — Chiper Portal request tag contract."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ def test_chiper_client_tag_includes_current_version():
 
 
 def test_chiper_client_tag_format():
-    """The client tag has the exact shape Nous Portal expects."""
+    """The client tag has the exact shape Chiper Portal expects."""
     from agent.portal_tags import chiper_client_tag
 
     tag = chiper_client_tag()
@@ -23,10 +23,10 @@ def test_chiper_client_tag_format():
 
 
 def test_nous_portal_tags_contains_product_and_client():
-    """Every Nous Portal request gets BOTH the product tag and the version tag."""
-    from agent.portal_tags import chiper_client_tag, nous_portal_tags
+    """Every Chiper Portal request gets BOTH the product tag and the version tag."""
+    from agent.portal_tags import chiper_client_tag, CHIPER_portal_tags
 
-    tags = nous_portal_tags()
+    tags = CHIPER_portal_tags()
     assert "product=chiper-agent" in tags
     assert chiper_client_tag() in tags
     assert len(tags) == 2
@@ -34,28 +34,28 @@ def test_nous_portal_tags_contains_product_and_client():
 
 def test_nous_portal_tags_returns_fresh_list():
     """Callers mutate the returned list; we must not share state across calls."""
-    from agent.portal_tags import nous_portal_tags
+    from agent.portal_tags import CHIPER_portal_tags
 
-    a = nous_portal_tags()
+    a = CHIPER_portal_tags()
     a.append("client=test-mutation")
-    b = nous_portal_tags()
+    b = CHIPER_portal_tags()
     assert "client=test-mutation" not in b
 
 
 def test_auxiliary_client_nous_extra_body_uses_helper():
-    """auxiliary_client.NOUS_EXTRA_BODY must match the canonical helper output."""
-    from agent.auxiliary_client import NOUS_EXTRA_BODY
-    from agent.portal_tags import nous_portal_tags
+    """auxiliary_client.CHIPER_EXTRA_BODY must match the canonical helper output."""
+    from agent.auxiliary_client import CHIPER_EXTRA_BODY
+    from agent.portal_tags import CHIPER_portal_tags
 
-    assert NOUS_EXTRA_BODY == {"tags": nous_portal_tags()}
+    assert CHIPER_EXTRA_BODY == {"tags": CHIPER_portal_tags()}
 
 
 def test_nous_provider_profile_uses_helper():
-    """The Nous provider profile (main agent loop) must use the canonical tags."""
-    from agent.portal_tags import nous_portal_tags
+    """The Chiper provider profile (main agent loop) must use the canonical tags."""
+    from agent.portal_tags import CHIPER_portal_tags
     from providers import get_provider_profile
 
-    profile = get_provider_profile("nous")
+    profile = get_provider_profile("chiper")
     assert profile is not None
     body = profile.build_extra_body()
-    assert body["tags"] == nous_portal_tags()
+    assert body["tags"] == CHIPER_portal_tags()

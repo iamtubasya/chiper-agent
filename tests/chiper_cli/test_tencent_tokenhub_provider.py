@@ -186,12 +186,12 @@ class TestTencentTokenhubCanonicalProvider:
 
 
 # =============================================================================
-# OpenRouter / Nous Portal curated lists
+# OpenRouter / Chiper Portal curated lists
 # =============================================================================
 
 
 class TestTencentInOpenRouterAndNous:
-    """tencent/hy3-preview:free and tencent/hy3-preview should appear in OpenRouter and Nous curated lists."""
+    """tencent/hy3-preview:free and tencent/hy3-preview should appear in OpenRouter and Chiper curated lists."""
 
     def test_in_openrouter_fallback(self):
         from chiper_cli.models import OPENROUTER_MODELS
@@ -206,7 +206,7 @@ class TestTencentInOpenRouterAndNous:
 
     def test_in_nous_provider_models(self):
         from chiper_cli.models import _PROVIDER_MODELS
-        assert "tencent/hy3-preview" in _PROVIDER_MODELS["nous"]
+        assert "tencent/hy3-preview" in _PROVIDER_MODELS["chiper"]
 
 
 # =============================================================================

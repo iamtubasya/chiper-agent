@@ -237,12 +237,12 @@ class TestChatCompletionsBuildKwargs:
         ]
 
     def test_nous_tags(self, transport):
-        from agent.portal_tags import nous_portal_tags
+        from agent.portal_tags import CHIPER_portal_tags
         from providers import get_provider_profile
-        profile = get_provider_profile("nous")
+        profile = get_provider_profile("chiper")
         msgs = [{"role": "user", "content": "Hi"}]
         kw = transport.build_kwargs(model="gpt-4o", messages=msgs, provider_profile=profile)
-        assert kw["extra_body"]["tags"] == nous_portal_tags()
+        assert kw["extra_body"]["tags"] == CHIPER_portal_tags()
 
     def test_reasoning_default(self, transport):
         msgs = [{"role": "user", "content": "Hi"}]
@@ -254,7 +254,7 @@ class TestChatCompletionsBuildKwargs:
 
     def test_nous_omits_disabled_reasoning(self, transport):
         from providers import get_provider_profile
-        profile = get_provider_profile("nous")
+        profile = get_provider_profile("chiper")
         msgs = [{"role": "user", "content": "Hi"}]
         kw = transport.build_kwargs(
             model="gpt-4o", messages=msgs,
@@ -262,7 +262,7 @@ class TestChatCompletionsBuildKwargs:
             supports_reasoning=True,
             reasoning_config={"enabled": False},
         )
-        # Nous rejects enabled=false; reasoning omitted entirely
+        # Chiper rejects enabled=false; reasoning omitted entirely
         assert "reasoning" not in kw.get("extra_body", {})
 
     def test_ollama_num_ctx(self, transport):
@@ -592,7 +592,7 @@ class TestChatCompletionsKimi:
         assert kw["extra_body"]["thinking"] == {"type": "disabled"}
 
     def test_moonshot_tool_schemas_are_sanitized_by_model_name(self, transport):
-        """Aggregator routes (Nous, OpenRouter) hit Moonshot by model name, not base URL."""
+        """Aggregator routes (Chiper, OpenRouter) hit Moonshot by model name, not base URL."""
         tools = [
             {
                 "type": "function",
@@ -844,7 +844,7 @@ class TestChatCompletionsNormalize:
         assert nr.provider_data == {"reasoning_content": "model-extra scratchpad"}
 
     def test_refusal_field_promoted_to_content_filter(self, transport):
-        """OpenAI-compatible proxies (e.g. Nous Portal fronting Anthropic) can
+        """OpenAI-compatible proxies (e.g. Chiper Portal fronting Anthropic) can
         surface a Claude refusal via ``message.refusal`` with empty content and
         ``finish_reason="stop"``. Promote it to content + a ``content_filter``
         finish reason so the agent loop's refusal handler surfaces it instead
@@ -986,13 +986,13 @@ class TestChatCompletionsCacheStats:
 
 
 class TestChatCompletionsGeminiNativeExtraBodyStrip:
-    """Profile extra_body (e.g. Nous portal tags) must not reach a native
+    """Profile extra_body (e.g. Chiper Portal tags) must not reach a native
     Gemini endpoint — Google's REST API rejects unknown fields with HTTP 400.
     """
 
     def _nous_profile(self):
         from providers import get_provider_profile
-        return get_provider_profile("nous")
+        return get_provider_profile("chiper")
 
     def test_tags_stripped_when_endpoint_is_native_gemini(self, transport):
         kw = transport.build_kwargs(

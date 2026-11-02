@@ -17,7 +17,7 @@ def _maybe_keep_current_tts(question, choices):
 
 def _clear_provider_env(monkeypatch):
     for key in (
-        "NOUS_API_KEY",
+        "CHIPER_API_KEY",
         "OPENROUTER_API_KEY",
         "OPENAI_BASE_URL",
         "OPENAI_API_KEY",
@@ -97,7 +97,7 @@ def test_setup_syncs_openrouter_from_disk(tmp_path, monkeypatch):
 
 
 def test_setup_syncs_nous_from_disk(tmp_path, monkeypatch):
-    """Nous OAuth writes config to disk; wizard config dict must pick it up."""
+    """Chiper OAuth writes config to disk; wizard config dict must pick it up."""
     monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
     _clear_provider_env(monkeypatch)
     _stub_tts(monkeypatch)
@@ -105,7 +105,7 @@ def test_setup_syncs_nous_from_disk(tmp_path, monkeypatch):
     config = load_config()
 
     def fake_select():
-        _write_model_config(tmp_path, "nous", "https://inference.example.com/v1", "gemini-3-flash")
+        _write_model_config(tmp_path, "chiper", "https://inference.example.com/v1", "gemini-3-flash")
 
     monkeypatch.setattr("chiper_cli.main.select_provider_and_model", fake_select)
 
@@ -114,7 +114,7 @@ def test_setup_syncs_nous_from_disk(tmp_path, monkeypatch):
 
     reloaded = load_config()
     assert isinstance(reloaded["model"], dict)
-    assert reloaded["model"]["provider"] == "nous"
+    assert reloaded["model"]["provider"] == "chiper"
     assert reloaded["model"]["base_url"] == "https://inference.example.com/v1"
 
 
@@ -417,7 +417,7 @@ def test_modal_setup_can_use_nous_subscription_without_modal_creds(tmp_path, mon
     monkeypatch.setattr("chiper_cli.setup._prompt_container_resources", lambda config: None)
     monkeypatch.setattr(
         "chiper_cli.setup.get_nous_subscription_features",
-        lambda config: type("Features", (), {"nous_auth_present": True})(),
+        lambda config: type("Features", (), {"CHIPER_auth_present": True})(),
     )
     monkeypatch.setitem(
         sys.modules,
@@ -459,7 +459,7 @@ def test_modal_setup_persists_direct_mode_when_user_chooses_their_own_account(tm
     monkeypatch.setattr("chiper_cli.setup._prompt_container_resources", lambda config: None)
     monkeypatch.setattr(
         "chiper_cli.setup.get_nous_subscription_features",
-        lambda config: type("Features", (), {"nous_auth_present": True})(),
+        lambda config: type("Features", (), {"CHIPER_auth_present": True})(),
     )
     monkeypatch.setitem(
         sys.modules,

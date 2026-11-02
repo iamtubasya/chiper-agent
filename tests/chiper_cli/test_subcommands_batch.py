@@ -115,7 +115,7 @@ def _login_parser():
     return parser
 
 
-@pytest.mark.parametrize("provider", ["anthropic", "nous", "openai-codex", "totally-made-up"])
+@pytest.mark.parametrize("provider", ["anthropic", "chiper", "openai-codex", "totally-made-up"])
 def test_login_accepts_any_provider_value(provider):
     """Deprecated `login` must route every `--provider` to the handler.
 

@@ -1395,7 +1395,7 @@ def handle_max_iterations(agent, messages: list, api_call_count: int) -> str:
                     "effort": "medium"
                 }
         if _is_nous:
-            from agent.portal_tags import nous_portal_tags as _portal_tags
+            from agent.portal_tags import CHIPER_portal_tags as _portal_tags
             summary_extra_body["tags"] = _portal_tags()
 
         if agent.api_mode == "codex_responses":
@@ -2062,7 +2062,7 @@ def interruptible_streaming_api_call(agent, api_kwargs: dict, *, on_first_delta=
         #      upstream dropped/stalled the connection mid tool-call.  This
         #      is NOT an output cap — the model never reported hitting one.
         #      Some dedicated endpoints (e.g. NVIDIA Nemotron Ultra on the
-        #      Nous dedicated endpoint) stall for minutes during large
+        #      Chiper dedicated endpoint) stall for minutes during large
         #      tool-arg generation, then close the stream cleanly without a
         #      finish_reason.  Stamping "length" here sends it down the
         #      max_tokens-boost truncation path, which retries 3× to no

@@ -1,4 +1,4 @@
-"""Tests for the bundled Nous dashboard-auth plugin.
+"""Tests for the bundled Chiper dashboard-auth plugin.
 
 Covers four shapes from Phase 4 of ``.chiper/plans/2026-05-21-dashboard-oauth-auth.md``:
 
@@ -30,7 +30,7 @@ import pytest
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
-import plugins.dashboard_auth.nous as nous_plugin
+import plugins.dashboard_auth.chiper as CHIPER_plugin
 from chiper_cli.dashboard_auth import (
     InvalidCodeError,
     LoginStart,
@@ -117,7 +117,7 @@ def _mint_token(
     )
 
 
-def _patched_jwks(provider: nous_plugin.NousDashboardAuthProvider, rsa_keypair):
+def _patched_jwks(provider: CHIPER_plugin.NousDashboardAuthProvider, rsa_keypair):
     """Patch the provider's JWKS client to return our fixture key."""
     fake_key = MagicMock()
     fake_key.key = serialization.load_pem_private_key(
@@ -135,30 +135,30 @@ def _patched_jwks(provider: nous_plugin.NousDashboardAuthProvider, rsa_keypair):
 
 class TestConstruction:
     def test_protocol_compliance(self):
-        assert_protocol_compliance(nous_plugin.NousDashboardAuthProvider)
+        assert_protocol_compliance(CHIPER_plugin.NousDashboardAuthProvider)
 
     def test_name_and_display(self):
-        p = nous_plugin.NousDashboardAuthProvider(
+        p = CHIPER_plugin.NousDashboardAuthProvider(
             client_id="agent:inst1", portal_url="https://portal.example.com"
         )
-        assert p.name == "nous"
+        assert p.name == "chiper"
         assert p.display_name == "Chiper"
 
     def test_extracts_agent_instance_id(self):
-        p = nous_plugin.NousDashboardAuthProvider(
+        p = CHIPER_plugin.NousDashboardAuthProvider(
             client_id="agent:abc-123", portal_url="https://portal.example.com"
         )
         assert p._agent_instance_id == "abc-123"
 
     def test_strips_trailing_slash_from_portal_url(self):
-        p = nous_plugin.NousDashboardAuthProvider(
+        p = CHIPER_plugin.NousDashboardAuthProvider(
             client_id="agent:x", portal_url="https://portal.example.com/"
         )
         assert p._portal_url == "https://portal.example.com"
 
     def test_rejects_malformed_client_id(self):
         with pytest.raises(ValueError, match="agent:"):
-            nous_plugin.NousDashboardAuthProvider(
+            CHIPER_plugin.NousDashboardAuthProvider(
                 client_id="chiper-dashboard", portal_url="https://x"
             )
 
@@ -173,43 +173,43 @@ class TestPluginRegister:
         monkeypatch.delenv("CHIPER_DASHBOARD_OAUTH_CLIENT_ID", raising=False)
         monkeypatch.delenv("CHIPER_DASHBOARD_PORTAL_URL", raising=False)
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         ctx.register_dashboard_auth_provider.assert_not_called()
         # Skip reason is surfaced for the gate's fail-closed message.
-        assert "CHIPER_DASHBOARD_OAUTH_CLIENT_ID" in nous_plugin.LAST_SKIP_REASON
+        assert "CHIPER_DASHBOARD_OAUTH_CLIENT_ID" in CHIPER_plugin.LAST_SKIP_REASON
 
     def test_registers_with_default_portal_url_when_only_client_id_set(
         self, monkeypatch
     ):
         """Phase 7 follow-up: CHIPER_DASHBOARD_PORTAL_URL is optional —
-        defaults to the production Nous Portal. The user shouldn't have
+        defaults to the production Chiper Portal. The user shouldn't have
         to set it for the common production deployment path."""
         monkeypatch.setenv("CHIPER_DASHBOARD_OAUTH_CLIENT_ID", "agent:inst1")
         monkeypatch.delenv("CHIPER_DASHBOARD_PORTAL_URL", raising=False)
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         ctx.register_dashboard_auth_provider.assert_called_once()
         registered = ctx.register_dashboard_auth_provider.call_args.args[0]
-        assert isinstance(registered, nous_plugin.NousDashboardAuthProvider)
-        assert registered._portal_url == "https://portal.Chiper.com"
+        assert isinstance(registered, CHIPER_plugin.NousDashboardAuthProvider)
+        assert registered._portal_url == "https://portal.chiper.local"
         # Skip reason cleared on successful registration.
-        assert nous_plugin.LAST_SKIP_REASON == ""
+        assert CHIPER_plugin.LAST_SKIP_REASON == ""
 
     def test_skips_when_client_id_malformed(self, monkeypatch):
         monkeypatch.setenv("CHIPER_DASHBOARD_OAUTH_CLIENT_ID", "chiper-dashboard")
         monkeypatch.setenv("CHIPER_DASHBOARD_PORTAL_URL", "https://p.example")
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         ctx.register_dashboard_auth_provider.assert_not_called()
         # Skip reason names the offending value + contract shape.
-        assert "agent:" in nous_plugin.LAST_SKIP_REASON
-        assert "chiper-dashboard" in nous_plugin.LAST_SKIP_REASON
+        assert "agent:" in CHIPER_plugin.LAST_SKIP_REASON
+        assert "chiper-dashboard" in CHIPER_plugin.LAST_SKIP_REASON
 
     def test_registers_with_explicit_portal_url(self, monkeypatch):
         monkeypatch.setenv("CHIPER_DASHBOARD_OAUTH_CLIENT_ID", "agent:inst1")
         monkeypatch.setenv("CHIPER_DASHBOARD_PORTAL_URL", "https://p.example")
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         ctx.register_dashboard_auth_provider.assert_called_once()
         registered = ctx.register_dashboard_auth_provider.call_args.args[0]
         assert registered._client_id == "agent:inst1"
@@ -219,7 +219,7 @@ class TestPluginRegister:
         monkeypatch.setenv("CHIPER_DASHBOARD_OAUTH_CLIENT_ID", "  agent:x  ")
         monkeypatch.setenv("CHIPER_DASHBOARD_PORTAL_URL", "  https://p.example  ")
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         ctx.register_dashboard_auth_provider.assert_called_once()
 
     def test_empty_portal_url_env_uses_default(self, monkeypatch):
@@ -229,9 +229,9 @@ class TestPluginRegister:
         monkeypatch.setenv("CHIPER_DASHBOARD_OAUTH_CLIENT_ID", "agent:inst1")
         monkeypatch.setenv("CHIPER_DASHBOARD_PORTAL_URL", "")
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         registered = ctx.register_dashboard_auth_provider.call_args.args[0]
-        assert registered._portal_url == "https://portal.Chiper.com"
+        assert registered._portal_url == "https://portal.chiper.local"
 
 
 # ---------------------------------------------------------------------------
@@ -277,13 +277,13 @@ class TestConfigYamlSource:
         monkeypatch.delenv("CHIPER_DASHBOARD_PORTAL_URL", raising=False)
         patch_config({"client_id": "agent:from-config"})
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         ctx.register_dashboard_auth_provider.assert_called_once()
         registered = ctx.register_dashboard_auth_provider.call_args.args[0]
         assert registered._client_id == "agent:from-config"
         # Defaults to production portal URL when neither config nor env
         # specifies one.
-        assert registered._portal_url == "https://portal.Chiper.com"
+        assert registered._portal_url == "https://portal.chiper.local"
 
     def test_config_yaml_client_id_and_portal_url(self, patch_config, monkeypatch):
         monkeypatch.delenv("CHIPER_DASHBOARD_OAUTH_CLIENT_ID", raising=False)
@@ -293,7 +293,7 @@ class TestConfigYamlSource:
             "portal_url": "https://staging.portal.example",
         })
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         registered = ctx.register_dashboard_auth_provider.call_args.args[0]
         assert registered._client_id == "agent:from-config"
         assert registered._portal_url == "https://staging.portal.example"
@@ -305,7 +305,7 @@ class TestConfigYamlSource:
         monkeypatch.setenv("CHIPER_DASHBOARD_OAUTH_CLIENT_ID", "agent:from-env")
         patch_config({"client_id": "agent:from-config"})
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         registered = ctx.register_dashboard_auth_provider.call_args.args[0]
         assert registered._client_id == "agent:from-env", (
             "env var must override config.yaml — Fly secret injection "
@@ -322,7 +322,7 @@ class TestConfigYamlSource:
             "portal_url": "https://config.portal.example",
         })
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         registered = ctx.register_dashboard_auth_provider.call_args.args[0]
         assert registered._portal_url == "https://env.portal.example"
 
@@ -336,7 +336,7 @@ class TestConfigYamlSource:
         monkeypatch.setenv("CHIPER_DASHBOARD_OAUTH_CLIENT_ID", "")
         patch_config({"client_id": "agent:from-config"})
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         ctx.register_dashboard_auth_provider.assert_called_once()
         registered = ctx.register_dashboard_auth_provider.call_args.args[0]
         assert registered._client_id == "agent:from-config"
@@ -350,15 +350,15 @@ class TestConfigYamlSource:
         monkeypatch.delenv("CHIPER_DASHBOARD_OAUTH_CLIENT_ID", raising=False)
         patch_config(None)
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         ctx.register_dashboard_auth_provider.assert_not_called()
         # Old behaviour: skip reason mentions the env var.
-        assert "CHIPER_DASHBOARD_OAUTH_CLIENT_ID" in nous_plugin.LAST_SKIP_REASON
+        assert "CHIPER_DASHBOARD_OAUTH_CLIENT_ID" in CHIPER_plugin.LAST_SKIP_REASON
         # New behaviour: skip reason ALSO mentions the config.yaml path
         # so the user knows it's a valid alternative.
-        assert "dashboard.oauth.client_id" in nous_plugin.LAST_SKIP_REASON, (
+        assert "dashboard.oauth.client_id" in CHIPER_plugin.LAST_SKIP_REASON, (
             f"skip reason omits the config.yaml surface — operators "
-            f"won't know it exists. got: {nous_plugin.LAST_SKIP_REASON!r}"
+            f"won't know it exists. got: {CHIPER_plugin.LAST_SKIP_REASON!r}"
         )
 
     def test_config_yaml_load_failure_falls_through_cleanly(
@@ -378,7 +378,7 @@ class TestConfigYamlSource:
         )
         ctx = MagicMock()
         # Must not raise.
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         ctx.register_dashboard_auth_provider.assert_not_called()
 
     def test_config_yaml_with_non_dict_oauth_section(
@@ -393,7 +393,7 @@ class TestConfigYamlSource:
             lambda: {"dashboard": {"oauth": "wrong type"}},
         )
         ctx = MagicMock()
-        nous_plugin.register(ctx)
+        CHIPER_plugin.register(ctx)
         # Falls through to the no-env-and-no-config path.
         ctx.register_dashboard_auth_provider.assert_not_called()
 
@@ -406,7 +406,7 @@ class TestConfigYamlSource:
 class TestStartLogin:
     @pytest.fixture
     def provider(self):
-        return nous_plugin.NousDashboardAuthProvider(
+        return CHIPER_plugin.NousDashboardAuthProvider(
             client_id="agent:inst1", portal_url="https://portal.example.com"
         )
 
@@ -522,7 +522,7 @@ class TestStartLogin:
 class TestCompleteLogin:
     @pytest.fixture
     def provider(self, rsa_keypair):
-        p = nous_plugin.NousDashboardAuthProvider(
+        p = CHIPER_plugin.NousDashboardAuthProvider(
             client_id="agent:inst123", portal_url="https://portal.example.com"
         )
         _patched_jwks(p, rsa_keypair)
@@ -553,7 +553,7 @@ class TestCompleteLogin:
                 "refresh_token": "rt_initial_value",
             },
         )
-        with patch("plugins.dashboard_auth.nous.httpx.post", return_value=mock_resp):
+        with patch("plugins.dashboard_auth.chiper.httpx.post", return_value=mock_resp):
             session = provider.complete_login(
                 code="abc",
                 state="state-val",
@@ -562,7 +562,7 @@ class TestCompleteLogin:
             )
         assert isinstance(session, Session)
         assert session.user_id == "usr_abc"
-        assert session.provider == "nous"
+        assert session.provider == "chiper"
         assert session.access_token == access_token
         # The dashboard auth-code grant now issues a refresh token (NAS #293);
         # complete_login must surface it so the middleware persists it.
@@ -578,7 +578,7 @@ class TestCompleteLogin:
         mock_resp = self._mock_post(
             200, {"access_token": access_token, "token_type": "Bearer"}
         )
-        with patch("plugins.dashboard_auth.nous.httpx.post", return_value=mock_resp):
+        with patch("plugins.dashboard_auth.chiper.httpx.post", return_value=mock_resp):
             session = provider.complete_login(
                 code="abc",
                 state="state-val",
@@ -589,7 +589,7 @@ class TestCompleteLogin:
 
     def test_400_raises_invalid_code(self, provider):
         mock_resp = self._mock_post(400, {"error": "invalid_grant"})
-        with patch("plugins.dashboard_auth.nous.httpx.post", return_value=mock_resp):
+        with patch("plugins.dashboard_auth.chiper.httpx.post", return_value=mock_resp):
             with pytest.raises(InvalidCodeError, match="invalid_grant"):
                 provider.complete_login(
                     code="bad", state="s", code_verifier="v",
@@ -599,7 +599,7 @@ class TestCompleteLogin:
     def test_500_raises_provider_error(self, provider):
         mock_resp = self._mock_post(500, "internal server error", ctype="text/plain")
         mock_resp.text = "internal server error"
-        with patch("plugins.dashboard_auth.nous.httpx.post", return_value=mock_resp):
+        with patch("plugins.dashboard_auth.chiper.httpx.post", return_value=mock_resp):
             with pytest.raises(ProviderError, match="500"):
                 provider.complete_login(
                     code="x", state="s", code_verifier="v",
@@ -608,7 +608,7 @@ class TestCompleteLogin:
 
     def test_missing_access_token_raises(self, provider):
         mock_resp = self._mock_post(200, {"token_type": "Bearer"})
-        with patch("plugins.dashboard_auth.nous.httpx.post", return_value=mock_resp):
+        with patch("plugins.dashboard_auth.chiper.httpx.post", return_value=mock_resp):
             with pytest.raises(ProviderError, match="access_token"):
                 provider.complete_login(
                     code="x", state="s", code_verifier="v",
@@ -620,7 +620,7 @@ class TestCompleteLogin:
         mock_resp = self._mock_post(
             200, {"access_token": access_token, "token_type": "DPoP"}
         )
-        with patch("plugins.dashboard_auth.nous.httpx.post", return_value=mock_resp):
+        with patch("plugins.dashboard_auth.chiper.httpx.post", return_value=mock_resp):
             with pytest.raises(ProviderError, match="token_type"):
                 provider.complete_login(
                     code="x", state="s", code_verifier="v",
@@ -629,7 +629,7 @@ class TestCompleteLogin:
 
     def test_network_error_raises_provider_error(self, provider):
         with patch(
-            "plugins.dashboard_auth.nous.httpx.post",
+            "plugins.dashboard_auth.chiper.httpx.post",
             side_effect=httpx.ConnectError("conn refused"),
         ):
             with pytest.raises(ProviderError, match="unreachable"):
@@ -652,7 +652,7 @@ class TestCompleteLogin:
                 "refresh_token": "rt-opaque",
             },
         )
-        with patch("plugins.dashboard_auth.nous.httpx.post", return_value=mock_resp):
+        with patch("plugins.dashboard_auth.chiper.httpx.post", return_value=mock_resp):
             session = provider.complete_login(
                 code="x", state="s", code_verifier="v",
                 redirect_uri="https://chiper.fly.dev/auth/callback",
@@ -668,7 +668,7 @@ class TestCompleteLogin:
 class TestVerifySession:
     @pytest.fixture
     def provider(self, rsa_keypair):
-        p = nous_plugin.NousDashboardAuthProvider(
+        p = CHIPER_plugin.NousDashboardAuthProvider(
             client_id="agent:inst123", portal_url="https://portal.example.com"
         )
         _patched_jwks(p, rsa_keypair)
@@ -732,7 +732,7 @@ class TestVerifySession:
     ):
         import logging
         token = _mint_token(rsa_keypair, oauth_contract_version=None)
-        with caplog.at_level(logging.WARNING, logger="plugins.dashboard_auth.nous"):
+        with caplog.at_level(logging.WARNING, logger="plugins.dashboard_auth.chiper"):
             session = provider.verify_session(access_token=token)
         assert session is not None
         assert any(
@@ -764,7 +764,7 @@ class TestVerifySession:
 class TestRefreshAndRevoke:
     @pytest.fixture
     def provider(self, rsa_keypair):
-        p = nous_plugin.NousDashboardAuthProvider(
+        p = CHIPER_plugin.NousDashboardAuthProvider(
             client_id="agent:inst123", portal_url="https://portal.example.com"
         )
         _patched_jwks(p, rsa_keypair)
@@ -794,7 +794,7 @@ class TestRefreshAndRevoke:
             },
         )
         with patch(
-            "plugins.dashboard_auth.nous.httpx.post", return_value=mock_resp
+            "plugins.dashboard_auth.chiper.httpx.post", return_value=mock_resp
         ) as mock_post:
             session = provider.refresh_session(refresh_token="rt_old_value")
 
@@ -803,7 +803,7 @@ class TestRefreshAndRevoke:
         # The ROTATED refresh token must be surfaced so the middleware can
         # persist it back to the cookie.
         assert session.refresh_token == "rt_rotated_value"
-        assert session.provider == "nous"
+        assert session.provider == "chiper"
 
         # Posts grant_type=refresh_token with the RT in BOTH the body (Portal's
         # schema requires it there) and the X-Refresh-Token header (log
@@ -812,25 +812,25 @@ class TestRefreshAndRevoke:
         assert kwargs["data"]["grant_type"] == "refresh_token"
         assert kwargs["data"]["client_id"] == "agent:inst123"
         assert kwargs["data"]["refresh_token"] == "rt_old_value"
-        assert kwargs["headers"]["x-nous-refresh-token"] == "rt_old_value"
+        assert kwargs["headers"]["x-chiper-refresh-token"] == "rt_old_value"
 
     def test_refresh_400_raises_refresh_expired(self, provider):
         # Expired / revoked / reuse-detected RT → Portal 400 → force re-login.
         mock_resp = self._mock_post(400, {"error": "invalid_grant"})
-        with patch("plugins.dashboard_auth.nous.httpx.post", return_value=mock_resp):
+        with patch("plugins.dashboard_auth.chiper.httpx.post", return_value=mock_resp):
             with pytest.raises(RefreshExpiredError, match="invalid_grant"):
                 provider.refresh_session(refresh_token="rt_dead")
 
     def test_refresh_empty_token_raises_refresh_expired_without_network(self, provider):
         # No RT present — fail fast as a dead session, never hit the network.
-        with patch("plugins.dashboard_auth.nous.httpx.post") as mock_post:
+        with patch("plugins.dashboard_auth.chiper.httpx.post") as mock_post:
             with pytest.raises(RefreshExpiredError):
                 provider.refresh_session(refresh_token="")
         mock_post.assert_not_called()
 
     def test_refresh_network_error_raises_provider_error(self, provider):
         with patch(
-            "plugins.dashboard_auth.nous.httpx.post",
+            "plugins.dashboard_auth.chiper.httpx.post",
             side_effect=httpx.RequestError("boom"),
         ):
             with pytest.raises(ProviderError, match="unreachable"):
@@ -838,7 +838,7 @@ class TestRefreshAndRevoke:
 
     def test_refresh_500_raises_provider_error(self, provider):
         mock_resp = self._mock_post(500, "oops", ctype="text/plain")
-        with patch("plugins.dashboard_auth.nous.httpx.post", return_value=mock_resp):
+        with patch("plugins.dashboard_auth.chiper.httpx.post", return_value=mock_resp):
             with pytest.raises(ProviderError):
                 provider.refresh_session(refresh_token="rt_x")
 

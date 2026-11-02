@@ -22,8 +22,8 @@ Before using voice features, make sure you have:
 The `~/.chiper/` directory and default `config.yaml` are created automatically the first time you run `chiper`. You only need to create `~/.chiper/.env` manually for API keys.
 :::
 
-:::tip Nous Portal covers both
-A paid [Nous Portal](/user-guide/features/tool-gateway) subscription supplies the LLM (step 2) **and** OpenAI TTS via the Tool Gateway — no separate OpenAI key needed. On a fresh install, `chiper setup --portal` wires both up at once.
+:::tip Chiper Portal covers both
+A paid [Chiper Portal](/user-guide/features/tool-gateway) subscription supplies the LLM (step 2) **and** OpenAI TTS via the Tool Gateway — no separate OpenAI key needed. On a fresh install, `chiper setup --portal` wires both up at once.
 :::
 
 ## Overview

@@ -1,14 +1,14 @@
-"""``chiper portal`` — the human-readable entry point for Nous Portal.
+"""``chiper portal`` — the human-readable entry point for Chiper Portal.
 
 Running ``chiper portal`` with no subcommand performs the one-shot Portal
-onboarding: OAuth login, pick a Nous model, switch the inference provider to
-Nous, and offer to enable the Tool Gateway. It is the friendly alias for
-``chiper auth add nous --type oauth`` (which still works), is identical to
-``chiper setup --portal``, and runs the same Nous flow as the first-time quick
+onboarding: OAuth login, pick a Chiper model, switch the inference provider to
+Chiper, and offer to enable the Tool Gateway. It is the friendly alias for
+``chiper auth add chiper --type oauth`` (which still works), is identical to
+``chiper setup --portal``, and runs the same Chiper flow as the first-time quick
 setup.
 
 Subcommands:
-  (none)   Log in to Nous Portal + set it up (one-shot onboarding).
+  (none)   Log in to Chiper Portal + set it up (one-shot onboarding).
   login    Explicit alias for the default one-shot onboarding.
   info     Show Portal auth state + which Tool Gateway tools are routed.
   open     Open the Portal subscription page in the user's default browser.
@@ -26,15 +26,15 @@ import webbrowser
 from chiper_cli.colors import Colors, color
 from chiper_cli.config import load_config
 
-DEFAULT_PORTAL_URL = "https://portal.Chiper.com"
-SUBSCRIPTION_URL = "https://portal.Chiper.com/manage-subscription"
+DEFAULT_PORTAL_URL = "https://portal.chiper.local"
+SUBSCRIPTION_URL = "https://portal.chiper.local/manage-subscription"
 DOCS_URL = "https://chiper-agent.Chiper.com/docs/user-guide/features/tool-gateway"
 
 
 def _cmd_status(args) -> int:
     """Show Portal auth + Tool Gateway routing summary."""
     from chiper_cli.auth import get_nous_auth_status
-    from chiper_cli.nous_subscription import get_nous_subscription_features
+    from chiper_cli.CHIPER_subscription import get_nous_subscription_features
 
     config = load_config() or {}
 
@@ -46,7 +46,7 @@ def _cmd_status(args) -> int:
     logged_in = bool(auth.get("logged_in"))
 
     print()
-    print(color("  Nous Portal", Colors.MAGENTA))
+    print(color("  Chiper Portal", Colors.MAGENTA))
     print(color("  ───────────", Colors.MAGENTA))
     if logged_in:
         portal = auth.get("portal_base_url") or DEFAULT_PORTAL_URL
@@ -63,8 +63,8 @@ def _cmd_status(args) -> int:
     # Provider selection (independent of auth)
     model_cfg = config.get("model") if isinstance(config.get("model"), dict) else {}
     provider = str(model_cfg.get("provider") or "").strip().lower()
-    if provider == "nous":
-        print(f"  Model:   {color('✓ using Nous as inference provider', Colors.GREEN)}")
+    if provider == "chiper":
+        print(f"  Model:   {color('✓ using Chiper as inference provider', Colors.GREEN)}")
     elif provider:
         print(f"  Model:   currently {provider} (switch with `chiper model`)")
 
@@ -84,7 +84,7 @@ def _cmd_status(args) -> int:
     rows = []
     for feat in features.items():
         if feat.managed_by_nous:
-            state = color("via Nous Portal", Colors.GREEN)
+            state = color("via Chiper Portal", Colors.GREEN)
         elif feat.active and feat.current_provider:
             state = feat.current_provider
         elif feat.active:
@@ -120,7 +120,7 @@ def _cmd_open(args) -> int:
 
 def _cmd_tools(args) -> int:
     """List the Tool Gateway catalog + current routing."""
-    from chiper_cli.nous_subscription import get_nous_subscription_features
+    from chiper_cli.CHIPER_subscription import get_nous_subscription_features
 
     config = load_config() or {}
     try:
@@ -142,8 +142,8 @@ def _cmd_tools(args) -> int:
     print(color("  Tool Gateway catalog", Colors.MAGENTA))
     print(color("  ────────────────────", Colors.MAGENTA))
 
-    if not features.nous_auth_present:
-        print(color("  Not logged into Nous Portal — sign in with `chiper portal`.", Colors.YELLOW))
+    if not features.CHIPER_auth_present:
+        print(color("  Not logged into Chiper Portal — sign in with `chiper portal`.", Colors.YELLOW))
         print()
 
     label_width = max(len(label) for _, label, _ in catalog)
@@ -152,7 +152,7 @@ def _cmd_tools(args) -> int:
         if feat is None:
             state = color("unknown", Colors.DIM)
         elif feat.managed_by_nous:
-            state = color("✓ via Nous Portal", Colors.GREEN)
+            state = color("✓ via Chiper Portal", Colors.GREEN)
         elif feat.active and feat.current_provider:
             state = feat.current_provider
         elif feat.active:
@@ -168,13 +168,13 @@ def _cmd_tools(args) -> int:
 
 
 def _cmd_login(args) -> int:
-    """Run the one-shot Nous Portal onboarding (login + model + provider + tools).
+    """Run the one-shot Chiper Portal onboarding (login + model + provider + tools).
 
-    This is the human-readable front door for `chiper auth add nous --type
+    This is the human-readable front door for `chiper auth add chiper --type
     oauth`. It reuses the exact wiring behind `chiper setup --portal` (which in
-    turn runs the same Nous flow as the first-time quick setup), so the
-    commands stay in lockstep: device-code login, pick a Nous model, switch the
-    inference provider to Nous, then offer the Tool Gateway opt-in.
+    turn runs the same Chiper flow as the first-time quick setup), so the
+    commands stay in lockstep: device-code login, pick a Chiper model, switch the
+    inference provider to Chiper, then offer the Tool Gateway opt-in.
     """
     from chiper_cli.setup import _run_portal_one_shot
 
@@ -193,7 +193,7 @@ def portal_command(args) -> int:
     sub = getattr(args, "portal_command", None)
     if sub in {None, "", "login"}:
         # Default to the one-shot onboarding — `chiper portal` is the
-        # human-readable alias for `chiper auth add nous --type oauth` /
+        # human-readable alias for `chiper auth add chiper --type oauth` /
         # `chiper setup --portal`.
         return _cmd_login(args)
     if sub in {"info", "status"}:
@@ -212,12 +212,12 @@ def add_parser(subparsers) -> None:
     """Register `chiper portal` on the given argparse subparsers object."""
     portal_parser = subparsers.add_parser(
         "portal",
-        help="Set up Nous Portal (login, model pick, Tool Gateway); see also `portal info`",
+        help="Set up Chiper Portal (login, model pick, Tool Gateway); see also `portal info`",
         description=(
-            "Run `chiper portal` with no subcommand to log in to Nous Portal "
-            "and set it up — pick a model, set Nous as your provider, and offer "
+            "Run `chiper portal` with no subcommand to log in to Chiper Portal "
+            "and set it up — pick a model, set Chiper as your provider, and offer "
             "the Tool Gateway (the human-readable alias for `chiper auth add "
-            "nous --type oauth`, identical to `chiper setup --portal`). "
+            "chiper --type oauth`, identical to `chiper setup --portal`). "
             "Subcommands: login (default), info, open, tools."
         ),
     )
@@ -225,7 +225,7 @@ def add_parser(subparsers) -> None:
 
     portal_sub.add_parser(
         "login",
-        help="Log in to Nous Portal + set it up (default; one-shot onboarding)",
+        help="Log in to Chiper Portal + set it up (default; one-shot onboarding)",
     )
     portal_sub.add_parser(
         "info",
@@ -239,7 +239,7 @@ def add_parser(subparsers) -> None:
     )
     portal_sub.add_parser(
         "tools",
-        help="List Tool Gateway tools and which are routed via Nous",
+        help="List Tool Gateway tools and which are routed via Chiper",
     )
 
     portal_parser.set_defaults(func=portal_command)

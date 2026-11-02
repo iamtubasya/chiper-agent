@@ -143,8 +143,8 @@ def _list_auth_returning(rows: list[dict]):
 
 def _nous_row(model: str = "openai/gpt-5.5") -> dict:
     return {
-        "slug": "nous",
-        "name": "Nous",
+        "slug": "chiper",
+        "name": "Chiper",
         "models": [model],
         "total_models": 1,
         "is_current": True,
@@ -175,7 +175,7 @@ def test_build_models_payload_does_not_call_provider_model_ids():
     caching). ``build_models_payload`` itself must not call the live fetcher
     directly; the test pins that boundary.
     """
-    rows = [{"slug": "nous", "name": "Nous", "models": ["chiper-4-405b"],
+    rows = [{"slug": "chiper", "name": "Chiper", "models": ["chiper-4-405b"],
              "total_models": 1, "is_current": False, "is_user_defined": False,
              "source": "built-in"}]
     ctx = _empty_ctx()
@@ -186,13 +186,13 @@ def test_build_models_payload_does_not_call_provider_model_ids():
 
 
 def test_build_models_payload_uses_cached_nous_tier_by_default():
-    """Picker payloads should not force fresh Nous account checks.
+    """Picker payloads should not force fresh Chiper account checks.
 
     Desktop/status picker opens are request/response UI paths. They can hit
     the short free-tier cache; explicit model/auth flows can still opt into a
     fresh account check when needed.
     """
-    ctx = _empty_ctx(provider="nous", model="openai/gpt-5.5")
+    ctx = _empty_ctx(provider="chiper", model="openai/gpt-5.5")
     rows = [_nous_row()]
     with patch(
         "chiper_cli.model_switch.list_authenticated_providers",
@@ -205,7 +205,7 @@ def test_build_models_payload_uses_cached_nous_tier_by_default():
 
 
 def test_build_models_payload_can_force_fresh_nous_tier():
-    ctx = _empty_ctx(provider="nous", model="openai/gpt-5.5")
+    ctx = _empty_ctx(provider="chiper", model="openai/gpt-5.5")
     rows = [_nous_row()]
     with patch(
         "chiper_cli.model_switch.list_authenticated_providers",
@@ -237,7 +237,7 @@ def test_list_authenticated_providers_force_fresh_is_keyword_only():
 
 def test_pricing_uses_cached_nous_tier_by_default():
     rows = [_nous_row()]
-    ctx = _empty_ctx(provider="nous", model="openai/gpt-5.5")
+    ctx = _empty_ctx(provider="chiper", model="openai/gpt-5.5")
     with (
         _list_auth_returning(rows),
         patch(
@@ -258,7 +258,7 @@ def test_pricing_uses_cached_nous_tier_by_default():
 
 def test_pricing_can_force_fresh_nous_tier():
     rows = [_nous_row()]
-    ctx = _empty_ctx(provider="nous", model="openai/gpt-5.5")
+    ctx = _empty_ctx(provider="chiper", model="openai/gpt-5.5")
     with (
         _list_auth_returning(rows),
         patch(

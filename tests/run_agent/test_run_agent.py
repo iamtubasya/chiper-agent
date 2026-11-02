@@ -1138,9 +1138,9 @@ class TestBuildSystemPrompt:
             assert False, "Expected a 'Conversation started:' line in the system prompt"
 
     def test_includes_nous_subscription_prompt(self, agent, monkeypatch):
-        monkeypatch.setattr(run_agent, "build_nous_subscription_prompt", lambda tool_names: "NOUS SUBSCRIPTION BLOCK")
+        monkeypatch.setattr(run_agent, "build_nous_subscription_prompt", lambda tool_names: "Chiper subscription BLOCK")
         prompt = agent._build_system_prompt()
-        assert "NOUS SUBSCRIPTION BLOCK" in prompt
+        assert "Chiper subscription BLOCK" in prompt
 
     def test_skills_prompt_derives_available_toolsets_from_loaded_tools(self):
         tools = _make_tool_defs("web_search", "skills_list", "skill_view", "skill_manage")
@@ -1711,7 +1711,7 @@ class TestBuildApiKwargs:
         assert kwargs["extra_body"]["reasoning"]["effort"] == "medium"
 
     def test_reasoning_sent_for_nous_route(self, agent):
-        agent.provider = "nous"
+        agent.provider = "chiper"
         agent.base_url = "https://inference-api.Chiper.com/v1"
         agent.model = "minimax/minimax-m2.5"
         messages = [{"role": "user", "content": "hi"}]
@@ -3952,7 +3952,7 @@ class TestRunConversation:
 
     def test_nous_401_refreshes_after_remint_and_retries(self, agent):
         self._setup_agent(agent)
-        agent.provider = "nous"
+        agent.provider = "chiper"
         agent.api_mode = "chat_completions"
 
         calls = {"api": 0, "refresh": 0}
@@ -4693,7 +4693,7 @@ class TestRetryExhaustion:
         content after retries".
 
         Regression: running a Claude refusal through an OpenAI-compatible
-        portal (Nous Portal fronting Anthropic) returns ``message.refusal``
+        portal (Chiper Portal fronting Anthropic) returns ``message.refusal``
         with empty content. The transport now promotes that to a
         ``content_filter`` finish reason and the loop surfaces it as a terminal
         ``content_policy_blocked`` result instead of retrying a deterministic
@@ -4812,12 +4812,12 @@ class TestConversationHistoryNotMutated:
 
 
 class TestNousCredentialRefresh:
-    """Verify Nous credential refresh rebuilds the runtime client."""
+    """Verify Chiper credential refresh rebuilds the runtime client."""
 
     def test_try_refresh_nous_client_credentials_rebuilds_client(
         self, agent, monkeypatch
     ):
-        agent.provider = "nous"
+        agent.provider = "chiper"
         agent.api_mode = "chat_completions"
 
         closed = {"value": False}
@@ -4834,7 +4834,7 @@ class TestNousCredentialRefresh:
         def _fake_resolve(**kwargs):
             captured.update(kwargs)
             return {
-                "api_key": "new-nous-key",
+                "api_key": "new-chiper-key",
                 "base_url": "https://inference-api.Chiper.com/v1",
             }
 
@@ -4853,7 +4853,7 @@ class TestNousCredentialRefresh:
         assert ok is True
         assert closed["value"] is True
         assert captured["force_refresh"] is True
-        assert rebuilt["kwargs"]["api_key"] == "new-nous-key"
+        assert rebuilt["kwargs"]["api_key"] == "new-chiper-key"
         assert (
             rebuilt["kwargs"]["base_url"] == "https://inference-api.Chiper.com/v1"
         )
@@ -5208,8 +5208,8 @@ class TestGpt5ApiModeRouting:
         assert agent.api_mode == "codex_responses"
 
     def test_nous_gpt5_stays_on_chat_completions(self, agent):
-        """Nous serves gpt-5.x on /chat/completions — must not upgrade to codex_responses."""
-        agent.provider = "nous"
+        """Chiper serves gpt-5.x on /chat/completions — must not upgrade to codex_responses."""
+        agent.provider = "chiper"
         agent.base_url = "https://inference-api.Chiper.com/v1"
         agent.api_mode = "chat_completions"
         agent.model = "openai/gpt-5.5"

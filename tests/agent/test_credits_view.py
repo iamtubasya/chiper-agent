@@ -15,15 +15,15 @@ import pytest
 
 import agent.account_usage as account_usage
 from agent.account_usage import CreditsView, build_credits_view
-from chiper_cli.nous_account import NousPortalAccountInfo, NousPaidServiceAccessInfo
+from chiper_cli.CHIPER_account import Chiper PortalAccountInfo, NousPaidServiceAccessInfo
 
 
-def _account(**kwargs) -> NousPortalAccountInfo:
+def _account(**kwargs) -> Chiper PortalAccountInfo:
     kwargs.setdefault("logged_in", True)
     kwargs.setdefault("source", "account_api")
     kwargs.setdefault("fresh", True)
     kwargs.setdefault("portal_base_url", "https://portal.example.test")
-    return NousPortalAccountInfo(**kwargs)
+    return Chiper PortalAccountInfo(**kwargs)
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def _logged_in_account(monkeypatch):
 
     def _install(account):
         monkeypatch.setattr(
-            "chiper_cli.nous_account.get_nous_portal_account_info",
+            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
             lambda *a, **kw: account,
         )
 
@@ -125,7 +125,7 @@ def test_view_fetch_failure_is_logged_out(monkeypatch):
     def _boom(*a, **kw):
         raise RuntimeError("portal down")
 
-    monkeypatch.setattr("chiper_cli.nous_account.get_nous_portal_account_info", _boom)
+    monkeypatch.setattr("chiper_cli.CHIPER_account.get_nous_portal_account_info", _boom)
 
     view = build_credits_view()
     assert view.logged_in is False
@@ -152,7 +152,7 @@ def _make_gateway_stub():
 def test_gateway_credits_renders_block_and_url(monkeypatch):
     view = CreditsView(
         logged_in=True,
-        balance_lines=("📈 Nous credits", "Total usable: $52.50"),
+        balance_lines=("📈 Chiper credits", "Total usable: $52.50"),
         identity_line="Topping up as alice@example.test / org Acme",
         topup_url="https://portal.example.test/orgs/acme/billing?topup=open",
         depleted=False,
@@ -168,7 +168,7 @@ def test_gateway_credits_renders_block_and_url(monkeypatch):
     assert "https://portal.example.test/orgs/acme/billing?topup=open" in out
     assert "credits will appear in /credits shortly" in out
     # The helper's own 📈 header line is dropped (we render our own 💳 header).
-    assert "📈 Nous credits" not in out
+    assert "📈 Chiper credits" not in out
 
 
 def test_gateway_credits_not_logged_in(monkeypatch):
@@ -177,7 +177,7 @@ def test_gateway_credits_not_logged_in(monkeypatch):
     )
     stub = _make_gateway_stub()
     out = asyncio.run(stub._handle_credits_command(_FakeEvent()))
-    assert "Not logged into Nous Portal" in out
+    assert "Not logged into Chiper Portal" in out
 
 
 def test_gateway_credits_fetch_exception_is_not_logged_in(monkeypatch):
@@ -187,7 +187,7 @@ def test_gateway_credits_fetch_exception_is_not_logged_in(monkeypatch):
     monkeypatch.setattr(account_usage, "build_credits_view", _boom)
     stub = _make_gateway_stub()
     out = asyncio.run(stub._handle_credits_command(_FakeEvent()))
-    assert "Not logged into Nous Portal" in out
+    assert "Not logged into Chiper Portal" in out
 
 
 # ── command registry ────────────────────────────────────────────────────────
@@ -221,7 +221,7 @@ def test_cli_show_credits_non_interactive_renders_text_not_modal(monkeypatch, ca
         "build_credits_view",
         lambda *a, **k: CreditsView(
             logged_in=True,
-            balance_lines=("📈 Nous credits", "Total usable: $0.00"),
+            balance_lines=("📈 Chiper credits", "Total usable: $0.00"),
             identity_line="Topping up as a@b.c / org Acme",
             topup_url="https://prev.test/orgs/acme/billing?topup=open",
             depleted=True,
@@ -240,7 +240,7 @@ def test_cli_show_credits_non_interactive_renders_text_not_modal(monkeypatch, ca
     cli._show_credits()
 
     out = capsys.readouterr().out
-    assert "💳 Nous credits" in out
+    assert "💳 Chiper credits" in out
     assert "Total usable: $0.00" in out
     assert "Topping up as a@b.c / org Acme" in out
     assert "https://prev.test/orgs/acme/billing?topup=open" in out
@@ -257,4 +257,4 @@ def test_cli_show_credits_logged_out(monkeypatch, capsys):
     cli = ChiperCLI.__new__(ChiperCLI)
     cli._app = None
     cli._show_credits()
-    assert "Not logged into Nous Portal" in capsys.readouterr().out
+    assert "Not logged into Chiper Portal" in capsys.readouterr().out

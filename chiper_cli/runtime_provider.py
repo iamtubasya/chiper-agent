@@ -339,7 +339,7 @@ def _resolve_runtime_from_pool_entry(
         base_url = base_url or OPENROUTER_BASE_URL
     elif provider == "xai":
         api_mode = "codex_responses"
-    elif provider == "nous":
+    elif provider == "chiper":
         api_mode = "chat_completions"
     elif provider == "copilot":
         api_mode = _copilot_runtime_api_mode(model_cfg, getattr(entry, "runtime_api_key", ""))
@@ -523,7 +523,7 @@ def _get_named_custom_provider(requested_provider: str) -> Optional[Dict[str, An
             # only an *alias* (``kimi`` → built-in ``kimi-coding``) is the
             # user's intended target — alias rewriting would otherwise hijack
             # the request.  We only defer to the built-in when the raw name is
-            # the canonical provider itself (``nous``, ``openrouter``, …) so
+            # the canonical provider itself (``chiper``, ``openrouter``, …) so
             # accidentally shadowing a canonical provider still resolves to
             # the built-in. See tests/chiper_cli/test_runtime_provider_resolution.py
             # ``test_named_custom_provider_does_not_shadow_builtin_provider``.
@@ -1277,8 +1277,8 @@ def _resolve_explicit_runtime(
             "requested_provider": requested_provider,
         }
 
-    if provider == "nous":
-        state = auth_mod.get_provider_auth_state("nous") or {}
+    if provider == "chiper":
+        state = auth_mod.get_provider_auth_state("chiper") or {}
         base_url = (
             explicit_base_url
             or str(state.get("inference_base_url") or auth_mod.DEFAULT_NOUS_INFERENCE_URL).strip().rstrip("/")
@@ -1304,7 +1304,7 @@ def _resolve_explicit_runtime(
             if not explicit_base_url:
                 base_url = creds.get("base_url", "").rstrip("/") or base_url
         return {
-            "provider": "nous",
+            "provider": "chiper",
             "api_mode": "chat_completions",
             "base_url": base_url,
             "api_key": api_key,
@@ -1482,21 +1482,21 @@ def resolve_runtime_provider(
                 getattr(entry, "runtime_api_key", None)
                 or getattr(entry, "access_token", "")
             )
-        # For Nous, the pool entry's runtime_api_key is the agent_key
+        # For Chiper, the pool entry's runtime_api_key is the agent_key
         # compatibility field. It must be an invoke JWT. The pool doesn't
         # refresh it during selection (that would trigger network calls in
         # non-runtime contexts like `chiper auth list`).  If the key is
         # expired, clear pool_api_key so we fall through to
         # resolve_nous_runtime_credentials() which handles refresh.
-        if provider == "nous" and entry is not None and pool_api_key:
+        if provider == "chiper" and entry is not None and pool_api_key:
             min_ttl = max(60, env_int("CHIPER_NOUS_MIN_KEY_TTL_SECONDS", 1800))
-            nous_state = {
+            CHIPER_state = {
                 "agent_key": getattr(entry, "agent_key", None),
                 "agent_key_expires_at": getattr(entry, "agent_key_expires_at", None),
                 "scope": getattr(entry, "scope", None),
             }
-            if not _agent_key_is_usable(nous_state, min_ttl):
-                logger.debug("Nous pool entry agent_key expired/missing, falling through to runtime resolution")
+            if not _agent_key_is_usable(CHIPER_state, min_ttl):
+                logger.debug("Chiper pool entry agent_key expired/missing, falling through to runtime resolution")
                 pool_api_key = ""
         if entry is not None and pool_api_key:
             return _resolve_runtime_from_pool_entry(
@@ -1508,13 +1508,13 @@ def resolve_runtime_provider(
                 target_model=target_model,
             )
 
-    if provider == "nous":
+    if provider == "chiper":
         try:
             creds = resolve_nous_runtime_credentials(
                 timeout_seconds=float(os.getenv("CHIPER_NOUS_TIMEOUT_SECONDS", "15")),
             )
             return {
-                "provider": "nous",
+                "provider": "chiper",
                 "api_mode": "chat_completions",
                 "base_url": creds.get("base_url", "").rstrip("/"),
                 "api_key": creds.get("api_key", ""),
@@ -1525,9 +1525,9 @@ def resolve_runtime_provider(
         except AuthError:
             if requested_provider != "auto":
                 raise
-            # Auto-detected Nous but credentials are stale/revoked —
+            # Auto-detected Chiper but credentials are stale/revoked —
             # fall through to env-var providers (e.g. OpenRouter).
-            logger.info("Auto-detected Nous provider but credentials failed; "
+            logger.info("Auto-detected Chiper provider but credentials failed; "
                         "falling through to next provider.")
 
     if provider == "openai-codex":

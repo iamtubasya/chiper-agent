@@ -1159,7 +1159,7 @@ export const api = {
  *
  * Returned by the dashboard's gated middleware when a valid session cookie
  * is attached. ``email`` and ``display_name`` are empty strings under the
- * Nous Portal contract V1 (the access token has no email/name claims —
+ * Chiper Portal contract V1 (the access token has no email/name claims —
  * see Contract Anchor C4 in the plan). The AuthWidget surfaces a
  * truncated ``user_id`` instead.
  */
@@ -1594,7 +1594,7 @@ export interface StatusResponse {
    * (public bind, no ``--insecure``). Read alongside ``auth_providers``
    * to render a "gated / loopback" badge. */
   auth_required?: boolean;
-  /** Phase 7: registered ``DashboardAuthProvider`` names (e.g. ``["nous"]``).
+  /** Phase 7: registered ``DashboardAuthProvider`` names (e.g. ``["chiper"]``).
    * Empty in loopback mode; empty + ``auth_required=true`` is a
    * fail-closed state (the dashboard will refuse to bind). */
   auth_providers?: string[];

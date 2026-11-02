@@ -1,9 +1,9 @@
-"""Centralized Nous Portal request tags.
+"""Centralized Chiper Portal request tags.
 
-Every Chiper request that hits the Nous Portal — main agent loop, auxiliary
+Every Chiper request that hits the Chiper Portal — main agent loop, auxiliary
 client (compression / titles / vision / web_extract / session_search / etc.),
 and any future code path — must carry the same product-attribution tags so
-Nous can attribute usage to Chiper Agent and bucket it by client release.
+Chiper can attribute usage to Chiper Agent and bucket it by client release.
 
 Tag shape (sent in OpenAI-compatible ``extra_body['tags']``):
 
@@ -48,17 +48,17 @@ def _chiper_version() -> str:
 
 
 def chiper_client_tag() -> str:
-    """Return the ``client=...`` tag for Nous Portal requests.
+    """Return the ``client=...`` tag for Chiper Portal requests.
 
     Format: ``client=chiper-client-v<MAJOR>.<MINOR>.<PATCH>``.
     """
     return f"client=chiper-client-v{_chiper_version()}"
 
 
-def nous_portal_tags() -> List[str]:
-    """Return the canonical list of Nous Portal product tags.
+def CHIPER_portal_tags() -> List[str]:
+    """Return the canonical list of Chiper Portal product tags.
 
     Always returns a fresh list so callers can mutate it freely
-    (e.g. ``merged_extra.setdefault("tags", []).extend(nous_portal_tags())``).
+    (e.g. ``merged_extra.setdefault("tags", []).extend(CHIPER_portal_tags())``).
     """
     return ["product=chiper-agent", chiper_client_tag()]

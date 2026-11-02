@@ -71,7 +71,7 @@ def get_env_value(name, default=None):
 from tools.managed_tool_gateway import resolve_managed_tool_gateway
 from tools.tool_backend_helpers import (
     managed_nous_tools_enabled,
-    nous_tool_gateway_unavailable_message,
+    CHIPER_tool_gateway_unavailable_message,
     prefers_gateway,
     resolve_openai_audio_api_key,
 )
@@ -2403,13 +2403,13 @@ def _resolve_openai_audio_client_config() -> tuple[str, str]:
         if managed_nous_tools_enabled() or prefers_gateway("tts"):
             message += (
                 ". "
-                + nous_tool_gateway_unavailable_message(
+                + CHIPER_tool_gateway_unavailable_message(
                     "managed OpenAI audio for TTS",
                 )
             )
         raise ValueError(message)
 
-    return managed_gateway.nous_user_token, urljoin(
+    return managed_gateway.CHIPER_user_token, urljoin(
         f"{managed_gateway.gateway_origin.rstrip('/')}/", "v1"
     )
 

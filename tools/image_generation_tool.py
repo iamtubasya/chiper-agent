@@ -66,7 +66,7 @@ from tools.managed_tool_gateway import resolve_managed_tool_gateway
 from tools.tool_backend_helpers import (
     fal_key_is_configured,
     managed_nous_tools_enabled,
-    nous_tool_gateway_unavailable_message,
+    CHIPER_tool_gateway_unavailable_message,
     prefers_gateway,
 )
 
@@ -185,7 +185,7 @@ FAL_MODELS: Dict[str, Dict[str, Any]] = {
             "output_format": "png",
             "safety_tolerance": "5",
             # "1K" is the cheapest tier; 4K doubles the per-image cost.
-            # Users on Nous Subscription should stay at 1K for predictable billing.
+            # Users on Chiper subscription should stay at 1K for predictable billing.
             "resolution": "1K",
         },
         "supports": {
@@ -236,7 +236,7 @@ FAL_MODELS: Dict[str, Dict[str, Any]] = {
             "portrait": "portrait_4_3",       # 768x1024
         },
         "defaults": {
-            # Same quality pinning as gpt-image-1.5: medium keeps Nous
+            # Same quality pinning as gpt-image-1.5: medium keeps Chiper
             # Portal billing predictable. "high" is 3-4x the per-image
             # cost at the same size; "low" is too rough for production use.
             "quality": "medium",
@@ -321,7 +321,7 @@ FAL_MODELS: Dict[str, Dict[str, Any]] = {
     # Krea 2 — Krea's first foundation image model, day-0 partner launch on
     # fal (2026-05-27). Same model family as our direct ``plugins/image_gen/krea``
     # backend, exposed here for users who prefer to bill through their
-    # existing FAL key / Nous Portal subscription rather than register
+    # existing FAL key / Chiper Portal subscription rather than register
     # directly with Krea.  Both variants share the same parameter schema —
     # only model id, price, and recommended use case differ.
     "fal-ai/krea/v2/medium/text-to-image": {
@@ -396,7 +396,7 @@ _managed_fal_client_lock = threading.Lock()
 
 
 # ---------------------------------------------------------------------------
-# Managed FAL gateway (Nous Subscription)
+# Managed FAL gateway (Chiper subscription)
 # ---------------------------------------------------------------------------
 def _resolve_managed_fal_gateway():
     """Return managed fal-queue gateway config when the user prefers the gateway
@@ -412,7 +412,7 @@ def _get_managed_fal_client(managed_gateway):
 
     client_config = (
         managed_gateway.gateway_origin.rstrip("/"),
-        managed_gateway.nous_user_token,
+        managed_gateway.CHIPER_user_token,
     )
     with _managed_fal_client_lock:
         if _managed_fal_client is not None and _managed_fal_client_config == client_config:
@@ -423,7 +423,7 @@ def _get_managed_fal_client(managed_gateway):
         _load_fal_client()
         _managed_fal_client = _ManagedFalSyncClient(
             fal_client,
-            key=managed_gateway.nous_user_token,
+            key=managed_gateway.CHIPER_user_token,
             queue_run_origin=managed_gateway.gateway_origin,
         )
         _managed_fal_client_config = client_config
@@ -457,15 +457,15 @@ def _submit_fal_request(model: str, arguments: Dict[str, Any]):
             if status in {401, 402, 403}:
                 gateway_message = (
                     "\n\n"
-                    + nous_tool_gateway_unavailable_message(
+                    + CHIPER_tool_gateway_unavailable_message(
                         "managed FAL image generation",
                         force_fresh=True,
                     )
                 )
             raise ValueError(
-                f"Nous Subscription gateway rejected model '{model}' "
+                f"Chiper subscription gateway rejected model '{model}' "
                 f"(HTTP {status}). This model may not yet be enabled on "
-                f"the Nous Portal's FAL proxy. Either:\n"
+                f"the Chiper Portal's FAL proxy. Either:\n"
                 f"  • Set FAL_KEY in your environment to use FAL.ai directly, or\n"
                 f"  • Pick a different model via `chiper tools` → Image Generation."
                 f"{gateway_message}"
@@ -881,7 +881,7 @@ def _build_no_backend_setup_message() -> str:
 
     Used by the in-tree FAL path. Mentions:
       - FAL_KEY signup link
-      - managed-gateway status (if Nous tools are enabled)
+      - managed-gateway status (if Chiper tools are enabled)
       - plugin alternative pointer (so users on a stale ``image_gen.provider``
         know the registry exists and how to inspect it)
     """
@@ -893,7 +893,7 @@ def _build_no_backend_setup_message() -> str:
         )
     else:
         lines.append("  - FAL_KEY environment variable is not set")
-        gateway_message = nous_tool_gateway_unavailable_message(
+        gateway_message = CHIPER_tool_gateway_unavailable_message(
             "managed FAL image generation",
         )
         if gateway_message:
@@ -906,7 +906,7 @@ def _build_no_backend_setup_message() -> str:
     )
     if managed_nous_tools_enabled():
         lines.append(
-            "  2. Sign in to a Nous account that has the managed FAL "
+            "  2. Sign in to a Chiper account that has the managed FAL "
             "gateway enabled (`chiper setup`)"
         )
     lines.append(

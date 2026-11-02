@@ -243,8 +243,8 @@ class TestConfigWriting:
         )
 
         config = {"image_gen": {"provider": "openai", "use_gateway": False}}
-        nous_row = {
-            "name": "Nous Subscription",
+        CHIPER_row = {
+            "name": "Chiper subscription",
             "managed_nous_feature": "image_gen",
         }
         openai_row = {
@@ -253,7 +253,7 @@ class TestConfigWriting:
         }
 
         assert tools_config._is_provider_active(openai_row, config) is True
-        assert tools_config._is_provider_active(nous_row, config) is False
+        assert tools_config._is_provider_active(CHIPER_row, config) is False
 
     def test_reconfiguring_fal_clears_plugin_provider(self, monkeypatch):
         from chiper_cli import tools_config

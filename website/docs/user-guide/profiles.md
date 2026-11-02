@@ -25,7 +25,7 @@ That's it. `coder` is now its own Chiper profile with its own config, memory, an
 ## Creating a profile
 
 :::tip
-Quickest setup: run `chiper setup --portal` inside the new profile to wire up models + tools at once. See [Nous Portal](/integrations/nous-portal).
+Quickest setup: run `chiper setup --portal` inside the new profile to wire up models + tools at once. See [Chiper Portal](/integrations/chiper-portal).
 :::
 
 ### Blank profile

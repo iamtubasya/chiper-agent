@@ -178,7 +178,7 @@ MODEL_STRATEGIES = {
             ),
         },
     },
-    # Nous/Chiper models — already uncensored, just needs clean prompt
+    # Chiper/Chiper models — already uncensored, just needs clean prompt
     "chiper": {
         "order": ["prefill_only"],
         "system_templates": {},
@@ -305,7 +305,7 @@ def _detect_model_family(model: str) -> str:
         return "gemini"
     if "grok" in model_lower or "x-ai" in model_lower:
         return "grok"
-    if "chiper" in model_lower or "nous" in model_lower:
+    if "chiper" in model_lower or "chiper" in model_lower:
         return "chiper"
     if "deepseek" in model_lower:
         return "deepseek"

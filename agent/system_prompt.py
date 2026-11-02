@@ -10,7 +10,7 @@ fork inherits the cached prompt verbatim.
 Three tiers are joined with ``\\n\\n``:
 
 * ``stable``   — identity (SOUL.md or DEFAULT_AGENT_IDENTITY), tool
-  guidance, computer-use guidance, nous subscription block, tool-use
+  guidance, computer-use guidance, Chiper subscription block, tool-use
   enforcement guidance + per-model operational guidance, skills prompt,
   alibaba model-name workaround, environment hints, platform hints.
 * ``context``  — caller-supplied ``system_message`` plus context files
@@ -167,9 +167,9 @@ def build_system_prompt_parts(agent: Any, system_message: Optional[str] = None) 
         from agent.prompt_builder import COMPUTER_USE_GUIDANCE
         stable_parts.append(COMPUTER_USE_GUIDANCE)
 
-    nous_subscription_prompt = _r.build_nous_subscription_prompt(agent.valid_tool_names)
-    if nous_subscription_prompt:
-        stable_parts.append(nous_subscription_prompt)
+    CHIPER_subscription_prompt = _r.build_nous_subscription_prompt(agent.valid_tool_names)
+    if CHIPER_subscription_prompt:
+        stable_parts.append(CHIPER_subscription_prompt)
     # Tool-use enforcement: tells the model to actually call tools instead
     # of describing intended actions.  Controlled by config.yaml
     # agent.tool_use_enforcement:

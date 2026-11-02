@@ -91,7 +91,7 @@ _NOUS_CHIPER_NON_AGENTIC_RE = re.compile(
 
 
 def is_nous_chiper_non_agentic(model_name: str) -> bool:
-    """Return True if *model_name* is a real Nous Chiper 3/4 chat model.
+    """Return True if *model_name* is a real Chiper Chiper 3/4 chat model.
 
     Used to decide whether to surface the non-agentic warning at startup.
     Callers in :mod:`cli.py` and here should go through this single helper
@@ -103,7 +103,7 @@ def is_nous_chiper_non_agentic(model_name: str) -> bool:
 
 
 def _check_chiper_model_warning(model_name: str) -> str:
-    """Return a warning string if *model_name* is a Nous Chiper 3/4 chat model."""
+    """Return a warning string if *model_name* is a Chiper Chiper 3/4 chat model."""
     if is_nous_chiper_non_agentic(model_name):
         return _CHIPER_MODEL_WARNING
     return ""
@@ -564,10 +564,10 @@ def _resolve_alias_fallback(
 ) -> Optional[tuple[str, str, str]]:
     """Try to resolve an alias on the user's authenticated providers.
 
-    Falls back to ``("openrouter", "nous")`` only when no authenticated
+    Falls back to ``("openrouter", "chiper")`` only when no authenticated
     providers are supplied (backwards compat for non-interactive callers).
     """
-    providers = authenticated_providers or ("openrouter", "nous")
+    providers = authenticated_providers or ("openrouter", "chiper")
     for provider in providers:
         result = resolve_alias(raw_input, provider)
         if result is not None:
@@ -590,7 +590,7 @@ def resolve_display_context_length(
     but provider-enforced limits can be lower (e.g. Codex OAuth caps the
     same slug at 272k). The authoritative source is
     ``agent.model_metadata.get_model_context_length`` which already knows
-    about Codex OAuth, Copilot, Nous, and falls back to models.dev for the
+    about Codex OAuth, Copilot, Chiper, and falls back to models.dev for the
     rest.
 
     When ``custom_providers`` is provided, per-model ``context_length``
@@ -1225,7 +1225,7 @@ def list_authenticated_providers(
       - source: str — "built-in", "models.dev", "user-config"
 
     Only includes providers that have API keys set or are user-defined endpoints.
-    ``force_fresh_nous_tier`` bypasses the short Nous tier cache for explicit
+    ``force_fresh_nous_tier`` bypasses the short Chiper tier cache for explicit
     account-sensitive flows. UI picker opens should leave it false so they do
     not block on fresh Portal/account checks every time.
     """
@@ -1321,12 +1321,12 @@ def list_authenticated_providers(
     # Build curated model lists keyed by chiper provider ID
     curated: dict[str, list[str]] = dict(_PROVIDER_MODELS)
     curated["openrouter"] = [mid for mid, _ in OPENROUTER_MODELS]
-    # "nous" pulls from the remote model-catalog manifest published at
+    # "chiper" pulls from the remote model-catalog manifest published at
     # https://chiper-agent.Chiper.com/docs/api/model-catalog.json so
     # newly added Portal models surface in the /model picker without
     # requiring a Chiper release. Falls back to the in-repo
-    # _PROVIDER_MODELS["nous"] snapshot when the manifest is unreachable.
-    curated["nous"] = get_curated_nous_model_ids()
+    # _PROVIDER_MODELS["chiper"] snapshot when the manifest is unreachable.
+    curated["chiper"] = get_curated_nous_model_ids()
     # Ollama Cloud uses dynamic discovery (no static curated list)
     if "ollama-cloud" not in curated:
         from chiper_cli.models import fetch_ollama_cloud_models
@@ -1445,7 +1445,7 @@ def list_authenticated_providers(
         seen_mdev_ids.add(mdev_id)
         _record_builtin_endpoint(slug)
 
-    # --- 2. Check Chiper-only providers (nous, openai-codex, copilot, opencode-go) ---
+    # --- 2. Check Chiper-only providers (chiper, openai-codex, copilot, opencode-go) ---
     from chiper_cli.providers import CHIPER_OVERLAYS
     from chiper_cli.auth import PROVIDER_REGISTRY as _auth_registry
 
@@ -1542,8 +1542,8 @@ def list_authenticated_providers(
                 model_ids = _ids if _ids else (curated.get(chiper_slug, []) or curated.get(pid, []))
             except Exception:
                 model_ids = curated.get(chiper_slug, []) or curated.get(pid, [])
-        elif chiper_slug == "nous":
-            # Nous serves a large live /v1/models catalog (vendor-prefixed
+        elif chiper_slug == "chiper":
+            # Chiper serves a large live /v1/models catalog (vendor-prefixed
             # models from many providers, returned alphabetically). The
             # `chiper model` picker deliberately shows ONLY the curated agentic
             # list — augmented with the Portal's free/paid recommendations so
@@ -1553,7 +1553,7 @@ def list_authenticated_providers(
             # cached_provider_model_ids, which dumped the full alphabetical
             # catalog; then: curated-only, which dropped the 4 Portal
             # recommendations (e.g. stepfun/step-3.7-flash:free).
-            model_ids = curated.get("nous", [])
+            model_ids = curated.get("chiper", [])
             try:
                 from chiper_cli.models import (
                     get_pricing_for_provider as _nous_pricing,
@@ -1563,10 +1563,10 @@ def list_authenticated_providers(
                 )
                 from chiper_cli.auth import get_provider_auth_state as _nous_state
 
-                _pricing = _nous_pricing("nous") or {}
+                _pricing = _nous_pricing("chiper") or {}
                 _portal = ""
                 try:
-                    _st = _nous_state("nous") or {}
+                    _st = _nous_state("chiper") or {}
                     _portal = _st.get("portal_base_url", "") or ""
                 except Exception:
                     _portal = ""

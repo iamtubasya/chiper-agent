@@ -1,8 +1,8 @@
 """Tests for the get_nous_auth_status() process-level cache.
 
-The cache avoids re-validating Nous credentials on every menu paint —
+The cache avoids re-validating Chiper credentials on every menu paint —
 `chiper tools` → "All Platforms" used to fire ~31 OAuth refresh POSTs
-against portal.Chiper.com during one render. The cache is keyed
+against portal.chiper.local during one render. The cache is keyed
 on auth.json path + mtime so profile switches stay isolated while
 login/logout flows invalidate naturally; tests and other writers can
 also call invalidate_nous_auth_status_cache().

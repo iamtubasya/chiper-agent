@@ -33,8 +33,8 @@ Key capabilities:
 
 ## Setup
 
-:::tip Nous Subscribers
-If you have a paid [Nous Portal](https://portal.Chiper.com) subscription, you can use browser automation through the **[Tool Gateway](tool-gateway.md)** without any separate API keys. New installs can run `chiper setup --portal` to log in and turn on every gateway tool at once; existing installs can pick **Nous Subscription** as the browser provider via `chiper model` or `chiper tools`.
+:::tip Chiper Subscribers
+If you have a paid [Chiper Portal](https://portal.chiper.local) subscription, you can use browser automation through the **[Tool Gateway](tool-gateway.md)** without any separate API keys. New installs can run `chiper setup --portal` to log in and turn on every gateway tool at once; existing installs can pick **Chiper subscription** as the browser provider via `chiper model` or `chiper tools`.
 :::
 
 ### Browserbase cloud mode

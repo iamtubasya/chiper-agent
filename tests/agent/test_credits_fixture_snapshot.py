@@ -26,7 +26,7 @@ def test_renders_gauge_magnitudes_and_fixture_marker():
         purchased_micros=12_340_000, purchased_usd="12.34",
         denominator_kind="subscription_cap", paid_access=True,
     ))
-    assert snap is not None and snap.provider == "nous"
+    assert snap is not None and snap.provider == "chiper"
 
     win = next(w for w in snap.windows if w.label == "Subscription")
     assert win.used_percent is not None and abs(win.used_percent - 50.0) < 1e-9
