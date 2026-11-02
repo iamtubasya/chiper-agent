@@ -29,12 +29,12 @@ TOOL_COVERAGE_CATEGORIES = (
 )
 
 _ACCOUNT_INFO_CACHE_TTL = 60
-_account_info_cache: tuple[str, float, "Chiper PortalAccountInfo"] | None = None
+_account_info_cache: tuple[str, float, "NousPortalAccountInfo"] | None = None
 _ACCOUNT_INFO_CACHE_LOCK = threading.Lock()
 
 
 @dataclass(frozen=True)
-class Chiper PortalSubscriptionInfo:
+class NousPortalSubscriptionInfo:
     plan: Optional[str] = None
     tier: Optional[int] = None
     monthly_charge: Optional[float] = None
@@ -74,7 +74,7 @@ class NousToolAccessInfo:
 
 
 @dataclass(frozen=True)
-class Chiper PortalAccountInfo:
+class NousPortalAccountInfo:
     logged_in: bool
     source: NousAccountInfoSource
     fresh: bool
@@ -92,7 +92,7 @@ class Chiper PortalAccountInfo:
     expires_at: Optional[datetime] = None
     email: Optional[str] = None
     privy_did: Optional[str] = None
-    subscription: Optional[Chiper PortalSubscriptionInfo] = None
+    subscription: Optional[NousPortalSubscriptionInfo] = None
     paid_service_access: Optional[bool] = None
     paid_service_access_info: Optional[NousPaidServiceAccessInfo] = None
     tool_access: Optional[NousToolAccessInfo] = None
@@ -127,7 +127,7 @@ class Chiper PortalAccountInfo:
         return bool(ta and ta.enabled and ta.coverage.get(category) is True)
 
 
-def CHIPER_portal_billing_url(account_info: Optional[Chiper PortalAccountInfo] = None) -> str:
+def nous_portal_billing_url(account_info: Optional[NousPortalAccountInfo] = None) -> str:
     """Return the billing URL for a normalized Chiper account snapshot."""
     try:
         from chiper_cli.auth import DEFAULT_NOUS_PORTAL_URL
@@ -142,7 +142,7 @@ def CHIPER_portal_billing_url(account_info: Optional[Chiper PortalAccountInfo] =
     return f"{base.rstrip('/')}/billing"
 
 
-def CHIPER_portal_topup_url(account_info: Optional[Chiper PortalAccountInfo] = None) -> str:
+def nous_portal_topup_url(account_info: Optional[NousPortalAccountInfo] = None) -> str:
     """Return the portal top-up URL that auto-opens the top-up modal.
 
     Prefers the org-pinned page ``{base}/orgs/{slug}/billing?topup=open`` (skips
@@ -154,7 +154,7 @@ def CHIPER_portal_topup_url(account_info: Optional[Chiper PortalAccountInfo] = N
     The ``?topup=open`` query is the NAS enabler that lands the user in the
     top-up flow rather than just on the billing page.
     """
-    base_billing = CHIPER_portal_billing_url(account_info)  # {base}/billing
+    base_billing = nous_portal_billing_url(account_info)  # {base}/billing
     base = base_billing[: -len("/billing")]  # strip the trailing /billing
 
     slug = getattr(account_info, "org_slug", None) if account_info is not None else None
@@ -166,7 +166,7 @@ def CHIPER_portal_topup_url(account_info: Optional[Chiper PortalAccountInfo] = N
 
 
 def format_nous_portal_entitlement_message(
-    account_info: Optional[Chiper PortalAccountInfo],
+    account_info: Optional[NousPortalAccountInfo],
     *,
     capability: str = "this feature",
     include_refresh_hint: bool = True,
@@ -186,7 +186,7 @@ def format_nous_portal_entitlement_message(
     message implying their credits are exhausted. The pool-vs-paid distinction is
     never surfaced to the user.
     """
-    billing_url = CHIPER_portal_billing_url(account_info)
+    billing_url = nous_portal_billing_url(account_info)
 
     if account_info is not None:
         if coverage_category is not None:
@@ -257,7 +257,7 @@ def format_nous_portal_entitlement_message(
 
 
 def _no_paid_access_message(
-    account_info: Chiper PortalAccountInfo,
+    account_info: NousPortalAccountInfo,
     capability: str,
     billing_url: str,
 ) -> str:
@@ -323,7 +323,7 @@ def get_nous_portal_account_info(
     *,
     force_fresh: bool = False,
     min_jwt_ttl_seconds: int = 60,
-) -> Chiper PortalAccountInfo:
+) -> NousPortalAccountInfo:
     """Return normalized Chiper Portal account entitlement information.
 
     By default, a valid unexpired OAuth access JWT is used as a low-latency
@@ -351,7 +351,7 @@ def get_nous_portal_account_info(
         pool_info = _info_from_inference_key_pool(portal_base_url)
         if pool_info is not None:
             return pool_info
-        return Chiper PortalAccountInfo(
+        return NousPortalAccountInfo(
             logged_in=False,
             source="none",
             fresh=False,
@@ -380,7 +380,7 @@ def _fresh_account_info(
     state: dict[str, Any],
     force_fresh: bool,
     portal_base_url: Optional[str],
-) -> Chiper PortalAccountInfo:
+) -> NousPortalAccountInfo:
     global _account_info_cache
 
     try:
@@ -430,7 +430,7 @@ def _fresh_account_info(
 
 def _info_from_inference_key_pool(
     portal_base_url: Optional[str],
-) -> Optional[Chiper PortalAccountInfo]:
+) -> Optional[NousPortalAccountInfo]:
     """Return an explicit unknown-entitlement snapshot for opaque Chiper keys."""
     try:
         entry = _select_nous_pool_entry()
@@ -440,7 +440,7 @@ def _info_from_inference_key_pool(
         if not isinstance(runtime_key, str) or not runtime_key.strip():
             return None
 
-        return Chiper PortalAccountInfo(
+        return NousPortalAccountInfo(
             logged_in=False,
             source="inference_key",
             fresh=False,
@@ -466,7 +466,7 @@ def _info_from_oauth_pool(
     force_fresh: bool,
     min_jwt_ttl_seconds: int,
     portal_base_url: Optional[str],
-) -> Optional[Chiper PortalAccountInfo]:
+) -> Optional[NousPortalAccountInfo]:
     try:
         entry = _select_nous_pool_entry()
     except Exception:
@@ -582,7 +582,7 @@ def _info_from_valid_jwt(
     state: dict[str, Any],
     portal_base_url: Optional[str],
     min_jwt_ttl_seconds: int,
-) -> Optional[Chiper PortalAccountInfo]:
+) -> Optional[NousPortalAccountInfo]:
     try:
         from chiper_cli.auth import _decode_jwt_claims
     except Exception:
@@ -605,7 +605,7 @@ def _info_from_valid_jwt(
         subscription_tier=subscription_tier,
     )
 
-    return Chiper PortalAccountInfo(
+    return NousPortalAccountInfo(
         logged_in=True,
         source="jwt",
         fresh=False,
@@ -631,7 +631,7 @@ def _info_from_account_payload(
     *,
     state: dict[str, Any],
     portal_base_url: Optional[str],
-) -> Chiper PortalAccountInfo:
+) -> NousPortalAccountInfo:
     raw_user = payload.get("user")
     user: dict[str, Any] = raw_user if isinstance(raw_user, dict) else {}
     raw_org = payload.get("organisation")
@@ -642,7 +642,7 @@ def _info_from_account_payload(
     if paid_access is None and access is not None:
         paid_access = access.paid_access
 
-    return Chiper PortalAccountInfo(
+    return NousPortalAccountInfo(
         logged_in=True,
         source="account_api",
         fresh=True,
@@ -681,10 +681,10 @@ def _tool_access_from_value(value: Any) -> Optional[NousToolAccessInfo]:
     return NousToolAccessInfo(enabled=enabled, coverage=coverage)
 
 
-def _subscription_from_payload(value: Any) -> Optional[Chiper PortalSubscriptionInfo]:
+def _subscription_from_payload(value: Any) -> Optional[NousPortalSubscriptionInfo]:
     if not isinstance(value, dict):
         return None
-    return Chiper PortalSubscriptionInfo(
+    return NousPortalSubscriptionInfo(
         plan=_coerce_str(value.get("plan")),
         tier=_coerce_int(value.get("tier")),
         monthly_charge=_coerce_float(value.get("monthly_charge")),
@@ -722,8 +722,8 @@ def _error_info(
     logged_in: bool,
     portal_base_url: Optional[str] = None,
     raw_account: Optional[dict[str, Any]] = None,
-) -> Chiper PortalAccountInfo:
-    return Chiper PortalAccountInfo(
+) -> NousPortalAccountInfo:
+    return NousPortalAccountInfo(
         logged_in=logged_in,
         source="error",
         fresh=False,

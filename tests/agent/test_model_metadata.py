@@ -522,7 +522,7 @@ class TestCodexOAuthContextLength:
 # Chiper Portal context-window resolution (provider="chiper")
 # =========================================================================
 
-class TestChiper PortalContextResolution:
+class TestNousPortalContextResolution:
     """Chiper Portal /v1/models is authoritative for what Chiper infra enforces
     and may diverge from the OpenRouter catalog.
 

@@ -408,9 +408,9 @@ class TestBuildApiKwargsKimiNoTemperatureOverride:
         assert "temperature" not in kwargs
 
 
-class TestBuildApiKwargsChiper Portal:
+class TestBuildApiKwargsNousPortal:
     def test_includes_nous_product_tags(self, monkeypatch):
-        from agent.portal_tags import CHIPER_portal_tags
+        from agent.portal_tags import nous_portal_tags
         agent = _make_agent(
             monkeypatch,
             "chiper",
@@ -420,7 +420,7 @@ class TestBuildApiKwargsChiper Portal:
         messages = [{"role": "user", "content": "hi"}]
         kwargs = agent._build_api_kwargs(messages)
         extra = kwargs.get("extra_body", {})
-        assert extra.get("tags") == CHIPER_portal_tags()
+        assert extra.get("tags") == nous_portal_tags()
 
     def test_uses_chat_completions_format(self, monkeypatch):
         agent = _make_agent(

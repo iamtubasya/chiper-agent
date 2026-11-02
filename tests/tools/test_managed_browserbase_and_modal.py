@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 import pytest
 
-from chiper_cli.CHIPER_account import Chiper PortalAccountInfo
+from chiper_cli.nous_account import NousPortalAccountInfo
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -71,11 +71,11 @@ def _enable_managed_nous_tools(monkeypatch):
     The _install_fake_tools_package() helper resets and reimports tool modules,
     so a simple monkeypatch on tool_backend_helpers doesn't survive.  We patch
     the *source* modules that the reimported modules will import from — both
-    chiper_cli.CHIPER_account — so the function body returns True.
+    chiper_cli.nous_account — so the function body returns True.
     """
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_account.get_nous_portal_account_info",
-        lambda: Chiper PortalAccountInfo(
+        "chiper_cli.nous_account.get_nous_portal_account_info",
+        lambda: NousPortalAccountInfo(
             logged_in=True,
             source="jwt",
             fresh=False,

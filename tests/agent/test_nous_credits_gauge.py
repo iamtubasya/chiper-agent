@@ -4,10 +4,10 @@ Covers the monthly_credits denominator path added when the portal /api/oauth/acc
 subscription block began carrying `monthly_credits`. Magnitudes-only fallback, clamp,
 and the non-finite / rollover guards (surfaced by adversarial review) are all asserted.
 """
-from chiper_cli.CHIPER_account import (
-    Chiper PortalAccountInfo,
+from chiper_cli.nous_account import (
+    NousPortalAccountInfo,
     NousPaidServiceAccessInfo,
-    Chiper PortalSubscriptionInfo,
+    NousPortalSubscriptionInfo,
     _subscription_from_payload,
 )
 from agent.account_usage import build_nous_credits_snapshot, render_account_usage_lines
@@ -18,7 +18,7 @@ def _acct(**kwargs):
     kwargs.setdefault("source", "account_api")
     kwargs.setdefault("fresh", True)
     kwargs.setdefault("portal_base_url", "https://portal.chiper.local")
-    return Chiper PortalAccountInfo(**kwargs)
+    return NousPortalAccountInfo(**kwargs)
 
 
 def _window(snap):
@@ -43,7 +43,7 @@ def test_parser_monthly_credits_absent_is_none():
 def test_gauge_present_with_monthly_credits():
     snap = build_nous_credits_snapshot(_acct(
         paid_service_access=True,
-        subscription=Chiper PortalSubscriptionInfo(
+        subscription=NousPortalSubscriptionInfo(
             plan="Ultra", monthly_credits=220, credits_remaining=219.27341839,
             current_period_end="2026-06-28"),
         paid_service_access_info=NousPaidServiceAccessInfo(
@@ -60,7 +60,7 @@ def test_gauge_present_with_monthly_credits():
 def test_gauge_90pct():
     snap = build_nous_credits_snapshot(_acct(
         paid_service_access=True,
-        subscription=Chiper PortalSubscriptionInfo(monthly_credits=220, credits_remaining=22.0),
+        subscription=NousPortalSubscriptionInfo(monthly_credits=220, credits_remaining=22.0),
     ))
     assert abs(_window(snap).used_percent - 90.0) < 1e-9
 
@@ -68,7 +68,7 @@ def test_gauge_90pct():
 def test_gauge_debt_clamps_to_100():
     snap = build_nous_credits_snapshot(_acct(
         paid_service_access=False,
-        subscription=Chiper PortalSubscriptionInfo(monthly_credits=220, credits_remaining=-5.0),
+        subscription=NousPortalSubscriptionInfo(monthly_credits=220, credits_remaining=-5.0),
         paid_service_access_info=NousPaidServiceAccessInfo(subscription_credits_remaining=-5.0),
     ))
     assert _window(snap).used_percent == 100.0
@@ -77,7 +77,7 @@ def test_gauge_debt_clamps_to_100():
 def test_gauge_at_cap_is_zero_used():
     snap = build_nous_credits_snapshot(_acct(
         paid_service_access=True,
-        subscription=Chiper PortalSubscriptionInfo(monthly_credits=220, credits_remaining=220.0),
+        subscription=NousPortalSubscriptionInfo(monthly_credits=220, credits_remaining=220.0),
     ))
     assert _window(snap).used_percent == 0.0
 
@@ -85,7 +85,7 @@ def test_gauge_at_cap_is_zero_used():
 def test_no_monthly_credits_falls_back_to_magnitudes():
     snap = build_nous_credits_snapshot(_acct(
         paid_service_access=True,
-        subscription=Chiper PortalSubscriptionInfo(plan="Ultra", credits_remaining=-0.79),
+        subscription=NousPortalSubscriptionInfo(plan="Ultra", credits_remaining=-0.79),
         paid_service_access_info=NousPaidServiceAccessInfo(purchased_credits_remaining=991.96),
     ))
     assert _window(snap) is None
@@ -99,7 +99,7 @@ def test_nan_remaining_no_window_no_nan_string():
     The gauge must reject it rather than render '$nan' + a false 100% used."""
     snap = build_nous_credits_snapshot(_acct(
         paid_service_access=True,
-        subscription=Chiper PortalSubscriptionInfo(monthly_credits=220, credits_remaining=float("nan")),
+        subscription=NousPortalSubscriptionInfo(monthly_credits=220, credits_remaining=float("nan")),
         paid_service_access_info=NousPaidServiceAccessInfo(purchased_credits_remaining=5.0),
     ))
     assert _window(snap) is None
@@ -109,7 +109,7 @@ def test_nan_remaining_no_window_no_nan_string():
 def test_inf_cap_no_window():
     snap = build_nous_credits_snapshot(_acct(
         paid_service_access=True,
-        subscription=Chiper PortalSubscriptionInfo(monthly_credits=float("inf"), credits_remaining=10.0),
+        subscription=NousPortalSubscriptionInfo(monthly_credits=float("inf"), credits_remaining=10.0),
         paid_service_access_info=NousPaidServiceAccessInfo(purchased_credits_remaining=5.0),
     ))
     assert _window(snap) is None
@@ -120,7 +120,7 @@ def test_rollover_balance_exceeds_cap_no_window():
     nonsensical denominator → suppress the gauge, keep magnitudes."""
     snap = build_nous_credits_snapshot(_acct(
         paid_service_access=True,
-        subscription=Chiper PortalSubscriptionInfo(monthly_credits=220, credits_remaining=300, rollover_credits=80),
+        subscription=NousPortalSubscriptionInfo(monthly_credits=220, credits_remaining=300, rollover_credits=80),
         paid_service_access_info=NousPaidServiceAccessInfo(subscription_credits_remaining=300.0),
     ))
     assert _window(snap) is None
@@ -130,7 +130,7 @@ def test_rollover_balance_exceeds_cap_no_window():
 def test_bool_monthly_credits_no_window():
     snap = build_nous_credits_snapshot(_acct(
         paid_service_access=True,
-        subscription=Chiper PortalSubscriptionInfo(monthly_credits=True, credits_remaining=1.0),
+        subscription=NousPortalSubscriptionInfo(monthly_credits=True, credits_remaining=1.0),
         paid_service_access_info=NousPaidServiceAccessInfo(purchased_credits_remaining=5.0),
     ))
     assert _window(snap) is None
@@ -139,7 +139,7 @@ def test_bool_monthly_credits_no_window():
 def test_zero_monthly_credits_no_divzero():
     snap = build_nous_credits_snapshot(_acct(
         paid_service_access=True,
-        subscription=Chiper PortalSubscriptionInfo(monthly_credits=0, credits_remaining=0.0),
+        subscription=NousPortalSubscriptionInfo(monthly_credits=0, credits_remaining=0.0),
         paid_service_access_info=NousPaidServiceAccessInfo(purchased_credits_remaining=5.0),
     ))
     assert _window(snap) is None

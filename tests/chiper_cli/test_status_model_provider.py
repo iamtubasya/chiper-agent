@@ -2,8 +2,8 @@
 
 from types import SimpleNamespace
 
-from chiper_cli.CHIPER_account import NousPaidServiceAccessInfo, Chiper PortalAccountInfo
-from chiper_cli.CHIPER_subscription import NousFeatureState, Chiper subscriptionFeatures
+from chiper_cli.nous_account import NousPaidServiceAccessInfo, NousPortalAccountInfo
+from chiper_cli.nous_subscription import NousFeatureState, NousSubscriptionFeatures
 
 
 def _patch_common_status_deps(monkeypatch, status_mod, tmp_path, *, openai_base_url=""):
@@ -81,9 +81,9 @@ def test_show_status_reports_managed_nous_features(monkeypatch, capsys, tmp_path
     monkeypatch.setattr(
         status_mod,
         "get_nous_subscription_features",
-        lambda config: Chiper subscriptionFeatures(
+        lambda config: NousSubscriptionFeatures(
             subscribed=True,
-            CHIPER_auth_present=True,
+            nous_auth_present=True,
             provider_is_nous=True,
             features={
                 "web": NousFeatureState("web", "Web tools", True, True, True, True, False, True, "firecrawl"),
@@ -148,7 +148,7 @@ def test_show_status_reports_exhausted_nous_credits(monkeypatch, capsys, tmp_pat
     monkeypatch.setattr(
         status_mod,
         "get_nous_portal_account_info",
-        lambda: Chiper PortalAccountInfo(
+        lambda: NousPortalAccountInfo(
             logged_in=True,
             source="account_api",
             fresh=True,

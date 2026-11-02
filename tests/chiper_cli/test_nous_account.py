@@ -9,12 +9,12 @@ from typing import Any
 
 import pytest
 
-from chiper_cli.CHIPER_account import (
+from chiper_cli.nous_account import (
     NousPaidServiceAccessInfo,
-    Chiper PortalAccountInfo,
+    NousPortalAccountInfo,
     format_nous_portal_entitlement_message,
     get_nous_portal_account_info,
-    CHIPER_portal_topup_url,
+    nous_portal_topup_url,
     reset_nous_portal_account_info_cache,
 )
 
@@ -169,7 +169,7 @@ def test_expired_jwt_falls_back_to_fresh_account(monkeypatch):
     )
     monkeypatch.setattr("chiper_cli.auth.get_provider_auth_state", lambda provider: _state(token))
     monkeypatch.setattr("chiper_cli.auth.resolve_nous_access_token", lambda: "fresh-token")
-    monkeypatch.setattr("chiper_cli.CHIPER_account._fetch_nous_account_info", lambda *a, **kw: payload)
+    monkeypatch.setattr("chiper_cli.nous_account._fetch_nous_account_info", lambda *a, **kw: payload)
 
     info = get_nous_portal_account_info()
 
@@ -241,11 +241,11 @@ def test_fresh_account_payload_normalization(monkeypatch, payload, expected_paid
     token = _jwt({"sub": "user_123", "org_id": "org_123", "exp": int(time.time()) + 900})
     monkeypatch.setattr("chiper_cli.auth.get_provider_auth_state", lambda provider: _state(token))
     monkeypatch.setattr("chiper_cli.auth.resolve_nous_access_token", lambda: "fresh-token")
-    monkeypatch.setattr("chiper_cli.CHIPER_account._fetch_nous_account_info", lambda *a, **kw: payload)
+    monkeypatch.setattr("chiper_cli.nous_account._fetch_nous_account_info", lambda *a, **kw: payload)
 
     info = get_nous_portal_account_info(force_fresh=True)
 
-    assert isinstance(info, Chiper PortalAccountInfo)
+    assert isinstance(info, NousPortalAccountInfo)
     assert info.source == "account_api"
     assert info.fresh is True
     assert info.email == "alice@example.test"
@@ -273,7 +273,7 @@ def test_force_fresh_uses_account_api_even_when_jwt_is_valid(monkeypatch):
     )
     monkeypatch.setattr("chiper_cli.auth.get_provider_auth_state", lambda provider: _state(token))
     monkeypatch.setattr("chiper_cli.auth.resolve_nous_access_token", lambda: "fresh-token")
-    monkeypatch.setattr("chiper_cli.CHIPER_account._fetch_nous_account_info", lambda *a, **kw: payload)
+    monkeypatch.setattr("chiper_cli.nous_account._fetch_nous_account_info", lambda *a, **kw: payload)
 
     info = get_nous_portal_account_info(force_fresh=True)
 
@@ -386,7 +386,7 @@ def test_pool_oauth_entry_force_fresh_uses_account_api(monkeypatch):
         purchased_credits=3,
     )
     monkeypatch.setattr("chiper_cli.auth.get_provider_auth_state", lambda provider: {})
-    monkeypatch.setattr("chiper_cli.CHIPER_account._fetch_nous_account_info", lambda *a, **kw: payload)
+    monkeypatch.setattr("chiper_cli.nous_account._fetch_nous_account_info", lambda *a, **kw: payload)
 
     class _Entry:
         label = "dashboard device_code"
@@ -428,7 +428,7 @@ def test_pool_oauth_entry_force_fresh_uses_account_api(monkeypatch):
 
 
 def test_entitlement_message_returns_none_for_paid_access():
-    info = Chiper PortalAccountInfo(
+    info = NousPortalAccountInfo(
         logged_in=True,
         source="account_api",
         fresh=True,
@@ -440,7 +440,7 @@ def test_entitlement_message_returns_none_for_paid_access():
 
 
 def test_entitlement_message_for_inference_key_without_portal_login():
-    info = Chiper PortalAccountInfo(
+    info = NousPortalAccountInfo(
         logged_in=False,
         source="inference_key",
         fresh=False,
@@ -460,7 +460,7 @@ def test_entitlement_message_for_inference_key_without_portal_login():
 
 
 def test_entitlement_message_for_active_paid_subscription_with_no_credits():
-    info = Chiper PortalAccountInfo(
+    info = NousPortalAccountInfo(
         logged_in=True,
         source="account_api",
         fresh=True,
@@ -489,7 +489,7 @@ def test_entitlement_message_for_active_paid_subscription_with_no_credits():
 
 
 def test_entitlement_message_for_no_subscription_or_credits():
-    info = Chiper PortalAccountInfo(
+    info = NousPortalAccountInfo(
         logged_in=True,
         source="account_api",
         fresh=True,
@@ -513,7 +513,7 @@ def test_entitlement_message_for_no_subscription_or_credits():
 
 
 def test_entitlement_message_for_unknown_entitlement_is_explicit():
-    info = Chiper PortalAccountInfo(
+    info = NousPortalAccountInfo(
         logged_in=True,
         source="error",
         fresh=False,
@@ -531,7 +531,7 @@ def test_entitlement_message_for_unknown_entitlement_is_explicit():
 
 
 def test_entitlement_message_for_account_missing():
-    info = Chiper PortalAccountInfo(
+    info = NousPortalAccountInfo(
         logged_in=True,
         source="account_api",
         fresh=True,
@@ -560,7 +560,7 @@ def test_account_payload_parses_org_slug_and_name(monkeypatch):
     }
     monkeypatch.setattr("chiper_cli.auth.get_provider_auth_state", lambda provider: _state(token))
     monkeypatch.setattr("chiper_cli.auth.resolve_nous_access_token", lambda: "fresh-token")
-    monkeypatch.setattr("chiper_cli.CHIPER_account._fetch_nous_account_info", lambda *a, **kw: payload)
+    monkeypatch.setattr("chiper_cli.nous_account._fetch_nous_account_info", lambda *a, **kw: payload)
 
     info = get_nous_portal_account_info(force_fresh=True)
 
@@ -579,7 +579,7 @@ def test_account_payload_org_without_slug_leaves_fields_none(monkeypatch):
     }
     monkeypatch.setattr("chiper_cli.auth.get_provider_auth_state", lambda provider: _state(token))
     monkeypatch.setattr("chiper_cli.auth.resolve_nous_access_token", lambda: "fresh-token")
-    monkeypatch.setattr("chiper_cli.CHIPER_account._fetch_nous_account_info", lambda *a, **kw: payload)
+    monkeypatch.setattr("chiper_cli.nous_account._fetch_nous_account_info", lambda *a, **kw: payload)
 
     info = get_nous_portal_account_info(force_fresh=True)
 
@@ -589,7 +589,7 @@ def test_account_payload_org_without_slug_leaves_fields_none(monkeypatch):
 
 
 def test_topup_url_is_org_pinned_when_slug_present():
-    info = Chiper PortalAccountInfo(
+    info = NousPortalAccountInfo(
         logged_in=True,
         source="account_api",
         fresh=True,
@@ -597,26 +597,26 @@ def test_topup_url_is_org_pinned_when_slug_present():
         org_slug="acme",
     )
     assert (
-        CHIPER_portal_topup_url(info)
+        nous_portal_topup_url(info)
         == "https://portal.example.test/orgs/acme/billing?topup=open"
     )
 
 
 def test_topup_url_falls_back_to_legacy_when_slug_null():
-    info = Chiper PortalAccountInfo(
+    info = NousPortalAccountInfo(
         logged_in=True,
         source="account_api",
         fresh=True,
         portal_base_url="https://portal.example.test",
         org_slug=None,
     )
-    url = CHIPER_portal_topup_url(info)
+    url = nous_portal_topup_url(info)
     assert url == "https://portal.example.test/billing?topup=open"
     assert "/orgs/" not in url
 
 
 def test_topup_url_strips_trailing_slash_and_encodes_slug():
-    info = Chiper PortalAccountInfo(
+    info = NousPortalAccountInfo(
         logged_in=True,
         source="account_api",
         fresh=True,
@@ -624,11 +624,11 @@ def test_topup_url_strips_trailing_slash_and_encodes_slug():
         org_slug="a/b team",
     )
     assert (
-        CHIPER_portal_topup_url(info)
+        nous_portal_topup_url(info)
         == "https://portal.example.test/orgs/a%2Fb%20team/billing?topup=open"
     )
 
 
 def test_topup_url_defaults_to_production_portal_for_none():
-    url = CHIPER_portal_topup_url(None)
+    url = nous_portal_topup_url(None)
     assert url == "https://portal.chiper.local/billing?topup=open"

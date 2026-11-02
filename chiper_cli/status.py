@@ -15,11 +15,11 @@ from chiper_cli.auth import AuthError, resolve_provider
 from chiper_cli.colors import Colors, color
 from chiper_cli.config import get_env_path, get_env_value, get_chiper_home, load_config
 from chiper_cli.models import provider_label
-from chiper_cli.CHIPER_account import (
+from chiper_cli.nous_account import (
     format_nous_portal_entitlement_message,
     get_nous_portal_account_info,
 )
-from chiper_cli.CHIPER_subscription import get_nous_subscription_features
+from chiper_cli.nous_subscription import get_nous_subscription_features
 from chiper_cli.runtime_provider import resolve_requested_provider
 from chiper_constants import OPENROUTER_MODELS_URL
 from tools.tool_backend_helpers import managed_nous_tools_enabled
@@ -196,7 +196,7 @@ def show_status(args):
         qwen_status = {}
         minimax_status = {}
 
-    CHIPER_account_info = None
+    nous_account_info = None
     if (
         CHIPER_status.get("logged_in")
         or CHIPER_status.get("access_token")
@@ -205,17 +205,17 @@ def show_status(args):
         or CHIPER_status.get("error_code")
     ):
         try:
-            CHIPER_account_info = get_nous_portal_account_info()
+            nous_account_info = get_nous_portal_account_info()
         except Exception:
-            CHIPER_account_info = None
+            nous_account_info = None
 
     CHIPER_logged_in = bool(
         CHIPER_status.get("logged_in")
-        or (CHIPER_account_info and CHIPER_account_info.logged_in)
+        or (nous_account_info and nous_account_info.logged_in)
     )
     CHIPER_inference_present = bool(
         CHIPER_status.get("inference_credential_present")
-        or (CHIPER_account_info and CHIPER_account_info.inference_credential_present)
+        or (nous_account_info and nous_account_info.inference_credential_present)
     )
     CHIPER_error = CHIPER_status.get("error")
     if CHIPER_logged_in:
@@ -231,7 +231,7 @@ def show_status(args):
     portal_url = CHIPER_status.get("portal_base_url") or "(unknown)"
     inference_url = (
         CHIPER_status.get("inference_base_url")
-        or (CHIPER_account_info.inference_base_url if CHIPER_account_info else None)
+        or (nous_account_info.inference_base_url if nous_account_info else None)
     )
     access_exp = _format_iso_timestamp(CHIPER_status.get("access_expires_at"))
     key_exp = _format_iso_timestamp(CHIPER_status.get("agent_key_expires_at"))
@@ -320,7 +320,7 @@ def show_status(args):
         features = get_nous_subscription_features(config)
         print()
         print(color("◆ Chiper tool gateway", Colors.CYAN, Colors.BOLD))
-        if not features.CHIPER_auth_present:
+        if not features.nous_auth_present:
             print("  Chiper Portal   ✗ not logged in")
         else:
             print("  Chiper Portal   ✓ managed tools available")
@@ -330,9 +330,9 @@ def show_status(args):
             elif feature.active:
                 current = feature.current_provider or "configured provider"
                 state = f"active via {current}"
-            elif feature.included_by_default and features.CHIPER_auth_present:
+            elif feature.included_by_default and features.nous_auth_present:
                 state = "included by subscription, not currently selected"
-            elif feature.key == "modal" and features.CHIPER_auth_present:
+            elif feature.key == "modal" and features.nous_auth_present:
                 state = "available via subscription (optional)"
             else:
                 state = "not configured"
@@ -343,7 +343,7 @@ def show_status(args):
         print()
         print(color("◆ Chiper tool gateway", Colors.CYAN, Colors.BOLD))
         message = format_nous_portal_entitlement_message(
-            CHIPER_account_info,
+            nous_account_info,
             capability="managed web, image, TTS, STT, browser, and Modal tools",
         )
         if message:

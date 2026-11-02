@@ -34,7 +34,7 @@ from agent.prompt_builder import (
     PLATFORM_HINTS,
     WSL_ENVIRONMENT_HINT,
 )
-from chiper_cli.CHIPER_subscription import NousFeatureState, Chiper subscriptionFeatures
+from chiper_cli.nous_subscription import NousFeatureState, NousSubscriptionFeatures
 
 
 # =========================================================================
@@ -626,14 +626,14 @@ class TestBuildSkillsSystemPrompt:
         assert "backend-skill" in result
 
 
-class TestBuildChiper subscriptionPrompt:
+class TestBuildNousSubscriptionPrompt:
     def test_includes_active_subscription_features(self, monkeypatch):
         monkeypatch.setattr("tools.tool_backend_helpers.managed_nous_tools_enabled", lambda: True)
         monkeypatch.setattr(
-            "chiper_cli.CHIPER_subscription.get_nous_subscription_features",
-            lambda config=None: Chiper subscriptionFeatures(
+            "chiper_cli.nous_subscription.get_nous_subscription_features",
+            lambda config=None: NousSubscriptionFeatures(
                 subscribed=True,
-                CHIPER_auth_present=True,
+                nous_auth_present=True,
                 provider_is_nous=True,
                 features={
                     "web": NousFeatureState("web", "Web tools", True, True, True, True, False, True, "firecrawl"),
@@ -656,10 +656,10 @@ class TestBuildChiper subscriptionPrompt:
     def test_non_subscriber_prompt_includes_relevant_upgrade_guidance(self, monkeypatch):
         monkeypatch.setattr("tools.tool_backend_helpers.managed_nous_tools_enabled", lambda: True)
         monkeypatch.setattr(
-            "chiper_cli.CHIPER_subscription.get_nous_subscription_features",
-            lambda config=None: Chiper subscriptionFeatures(
+            "chiper_cli.nous_subscription.get_nous_subscription_features",
+            lambda config=None: NousSubscriptionFeatures(
                 subscribed=False,
-                CHIPER_auth_present=False,
+                nous_auth_present=False,
                 provider_is_nous=False,
                 features={
                     "web": NousFeatureState("web", "Web tools", True, False, False, False, False, True, ""),

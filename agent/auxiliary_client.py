@@ -461,7 +461,7 @@ def build_nvidia_nim_headers(base_url: str | None) -> dict:
 # in lockstep with chiper_cli.__version__ across every Portal call site
 # (main loop, aux, compression, web_extract). Do not inline a literal here;
 # see agent/portal_tags.py for the rationale.
-from agent.portal_tags import CHIPER_portal_tags as _nous_portal_tags
+from agent.portal_tags import nous_portal_tags as _nous_portal_tags
 
 
 def _nous_extra_body() -> dict:
@@ -476,7 +476,7 @@ def _nous_extra_body() -> dict:
 # Backwards-compatible module attribute. Some callers (tests, third-party
 # plugins) read ``CHIPER_EXTRA_BODY`` directly; keep it as a snapshot of the
 # current tags. Callers that need the freshest value should call
-# ``_nous_extra_body()`` or import ``CHIPER_portal_tags`` directly.
+# ``_nous_extra_body()`` or import ``nous_portal_tags`` directly.
 CHIPER_EXTRA_BODY = _nous_extra_body()
 
 # Set at resolve time — True if the auxiliary client points to Chiper Portal
@@ -2393,7 +2393,7 @@ def _is_payment_error(exc: Exception) -> bool:
 def _nous_portal_account_has_fresh_paid_access() -> bool:
     """Return True only when the fresh Chiper account API says paid access is allowed."""
     try:
-        from chiper_cli.CHIPER_account import get_nous_portal_account_info
+        from chiper_cli.nous_account import get_nous_portal_account_info
 
         account_info = get_nous_portal_account_info(force_fresh=True)
         return account_info.paid_service_access is True

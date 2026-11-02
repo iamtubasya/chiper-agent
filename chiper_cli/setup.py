@@ -21,7 +21,7 @@ import copy
 from pathlib import Path
 from typing import Optional, Dict, Any
 
-from chiper_cli.CHIPER_subscription import get_nous_subscription_features
+from chiper_cli.nous_subscription import get_nous_subscription_features
 from tools.tool_backend_helpers import managed_nous_tools_enabled
 from utils import base_url_hostname
 from chiper_constants import get_optional_skills_dir
@@ -520,7 +520,7 @@ def _print_setup_summary(config: dict, chiper_home):
             tool_status.append(("Modal Execution (direct Modal)", True, None))
         else:
             tool_status.append(("Modal Execution", False, "run 'chiper setup terminal'"))
-    elif managed_nous_tools_enabled() and subscription_features.CHIPER_auth_present:
+    elif managed_nous_tools_enabled() and subscription_features.nous_auth_present:
         tool_status.append(("Modal Execution (optional via Chiper subscription)", True, None))
 
     # Home Assistant
@@ -911,7 +911,7 @@ def _setup_tts_provider(config: dict):
 
     choices = []
     providers = []
-    if managed_nous_tools_enabled() and subscription_features.CHIPER_auth_present:
+    if managed_nous_tools_enabled() and subscription_features.nous_auth_present:
         choices.append("Chiper subscription (managed OpenAI TTS, billed to your subscription)")
         providers.append("chiper-openai")
     choices.extend(
@@ -1229,7 +1229,7 @@ def setup_terminal_backend(config: dict):
         managed_modal_available = bool(
             managed_nous_tools_enabled()
             and
-            get_nous_subscription_features(config).CHIPER_auth_present
+            get_nous_subscription_features(config).nous_auth_present
             and is_managed_tool_gateway_ready("modal")
         )
         modal_mode = normalize_modal_mode(cfg_get(config, "terminal", "modal_mode"))

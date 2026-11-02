@@ -16,7 +16,7 @@ from unittest.mock import patch
 
 import pytest
 
-from chiper_cli.CHIPER_account import NousPaidServiceAccessInfo, Chiper PortalAccountInfo
+from chiper_cli.nous_account import NousPaidServiceAccessInfo, NousPortalAccountInfo
 from tools.tool_backend_helpers import (
     coerce_modal_mode,
     has_direct_modal_credentials,
@@ -37,20 +37,20 @@ def _raise_import():
 # ---------------------------------------------------------------------------
 # managed_nous_tools_enabled
 # ---------------------------------------------------------------------------
-class Testmanaged ChiperToolsEnabled:
+class TestManagedNousToolsEnabled:
     """Subscription-based gate: True for paid Chiper Subscribers."""
 
     def test_disabled_when_not_logged_in(self, monkeypatch):
         monkeypatch.setattr(
-            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
-            lambda: Chiper PortalAccountInfo(logged_in=False, source="none", fresh=False),
+            "chiper_cli.nous_account.get_nous_portal_account_info",
+            lambda: NousPortalAccountInfo(logged_in=False, source="none", fresh=False),
         )
         assert managed_nous_tools_enabled() is False
 
     def test_disabled_for_free_tier(self, monkeypatch):
         monkeypatch.setattr(
-            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
-            lambda: Chiper PortalAccountInfo(
+            "chiper_cli.nous_account.get_nous_portal_account_info",
+            lambda: NousPortalAccountInfo(
                 logged_in=True,
                 source="jwt",
                 fresh=False,
@@ -61,8 +61,8 @@ class Testmanaged ChiperToolsEnabled:
 
     def test_enabled_for_paid_subscriber(self, monkeypatch):
         monkeypatch.setattr(
-            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
-            lambda: Chiper PortalAccountInfo(
+            "chiper_cli.nous_account.get_nous_portal_account_info",
+            lambda: NousPortalAccountInfo(
                 logged_in=True,
                 source="jwt",
                 fresh=False,
@@ -76,7 +76,7 @@ class Testmanaged ChiperToolsEnabled:
 
         def fake_account_info(*, force_fresh=False):
             calls.append(force_fresh)
-            return Chiper PortalAccountInfo(
+            return NousPortalAccountInfo(
                 logged_in=True,
                 source="account_api",
                 fresh=True,
@@ -84,7 +84,7 @@ class Testmanaged ChiperToolsEnabled:
             )
 
         monkeypatch.setattr(
-            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
+            "chiper_cli.nous_account.get_nous_portal_account_info",
             fake_account_info,
         )
 
@@ -94,17 +94,17 @@ class Testmanaged ChiperToolsEnabled:
     def test_returns_false_on_exception(self, monkeypatch):
         """Should never crash — returns False on any exception."""
         monkeypatch.setattr(
-            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
+            "chiper_cli.nous_account.get_nous_portal_account_info",
             _raise_import,
         )
         assert managed_nous_tools_enabled() is False
 
 
-class TestChiper tool gatewayUnavailableMessage:
+class TestNousToolGatewayUnavailableMessage:
     def test_uses_entitlement_reason_for_logged_in_user(self, monkeypatch):
         monkeypatch.setattr(
-            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
-            lambda force_fresh=False: Chiper PortalAccountInfo(
+            "chiper_cli.nous_account.get_nous_portal_account_info",
+            lambda force_fresh=False: NousPortalAccountInfo(
                 logged_in=True,
                 source="account_api",
                 fresh=True,

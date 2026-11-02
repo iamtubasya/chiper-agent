@@ -15,15 +15,15 @@ import pytest
 
 import agent.account_usage as account_usage
 from agent.account_usage import CreditsView, build_credits_view
-from chiper_cli.CHIPER_account import Chiper PortalAccountInfo, NousPaidServiceAccessInfo
+from chiper_cli.nous_account import NousPortalAccountInfo, NousPaidServiceAccessInfo
 
 
-def _account(**kwargs) -> Chiper PortalAccountInfo:
+def _account(**kwargs) -> NousPortalAccountInfo:
     kwargs.setdefault("logged_in", True)
     kwargs.setdefault("source", "account_api")
     kwargs.setdefault("fresh", True)
     kwargs.setdefault("portal_base_url", "https://portal.example.test")
-    return Chiper PortalAccountInfo(**kwargs)
+    return NousPortalAccountInfo(**kwargs)
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def _logged_in_account(monkeypatch):
 
     def _install(account):
         monkeypatch.setattr(
-            "chiper_cli.CHIPER_account.get_nous_portal_account_info",
+            "chiper_cli.nous_account.get_nous_portal_account_info",
             lambda *a, **kw: account,
         )
 
@@ -125,7 +125,7 @@ def test_view_fetch_failure_is_logged_out(monkeypatch):
     def _boom(*a, **kw):
         raise RuntimeError("portal down")
 
-    monkeypatch.setattr("chiper_cli.CHIPER_account.get_nous_portal_account_info", _boom)
+    monkeypatch.setattr("chiper_cli.nous_account.get_nous_portal_account_info", _boom)
 
     view = build_credits_view()
     assert view.logged_in is False

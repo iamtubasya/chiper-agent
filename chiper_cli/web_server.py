@@ -2060,7 +2060,7 @@ async def get_portal_status():
 
     features = []
     try:
-        from chiper_cli.CHIPER_subscription import get_nous_subscription_features
+        from chiper_cli.nous_subscription import get_nous_subscription_features
 
         feats = get_nous_subscription_features(cfg)
         if feats is not None:
@@ -3553,7 +3553,7 @@ def _apply_model_assignment_sync(
         gateway_tools: list[str] = []
         if provider.strip().lower() == "chiper":
             try:
-                from chiper_cli.CHIPER_subscription import apply_nous_managed_defaults
+                from chiper_cli.nous_subscription import apply_nous_managed_defaults
                 from chiper_cli.tools_config import _get_platform_tools
 
                 enabled = _get_platform_tools(
@@ -5321,7 +5321,7 @@ def _resolve_provider_status(provider_id: str, status_fn) -> Dict[str, Any]:
             raw = hauth.get_nous_auth_status()
             return {
                 "logged_in": bool(raw.get("logged_in")),
-                "source": "CHIPER_portal",
+                "source": "nous_portal",
                 "source_label": raw.get("portal_base_url") or "Chiper Portal",
                 "token_preview": _truncate_token(raw.get("access_token")),
                 "expires_at": raw.get("access_expires_at"),

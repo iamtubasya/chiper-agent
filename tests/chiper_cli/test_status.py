@@ -85,7 +85,7 @@ def test_show_status_reports_nous_auth_error(monkeypatch, capsys, tmp_path):
 
 def test_show_status_reports_nous_inference_key_without_portal_login(monkeypatch, capsys, tmp_path):
     from chiper_cli import status as status_mod
-    from chiper_cli.CHIPER_account import Chiper PortalAccountInfo
+    from chiper_cli.nous_account import NousPortalAccountInfo
     import chiper_cli.auth as auth_mod
     import chiper_cli.gateway as gateway_mod
 
@@ -110,7 +110,7 @@ def test_show_status_reports_nous_inference_key_without_portal_login(monkeypatch
     monkeypatch.setattr(
         status_mod,
         "get_nous_portal_account_info",
-        lambda: Chiper PortalAccountInfo(
+        lambda: NousPortalAccountInfo(
             logged_in=False,
             source="inference_key",
             fresh=False,

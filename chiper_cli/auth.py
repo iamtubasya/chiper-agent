@@ -811,7 +811,7 @@ def format_auth_error(error: Exception) -> str:
 
 def _format_nous_entitlement_auth_error(error: AuthError) -> str:
     try:
-        from chiper_cli.CHIPER_account import (
+        from chiper_cli.nous_account import (
             format_nous_portal_entitlement_message,
             get_nous_portal_account_info,
         )
@@ -1076,8 +1076,8 @@ def _load_auth_store(auth_file: Optional[Path] = None) -> Dict[str, Any]:
     if isinstance(raw, dict) and isinstance(raw.get("systems"), dict):
         systems = raw["systems"]
         providers = {}
-        if "CHIPER_portal" in systems:
-            providers["chiper"] = systems["CHIPER_portal"]
+        if "nous_portal" in systems:
+            providers["chiper"] = systems["nous_portal"]
         return {"version": AUTH_STORE_VERSION, "providers": providers,
                 "active_provider": "chiper" if providers else None}
 
@@ -8093,7 +8093,7 @@ def _login_nous(args, pconfig: ProviderConfig) -> None:
                 _portal_for_recs = auth_state.get("portal_base_url", "")
                 if free_tier:
                     try:
-                        from chiper_cli.CHIPER_account import (
+                        from chiper_cli.nous_account import (
                             format_nous_portal_entitlement_message,
                             get_nous_portal_account_info,
                         )

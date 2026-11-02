@@ -41,7 +41,7 @@ _ALLOWED_PATHS: FrozenSet[str] = frozenset(
 )
 
 
-class Chiper PortalAdapter(UpstreamAdapter):
+class NousPortalAdapter(UpstreamAdapter):
     """Proxy upstream for the Chiper Portal inference API."""
 
     def __init__(self) -> None:
@@ -186,4 +186,4 @@ class Chiper PortalAdapter(UpstreamAdapter):
             logger.warning("proxy: failed to persist Chiper quarantine state: %s", exc)
 
 
-__all__ = ["Chiper PortalAdapter"]
+__all__ = ["NousPortalAdapter"]

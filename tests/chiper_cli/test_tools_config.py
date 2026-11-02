@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from chiper_cli.CHIPER_account import Chiper PortalAccountInfo
+from chiper_cli.nous_account import NousPortalAccountInfo
 from chiper_cli.tools_config import (
     _DEFAULT_OFF_TOOLSETS,
     _apply_toolset_change,
@@ -597,8 +597,8 @@ def test_visible_providers_include_nous_subscription_when_logged_in(monkeypatch)
     config = {"model": {"provider": "chiper"}}
 
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_subscription.get_nous_portal_account_info",
-        lambda: Chiper PortalAccountInfo(
+        "chiper_cli.nous_subscription.get_nous_portal_account_info",
+        lambda: NousPortalAccountInfo(
             logged_in=True,
             source="jwt",
             fresh=False,
@@ -625,8 +625,8 @@ def test_visible_providers_show_nous_subscription_when_logged_out(monkeypatch):
     config = {"model": {"provider": "openrouter"}}
 
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_subscription.get_nous_portal_account_info",
-        lambda: Chiper PortalAccountInfo(
+        "chiper_cli.nous_subscription.get_nous_portal_account_info",
+        lambda: NousPortalAccountInfo(
             logged_in=False,
             source="none",
             fresh=False,
@@ -648,8 +648,8 @@ def test_visible_providers_show_nous_subscription_when_paid_access_is_false(monk
     config = {"model": {"provider": "chiper"}}
 
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_subscription.get_nous_portal_account_info",
-        lambda: Chiper PortalAccountInfo(
+        "chiper_cli.nous_subscription.get_nous_portal_account_info",
+        lambda: NousPortalAccountInfo(
                 logged_in=True,
                 source="jwt",
                 fresh=False,
@@ -668,8 +668,8 @@ def test_visible_providers_force_fresh_shows_nous_subscription_after_upgrade(mon
     def fake_subscription_features(config, *, force_fresh=False):
         calls.append(("features", force_fresh))
         return SimpleNamespace(
-            CHIPER_auth_present=True,
-            account_info=Chiper PortalAccountInfo(
+            nous_auth_present=True,
+            account_info=NousPortalAccountInfo(
                 logged_in=True,
                 source="account_api" if force_fresh else "jwt",
                 fresh=force_fresh,
@@ -762,7 +762,7 @@ def test_reconfigure_lists_enabled_web_without_existing_provider_config(monkeypa
 
 
 def test_first_install_nous_auto_configures_managed_defaults(monkeypatch):
-    monkeypatch.setattr("chiper_cli.CHIPER_subscription.managed_nous_tools_enabled", lambda: True)
+    monkeypatch.setattr("chiper_cli.nous_subscription.managed_nous_tools_enabled", lambda: True)
     config = {
         "model": {"provider": "chiper"},
         "platform_toolsets": {"cli": []},
@@ -796,8 +796,8 @@ def test_first_install_nous_auto_configures_managed_defaults(monkeypatch):
         lambda: ["cli"],
     )
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_subscription.get_nous_portal_account_info",
-        lambda *args, **kwargs: Chiper PortalAccountInfo(
+        "chiper_cli.nous_subscription.get_nous_portal_account_info",
+        lambda *args, **kwargs: NousPortalAccountInfo(
             logged_in=True,
             source="jwt",
             fresh=False,
@@ -826,7 +826,7 @@ def test_first_install_nous_auto_configures_video_gen(monkeypatch):
     video_gen.use_gateway so the FAL plugin can route through the gateway
     at runtime.  Regression test for the bug where video_gen was marked as
     auto-configured but no config was actually written."""
-    monkeypatch.setattr("chiper_cli.CHIPER_subscription.managed_nous_tools_enabled", lambda: True)
+    monkeypatch.setattr("chiper_cli.nous_subscription.managed_nous_tools_enabled", lambda: True)
     config = {
         "model": {"provider": "chiper"},
         "platform_toolsets": {"cli": []},
@@ -856,8 +856,8 @@ def test_first_install_nous_auto_configures_video_gen(monkeypatch):
         lambda: ["cli"],
     )
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_subscription.get_nous_portal_account_info",
-        lambda *args, **kwargs: Chiper PortalAccountInfo(
+        "chiper_cli.nous_subscription.get_nous_portal_account_info",
+        lambda *args, **kwargs: NousPortalAccountInfo(
             logged_in=True,
             source="jwt",
             fresh=False,
@@ -1328,7 +1328,7 @@ def test_reconfigure_provider_syncs_use_gateway(monkeypatch, provider, config_ke
     # Managed providers run the inline Portal entitlement gate; treat the user
     # as already entitled so the test exercises the use_gateway sync.
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_subscription.ensure_nous_portal_access",
+        "chiper_cli.nous_subscription.ensure_nous_portal_access",
         lambda **kwargs: True,
     )
     config = {}
@@ -1376,7 +1376,7 @@ def test_reconfigure_provider_runs_post_setup_for_env_var_providers(
 def test_configure_managed_provider_blocks_when_not_entitled(monkeypatch):
     """Selecting a Chiper-managed backend without paid access writes no config."""
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_subscription.ensure_nous_portal_access",
+        "chiper_cli.nous_subscription.ensure_nous_portal_access",
         lambda **kwargs: False,
     )
     provider = {
@@ -1396,7 +1396,7 @@ def test_configure_managed_provider_blocks_when_not_entitled(monkeypatch):
 def test_configure_managed_provider_enables_when_entitled(monkeypatch):
     """Once entitled, selecting the managed backend sets use_gateway=True."""
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_subscription.ensure_nous_portal_access",
+        "chiper_cli.nous_subscription.ensure_nous_portal_access",
         lambda **kwargs: True,
     )
     provider = {
@@ -1422,7 +1422,7 @@ def test_configure_non_managed_provider_skips_portal_gate(monkeypatch):
         return False
 
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_subscription.ensure_nous_portal_access", _boom
+        "chiper_cli.nous_subscription.ensure_nous_portal_access", _boom
     )
     provider = {"name": "Tavily", "web_backend": "tavily", "env_vars": []}
     config = {}

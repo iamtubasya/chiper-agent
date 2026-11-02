@@ -755,7 +755,7 @@ def check_nous_free_tier(*, force_fresh: bool = False) -> bool:
             return cached_result
 
     try:
-        from chiper_cli.CHIPER_account import get_nous_portal_account_info
+        from chiper_cli.nous_account import get_nous_portal_account_info
 
         account_info = get_nous_portal_account_info(force_fresh=force_fresh)
         result = account_info.is_free_tier

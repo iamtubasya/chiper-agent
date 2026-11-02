@@ -1,7 +1,7 @@
 """Tests for Chiper subscription feature detection."""
 
-from chiper_cli.CHIPER_account import Chiper PortalAccountInfo, NousToolAccessInfo
-from chiper_cli import CHIPER_subscription as ns
+from chiper_cli.nous_account import NousPortalAccountInfo, NousToolAccessInfo
+from chiper_cli import nous_subscription as ns
 
 
 _POOL_COVERAGE = {
@@ -14,8 +14,8 @@ _POOL_COVERAGE = {
 }
 
 
-def _account(*, logged_in: bool, paid: bool | None = None) -> Chiper PortalAccountInfo:
-    return Chiper PortalAccountInfo(
+def _account(*, logged_in: bool, paid: bool | None = None) -> NousPortalAccountInfo:
+    return NousPortalAccountInfo(
         logged_in=logged_in,
         source="jwt" if logged_in else "none",
         fresh=False,
@@ -23,9 +23,9 @@ def _account(*, logged_in: bool, paid: bool | None = None) -> Chiper PortalAccou
     )
 
 
-def _pool_account() -> Chiper PortalAccountInfo:
+def _pool_account() -> NousPortalAccountInfo:
     """A $0 subscriber with a live free tool pool (no paid access)."""
-    return Chiper PortalAccountInfo(
+    return NousPortalAccountInfo(
         logged_in=True,
         source="jwt",
         fresh=False,
@@ -731,9 +731,9 @@ def test_apply_nous_managed_defaults_flips_stt_provider_to_openai_for_nous_users
     monkeypatch.setattr(
         ns,
         "get_nous_subscription_features",
-        lambda config, **kw: ns.Chiper subscriptionFeatures(
+        lambda config, **kw: ns.NousSubscriptionFeatures(
             subscribed=True,
-            CHIPER_auth_present=True,
+            nous_auth_present=True,
             provider_is_nous=True,
             account_info=_account(logged_in=True, paid=True),
             features={
@@ -756,9 +756,9 @@ def test_apply_nous_managed_defaults_flips_stt_provider_to_openai_for_nous_users
 
 
 def _stt_features_stub(*, account_info):
-    return ns.Chiper subscriptionFeatures(
+    return ns.NousSubscriptionFeatures(
         subscribed=True,
-        CHIPER_auth_present=True,
+        nous_auth_present=True,
         provider_is_nous=True,
         account_info=account_info,
         features={
@@ -822,9 +822,9 @@ def test_apply_nous_managed_defaults_skips_stt_when_groq_key_present(monkeypatch
     monkeypatch.setattr(
         ns,
         "get_nous_subscription_features",
-        lambda config, **kw: ns.Chiper subscriptionFeatures(
+        lambda config, **kw: ns.NousSubscriptionFeatures(
             subscribed=True,
-            CHIPER_auth_present=True,
+            nous_auth_present=True,
             provider_is_nous=True,
             account_info=_account(logged_in=True, paid=True),
             features={

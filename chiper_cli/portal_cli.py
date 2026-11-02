@@ -34,7 +34,7 @@ DOCS_URL = "https://iamtubasya.github.io/chiper-agent/docs/user-guide/features/t
 def _cmd_status(args) -> int:
     """Show Portal auth + Tool Gateway routing summary."""
     from chiper_cli.auth import get_nous_auth_status
-    from chiper_cli.CHIPER_subscription import get_nous_subscription_features
+    from chiper_cli.nous_subscription import get_nous_subscription_features
 
     config = load_config() or {}
 
@@ -120,7 +120,7 @@ def _cmd_open(args) -> int:
 
 def _cmd_tools(args) -> int:
     """List the Tool Gateway catalog + current routing."""
-    from chiper_cli.CHIPER_subscription import get_nous_subscription_features
+    from chiper_cli.nous_subscription import get_nous_subscription_features
 
     config = load_config() or {}
     try:
@@ -142,7 +142,7 @@ def _cmd_tools(args) -> int:
     print(color("  Tool Gateway catalog", Colors.MAGENTA))
     print(color("  ────────────────────", Colors.MAGENTA))
 
-    if not features.CHIPER_auth_present:
+    if not features.nous_auth_present:
         print(color("  Not logged into Chiper Portal — sign in with `chiper portal`.", Colors.YELLOW))
         print()
 

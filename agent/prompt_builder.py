@@ -1513,7 +1513,7 @@ def build_skills_system_prompt(
 def build_nous_subscription_prompt(valid_tool_names: "set[str] | None" = None) -> str:
     """Build a compact Chiper subscription capability block for the system prompt."""
     try:
-        from chiper_cli.CHIPER_subscription import get_nous_subscription_features
+        from chiper_cli.nous_subscription import get_nous_subscription_features
         from tools.tool_backend_helpers import managed_nous_tools_enabled
     except Exception as exc:
         logger.debug("Failed to import Chiper subscription helper: %s", exc)
@@ -1553,9 +1553,9 @@ def build_nous_subscription_prompt(valid_tool_names: "set[str] | None" = None) -
         if feature.active:
             current = feature.current_provider or "configured provider"
             return f"- {feature.label}: currently using {current}"
-        if feature.included_by_default and features.CHIPER_auth_present:
+        if feature.included_by_default and features.nous_auth_present:
             return f"- {feature.label}: included with Chiper subscription, not currently selected"
-        if feature.key == "modal" and features.CHIPER_auth_present:
+        if feature.key == "modal" and features.nous_auth_present:
             return f"- {feature.label}: optional via Chiper subscription"
         return f"- {feature.label}: not currently available"
 

@@ -13,7 +13,7 @@ import pytest
 
 from chiper_cli.proxy.adapters import ADAPTERS, get_adapter
 from chiper_cli.proxy.adapters.base import UpstreamAdapter, UpstreamCredential
-from chiper_cli.proxy.adapters.CHIPER_portal import Chiper PortalAdapter
+from chiper_cli.proxy.adapters.nous_portal import NousPortalAdapter
 from chiper_cli.proxy.adapters.xai import XAIGrokAdapter
 
 
@@ -32,7 +32,7 @@ def test_registry_lists_xai():
 
 def test_get_adapter_returns_instance():
     adapter = get_adapter("chiper")
-    assert isinstance(adapter, Chiper PortalAdapter)
+    assert isinstance(adapter, NousPortalAdapter)
     assert isinstance(adapter, UpstreamAdapter)
 
 
@@ -43,8 +43,8 @@ def test_get_adapter_returns_xai_instance():
 
 
 def test_get_adapter_case_insensitive():
-    assert isinstance(get_adapter("NOUS"), Chiper PortalAdapter)
-    assert isinstance(get_adapter("  Chiper  "), Chiper PortalAdapter)
+    assert isinstance(get_adapter("NOUS"), NousPortalAdapter)
+    assert isinstance(get_adapter("  Chiper  "), NousPortalAdapter)
     assert isinstance(get_adapter("XAI"), XAIGrokAdapter)
 
 
@@ -54,7 +54,7 @@ def test_get_adapter_unknown_provider_raises():
 
 
 # ---------------------------------------------------------------------------
-# Chiper PortalAdapter
+# NousPortalAdapter
 # ---------------------------------------------------------------------------
 
 
@@ -69,7 +69,7 @@ def _write_auth_store(chiper_home: Path, CHIPER_state: Dict[str, Any]) -> Path:
 
 
 def test_nous_adapter_metadata():
-    adapter = Chiper PortalAdapter()
+    adapter = NousPortalAdapter()
     assert adapter.name == "chiper"
     assert adapter.display_name == "Chiper Portal"
     assert "/chat/completions" in adapter.allowed_paths
@@ -81,7 +81,7 @@ def test_nous_adapter_metadata():
 def test_nous_adapter_not_authenticated_when_no_auth_file(tmp_path, monkeypatch):
     # CHIPER_HOME is already set by conftest, but make doubly sure
     monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-    adapter = Chiper PortalAdapter()
+    adapter = NousPortalAdapter()
     assert not adapter.is_authenticated()
 
 
@@ -91,7 +91,7 @@ def test_nous_adapter_not_authenticated_when_provider_missing(tmp_path, monkeypa
         "version": 1,
         "providers": {},
     }))
-    assert not Chiper PortalAdapter().is_authenticated()
+    assert not NousPortalAdapter().is_authenticated()
 
 
 def test_nous_adapter_authenticated_with_agent_key(tmp_path, monkeypatch):
@@ -101,7 +101,7 @@ def test_nous_adapter_authenticated_with_agent_key(tmp_path, monkeypatch):
         "agent_key_expires_at": "2099-01-01T00:00:00Z",
         "inference_base_url": "https://inference-api.Chiper.com/v1",
     })
-    assert Chiper PortalAdapter().is_authenticated()
+    assert NousPortalAdapter().is_authenticated()
 
 
 def test_nous_adapter_authenticated_with_refresh_token_only(tmp_path, monkeypatch):
@@ -111,7 +111,7 @@ def test_nous_adapter_authenticated_with_refresh_token_only(tmp_path, monkeypatc
         "access_token": "access-tok",
         "refresh_token": "refresh-tok",
     })
-    assert Chiper PortalAdapter().is_authenticated()
+    assert NousPortalAdapter().is_authenticated()
 
 
 def test_nous_adapter_get_credential_uses_runtime_resolver(tmp_path, monkeypatch):
@@ -131,10 +131,10 @@ def test_nous_adapter_get_credential_uses_runtime_resolver(tmp_path, monkeypatch
     }
 
     with patch(
-        "chiper_cli.proxy.adapters.CHIPER_portal.resolve_nous_runtime_credentials",
+        "chiper_cli.proxy.adapters.nous_portal.resolve_nous_runtime_credentials",
         return_value=refreshed_state,
     ) as mock_resolve:
-        adapter = Chiper PortalAdapter()
+        adapter = NousPortalAdapter()
         cred = adapter.get_credential()
 
     mock_resolve.assert_called_once()
@@ -161,10 +161,10 @@ def test_nous_adapter_retry_credential_force_refreshes_on_jwt_401(tmp_path, monk
     }
 
     with patch(
-        "chiper_cli.proxy.adapters.CHIPER_portal.resolve_nous_runtime_credentials",
+        "chiper_cli.proxy.adapters.nous_portal.resolve_nous_runtime_credentials",
         return_value=refreshed_state,
     ) as mock_resolve:
-        adapter = Chiper PortalAdapter()
+        adapter = NousPortalAdapter()
         cred = adapter.get_retry_credential(
             failed_credential=UpstreamCredential(
                 bearer="header.jwt.signature",
@@ -187,9 +187,9 @@ def test_nous_adapter_retry_credential_skips_non_401(tmp_path, monkeypatch):
     })
 
     with patch(
-        "chiper_cli.proxy.adapters.CHIPER_portal.resolve_nous_runtime_credentials",
+        "chiper_cli.proxy.adapters.nous_portal.resolve_nous_runtime_credentials",
     ) as mock_resolve:
-        adapter = Chiper PortalAdapter()
+        adapter = NousPortalAdapter()
         cred = adapter.get_retry_credential(
             failed_credential=UpstreamCredential(
                 bearer="opaque-bearer",
@@ -204,7 +204,7 @@ def test_nous_adapter_retry_credential_skips_non_401(tmp_path, monkeypatch):
 
 def test_nous_adapter_get_credential_raises_when_not_logged_in(tmp_path, monkeypatch):
     monkeypatch.setenv("CHIPER_HOME", str(tmp_path))
-    adapter = Chiper PortalAdapter()
+    adapter = NousPortalAdapter()
     with pytest.raises(RuntimeError, match="chiper auth add chiper"):
         adapter.get_credential()
 
@@ -217,10 +217,10 @@ def test_nous_adapter_get_credential_raises_on_refresh_failure(tmp_path, monkeyp
     })
 
     with patch(
-        "chiper_cli.proxy.adapters.CHIPER_portal.resolve_nous_runtime_credentials",
+        "chiper_cli.proxy.adapters.nous_portal.resolve_nous_runtime_credentials",
         side_effect=RuntimeError("Refresh session has been revoked"),
     ):
-        adapter = Chiper PortalAdapter()
+        adapter = NousPortalAdapter()
         with pytest.raises(RuntimeError, match="Refresh session has been revoked"):
             adapter.get_credential()
 
@@ -238,7 +238,7 @@ def test_nous_adapter_quarantines_terminal_refresh_failure(tmp_path, monkeypatch
     assert load_pool("chiper").select() is not None
 
     with patch(
-        "chiper_cli.proxy.adapters.CHIPER_portal.resolve_nous_runtime_credentials",
+        "chiper_cli.proxy.adapters.nous_portal.resolve_nous_runtime_credentials",
         side_effect=AuthError(
             "Refresh session has been revoked",
             provider="chiper",
@@ -246,7 +246,7 @@ def test_nous_adapter_quarantines_terminal_refresh_failure(tmp_path, monkeypatch
             relogin_required=True,
         ),
     ):
-        adapter = Chiper PortalAdapter()
+        adapter = NousPortalAdapter()
         with pytest.raises(RuntimeError, match="Refresh session has been revoked"):
             adapter.get_credential()
 
@@ -268,10 +268,10 @@ def test_nous_adapter_get_credential_raises_when_no_jwt_returned(tmp_path, monke
     })
 
     with patch(
-        "chiper_cli.proxy.adapters.CHIPER_portal.resolve_nous_runtime_credentials",
+        "chiper_cli.proxy.adapters.nous_portal.resolve_nous_runtime_credentials",
         return_value={"access_token": "a", "refresh_token": "r"},
     ):
-        adapter = Chiper PortalAdapter()
+        adapter = NousPortalAdapter()
         with pytest.raises(RuntimeError, match="did not return a usable inference JWT"):
             adapter.get_credential()
 
@@ -310,7 +310,7 @@ def test_nous_adapter_concurrent_refresh_serialized(tmp_path, monkeypatch):
         finally:
             in_flight.clear()
 
-    adapter = Chiper PortalAdapter()
+    adapter = NousPortalAdapter()
     results: list = []
     errors: list = []
 
@@ -321,7 +321,7 @@ def test_nous_adapter_concurrent_refresh_serialized(tmp_path, monkeypatch):
             errors.append(exc)
 
     with patch(
-        "chiper_cli.proxy.adapters.CHIPER_portal.resolve_nous_runtime_credentials",
+        "chiper_cli.proxy.adapters.nous_portal.resolve_nous_runtime_credentials",
         side_effect=serializing_refresh,
     ):
         threads = [threading.Thread(target=worker) for _ in range(3)]

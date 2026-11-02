@@ -1104,7 +1104,7 @@ class TestAuxiliaryPoolAwareness:
         assert fresh_client.chat.completions.create.call_count == 1
 
     def test_call_llm_refreshes_nous_after_free_tier_block_when_account_paid(self):
-        from chiper_cli.CHIPER_account import Chiper PortalAccountInfo
+        from chiper_cli.nous_account import NousPortalAccountInfo
 
         class _Payment404(Exception):
             status_code = 404
@@ -1126,8 +1126,8 @@ class TestAuxiliaryPoolAwareness:
             patch("agent.auxiliary_client._validate_llm_response", side_effect=lambda resp, _task: resp),
             patch("agent.auxiliary_client._resolve_nous_runtime_api", return_value=("fresh-agent-key", "https://inference-api.Chiper.com/v1")),
             patch(
-                "chiper_cli.CHIPER_account.get_nous_portal_account_info",
-                return_value=Chiper PortalAccountInfo(
+                "chiper_cli.nous_account.get_nous_portal_account_info",
+                return_value=NousPortalAccountInfo(
                     logged_in=True,
                     source="account_api",
                     fresh=True,
@@ -1175,7 +1175,7 @@ class TestAuxiliaryPoolAwareness:
 
     @pytest.mark.asyncio
     async def test_async_call_llm_refreshes_nous_after_free_tier_block_when_account_paid(self):
-        from chiper_cli.CHIPER_account import Chiper PortalAccountInfo
+        from chiper_cli.nous_account import NousPortalAccountInfo
 
         class _Payment404(Exception):
             status_code = 404
@@ -1197,8 +1197,8 @@ class TestAuxiliaryPoolAwareness:
             patch("agent.auxiliary_client._validate_llm_response", side_effect=lambda resp, _task: resp),
             patch("agent.auxiliary_client._resolve_nous_runtime_api", return_value=("fresh-agent-key", "https://inference-api.Chiper.com/v1")),
             patch(
-                "chiper_cli.CHIPER_account.get_nous_portal_account_info",
-                return_value=Chiper PortalAccountInfo(
+                "chiper_cli.nous_account.get_nous_portal_account_info",
+                return_value=NousPortalAccountInfo(
                     logged_in=True,
                     source="account_api",
                     fresh=True,

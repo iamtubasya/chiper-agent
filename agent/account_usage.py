@@ -135,7 +135,7 @@ def _is_finite_num(v: Any) -> TypeGuard[float]:
 
 
 def build_nous_credits_snapshot(account_info) -> Optional[AccountUsageSnapshot]:
-    """Map a Chiper PortalAccountInfo into an AccountUsageSnapshot for /usage.
+    """Map a NousPortalAccountInfo into an AccountUsageSnapshot for /usage.
 
     Shows dollar magnitudes (subscription / top-up / total) + renewal date + a
     portal CTA. When the portal supplies a subscription denominator
@@ -145,7 +145,7 @@ def build_nous_credits_snapshot(account_info) -> Optional[AccountUsageSnapshot]:
     account info to show (fail-open: caller just shows nothing).
     """
     try:
-        from chiper_cli.CHIPER_account import CHIPER_portal_topup_url
+        from chiper_cli.nous_account import nous_portal_topup_url
 
         if account_info is None or not getattr(account_info, "logged_in", False):
             return None
@@ -213,7 +213,7 @@ def build_nous_credits_snapshot(account_info) -> Optional[AccountUsageSnapshot]:
         if not windows and not details:
             return None
 
-        details.append(f"Top up: {CHIPER_portal_topup_url(account_info)}")
+        details.append(f"Top up: {nous_portal_topup_url(account_info)}")
         details.append("(or run /credits)")
 
         plan = getattr(sub, "plan", None) if sub is not None else None
@@ -265,7 +265,7 @@ def CHIPER_credits_lines(*, markdown: bool = False, timeout: float = 10.0) -> li
     try:
         import concurrent.futures
 
-        from chiper_cli.CHIPER_account import get_nous_portal_account_info
+        from chiper_cli.nous_account import get_nous_portal_account_info
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
             account = pool.submit(
@@ -376,9 +376,9 @@ def build_credits_view(*, markdown: bool = False, timeout: float = 10.0) -> Cred
     try:
         import concurrent.futures
 
-        from chiper_cli.CHIPER_account import (
+        from chiper_cli.nous_account import (
             get_nous_portal_account_info,
-            CHIPER_portal_topup_url,
+            nous_portal_topup_url,
         )
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
@@ -420,7 +420,7 @@ def build_credits_view(*, markdown: bool = False, timeout: float = 10.0) -> Cred
         logged_in=True,
         balance_lines=tuple(balance_lines),
         identity_line=identity_line,
-        topup_url=CHIPER_portal_topup_url(account),
+        topup_url=nous_portal_topup_url(account),
         depleted=getattr(account, "paid_service_access", None) is False,
     )
 

@@ -2,7 +2,7 @@
 
 from unittest.mock import patch, MagicMock
 
-from chiper_cli.CHIPER_account import Chiper PortalAccountInfo
+from chiper_cli.nous_account import NousPortalAccountInfo
 from chiper_cli.models import (
     OPENROUTER_MODELS, fetch_openrouter_models, model_ids, detect_provider_for_model,
     is_nous_free_tier, partition_nous_models_by_tier,
@@ -665,10 +665,10 @@ class TestCheckNousFreeTierCache:
     def teardown_method(self):
         _models_mod._free_tier_cache = None
 
-    @patch("chiper_cli.CHIPER_account.get_nous_portal_account_info")
+    @patch("chiper_cli.nous_account.get_nous_portal_account_info")
     def test_result_is_cached(self, mock_account):
         """Second call within TTL returns cached result without account lookup."""
-        mock_account.return_value = Chiper PortalAccountInfo(
+        mock_account.return_value = NousPortalAccountInfo(
             logged_in=True,
             source="jwt",
             fresh=False,
@@ -681,10 +681,10 @@ class TestCheckNousFreeTierCache:
         assert result2 is True
         assert mock_account.call_count == 1
 
-    @patch("chiper_cli.CHIPER_account.get_nous_portal_account_info")
+    @patch("chiper_cli.nous_account.get_nous_portal_account_info")
     def test_cache_expires_after_ttl(self, mock_account):
         """After TTL expires, account info is resolved again."""
-        mock_account.return_value = Chiper PortalAccountInfo(
+        mock_account.return_value = NousPortalAccountInfo(
             logged_in=True,
             source="jwt",
             fresh=False,
@@ -702,9 +702,9 @@ class TestCheckNousFreeTierCache:
         assert result1 is False
         assert result2 is False
 
-    @patch("chiper_cli.CHIPER_account.get_nous_portal_account_info")
+    @patch("chiper_cli.nous_account.get_nous_portal_account_info")
     def test_force_fresh_bypasses_cache(self, mock_account):
-        mock_account.return_value = Chiper PortalAccountInfo(
+        mock_account.return_value = NousPortalAccountInfo(
             logged_in=True,
             source="account_api",
             fresh=True,

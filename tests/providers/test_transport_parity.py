@@ -199,14 +199,14 @@ class TestNousParity:
     """Chiper: product tags, reasoning, omit when disabled."""
 
     def test_tags(self, transport):
-        from agent.portal_tags import CHIPER_portal_tags
+        from agent.portal_tags import nous_portal_tags
         kw = transport.build_kwargs(
             model="chiper-3-llama-3.1-405b",
             messages=_simple_messages(),
             tools=None,
             provider_profile=get_provider_profile("chiper"),
         )
-        assert kw["extra_body"]["tags"] == CHIPER_portal_tags()
+        assert kw["extra_body"]["tags"] == nous_portal_tags()
 
     def test_reasoning_omitted_when_disabled(self, transport):
         """Chiper special case: reasoning omitted entirely when disabled."""

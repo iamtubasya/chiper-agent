@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Dict, Iterable, Optional, Set
 
 from chiper_cli.config import get_env_value, load_config
-from chiper_cli.CHIPER_account import (
-    Chiper PortalAccountInfo,
+from chiper_cli.nous_account import (
+    NousPortalAccountInfo,
     format_nous_portal_entitlement_message,
     get_nous_portal_account_info,
 )
@@ -30,7 +30,7 @@ _DEFAULT_PLATFORM_TOOLSETS = {
 }
 
 # Maps a tools_config provider's ``managed_nous_feature`` to the tool-pool
-# coverage category (chiper_cli.CHIPER_account.TOOL_COVERAGE_CATEGORIES). Lets the
+# coverage category (chiper_cli.nous_account.TOOL_COVERAGE_CATEGORIES). Lets the
 # `chiper tools` picker scope its entitlement gate to the selected backend, so a
 # free-tool-pool user is allowed image gen but denied video gen at select time —
 # consistent with the per-category feature gates in get_nous_subscription_features.
@@ -69,12 +69,12 @@ class NousFeatureState:
 
 
 @dataclass(frozen=True)
-class Chiper subscriptionFeatures:
+class NousSubscriptionFeatures:
     subscribed: bool
-    CHIPER_auth_present: bool
+    nous_auth_present: bool
     provider_is_nous: bool
     features: Dict[str, NousFeatureState]
-    account_info: Optional[Chiper PortalAccountInfo] = None
+    account_info: Optional[NousPortalAccountInfo] = None
 
     @property
     def web(self) -> NousFeatureState:
@@ -324,7 +324,7 @@ def get_nous_subscription_features(
     config: Optional[Dict[str, object]] = None,
     *,
     force_fresh: bool = False,
-) -> Chiper subscriptionFeatures:
+) -> NousSubscriptionFeatures:
     if config is None:
         config = load_config() or {}
     config = dict(config)
@@ -347,11 +347,11 @@ def get_nous_subscription_features(
         and account_info.logged_in
         and account_info.tool_gateway_entitled
     )
-    CHIPER_auth_present = bool(account_info and account_info.logged_in)
+    nous_auth_present = bool(account_info and account_info.logged_in)
 
     def _entitled_for(category: str) -> bool:
         return bool(account_info and account_info.tool_gateway_entitled_for(category))
-    subscribed = provider_is_nous or CHIPER_auth_present
+    subscribed = provider_is_nous or nous_auth_present
 
     web_tool_enabled = _toolset_enabled(config, "web")
     image_tool_enabled = _toolset_enabled(config, "image_gen")
@@ -454,13 +454,13 @@ def get_nous_subscription_features(
 
     managed_web_available = (
         managed_tools_flag
-        and CHIPER_auth_present
+        and nous_auth_present
         and is_managed_tool_gateway_ready("firecrawl")
         and _entitled_for("firecrawl")
     )
     managed_image_available = (
         managed_tools_flag
-        and CHIPER_auth_present
+        and nous_auth_present
         and is_managed_tool_gateway_ready("fal-queue")
         and _entitled_for("fal")
     )
@@ -469,13 +469,13 @@ def get_nous_subscription_features(
     # rather than aliasing it to image. (Paid users are entitled to both.)
     managed_video_available = (
         managed_tools_flag
-        and CHIPER_auth_present
+        and nous_auth_present
         and is_managed_tool_gateway_ready("fal-queue")
         and _entitled_for("fal-video")
     )
     managed_tts_available = (
         managed_tools_flag
-        and CHIPER_auth_present
+        and nous_auth_present
         and is_managed_tool_gateway_ready("openai-audio")
         and _entitled_for("openai-audio")
     )
@@ -485,13 +485,13 @@ def get_nous_subscription_features(
     managed_stt_available = managed_tts_available
     managed_browser_available = (
         managed_tools_flag
-        and CHIPER_auth_present
+        and nous_auth_present
         and is_managed_tool_gateway_ready("browser-use")
         and _entitled_for("browser-use")
     )
     managed_modal_available = (
         managed_tools_flag
-        and CHIPER_auth_present
+        and nous_auth_present
         and is_managed_tool_gateway_ready("modal")
         and _entitled_for("modal")
     )
@@ -719,9 +719,9 @@ def get_nous_subscription_features(
         ),
     }
 
-    return Chiper subscriptionFeatures(
+    return NousSubscriptionFeatures(
         subscribed=subscribed,
-        CHIPER_auth_present=CHIPER_auth_present,
+        nous_auth_present=nous_auth_present,
         provider_is_nous=provider_is_nous,
         features=features,
         account_info=account_info,

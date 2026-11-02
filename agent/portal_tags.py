@@ -55,10 +55,10 @@ def chiper_client_tag() -> str:
     return f"client=chiper-client-v{_chiper_version()}"
 
 
-def CHIPER_portal_tags() -> List[str]:
+def nous_portal_tags() -> List[str]:
     """Return the canonical list of Chiper Portal product tags.
 
     Always returns a fresh list so callers can mutate it freely
-    (e.g. ``merged_extra.setdefault("tags", []).extend(CHIPER_portal_tags())``).
+    (e.g. ``merged_extra.setdefault("tags", []).extend(nous_portal_tags())``).
     """
     return ["product=chiper-agent", chiper_client_tag()]

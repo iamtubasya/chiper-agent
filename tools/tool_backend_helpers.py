@@ -28,7 +28,7 @@ def managed_nous_tools_enabled(*, force_fresh: bool = False) -> bool:
     reflect a just-purchased subscription, credits, or pool grant immediately.
     """
     try:
-        from chiper_cli.CHIPER_account import get_nous_portal_account_info
+        from chiper_cli.nous_account import get_nous_portal_account_info
 
         if force_fresh:
             account_info = get_nous_portal_account_info(force_fresh=True)
@@ -48,7 +48,7 @@ def CHIPER_tool_gateway_unavailable_message(
 ) -> str:
     """Return account-aware guidance for an unavailable Chiper tool gateway path."""
     try:
-        from chiper_cli.CHIPER_account import (
+        from chiper_cli.nous_account import (
             format_nous_portal_entitlement_message,
             get_nous_portal_account_info,
         )

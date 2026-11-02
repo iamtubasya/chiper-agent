@@ -1984,7 +1984,7 @@ class TestWebServerEndpoints:
         """Switching the main provider to Chiper calls apply_nous_managed_defaults
         (mirroring the CLI's post-model-selection Tool Gateway routing) and
         surfaces the routed tools in the response."""
-        import chiper_cli.CHIPER_subscription as ns
+        import chiper_cli.nous_subscription as ns
 
         called = {}
 
@@ -2011,7 +2011,7 @@ class TestWebServerEndpoints:
 
     def test_set_model_main_non_nous_skips_gateway_defaults(self, monkeypatch):
         """Non-Chiper providers must NOT trigger Tool Gateway auto-routing."""
-        import chiper_cli.CHIPER_subscription as ns
+        import chiper_cli.nous_subscription as ns
 
         def boom(*args, **kwargs):  # pragma: no cover - must not be called
             raise AssertionError("apply_nous_managed_defaults called for non-chiper provider")
@@ -2307,7 +2307,7 @@ class TestWebServerEndpoints:
 
     def test_set_model_main_gateway_failure_does_not_block_save(self, monkeypatch):
         """A Portal/gateway hiccup must never prevent saving the model."""
-        import chiper_cli.CHIPER_subscription as ns
+        import chiper_cli.nous_subscription as ns
 
         def boom(*args, **kwargs):
             raise RuntimeError("portal unreachable")

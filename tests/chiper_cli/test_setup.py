@@ -417,7 +417,7 @@ def test_modal_setup_can_use_nous_subscription_without_modal_creds(tmp_path, mon
     monkeypatch.setattr("chiper_cli.setup._prompt_container_resources", lambda config: None)
     monkeypatch.setattr(
         "chiper_cli.setup.get_nous_subscription_features",
-        lambda config: type("Features", (), {"CHIPER_auth_present": True})(),
+        lambda config: type("Features", (), {"nous_auth_present": True})(),
     )
     monkeypatch.setitem(
         sys.modules,
@@ -459,7 +459,7 @@ def test_modal_setup_persists_direct_mode_when_user_chooses_their_own_account(tm
     monkeypatch.setattr("chiper_cli.setup._prompt_container_resources", lambda config: None)
     monkeypatch.setattr(
         "chiper_cli.setup.get_nous_subscription_features",
-        lambda config: type("Features", (), {"CHIPER_auth_present": True})(),
+        lambda config: type("Features", (), {"nous_auth_present": True})(),
     )
     monkeypatch.setitem(
         sys.modules,

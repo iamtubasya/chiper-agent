@@ -148,7 +148,7 @@ def _model_flow_nous(config, current_model="", args=None):
         save_config,
         save_env_value,
     )
-    from chiper_cli.CHIPER_subscription import prompt_enable_tool_gateway
+    from chiper_cli.nous_subscription import prompt_enable_tool_gateway
 
     state = get_provider_auth_state("chiper")
     if not state or not state.get("access_token"):
@@ -266,7 +266,7 @@ def _model_flow_nous(config, current_model="", args=None):
     unavailable_message = ""
     if free_tier:
         try:
-            from chiper_cli.CHIPER_account import (
+            from chiper_cli.nous_account import (
                 format_nous_portal_entitlement_message,
                 get_nous_portal_account_info,
             )

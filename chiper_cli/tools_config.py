@@ -24,11 +24,11 @@ from chiper_cli.config import (
     load_config, save_config, get_env_value, save_env_value,
 )
 from chiper_cli.colors import Colors, color
-from chiper_cli.CHIPER_subscription import (
+from chiper_cli.nous_subscription import (
     apply_nous_managed_defaults,
     get_nous_subscription_features,
 )
-from chiper_cli.CHIPER_account import format_nous_portal_entitlement_message
+from chiper_cli.nous_account import format_nous_portal_entitlement_message
 from tools.tool_backend_helpers import fal_key_is_configured
 from utils import base_url_hostname, is_truthy_value
 
@@ -2059,7 +2059,7 @@ def _visible_providers(
         if (
             provider.get("requires_nous_auth")
             and not provider.get("managed_nous_feature")
-            and not features.CHIPER_auth_present
+            and not features.nous_auth_present
         ):
             continue
         # Hide the managed video-gen row from pool-only users — their free tool
@@ -2289,7 +2289,7 @@ def _configure_tool_category(
                 get_nous_subscription_features(
                     config,
                     force_fresh=force_fresh,
-                ).CHIPER_auth_present
+                ).nous_auth_present
             )
         except Exception:
             _nous_logged_in = False
@@ -2843,7 +2843,7 @@ def _configure_provider(
     # auth + entitlement only, no inference-provider switch and no bulk
     # "enable all tools" prompt (that lives in `chiper model`).
     if managed_feature:
-        from chiper_cli.CHIPER_subscription import (
+        from chiper_cli.nous_subscription import (
             MANAGED_FEATURE_COVERAGE_CATEGORY,
             ensure_nous_portal_access,
         )
@@ -2865,7 +2865,7 @@ def _configure_provider(
         entitled = bool(
             features.account_info and features.account_info.paid_service_access is True
         )
-        if not features.CHIPER_auth_present or not entitled:
+        if not features.nous_auth_present or not entitled:
             message = format_nous_portal_entitlement_message(
                 features.account_info,
                 capability=f"{provider.get('name', 'Chiper subscription')}",
@@ -2950,7 +2950,7 @@ def _configure_provider(
                     config,
                     force_fresh=force_fresh,
                 )
-                _show_portal_hint = not _features.CHIPER_auth_present
+                _show_portal_hint = not _features.nous_auth_present
         except Exception:
             _show_portal_hint = False
 
@@ -3211,7 +3211,7 @@ def _reconfigure_provider(
     # Same inline Chiper Portal login + entitlement gate as _configure_provider:
     # managed Tool Gateway backends only activate with paid Portal access.
     if managed_feature:
-        from chiper_cli.CHIPER_subscription import (
+        from chiper_cli.nous_subscription import (
             MANAGED_FEATURE_COVERAGE_CATEGORY,
             ensure_nous_portal_access,
         )
@@ -3232,7 +3232,7 @@ def _reconfigure_provider(
         entitled = bool(
             features.account_info and features.account_info.paid_service_access is True
         )
-        if not features.CHIPER_auth_present or not entitled:
+        if not features.nous_auth_present or not entitled:
             message = format_nous_portal_entitlement_message(
                 features.account_info,
                 capability=f"{provider.get('name', 'Chiper subscription')}",

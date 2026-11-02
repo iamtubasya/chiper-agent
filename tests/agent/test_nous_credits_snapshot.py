@@ -3,18 +3,18 @@
 from __future__ import annotations
 
 from agent.account_usage import build_nous_credits_snapshot
-from chiper_cli.CHIPER_account import (
+from chiper_cli.nous_account import (
     NousPaidServiceAccessInfo,
-    Chiper PortalAccountInfo,
-    Chiper PortalSubscriptionInfo,
+    NousPortalAccountInfo,
+    NousPortalSubscriptionInfo,
 )
 
 
-def _account(**kwargs) -> Chiper PortalAccountInfo:
+def _account(**kwargs) -> NousPortalAccountInfo:
     kwargs.setdefault("logged_in", True)
     kwargs.setdefault("source", "account_api")
     kwargs.setdefault("fresh", True)
-    return Chiper PortalAccountInfo(**kwargs)
+    return NousPortalAccountInfo(**kwargs)
 
 
 def _all_lines(snapshot) -> list[str]:
@@ -29,7 +29,7 @@ def test_healthy():
             purchased_credits_remaining=12.34,
             total_usable_credits=30.34,
         ),
-        subscription=Chiper PortalSubscriptionInfo(
+        subscription=NousPortalSubscriptionInfo(
             plan="Pro",
             current_period_end="2026-07-01",
         ),
@@ -58,7 +58,7 @@ def test_money_rule_no_percent():
             purchased_credits_remaining=12.34,
             total_usable_credits=30.34,
         ),
-        subscription=Chiper PortalSubscriptionInfo(plan="Pro"),
+        subscription=NousPortalSubscriptionInfo(plan="Pro"),
     )
     snap = build_nous_credits_snapshot(info)
     assert snap is not None
@@ -74,7 +74,7 @@ def test_depleted():
             purchased_credits_remaining=0.0,
             total_usable_credits=0.0,
         ),
-        subscription=Chiper PortalSubscriptionInfo(plan="Pro"),
+        subscription=NousPortalSubscriptionInfo(plan="Pro"),
     )
     snap = build_nous_credits_snapshot(info)
     assert snap is not None

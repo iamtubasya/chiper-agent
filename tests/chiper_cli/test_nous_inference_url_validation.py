@@ -180,7 +180,7 @@ class TestCallSiteWiring:
         bypass at the source layer still gets caught at the forward
         boundary."""
         from pathlib import Path
-        import chiper_cli.proxy.adapters.CHIPER_portal as _nous_adapter
+        import chiper_cli.proxy.adapters.nous_portal as _nous_adapter
         source = Path(_nous_adapter.__file__).read_text(encoding="utf-8")
         assert "_validate_nous_inference_url_from_network" in source
 

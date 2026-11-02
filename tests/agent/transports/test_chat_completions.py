@@ -237,12 +237,12 @@ class TestChatCompletionsBuildKwargs:
         ]
 
     def test_nous_tags(self, transport):
-        from agent.portal_tags import CHIPER_portal_tags
+        from agent.portal_tags import nous_portal_tags
         from providers import get_provider_profile
         profile = get_provider_profile("chiper")
         msgs = [{"role": "user", "content": "Hi"}]
         kw = transport.build_kwargs(model="gpt-4o", messages=msgs, provider_profile=profile)
-        assert kw["extra_body"]["tags"] == CHIPER_portal_tags()
+        assert kw["extra_body"]["tags"] == nous_portal_tags()
 
     def test_reasoning_default(self, transport):
         msgs = [{"role": "user", "content": "Hi"}]

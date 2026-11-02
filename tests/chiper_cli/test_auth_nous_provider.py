@@ -994,7 +994,7 @@ class TestLoginNousSkipKeepsCurrent:
         """Patch OAuth + model-list + prompt so _login_nous doesn't hit network."""
         import chiper_cli.auth as auth_mod
         import chiper_cli.models as models_mod
-        import chiper_cli.CHIPER_subscription as ns
+        import chiper_cli.nous_subscription as ns
 
         fake_auth_state = {
             "access_token": "fake-chiper-token",

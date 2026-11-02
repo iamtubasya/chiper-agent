@@ -272,7 +272,7 @@ def test_codex_provider_replaces_incompatible_default_model(monkeypatch):
 
 def test_model_flow_nous_prints_subscription_guidance_without_mutating_explicit_tts(monkeypatch, capsys):
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_subscription.managed_nous_tools_enabled",
+        "chiper_cli.nous_subscription.managed_nous_tools_enabled",
         lambda *args, **kwargs: True,
     )
     config = {
@@ -309,13 +309,13 @@ def test_model_flow_nous_prints_subscription_guidance_without_mutating_explicit_
 
 
 def test_model_flow_nous_offers_tool_gateway_prompt_when_unconfigured(monkeypatch, capsys):
-    from chiper_cli.CHIPER_account import Chiper PortalAccountInfo
+    from chiper_cli.nous_account import NousPortalAccountInfo
 
     # Entitled account (paid → all tools eligible) drives the offer; the prompt
     # is a per-tool checklist now, so capture the call rather than scrape stdout.
     monkeypatch.setattr(
-        "chiper_cli.CHIPER_subscription.get_nous_portal_account_info",
-        lambda **kwargs: Chiper PortalAccountInfo(
+        "chiper_cli.nous_subscription.get_nous_portal_account_info",
+        lambda **kwargs: NousPortalAccountInfo(
             logged_in=True,
             source="account_api",
             fresh=True,

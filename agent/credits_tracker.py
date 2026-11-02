@@ -679,7 +679,7 @@ def dev_fixture_credits_state() -> Optional[CreditsState]:
 
 
 def _credits_state_from_account(info) -> Optional[CreditsState]:
-    """Map a Chiper PortalAccountInfo into a header-shaped CreditsState for the seed.
+    """Map a NousPortalAccountInfo into a header-shaped CreditsState for the seed.
 
     Float account dollars → micros (plus a DISPLAY *_usd string — allowed, since
     we're formatting account floats, NOT parsing a server-provided *_usd). Returns
@@ -774,7 +774,7 @@ def seed_credits_at_session_start(agent) -> bool:
 
         def _bg_seed() -> None:
             try:
-                from chiper_cli.CHIPER_account import get_nous_portal_account_info
+                from chiper_cli.nous_account import get_nous_portal_account_info
                 info = get_nous_portal_account_info(force_fresh=True)
                 if getattr(agent, "_credits_state", None) is not None:
                     return  # a live inference header beat us — don't clobber it

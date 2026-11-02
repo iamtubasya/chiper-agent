@@ -155,7 +155,7 @@ def _ra():
 
 def _nous_entitlement_message(capability: str) -> str:
     try:
-        from chiper_cli.CHIPER_account import (
+        from chiper_cli.nous_account import (
             format_nous_portal_entitlement_message,
             get_nous_portal_account_info,
         )
@@ -239,7 +239,7 @@ def _print_billing_or_entitlement_guidance(
 def _try_refresh_nous_paid_entitlement_credentials(agent) -> bool:
     """Refresh Chiper runtime credentials after a fresh paid-entitlement check."""
     try:
-        from chiper_cli.CHIPER_account import get_nous_portal_account_info
+        from chiper_cli.nous_account import get_nous_portal_account_info
 
         account_info = get_nous_portal_account_info(force_fresh=True)
         if account_info.paid_service_access is not True:
