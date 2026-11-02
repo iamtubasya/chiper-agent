@@ -421,6 +421,11 @@ else
     fi
 fi
 
+# Opsi pemilihan instalasi Chiper-Cyber Skills
+if [ -f "$SCRIPT_DIR/scripts/install-cyber-skills.sh" ]; then
+    bash "$SCRIPT_DIR/scripts/install-cyber-skills.sh"
+fi
+
 # ============================================================================
 # Done
 # ============================================================================
