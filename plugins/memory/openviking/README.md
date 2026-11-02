@@ -21,7 +21,7 @@ not exist.
 Or manually:
 ```bash
 chiper config set memory.provider openviking
-echo "OPENVIKING_ENDPOINT=http://localhost:1933" >> ~/.Chiper/.env
+echo "OPENVIKING_ENDPOINT=http://localhost:1933" >> ~/.chiper/.env
 ```
 
 ## Config

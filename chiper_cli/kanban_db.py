@@ -36,8 +36,8 @@ Board resolution order (highest precedence first, all optional):
   the "currently selected" board. Written by ``chiper kanban boards
   switch <slug>``. When absent, the active board is ``default``.
 
-In standard installs ``<root>`` is ``~/.Chiper``. In Docker / custom
-deployments where ``CHIPER_HOME`` points outside ``~/.Chiper`` (e.g.
+In standard installs ``<root>`` is ``~/.chiper``. In Docker / custom
+deployments where ``CHIPER_HOME`` points outside ``~/.chiper`` (e.g.
 ``/opt/chiper``), ``<root>`` is ``CHIPER_HOME``. Legacy env-var
 overrides still work:
 
@@ -6627,8 +6627,8 @@ def _kanban_worker_skill_available(chiper_home: Optional[str]) -> bool:
     from pathlib import Path as _Path
 
     # An unset CHIPER_HOME means the worker falls back to the default root
-    # home (``~/.Chiper``), which ships the bundled skill.
-    base = _Path(chiper_home) if chiper_home else (_Path.home() / ".Chiper")
+    # home (``~/.chiper``), which ships the bundled skill.
+    base = _Path(chiper_home) if chiper_home else (_Path.home() / ".chiper")
     skills_root = base / "skills"
     if not skills_root.is_dir():
         return False
@@ -6744,7 +6744,7 @@ def _default_spawn(
     # env, and when the child process starts `chiper -p <name>` the
     # _apply_profile_override() runs *before* chiper_constants is imported.
     # If CHIPER_HOME is absent from the child's env, get_chiper_home() falls
-    # back to Path.home() / ".Chiper" (the DEFAULT profile root), ignoring the
+    # back to Path.home() / ".chiper" (the DEFAULT profile root), ignoring the
     # profile-specific config entirely.  Fixes profile-scoped fallback_providers
     # being invisible to kanban workers.
     from chiper_cli.profiles import resolve_profile_env

@@ -99,7 +99,7 @@ def build_dashboard_parser(
     dashboard_parser.set_defaults(func=cmd_dashboard)
 
     # `chiper dashboard register` — register a self-hosted dashboard OAuth
-    # client with Nous Portal and write the client_id into ~/.Chiper/.env.
+    # client with Nous Portal and write the client_id into ~/.chiper/.env.
     # Nested subparser so bare `chiper dashboard` keeps launching the server
     # (set_defaults(func=cmd_dashboard) above remains the default).
     dashboard_subparsers = dashboard_parser.add_subparsers(
@@ -111,7 +111,7 @@ def build_dashboard_parser(
         description=(
             "Register this install as a self-hosted dashboard with your Nous "
             "Portal account. Creates an OAuth client, writes "
-            "CHIPER_DASHBOARD_OAUTH_CLIENT_ID into ~/.Chiper/.env, and prints "
+            "CHIPER_DASHBOARD_OAUTH_CLIENT_ID into ~/.chiper/.env, and prints "
             "how to engage the login gate. Requires being logged in (chiper setup)."
         ),
     )

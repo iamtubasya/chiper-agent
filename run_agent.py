@@ -2249,7 +2249,7 @@ class AIAgent:
 
         Gated by ``sessions.write_json_snapshots`` (default False).  state.db
         is the canonical message store; this writer exists only for users
-        whose external tooling consumes ``~/.Chiper/sessions/session_{sid}.json``
+        whose external tooling consumes ``~/.chiper/sessions/session_{sid}.json``
         directly.  When the flag is off this is a fast no-op.
 
         When enabled, rewrites the snapshot after every persistence point with
@@ -2590,7 +2590,7 @@ class AIAgent:
         path and any path echoed inside the tool's error preview — is
         backtick-wrapped via ``_neutralize_footer_paths`` so the gateway's
         bare-path media extractor can never auto-attach a protected file
-        (e.g. ``~/.Chiper/config.yaml``) to a messaging channel (#35584).
+        (e.g. ``~/.chiper/config.yaml``) to a messaging channel (#35584).
         """
         if not failed:
             return ""

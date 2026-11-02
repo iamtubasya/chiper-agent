@@ -48,8 +48,8 @@ else
   AUTH="git"
   # Ensure we have a token for API calls
   if [ -z "$GITHUB_TOKEN" ]; then
-    if [ -f ~/.Chiper/.env ] && grep -q "^GITHUB_TOKEN=" ~/.Chiper/.env; then
-      GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" ~/.Chiper/.env | head -1 | cut -d= -f2 | tr -d '\n\r')
+    if [ -f ~/.chiper/.env ] && grep -q "^GITHUB_TOKEN=" ~/.chiper/.env; then
+      GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" ~/.chiper/.env | head -1 | cut -d= -f2 | tr -d '\n\r')
     elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
       GITHUB_TOKEN=$(grep "github.com" ~/.git-credentials 2>/dev/null | head -1 | sed 's|https://[^:]*:\([^@]*\)@.*|\1|')
     fi

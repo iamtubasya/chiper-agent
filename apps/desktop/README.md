@@ -85,7 +85,7 @@ Installers are built and uploaded to GitHub Releases manually. macOS/Windows sig
 
 ### How it works
 
-The packaged app ships only the Electron shell. On first launch it installs the Chiper Agent runtime into `CHIPER_HOME` (`~/.Chiper`, or `%LOCALAPPDATA%\chiper` on Windows) — the **same layout a CLI install uses**, so the two are interchangeable. The renderer (React, in `src/`) talks to a `chiper dashboard` backend over the standard gateway APIs and reuses the embedded TUI rather than reimplementing chat. The install, backend-resolution, and self-update logic all live in `electron/main.cjs`.
+The packaged app ships only the Electron shell. On first launch it installs the Chiper Agent runtime into `CHIPER_HOME` (`~/.chiper`, or `%LOCALAPPDATA%\chiper` on Windows) — the **same layout a CLI install uses**, so the two are interchangeable. The renderer (React, in `src/`) talks to a `chiper dashboard` backend over the standard gateway APIs and reuses the embedded TUI rather than reimplementing chat. The install, backend-resolution, and self-update logic all live in `electron/main.cjs`.
 
 ### Verification
 
@@ -106,9 +106,9 @@ Boot logs land in `CHIPER_HOME/logs/desktop.log` (includes backend output and re
 
 ```bash
 # Force a clean first-launch setup
-rm "$HOME/.Chiper/chiper-agent/.chiper-bootstrap-complete"
+rm "$HOME/.chiper/chiper-agent/.chiper-bootstrap-complete"
 # Rebuild a broken Python venv
-rm -rf "$HOME/.Chiper/chiper-agent/venv"
+rm -rf "$HOME/.chiper/chiper-agent/venv"
 # Reset a stuck macOS microphone prompt (macOS only)
 tccutil reset Microphone com.Chiper.chiper
 ```

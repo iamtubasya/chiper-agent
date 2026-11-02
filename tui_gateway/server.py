@@ -46,7 +46,7 @@ load_chiper_dotenv(
 # JSON-RPC pipe (TUI side parses it, doesn't log raw), the root logger
 # only catches handled warnings, and the subprocess exits before stderr
 # flushes through the stderr->gateway.stderr event pump. This hook
-# appends every unhandled exception to ~/.Chiper/logs/tui_gateway_crash.log
+# appends every unhandled exception to ~/.chiper/logs/tui_gateway_crash.log
 # AND re-emits a one-line summary to stderr so the TUI can surface it in
 # Activity — exactly what was missing when the voice-mode turns started
 # exiting the gateway mid-TTS.
@@ -5402,7 +5402,7 @@ def _(rid, params: dict) -> dict:
 
     agent = session["agent"]
     # Mirror the classic CLI /save: snapshot under the Chiper profile home
-    # (~/.Chiper/sessions/saved/) rather than the project/workspace CWD, and
+    # (~/.chiper/sessions/saved/) rather than the project/workspace CWD, and
     # include the system prompt so the export matches the dashboard save.
     saved_dir = get_chiper_home() / "sessions" / "saved"
     try:
@@ -6890,7 +6890,7 @@ def _attachment_ref_path(session: dict, target: Path) -> str:
 
 
 def _desktop_attachment_dir(session: dict) -> Path:
-    root = Path(_session_cwd(session)).resolve() / ".Chiper" / "desktop-attachments"
+    root = Path(_session_cwd(session)).resolve() / ".chiper" / "desktop-attachments"
     root.mkdir(parents=True, exist_ok=True)
     return root
 
@@ -8183,7 +8183,7 @@ def _(rid, params: dict) -> dict:
 
 @method("reload.env")
 def _(rid, params: dict) -> dict:
-    """Re-read ``~/.Chiper/.env`` into the gateway process via
+    """Re-read ``~/.chiper/.env`` into the gateway process via
     ``chiper_cli.config.reload_env``, matching classic CLI's ``/reload``
     handler.  Newly added API keys take effect on the next agent call
     without restarting the TUI.
@@ -9324,7 +9324,7 @@ def _(rid, params: dict) -> dict:
         if not pconfig.api_key_env_vars:
             return _err(rid, 4004, f"no env var defined for {pconfig.name}")
 
-        # Save the key to ~/.Chiper/.env
+        # Save the key to ~/.chiper/.env
         env_var = pconfig.api_key_env_vars[0]
         save_env_value(env_var, api_key)
         # Also set in current process so the refreshed inventory sees it.

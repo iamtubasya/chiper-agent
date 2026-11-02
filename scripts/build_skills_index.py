@@ -29,7 +29,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO_ROOT)
 
 # Ensure CHIPER_HOME is set (needed by tools/skills_hub.py imports)
-os.environ.setdefault("CHIPER_HOME", os.path.join(os.path.expanduser("~"), ".Chiper"))
+os.environ.setdefault("CHIPER_HOME", os.path.join(os.path.expanduser("~"), ".chiper"))
 
 from tools.skills_hub import (
     GitHubAuth,

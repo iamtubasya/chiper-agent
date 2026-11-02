@@ -54,15 +54,15 @@ You MUST run `maintain-subscriptions` on a schedule. Pick one of these three opt
 
 #### Option 1: Chiper cron (recommended if you already run the Chiper gateway)
 
-Chiper ships a built-in cron scheduler. The `--no-agent` mode runs a script as the job (rather than using an LLM), and `--script` must point at a file under `~/.Chiper/scripts/`. First create the script:
+Chiper ships a built-in cron scheduler. The `--no-agent` mode runs a script as the job (rather than using an LLM), and `--script` must point at a file under `~/.chiper/scripts/`. First create the script:
 
 ```bash
-mkdir -p ~/.Chiper/scripts
-cat > ~/.Chiper/scripts/maintain-teams-subscriptions.sh <<'EOF'
+mkdir -p ~/.chiper/scripts
+cat > ~/.chiper/scripts/maintain-teams-subscriptions.sh <<'EOF'
 #!/usr/bin/env bash
 exec chiper teams-pipeline maintain-subscriptions
 EOF
-chmod +x ~/.Chiper/scripts/maintain-teams-subscriptions.sh
+chmod +x ~/.chiper/scripts/maintain-teams-subscriptions.sh
 ```
 
 Then register a script-only cron job that runs every 12 hours (gives 6x headroom against the 72h expiry window):
@@ -127,7 +127,7 @@ systemctl list-timers chiper-teams-pipeline-maintain.timer
 0 */12 * * * /usr/local/bin/chiper teams-pipeline maintain-subscriptions >> /var/log/chiper/teams-pipeline-maintain.log 2>&1
 ```
 
-Make sure the cron environment has the `MSGRAPH_*` credentials. Simplest fix: source `~/.Chiper/.env` at the top of a wrapper script that crontab calls.
+Make sure the cron environment has the `MSGRAPH_*` credentials. Simplest fix: source `~/.chiper/.env` at the top of a wrapper script that crontab calls.
 
 #### Verifying renewal is working
 

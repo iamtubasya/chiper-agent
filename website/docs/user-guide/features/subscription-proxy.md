@@ -33,7 +33,7 @@ chiper portal
 ```
 
 This opens your browser for the Nous Portal OAuth flow. Chiper stores
-the refresh token in `~/.Chiper/auth.json` — the same place all Chiper
+the refresh token in `~/.chiper/auth.json` — the same place all Chiper
 provider logins live.
 
 ### 2. Start the proxy

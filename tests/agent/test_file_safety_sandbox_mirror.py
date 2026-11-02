@@ -2,7 +2,7 @@
 
 The guard fires when a tool tries to write into the per-task mirror
 directory created by a non-local terminal backend (Docker, Daytona, etc.).
-Those paths look like ``…/sandboxes/<backend>/<task>/home/.Chiper/…`` and
+Those paths look like ``…/sandboxes/<backend>/<task>/home/.chiper/…`` and
 they accumulate divergent copies of authoritative profile state (SOUL.md,
 config.yaml, memories/*.md) because the host Chiper process never reads
 them. Soft guard — defense in depth, NOT a security boundary.
@@ -109,7 +109,7 @@ class TestClassifySandboxMirrorTarget:
         assert classify_sandbox_mirror_target(str(target)) is None
 
     def test_truncated_sandbox_path_returns_none(self, tmp_path):
-        """``…/sandboxes/<backend>/<task>`` without ``home/.Chiper/<thing>`` is not a mirror."""
+        """``…/sandboxes/<backend>/<task>`` without ``home/.chiper/<thing>`` is not a mirror."""
         from agent.file_safety import classify_sandbox_mirror_target
 
         target = tmp_path / "sandboxes" / "docker" / "task-42"

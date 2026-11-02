@@ -13,7 +13,7 @@ from gateway.config import GatewayConfig
 
 
 def _pin_db(monkeypatch, tmp_path):
-    """Force SessionDB() to write into tmp_path instead of the real ~/.Chiper."""
+    """Force SessionDB() to write into tmp_path instead of the real ~/.chiper."""
     import chiper_state
     monkeypatch.setattr(chiper_state, "DEFAULT_DB_PATH", tmp_path / "state.db")
 

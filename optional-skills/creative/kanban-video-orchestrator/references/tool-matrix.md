@@ -284,7 +284,7 @@ skills:
 ## API key requirements
 
 Track these in the project setup. The setup script should verify each required
-key is present in `${CHIPER_HOME:-~/.Chiper}/.env` (or macOS Keychain) before firing the kanban.
+key is present in `${CHIPER_HOME:-~/.chiper}/.env` (or macOS Keychain) before firing the kanban.
 
 | Service | Env var | Used by |
 |---------|---------|---------|
@@ -301,7 +301,7 @@ key is present in `${CHIPER_HOME:-~/.Chiper}/.env` (or macOS Keychain) before fi
 | Anthropic | `ANTHROPIC_API_KEY` | every Chiper profile (Claude) |
 
 If a key is missing, prompt the user to add it. Storage methods, in order of
-preference: macOS Keychain → `${CHIPER_HOME:-~/.Chiper}/.env` → environment variable.
+preference: macOS Keychain → `${CHIPER_HOME:-~/.chiper}/.env` → environment variable.
 
 ## Skill version pinning
 

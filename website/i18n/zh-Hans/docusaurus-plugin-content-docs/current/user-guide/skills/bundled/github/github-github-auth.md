@@ -238,8 +238,8 @@ if command -v gh &>/dev/null && gh auth status &>/dev/null; then
   echo "AUTH_METHOD=gh"
 elif [ -n "$GITHUB_TOKEN" ]; then
   echo "AUTH_METHOD=curl"
-elif [ -f ~/.Chiper/.env ] && grep -q "^GITHUB_TOKEN=" ~/.Chiper/.env; then
-  export GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" ~/.Chiper/.env | head -1 | cut -d= -f2 | tr -d '\n\r')
+elif [ -f ~/.chiper/.env ] && grep -q "^GITHUB_TOKEN=" ~/.chiper/.env; then
+  export GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" ~/.chiper/.env | head -1 | cut -d= -f2 | tr -d '\n\r')
   echo "AUTH_METHOD=curl"
 elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
   export GITHUB_TOKEN=$(grep "github.com" ~/.git-credentials | head -1 | sed 's|https://[^:]*:\([^@]*\)@.*|\1|')

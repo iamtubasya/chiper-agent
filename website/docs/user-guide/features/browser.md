@@ -42,7 +42,7 @@ If you have a paid [Nous Portal](https://portal.Chiper.com) subscription, you ca
 To use Browserbase-managed cloud browsers, add:
 
 ```bash
-# Add to ~/.Chiper/.env
+# Add to ~/.chiper/.env
 BROWSERBASE_API_KEY=***
 BROWSERBASE_PROJECT_ID=your-project-id-here
 ```
@@ -54,7 +54,7 @@ Get your credentials at [browserbase.com](https://browserbase.com).
 To use Browser Use as your cloud browser provider, add:
 
 ```bash
-# Add to ~/.Chiper/.env
+# Add to ~/.chiper/.env
 BROWSER_USE_API_KEY=***
 ```
 
@@ -65,7 +65,7 @@ Get your API key at [browser-use.com](https://browser-use.com). Browser Use prov
 To use Firecrawl as your cloud browser provider, add:
 
 ```bash
-# Add to ~/.Chiper/.env
+# Add to ~/.chiper/.env
 FIRECRAWL_API_KEY=fc-***
 ```
 
@@ -103,7 +103,7 @@ The feature is **on by default**. To disable it (all URLs go to the configured
 cloud provider, as before):
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 browser:
   cloud_provider: browserbase
   auto_local_for_private_urls: false
@@ -179,7 +179,7 @@ make down
 # then run the custom docker run command above
 ```
 
-Then set in `~/.Chiper/.env`:
+Then set in `~/.chiper/.env`:
 
 ```bash
 CAMOFOX_URL=http://localhost:9377
@@ -188,7 +188,7 @@ CAMOFOX_URL=http://localhost:9377
 If Camofox is running in Docker and you want it to open web apps served from the host machine, enable loopback rewriting. `CAMOFOX_URL` should still point at the host-published control API, but page URLs such as `http://127.0.0.1:3000` must be opened from inside the container as `http://host.docker.internal:3000`:
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 browser:
   camofox:
     rewrite_loopback_urls: true
@@ -210,7 +210,7 @@ When `CAMOFOX_URL` is set, all browser tools automatically route through Camofox
 
 #### Persistent browser sessions
 
-By default, each Camofox session gets a random identity — cookies and logins don't survive across agent restarts. To enable persistent browser sessions, add the following to `~/.Chiper/config.yaml`:
+By default, each Camofox session gets a random identity — cookies and logins don't survive across agent restarts. To enable persistent browser sessions, add the following to `~/.chiper/config.yaml`:
 
 ```yaml
 browser:
@@ -252,7 +252,7 @@ If step 5 logs you out, the Camofox server isn't honoring the stable `userId`. D
 
 ##### Where state lives
 
-Chiper derives the stable `userId` from the profile-scoped directory `~/.Chiper/browser_auth/camofox/` (or the equivalent under `$CHIPER_HOME` for non-default profiles). The actual browser profile data lives on the Camofox server side, keyed by that `userId`. To fully reset a persistent profile, clear it on the Camofox server and remove the corresponding Chiper profile's state directory.
+Chiper derives the stable `userId` from the profile-scoped directory `~/.chiper/browser_auth/camofox/` (or the equivalent under `$CHIPER_HOME` for non-default profiles). The actual browser profile data lives on the Camofox server side, keyed by that `userId`. To fully reset a persistent profile, clear it on the Camofox server and remove the corresponding Chiper profile's state directory.
 
 #### Externally managed Camofox sessions
 
@@ -330,28 +330,28 @@ To start a Chromium-family browser manually with CDP enabled, use a dedicated us
 # Linux — Brave
 brave-browser \
   --remote-debugging-port=9222 \
-  --user-data-dir=$HOME/.Chiper/chrome-debug \
+  --user-data-dir=$HOME/.chiper/chrome-debug \
   --no-first-run \
   --no-default-browser-check &
 
 # Linux — Google Chrome
 google-chrome \
   --remote-debugging-port=9222 \
-  --user-data-dir=$HOME/.Chiper/chrome-debug \
+  --user-data-dir=$HOME/.chiper/chrome-debug \
   --no-first-run \
   --no-default-browser-check &
 
 # macOS — Brave
 "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" \
   --remote-debugging-port=9222 \
-  --user-data-dir="$HOME/.Chiper/chrome-debug" \
+  --user-data-dir="$HOME/.chiper/chrome-debug" \
   --no-first-run \
   --no-default-browser-check &
 
 # macOS — Google Chrome
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
   --remote-debugging-port=9222 \
-  --user-data-dir="$HOME/.Chiper/chrome-debug" \
+  --user-data-dir="$HOME/.chiper/chrome-debug" \
   --no-first-run \
   --no-default-browser-check &
 ```
@@ -497,7 +497,7 @@ The screenshot is saved persistently and the file path is returned alongside the
 What does the chart on this page show?
 ```
 
-Screenshots are stored in `~/.Chiper/cache/screenshots/` and automatically cleaned up after 24 hours.
+Screenshots are stored in `~/.chiper/cache/screenshots/` and automatically cleaned up after 24 hours.
 
 ### `browser_console`
 
@@ -627,7 +627,7 @@ browser:
   record_sessions: true  # default: false
 ```
 
-When enabled, recording starts automatically on the first `browser_navigate` and saves to `~/.Chiper/browser_recordings/` when the session closes. Works in both local and cloud (Browserbase) modes. Recordings older than 72 hours are automatically cleaned up.
+When enabled, recording starts automatically on the first `browser_navigate` and saves to `~/.chiper/browser_recordings/` when the session closes. Works in both local and cloud (Browserbase) modes. Recordings older than 72 hours are automatically cleaned up.
 
 ## Stealth Features
 

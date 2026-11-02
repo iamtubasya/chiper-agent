@@ -50,13 +50,13 @@ const APP = (() => {
 
 // Default CHIPER_HOME for non-sandboxed runs -- matches main.cjs's
 // resolveChiperHome(). On Windows it's %LOCALAPPDATA%\Chiper; elsewhere
-// it's ~/.Chiper. The fresh-install sandbox launchFresh() sets its own
+// it's ~/.chiper. The fresh-install sandbox launchFresh() sets its own
 // CHIPER_HOME and never touches this.
 const DEFAULT_CHIPER_HOME = (() => {
   if (PLATFORM === 'win32' && process.env.LOCALAPPDATA) {
     return path.join(process.env.LOCALAPPDATA, 'chiper')
   }
-  return path.join(os.homedir(), '.Chiper')
+  return path.join(os.homedir(), '.chiper')
 })()
 const VENV_ROOT = path.join(DEFAULT_CHIPER_HOME, 'chiper-agent', 'venv')
 const FRESH_SANDBOX_ROOT = path.join(os.tmpdir(), 'chiper-desktop-fresh-install')

@@ -2075,7 +2075,7 @@ def _resolve_copilot_catalog_api_key() -> str:
          ``gho_*`` from device-code login, or a fine-grained PAT) stored in
          ``auth.json`` under ``credential_pool.copilot[]``. The pool is
          populated by ``chiper auth add copilot`` and by ``_seed_from_env``
-         when the env var is set in ``~/.Chiper/.env``.
+         when the env var is set in ``~/.chiper/.env``.
 
     Without (2), users whose only Copilot credential is in the pool see
     the ``/model`` picker fall back to a stale hardcoded list because the

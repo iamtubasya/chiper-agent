@@ -16,7 +16,7 @@ Rules:
   - >500 MB files → prompt always (deep only)
 
 Scope: strictly CHIPER_HOME and /tmp/chiper-*
-Never touches: ~/.Chiper/logs/ or any system directory.
+Never touches: ~/.chiper/logs/ or any system directory.
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ except Exception:  # pragma: no cover — plugin may load before constants resol
 
     def get_chiper_home() -> Path:  # type: ignore[no-redef]
         val = (os.environ.get("CHIPER_HOME") or "").strip()
-        return Path(val).resolve() if val else (Path.home() / ".Chiper").resolve()
+        return Path(val).resolve() if val else (Path.home() / ".chiper").resolve()
 
 
 logger = logging.getLogger(__name__)

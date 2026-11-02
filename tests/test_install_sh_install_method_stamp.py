@@ -4,7 +4,7 @@
 Background (shared-$CHIPER_HOME bug)
 ------------------------------------
 $CHIPER_HOME is a data directory users frequently bind-mount into a Docker
-gateway as well (``~/.Chiper:/opt/data``). The published image stamps 'docker'
+gateway as well (``~/.chiper:/opt/data``). The published image stamps 'docker'
 there on boot, so if install.sh had written its 'git' marker into the same
 $CHIPER_HOME the two installs would fight over one slot — and the container,
 booting last, would win and wrongly make the host install look like 'docker'
@@ -12,7 +12,7 @@ booting last, would win and wrongly make the host install look like 'docker'
 
 The fix: detect_install_method() reads a CODE-scoped stamp first, and the
 installer writes ``git`` into $INSTALL_DIR (the git checkout, e.g.
-``~/.Chiper/chiper-agent``), which is unique to this install and immune to the
+``~/.chiper/chiper-agent``), which is unique to this install and immune to the
 shared data dir.
 """
 from __future__ import annotations

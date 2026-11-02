@@ -138,7 +138,7 @@ class TestFirecrawlClientConfig:
                 )
 
     def test_nous_auth_token_respects_chiper_home_override(self, tmp_path):
-        """Auth lookup should read from CHIPER_HOME/auth.json, not ~/.Chiper/auth.json."""
+        """Auth lookup should read from CHIPER_HOME/auth.json, not ~/.chiper/auth.json."""
         real_home = tmp_path / "real-home"
         (real_home / ".chiper").mkdir(parents=True)
 

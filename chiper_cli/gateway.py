@@ -805,7 +805,7 @@ def _sync_chiper_home_from_systemd_unit(system: bool) -> None:
     """When acting on a system-scope unit, adopt its ``CHIPER_HOME``.
 
     Under ``sudo``, ``CHIPER_HOME`` is stripped and ``HOME=/root``, so
-    :func:`get_chiper_home` falls back to ``/root/.Chiper`` — the wrong
+    :func:`get_chiper_home` falls back to ``/root/.chiper`` — the wrong
     profile. The unit file pins ``CHIPER_HOME`` for the actual gateway
     process, so we mirror that into our own environment to make
     ``read_runtime_status`` / ``get_running_pid`` read the correct files.
@@ -1465,7 +1465,7 @@ def _profile_suffix() -> str:
 def _profile_arg(chiper_home: str | None = None, default_root: str | Path | None = None) -> str:
     """Return ``--profile <name>`` only when CHIPER_HOME is a named profile.
 
-    For ``~/.Chiper/profiles/<name>``, returns ``"--profile <name>"``.
+    For ``~/.chiper/profiles/<name>``, returns ``"--profile <name>"``.
     For the default profile or hash-based custom paths, returns the empty string.
 
     Args:
@@ -1497,7 +1497,7 @@ def _profile_arg(chiper_home: str | None = None, default_root: str | Path | None
 
 def _profile_arg_for_target_user(chiper_home: str, target_home_dir: str) -> str:
     """Return the profile arg for a system service running as another user."""
-    target_root = Path(target_home_dir) / ".Chiper"
+    target_root = Path(target_home_dir) / ".chiper"
     try:
         Path(chiper_home).resolve().relative_to(target_root.resolve())
         return _profile_arg(chiper_home, default_root=target_root)
@@ -1508,8 +1508,8 @@ def _profile_arg_for_target_user(chiper_home: str, target_home_dir: str) -> str:
 def get_service_name() -> str:
     """Derive a systemd service name scoped to this CHIPER_HOME.
 
-    Default ``~/.Chiper`` returns ``chiper-gateway`` (backward compatible).
-    Profile ``~/.Chiper/profiles/coder`` returns ``chiper-gateway-coder``.
+    Default ``~/.chiper`` returns ``chiper-gateway`` (backward compatible).
+    Profile ``~/.chiper/profiles/coder`` returns ``chiper-gateway-coder``.
     Any other CHIPER_HOME appends a short hash for uniqueness.
     """
     suffix = _profile_suffix()
@@ -2174,8 +2174,8 @@ def _launchd_user_home() -> Path:
 def get_launchd_plist_path() -> Path:
     """Return the launchd plist path, scoped per profile.
 
-    Default ``~/.Chiper`` → ``ai.Chiper.gateway.plist`` (backward compatible).
-    Profile ``~/.Chiper/profiles/coder`` → ``ai.Chiper.gateway-coder.plist``.
+    Default ``~/.chiper`` → ``ai.Chiper.gateway.plist`` (backward compatible).
+    Profile ``~/.chiper/profiles/coder`` → ``ai.Chiper.gateway-coder.plist``.
     """
     suffix = _profile_suffix()
     name = f"ai.Chiper.gateway-{suffix}" if suffix else "ai.Chiper.gateway"
@@ -2289,7 +2289,7 @@ def _remap_path_for_user(path: str, target_home_dir: str) -> str:
     If *path* lives under ``Path.home()`` the corresponding prefix is swapped
     to *target_home_dir*; otherwise the path is returned unchanged.
 
-      /root/.Chiper/chiper-agent  -> /home/alice/.Chiper/chiper-agent
+      /root/.chiper/chiper-agent  -> /home/alice/.chiper/chiper-agent
       /opt/chiper                 -> /opt/chiper  (kept as-is)
 
     Note: this function intentionally does NOT resolve symlinks. A venv's
@@ -2314,24 +2314,24 @@ def _chiper_home_for_target_user(target_home_dir: str) -> str:
 
     When installing a system service via sudo, get_chiper_home() resolves to
     root's home.  This translates it to the target user's equivalent path:
-      /root/.Chiper                    → /home/alice/.Chiper
-      /root/.Chiper/profiles/coder     → /home/alice/.Chiper/profiles/coder
+      /root/.chiper                    → /home/alice/.chiper
+      /root/.chiper/profiles/coder     → /home/alice/.chiper/profiles/coder
       /opt/custom-chiper               → /opt/custom-chiper  (kept as-is)
     """
     current_chiper = get_chiper_home().resolve()
-    current_default = (Path.home() / ".Chiper").resolve()
-    target_default = Path(target_home_dir) / ".Chiper"
+    current_default = (Path.home() / ".chiper").resolve()
+    target_default = Path(target_home_dir) / ".chiper"
 
-    # Default ~/.Chiper → remap to target user's default
+    # Default ~/.chiper → remap to target user's default
     if current_chiper == current_default:
         return str(target_default)
 
-    # Profile or subdir of ~/.Chiper → preserve the relative structure
+    # Profile or subdir of ~/.chiper → preserve the relative structure
     try:
         relative = current_chiper.relative_to(current_default)
         return str(target_default / relative)
     except ValueError:
-        # Completely custom path (not under ~/.Chiper) — keep as-is
+        # Completely custom path (not under ~/.chiper) — keep as-is
         return str(current_chiper)
 
 
@@ -4055,7 +4055,7 @@ def run_gateway(verbose: int = 0, quiet: bool = False, replace: bool = False, fo
         platforms = []
         try:
             from pathlib import Path
-            env_path = Path(os.environ.get("CHIPER_HOME", os.path.expanduser("~/.Chiper"))) / ".env"
+            env_path = Path(os.environ.get("CHIPER_HOME", os.path.expanduser("~/.chiper"))) / ".env"
             if env_path.exists():
                 for line in env_path.read_text(encoding="utf-8").splitlines():
                     line = line.strip()
@@ -4797,7 +4797,7 @@ def _all_platforms() -> list[dict]:
     # Populate the registry so plugin platforms are visible. Idempotent.
     # Bundled platform plugins (``kind: platform``) auto-load unconditionally,
     # so every shipped messaging channel appears in the setup menu by default.
-    # User-installed platform plugins under ~/.Chiper/plugins/ still require
+    # User-installed platform plugins under ~/.chiper/plugins/ still require
     # opt-in via ``plugins.enabled`` (untrusted code).
     try:
         from chiper_cli.plugins import discover_plugins
@@ -5383,7 +5383,7 @@ def _setup_weixin():
     print_info("  1. Chiper will open Tencent iLink QR login in this terminal.")
     print_info("  2. Use WeChat to scan and confirm the QR code.")
     print_info(
-        "  3. Chiper will store the returned account_id/token in ~/.Chiper/.env."
+        "  3. Chiper will store the returned account_id/token in ~/.chiper/.env."
     )
     print_info(
         "  4. This adapter supports native text, image, video, and document delivery."
@@ -6032,7 +6032,7 @@ def _configure_platform(platform: dict) -> None:
       4. Env-var hint fallback for plugins that offer no setup helper.
 
     Bundled platform plugins (e.g. IRC) auto-load, so no plugin enable step
-    is needed here. User-installed platform plugins under ~/.Chiper/plugins/
+    is needed here. User-installed platform plugins under ~/.chiper/plugins/
     must already be in ``plugins.enabled`` before they appear in this menu.
     """
     entry = platform.get("_registry_entry")
@@ -6057,7 +6057,7 @@ def _configure_platform(platform: dict) -> None:
     print(color(f"  ─── {emoji} {label} Setup ───", Colors.CYAN))
     required = entry.required_env if entry else []
     if required:
-        print_info(f"  Set these env vars in ~/.Chiper/.env: {', '.join(required)}")
+        print_info(f"  Set these env vars in ~/.chiper/.env: {', '.join(required)}")
     else:
         print_info(
             f"  Configure {label} in config.yaml under gateway.platforms.{platform['key']}"
@@ -6645,7 +6645,7 @@ def _gateway_command_inner(args):
                 "  tmux new -s chiper 'chiper gateway run'         # persistent via tmux"
             )
             print(
-                "  nohup chiper gateway run > ~/.Chiper/logs/gateway.log 2>&1 &  # background"
+                "  nohup chiper gateway run > ~/.chiper/logs/gateway.log 2>&1 &  # background"
             )
             sys.exit(1)
         elif is_container():
@@ -6764,7 +6764,7 @@ def _gateway_command_inner(args):
                 "  tmux new -s chiper 'chiper gateway run'         # persistent via tmux"
             )
             print(
-                "  nohup chiper gateway run > ~/.Chiper/logs/gateway.log 2>&1 &  # background"
+                "  nohup chiper gateway run > ~/.chiper/logs/gateway.log 2>&1 &  # background"
             )
             print()
             print(
@@ -7117,14 +7117,14 @@ def _gateway_command_inner(args):
                 print("  chiper gateway run      # Run in foreground")
                 if is_termux():
                     print(
-                        "  nohup chiper gateway run > ~/.Chiper/logs/gateway.log 2>&1 &  # Best-effort background start"
+                        "  nohup chiper gateway run > ~/.chiper/logs/gateway.log 2>&1 &  # Best-effort background start"
                     )
                 elif is_wsl():
                     print(
                         "  tmux new -s chiper 'chiper gateway run'         # persistent via tmux"
                     )
                     print(
-                        "  nohup chiper gateway run > ~/.Chiper/logs/gateway.log 2>&1 &  # background"
+                        "  nohup chiper gateway run > ~/.chiper/logs/gateway.log 2>&1 &  # background"
                     )
                 elif is_windows():
                     print(

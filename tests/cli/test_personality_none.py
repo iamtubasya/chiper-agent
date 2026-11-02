@@ -150,11 +150,11 @@ class TestGatewayPersonalityNone:
         (tmp_path / "config.yaml").write_text(yaml.dump({"agent": {"personalities": {}}}))
 
         with patch("gateway.run._chiper_home", tmp_path), \
-             patch("chiper_constants.display_chiper_home", return_value="~/.Chiper/profiles/coder"):
+             patch("chiper_constants.display_chiper_home", return_value="~/.chiper/profiles/coder"):
             event = self._make_event("")
             result = await runner._handle_personality_command(event)
 
-        assert result == "No personalities configured in `~/.Chiper/profiles/coder/config.yaml`"
+        assert result == "No personalities configured in `~/.chiper/profiles/coder/config.yaml`"
 
 
 class TestPersonalityDictFormat:

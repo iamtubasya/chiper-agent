@@ -53,7 +53,7 @@ chiper model
 chiper
 ```
 
-After the first login, credentials are stored under `~/.Chiper/auth.json` and refreshed automatically before they expire.
+After the first login, credentials are stored under `~/.chiper/auth.json` and refreshed automatically before they expire.
 
 ## Logging In Manually
 
@@ -100,7 +100,7 @@ If the consent page renders the authorization code directly on the page (xAI's c
 
 1. Chiper opens your browser to `accounts.x.ai`.
 2. You sign in (or confirm your existing session) and approve access.
-3. xAI redirects back to Chiper and the tokens are saved to `~/.Chiper/auth.json`.
+3. xAI redirects back to Chiper and the tokens are saved to `~/.chiper/auth.json`.
 4. From then on, Chiper refreshes the access token in the background — you stay signed in until you `chiper auth remove xai-oauth` or revoke access from your xAI account settings.
 
 ## Checking Login Status
@@ -128,7 +128,7 @@ chiper config set model.provider xai-oauth
 
 ## Configuration Reference
 
-After login, `~/.Chiper/config.yaml` will contain:
+After login, `~/.chiper/config.yaml` will contain:
 
 ```yaml
 model:

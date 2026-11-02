@@ -1,6 +1,6 @@
 # Session Storage
 
-Chiper Agent uses a SQLite database (`~/.Chiper/state.db`) to persist session
+Chiper Agent uses a SQLite database (`~/.chiper/state.db`) to persist session
 metadata, full message history, and model configuration across CLI and gateway
 sessions. This replaces the earlier per-session JSONL file approach.
 
@@ -10,7 +10,7 @@ Source file: `chiper_state.py`
 ## Architecture Overview
 
 ```
-~/.Chiper/state.db (SQLite, WAL mode)
+~/.chiper/state.db (SQLite, WAL mode)
 ├── sessions              — Session metadata, token counts, billing
 ├── messages              — Full message history per session
 ├── messages_fts          — FTS5 virtual table (content + tool_name + tool_calls)
@@ -182,7 +182,7 @@ _CHECKPOINT_EVERY_N_WRITES = 50
 ```python
 from chiper_state import SessionDB
 
-db = SessionDB()                           # Default: ~/.Chiper/state.db
+db = SessionDB()                           # Default: ~/.chiper/state.db
 db = SessionDB(db_path=Path("/tmp/test.db"))  # Custom path
 ```
 
@@ -386,10 +386,10 @@ db.delete_session("sess_abc123")
 
 ## Database Location
 
-Default path: `~/.Chiper/state.db`
+Default path: `~/.chiper/state.db`
 
 This is derived from `chiper_constants.get_chiper_home()` which resolves to
-`~/.Chiper/` by default, or the value of `CHIPER_HOME` environment variable.
+`~/.chiper/` by default, or the value of `CHIPER_HOME` environment variable.
 
 The database file, WAL file (`state.db-wal`), and shared-memory file
 (`state.db-shm`) are all created in the same directory.

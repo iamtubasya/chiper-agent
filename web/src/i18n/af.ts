@@ -336,8 +336,8 @@ export const af: Translations = {
     providersHint:
       "Skryf memory.provider (leeg = ingebou) en context.engine na config.yaml. Tree volgende sessie in werking.",
     refreshDashboard: "Herskandeer dashboard-uitbreidings",
-    removeConfirm: "Verwyder hierdie inprop uit ~/.Chiper/plugins/?",
-    removeHint: "Slegs gebruiker-geïnstalleerde inproppe onder ~/.Chiper/plugins kan verwyder word.",
+    removeConfirm: "Verwyder hierdie inprop uit ~/.chiper/plugins/?",
+    removeHint: "Slegs gebruiker-geïnstalleerde inproppe onder ~/.chiper/plugins kan verwyder word.",
     rescanHeading: "SPA-inprop-register",
     rescanHint: "Herskandeer ná die byvoeg van lêers op skyf sodat die dashboard-sybalk nuwe manifeste optel.",
     runtimeHeading: "Gateway-looptyd (YAML-inproppe)",
@@ -359,7 +359,7 @@ export const af: Translations = {
     all: "Alles",
     categories: "Kategorieë",
     filters: "Filters",
-    noSkills: "Geen vaardighede gevind nie. Vaardighede word gelaai uit ~/.Chiper/skills/",
+    noSkills: "Geen vaardighede gevind nie. Vaardighede word gelaai uit ~/.chiper/skills/",
     noSkillsMatch: "Geen vaardighede stem ooreen met jou soektog of filter nie.",
     skillCount: "{count} vaardighe{s}id",
     resultCount: "{count} resulta{s}at",
@@ -373,7 +373,7 @@ export const af: Translations = {
   },
 
   config: {
-    configPath: "~/.Chiper/config.yaml",
+    configPath: "~/.chiper/config.yaml",
     filters: "Filters",
     sections: "Afdelings",
     exportConfig: "Voer konfigurasie uit as JSON",

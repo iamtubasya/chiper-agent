@@ -1,4 +1,4 @@
-"""Tests for Codex auth — tokens stored in Chiper auth store (~/.Chiper/auth.json)."""
+"""Tests for Codex auth — tokens stored in Chiper auth store (~/.chiper/auth.json)."""
 
 import json
 import time

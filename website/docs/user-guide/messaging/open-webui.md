@@ -35,13 +35,13 @@ Open WebUI talks to Chiper server-to-server, so you do not need `API_SERVER_CORS
 If you want Chiper + Open WebUI wired together locally with a reusable launcher, run:
 
 ```bash
-cd ~/.Chiper/chiper-agent
+cd ~/.chiper/chiper-agent
 bash scripts/setup_open_webui.sh
 ```
 
 What the script does:
 
-- ensures `~/.Chiper/.env` contains `API_SERVER_ENABLED`, `API_SERVER_HOST`, `API_SERVER_KEY`, `API_SERVER_PORT`, and `API_SERVER_MODEL_NAME`
+- ensures `~/.chiper/.env` contains `API_SERVER_ENABLED`, `API_SERVER_HOST`, `API_SERVER_KEY`, `API_SERVER_PORT`, and `API_SERVER_MODEL_NAME`
 - restarts the Chiper gateway so the API server comes up
 - installs Open WebUI into `~/.local/open-webui-venv`
 - writes a launcher at `~/.local/bin/start-open-webui-chiper.sh`
@@ -75,7 +75,7 @@ chiper config set API_SERVER_ENABLED true
 chiper config set API_SERVER_KEY your-secret-key
 ```
 
-`chiper config set` auto-routes the flag to `config.yaml` and the secret to `~/.Chiper/.env`. If the gateway is already running, restart it so the change takes effect:
+`chiper config set` auto-routes the flag to `config.yaml` and the secret to `~/.chiper/.env`. If the gateway is already running, restart it so the change takes effect:
 
 ```bash
 chiper gateway stop && chiper gateway
@@ -279,14 +279,14 @@ To run separate Chiper instances per user — each with their own config, memory
 
 ```bash
 chiper profile create alice
-cat >> ~/.Chiper/profiles/alice/.env <<EOF
+cat >> ~/.chiper/profiles/alice/.env <<EOF
 API_SERVER_ENABLED=true
 API_SERVER_PORT=8650
 API_SERVER_KEY=alice-secret
 EOF
 
 chiper profile create bob
-cat >> ~/.Chiper/profiles/bob/.env <<EOF
+cat >> ~/.chiper/profiles/bob/.env <<EOF
 API_SERVER_ENABLED=true
 API_SERVER_PORT=8651
 API_SERVER_KEY=bob-secret

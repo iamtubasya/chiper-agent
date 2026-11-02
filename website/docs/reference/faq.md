@@ -26,7 +26,7 @@ Chiper Agent works with any OpenAI-compatible API. Supported providers include:
 - **MiniMax** — global and China endpoints
 - **Local models** — via [Ollama](https://ollama.com/), [vLLM](https://docs.vllm.ai/), [llama.cpp](https://github.com/ggerganov/llama.cpp), [SGLang](https://github.com/sgl-project/sglang), or any OpenAI-compatible server
 
-Set your provider with `chiper model` or by editing `~/.Chiper/.env`. See the [Environment Variables](./environment-variables.md) reference for all provider keys.
+Set your provider with `chiper model` or by editing `~/.chiper/.env`. See the [Environment Variables](./environment-variables.md) reference for all provider keys.
 
 ### Does it work on Windows?
 
@@ -78,7 +78,7 @@ Important caveat: the full `.[all]` extra is not currently available on Android 
 
 ### Is my data sent anywhere?
 
-API calls go **only to the LLM provider you configure** (e.g., OpenRouter, your local Ollama instance). Chiper Agent does not collect telemetry, usage data, or analytics. Your conversations, memory, and skills are stored locally in `~/.Chiper/`.
+API calls go **only to the LLM provider you configure** (e.g., OpenRouter, your local Ollama instance). Chiper Agent does not collect telemetry, usage data, or analytics. Your conversations, memory, and skills are stored locally in `~/.chiper/`.
 
 ### Can I use it offline / with local models?
 
@@ -190,7 +190,7 @@ The installer handles this automatically — if you see this error during manual
 
 **Cause:** Chiper builds a per-session environment snapshot by running `bash -l` once at startup. A bash login shell reads `/etc/profile`, `~/.bash_profile`, and `~/.profile`, but **does not source `~/.bashrc`** — so tools that install themselves there (`nvm`, `asdf`, `pyenv`, `cargo`, custom `PATH` exports) stay invisible to the snapshot. This most commonly happens when Chiper runs under systemd or in a minimal shell where nothing has pre-loaded the interactive shell profile.
 
-**Solution:** Chiper auto-sources `~/.bashrc` by default. If that's not enough — e.g. you're a zsh user whose PATH lives in `~/.zshrc`, or you init `nvm` from a standalone file — list the extra files to source in `~/.Chiper/config.yaml`:
+**Solution:** Chiper auto-sources `~/.bashrc` by default. If that's not enough — e.g. you're a zsh user whose PATH lives in `~/.zshrc`, or you init `nvm` from a standalone file — list the extra files to source in `~/.chiper/config.yaml`:
 
 ```yaml
 terminal:
@@ -283,7 +283,7 @@ chiper config set OPENROUTER_API_KEY sk-or-v1-xxxxxxxxxxxx
 ```
 
 :::warning
-Make sure the key matches the provider. An OpenAI key won't work with OpenRouter and vice versa. Check `~/.Chiper/.env` for conflicting entries.
+Make sure the key matches the provider. An OpenAI key won't work with OpenRouter and vice versa. Check `~/.chiper/.env` for conflicting entries.
 :::
 
 #### Model not available / model not found
@@ -334,7 +334,7 @@ Look at the CLI startup line — it shows the detected context length (e.g., `�
 To fix context detection, set it explicitly:
 
 ```yaml
-# In ~/.Chiper/config.yaml
+# In ~/.chiper/config.yaml
 model:
   default: your-model-name
   context_length: 131072  # your model's actual context window
@@ -412,7 +412,7 @@ chiper gateway status
 chiper gateway start
 
 # Check logs for errors
-cat ~/.Chiper/logs/gateway.log | tail -50
+cat ~/.chiper/logs/gateway.log | tail -50
 ```
 
 #### Messages not delivering
@@ -421,7 +421,7 @@ cat ~/.Chiper/logs/gateway.log | tail -50
 
 **Solution:**
 - Verify your bot token is valid with `chiper gateway setup`
-- Check gateway logs: `cat ~/.Chiper/logs/gateway.log | tail -50`
+- Check gateway logs: `cat ~/.chiper/logs/gateway.log | tail -50`
 - For webhook-based platforms (Slack, WhatsApp), ensure your server is publicly accessible
 
 #### Allowlist confusion — who can talk to the bot?
@@ -436,7 +436,7 @@ cat ~/.Chiper/logs/gateway.log | tail -50
 | **DM pairing** | First user to message in DM claims exclusive access |
 | **Open** | Anyone can interact (not recommended for production) |
 
-Configure in `~/.Chiper/config.yaml` under your gateway's settings. See the [Messaging docs](../user-guide/messaging/index.md).
+Configure in `~/.chiper/config.yaml` under your gateway's settings. See the [Messaging docs](../user-guide/messaging/index.md).
 
 #### Gateway won't start
 
@@ -469,7 +469,7 @@ tmux new -s chiper 'chiper gateway run'
 # Reattach later: tmux attach -t chiper
 
 # Option 3: Background via nohup
-nohup chiper gateway run > ~/.Chiper/logs/gateway.log 2>&1 &
+nohup chiper gateway run > ~/.chiper/logs/gateway.log 2>&1 &
 ```
 
 If you want to try systemd anyway, make sure it's enabled:
@@ -565,7 +565,7 @@ chiper chat --continue
 **Solution:**
 ```bash
 # Ensure MCP dependencies are installed (already included in standard install)
-cd ~/.Chiper/chiper-agent && uv pip install -e ".[mcp]"
+cd ~/.chiper/chiper-agent && uv pip install -e ".[mcp]"
 
 # For npm-based servers, ensure Node.js is available
 node --version
@@ -575,7 +575,7 @@ npx --version
 npx -y @modelcontextprotocol/server-filesystem /tmp
 ```
 
-Verify your `~/.Chiper/config.yaml` MCP configuration:
+Verify your `~/.chiper/config.yaml` MCP configuration:
 ```yaml
 mcp_servers:
   filesystem:
@@ -626,7 +626,7 @@ If an MCP server crashes mid-request, Chiper will report a timeout. Check the se
 
 ### How do profiles differ from just setting CHIPER_HOME?
 
-Profiles are a managed layer on top of `CHIPER_HOME`. You *could* manually set `CHIPER_HOME=/some/path` before every command, but profiles handle all the plumbing for you: creating the directory structure, generating shell aliases (`chiper-work`), tracking the active profile in `~/.Chiper/active_profile`, and syncing skill updates across all profiles automatically. They also integrate with tab completion so you don't have to remember paths.
+Profiles are a managed layer on top of `CHIPER_HOME`. You *could* manually set `CHIPER_HOME=/some/path` before every command, but profiles handle all the plumbing for you: creating the directory structure, generating shell aliases (`chiper-work`), tracking the active profile in `~/.chiper/active_profile`, and syncing skill updates across all profiles automatically. They also integrate with tab completion so you don't have to remember paths.
 
 ### Can two profiles share the same bot token?
 
@@ -643,7 +643,7 @@ No. Each profile has its own memory store, session database, and skills director
 
 ### How many profiles can I run?
 
-There is no hard limit. Each profile is just a directory under `~/.Chiper/profiles/`. The practical limit depends on your disk space and how many concurrent gateways your system can handle (each gateway is a lightweight Python process). Running dozens of profiles is fine; each idle profile uses no resources.
+There is no hard limit. Each profile is just a directory under `~/.chiper/profiles/`. The practical limit depends on your disk space and how many concurrent gateways your system can handle (each gateway is a lightweight Python process). Running dozens of profiles is fine; each idle profile uses no resources.
 
 ---
 
@@ -653,7 +653,7 @@ There is no hard limit. Each profile is just a directory under `~/.Chiper/profil
 
 **Scenario:** You use GPT-5.4 as your daily driver, but Gemini or Grok writes better social media content. Manually switching models every time is tedious.
 
-**Solution: Delegation config.** Chiper can route subagents to a different model automatically. Set this in `~/.Chiper/config.yaml`:
+**Solution: Delegation config.** Chiper can route subagents to a different model automatically. Set this in `~/.chiper/config.yaml`:
 
 ```yaml
 delegation:
@@ -766,7 +766,7 @@ Skills with very long descriptions are truncated to 40 characters in the Telegra
    ```bash
    chiper backup
    ```
-   This creates a zip of your entire `~/.Chiper/` directory — config, API keys, memories, skills, sessions, and profiles — saved to your home directory as `~/chiper-backup-<timestamp>.zip`.
+   This creates a zip of your entire `~/.chiper/` directory — config, API keys, memories, skills, sessions, and profiles — saved to your home directory as `~/chiper-backup-<timestamp>.zip`.
 
 3. Copy the zip to the new machine and import it:
    ```bash
@@ -798,14 +798,14 @@ The imported profile will have all config, memories, sessions, and skills from t
 | Feature | `chiper backup` | `chiper profile export` |
 | :--- | :--- | :--- |
 | **Use Case** | **Full machine migration** | **Porting/sharing a specific profile** |
-| **Scope** | Global (entire `~/.Chiper` directory) | Local (single profile directory) |
+| **Scope** | Global (entire `~/.chiper` directory) | Local (single profile directory) |
 | **Includes** | All profiles, global config, API keys, sessions | Single profile: SOUL.md, memories, sessions, skills |
 | **Credentials** | **Included** (`.env` and `auth.json`) | **Excluded** (stripped for safe sharing) |
 | **Format** | `.zip` | `.tar.gz` |
 
 **Manual fallback (rsync):** If you prefer to copy files directly, exclude the code repo:
 ```bash
-rsync -av --exclude='chiper-agent' ~/.Chiper/ newmachine:~/.Chiper/
+rsync -av --exclude='chiper-agent' ~/.chiper/ newmachine:~/.chiper/
 ```
 
 :::tip

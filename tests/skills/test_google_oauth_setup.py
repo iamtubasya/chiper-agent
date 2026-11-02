@@ -282,7 +282,7 @@ class TestChiperConstantsFallback:
         assert module.get_chiper_home() == tmp_path / "custom-chiper"
 
     def test_fallback_defaults_to_dot_chiper(self, monkeypatch):
-        """When chiper_constants is missing and CHIPER_HOME unset, default to ~/.Chiper."""
+        """When chiper_constants is missing and CHIPER_HOME unset, default to ~/.chiper."""
         monkeypatch.delenv("CHIPER_HOME", raising=False)
         module = self._load_helper(monkeypatch)
         assert module.get_chiper_home() == Path.home() / ".chiper"
@@ -297,13 +297,13 @@ class TestChiperConstantsFallback:
         """Fallback display_chiper_home() uses ~/ shorthand like the real one."""
         monkeypatch.delenv("CHIPER_HOME", raising=False)
         module = self._load_helper(monkeypatch)
-        assert module.display_chiper_home() == "~/.Chiper"
+        assert module.display_chiper_home() == "~/.chiper"
 
     def test_fallback_display_chiper_home_profile_path(self, monkeypatch):
         """Fallback display_chiper_home() handles profile paths under ~/."""
         monkeypatch.setenv("CHIPER_HOME", str(Path.home() / ".chiper/profiles/coder"))
         module = self._load_helper(monkeypatch)
-        assert module.display_chiper_home() == "~/.Chiper/profiles/coder"
+        assert module.display_chiper_home() == "~/.chiper/profiles/coder"
 
     def test_fallback_display_chiper_home_custom_path(self, monkeypatch):
         """Fallback display_chiper_home() returns full path for non-home locations."""

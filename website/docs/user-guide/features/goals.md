@@ -106,7 +106,7 @@ The continuation prompt is a plain user-role message appended to history. It doe
 
 ## Configuration
 
-Add to `~/.Chiper/config.yaml`:
+Add to `~/.chiper/config.yaml`:
 
 ```yaml
 goals:

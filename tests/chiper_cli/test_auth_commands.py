@@ -1506,7 +1506,7 @@ def test_seed_from_singletons_respects_codex_suppression(tmp_path, monkeypatch):
 
 def test_auth_remove_env_seeded_suppresses_shell_exported_var(tmp_path, monkeypatch, capsys):
     """`chiper auth remove xai 1` must stick even when the env var is exported
-    by the shell (not written into ~/.Chiper/.env).  Before PR for #13371 the
+    by the shell (not written into ~/.chiper/.env).  Before PR for #13371 the
     removal silently restored on next load_pool() because _seed_from_env()
     re-read os.environ.  Now env:<VAR> is suppressed in auth.json.
     """
@@ -1557,7 +1557,7 @@ def test_auth_remove_env_seeded_suppresses_shell_exported_var(tmp_path, monkeypa
 
 
 def test_auth_remove_env_seeded_dotenv_only_no_shell_hint(tmp_path, monkeypatch, capsys):
-    """When the env var lives only in ~/.Chiper/.env (not the shell), the
+    """When the env var lives only in ~/.chiper/.env (not the shell), the
     shell-hint should NOT be printed — avoid scaring the user about a
     non-existent shell export.
     """
@@ -1756,7 +1756,7 @@ def test_seed_from_singletons_respects_qwen_suppression(tmp_path, monkeypatch):
 
 
 def test_seed_from_singletons_respects_chiper_pkce_suppression(tmp_path, monkeypatch):
-    """anthropic chiper_pkce must not re-seed from ~/.Chiper/.anthropic_oauth.json when suppressed."""
+    """anthropic chiper_pkce must not re-seed from ~/.chiper/.anthropic_oauth.json when suppressed."""
     chiper_home = tmp_path / "chiper"
     chiper_home.mkdir(parents=True, exist_ok=True)
     monkeypatch.setenv("CHIPER_HOME", str(chiper_home))
@@ -1838,7 +1838,7 @@ def test_credential_sources_registry_has_expected_steps():
         "gh auth token / COPILOT_GITHUB_TOKEN / GH_TOKEN",
         "Any env-seeded credential (XAI_API_KEY, DEEPSEEK_API_KEY, etc.)",
         "~/.claude/.credentials.json",
-        "~/.Chiper/.anthropic_oauth.json",
+        "~/.chiper/.anthropic_oauth.json",
         "auth.json providers.nous",
         "auth.json providers.openai-codex + ~/.codex/auth.json",
         "auth.json providers.minimax-oauth",

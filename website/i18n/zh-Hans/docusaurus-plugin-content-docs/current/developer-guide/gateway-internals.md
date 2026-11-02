@@ -135,8 +135,8 @@ Gateway 从多个来源读取配置：
 
 | 来源 | 提供内容 |
 |--------|-----------------|
-| `~/.Chiper/.env` | API 密钥、bot token、平台凭据 |
-| `~/.Chiper/config.yaml` | 模型设置、工具配置、显示选项 |
+| `~/.chiper/.env` | API 密钥、bot token、平台凭据 |
+| `~/.chiper/config.yaml` | 模型设置、工具配置、显示选项 |
 | 环境变量 | 覆盖上述任意配置 |
 
 与 CLI（使用带硬编码默认值的 `load_cli_config()`）不同，gateway 通过 YAML 加载器直接读取 `config.yaml`。这意味着存在于 CLI 默认值字典但不在用户配置文件中的配置键，在 CLI 和 gateway 之间可能表现不同。
@@ -208,7 +208,7 @@ Gateway hook 是响应生命周期事件的 Python 模块。
 | `agent:end` | Agent 完成并返回响应时 |
 | `command:*` | 任意斜杠命令被执行时 |
 
-Hook 从 `gateway/builtin_hooks/`（扩展点 — 当前发行版中为空；`_register_builtin_hooks()` 是一个空操作存根）和 `~/.Chiper/hooks/`（用户安装）中发现。每个 hook 是一个包含 `HOOK.yaml` 清单和 `handler.py` 的目录。
+Hook 从 `gateway/builtin_hooks/`（扩展点 — 当前发行版中为空；`_register_builtin_hooks()` 是一个空操作存根）和 `~/.chiper/hooks/`（用户安装）中发现。每个 hook 是一个包含 `HOOK.yaml` 清单和 `handler.py` 的目录。
 
 ## 内存提供者集成
 
@@ -249,7 +249,7 @@ Gateway 作为长期运行进程运行，管理方式如下：
 
 - `chiper gateway start` / `chiper gateway stop` — 手动控制
 - `systemctl`（Linux）或 `launchctl`（macOS）— 服务管理
-- PID 文件位于 `~/.Chiper/gateway.pid` — 面向 profile 的进程追踪
+- PID 文件位于 `~/.chiper/gateway.pid` — 面向 profile 的进程追踪
 
 **Profile 范围 vs 全局**：`start_gateway()` 使用 profile 范围的 PID 文件。`chiper gateway stop` 仅停止当前 profile 的 gateway。`chiper gateway stop --all` 使用全局 `ps aux` 扫描来终止所有 gateway 进程（用于更新时）。
 

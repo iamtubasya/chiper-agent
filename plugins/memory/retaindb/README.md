@@ -16,7 +16,7 @@ chiper memory setup    # select "retaindb"
 Or manually:
 ```bash
 chiper config set memory.provider retaindb
-echo "RETAINDB_API_KEY=your-key" >> ~/.Chiper/.env
+echo "RETAINDB_API_KEY=your-key" >> ~/.chiper/.env
 ```
 
 ## Config

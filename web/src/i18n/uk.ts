@@ -337,8 +337,8 @@ export const uk: Translations = {
     providersHint:
       "Записує memory.provider (порожньо = вбудований) та context.engine у config.yaml. Набуває чинності в наступній сесії.",
     refreshDashboard: "Перескан розширень панелі",
-    removeConfirm: "Видалити цей плагін з ~/.Chiper/plugins/?",
-    removeHint: "Видаляти можна лише плагіни, встановлені користувачем у ~/.Chiper/plugins.",
+    removeConfirm: "Видалити цей плагін з ~/.chiper/plugins/?",
+    removeHint: "Видаляти можна лише плагіни, встановлені користувачем у ~/.chiper/plugins.",
     rescanHeading: "Реєстр SPA-плагінів",
     rescanHint: "Скануйте після додавання файлів на диск, щоб бічна панель підхопила нові маніфести.",
     runtimeHeading: "Час виконання шлюзу (YAML-плагіни)",
@@ -360,7 +360,7 @@ export const uk: Translations = {
     all: "Усі",
     categories: "Категорії",
     filters: "Фільтри",
-    noSkills: "Навичок не знайдено. Навички завантажуються з ~/.Chiper/skills/",
+    noSkills: "Навичок не знайдено. Навички завантажуються з ~/.chiper/skills/",
     noSkillsMatch: "Жодна навичка не відповідає вашому пошуку чи фільтру.",
     skillCount: "{count} навичок",
     resultCount: "{count} результатів",
@@ -374,7 +374,7 @@ export const uk: Translations = {
   },
 
   config: {
-    configPath: "~/.Chiper/config.yaml",
+    configPath: "~/.chiper/config.yaml",
     filters: "Фільтри",
     sections: "Розділи",
     exportConfig: "Експортувати конфігурацію як JSON",

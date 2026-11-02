@@ -221,7 +221,7 @@ Each entry supports:
 
 3. **Runtime injection:** When a skill loads, its config values are resolved and appended to the skill message:
    ```
-   [Skill config (from ~/.Chiper/config.yaml):
+   [Skill config (from ~/.chiper/config.yaml):
      myplugin.path = /home/user/my-data
    ]
    ```
@@ -233,7 +233,7 @@ Each entry supports:
    ```
 
 :::tip When to use which
-Use `required_environment_variables` for API keys, tokens, and other **secrets** (stored in `~/.Chiper/.env`, never shown to the model). Use `config` for **paths, preferences, and non-sensitive settings** (stored in `config.yaml`, visible in config show).
+Use `required_environment_variables` for API keys, tokens, and other **secrets** (stored in `~/.chiper/.env`, never shown to the model). Use `config` for **paths, preferences, and non-sensitive settings** (stored in `config.yaml`, visible in config show).
 :::
 
 ### Credential File Requirements (OAuth tokens, etc.)
@@ -249,7 +249,7 @@ required_credential_files:
 ```
 
 Each entry supports:
-- `path` (required) — file path relative to `~/.Chiper/`
+- `path` (required) — file path relative to `~/.chiper/`
 - `description` (optional) — explains what the file is and how it's created
 
 When loaded, Chiper checks if these files exist. Missing files trigger `setup_needed`. Existing files are automatically:
@@ -258,7 +258,7 @@ When loaded, Chiper checks if these files exist. Missing files trigger `setup_ne
 - Available on **local** backend without any special handling
 
 :::tip When to use which
-Use `required_environment_variables` for simple API keys and tokens (strings stored in `~/.Chiper/.env`). Use `required_credential_files` for OAuth token files, client secrets, service account JSON, certificates, or any credential that's a file on disk.
+Use `required_environment_variables` for simple API keys and tokens (strings stored in `~/.chiper/.env`). Use `required_credential_files` for OAuth token files, client secrets, service account JSON, certificates, or any credential that's a file on disk.
 :::
 
 See the `skills/productivity/google-workspace/SKILL.md` for a complete example using both.

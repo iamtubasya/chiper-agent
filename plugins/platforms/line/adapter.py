@@ -1299,7 +1299,7 @@ class LineAdapter(BasePlatformAdapter):
             from chiper_constants import get_chiper_home
             chiper_home = Path(get_chiper_home()).resolve()
         except Exception:
-            chiper_home = Path.home().joinpath(".Chiper").resolve()
+            chiper_home = Path.home().joinpath(".chiper").resolve()
 
         allowed_roots = {
             Path(tempfile.gettempdir()).resolve(),
@@ -1579,7 +1579,7 @@ def interactive_setup() -> None:
     """Minimal stdin wizard for ``chiper setup line``.
 
     Mirrors the irc/teams style: prompts for the two required vars, plus
-    one optional public URL. Writes to ``~/.Chiper/.env`` via ``chiper_cli.config``.
+    one optional public URL. Writes to ``~/.chiper/.env`` via ``chiper_cli.config``.
     """
     print()
     print("LINE Messaging API setup")
@@ -1591,7 +1591,7 @@ def interactive_setup() -> None:
     try:
         from chiper_cli.config import get_env_var, set_env_var
     except ImportError:
-        print("chiper_cli.config not available; set LINE_* vars manually in ~/.Chiper/.env")
+        print("chiper_cli.config not available; set LINE_* vars manually in ~/.chiper/.env")
         return
 
     def _prompt(var: str, prompt: str, *, secret: bool = False) -> None:

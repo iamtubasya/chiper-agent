@@ -161,7 +161,7 @@ class HolographicMemoryProvider(MemoryProvider):
         _default_db = _chiper_home + "/memory_store.db"
         db_path = self._config.get("db_path", _default_db)
         # Expand $CHIPER_HOME in user-supplied paths so config values like
-        # "$CHIPER_HOME/memory_store.db" or "~/.Chiper/memory_store.db" both
+        # "$CHIPER_HOME/memory_store.db" or "~/.chiper/memory_store.db" both
         # resolve to the active profile's directory.
         if isinstance(db_path, str):
             db_path = db_path.replace("$CHIPER_HOME", _chiper_home)

@@ -32,7 +32,7 @@ re-checks defensively).
 
 Providers live in ``<repo>/plugins/transcription/<name>/`` (built-in
 plugins, none shipped today) or
-``~/.Chiper/plugins/transcription/<name>/`` (user-installed).
+``~/.chiper/plugins/transcription/<name>/`` (user-installed).
 
 Response contract
 -----------------

@@ -62,7 +62,7 @@ Select **Email** from the platform menu. The wizard prompts for your email addre
 
 ### Manual Configuration
 
-Add to `~/.Chiper/.env`:
+Add to `~/.chiper/.env`:
 
 ```bash
 # Required
@@ -176,7 +176,7 @@ Email access follows the same pattern as all other Chiper platforms:
 
 - Use **App Passwords** instead of your main password (required for Gmail with 2FA)
 - Set `EMAIL_ALLOWED_USERS` to restrict who can interact with the agent
-- The password is stored in `~/.Chiper/.env` — protect this file (`chmod 600`)
+- The password is stored in `~/.chiper/.env` — protect this file (`chmod 600`)
 - IMAP uses SSL (port 993) and SMTP uses STARTTLS (port 587) by default — connections are encrypted
 
 ---

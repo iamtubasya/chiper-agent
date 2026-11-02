@@ -41,7 +41,7 @@ Use this skill when the user wants secrets managed through 1Password instead of 
 
 ### Service Account (recommended for Chiper)
 
-Set `OP_SERVICE_ACCOUNT_TOKEN` in `${CHIPER_HOME:-~/.Chiper}/.env` (the skill will prompt for this on first load).
+Set `OP_SERVICE_ACCOUNT_TOKEN` in `${CHIPER_HOME:-~/.chiper}/.env` (the skill will prompt for this on first load).
 No desktop app needed. Supports `op read`, `op inject`, `op run`.
 
 ```bash

@@ -18,7 +18,7 @@ Chiper 本身需要配置好 provider（提供商）和工具后端，API 服务
 
 ### 1. 启用 API 服务器
 
-在 `~/.Chiper/.env` 中添加：
+在 `~/.chiper/.env` 中添加：
 
 ```bash
 API_SERVER_ENABLED=true
@@ -404,13 +404,13 @@ chiper profile create bob
 
 # 在不同端口上配置每个 profile 的 API 服务器。API_SERVER_* 是环境变量
 # （不是 config.yaml 键），因此将它们写入每个 profile 的 .env：
-cat >> ~/.Chiper/profiles/alice/.env <<EOF
+cat >> ~/.chiper/profiles/alice/.env <<EOF
 API_SERVER_ENABLED=true
 API_SERVER_PORT=8643
 API_SERVER_KEY=alice-secret
 EOF
 
-cat >> ~/.Chiper/profiles/bob/.env <<EOF
+cat >> ~/.chiper/profiles/bob/.env <<EOF
 API_SERVER_ENABLED=true
 API_SERVER_PORT=8644
 API_SERVER_KEY=bob-secret

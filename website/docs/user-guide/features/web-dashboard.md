@@ -148,12 +148,12 @@ Set a username and password, then run the dashboard bound to a reachable address
 
 ```ini
 [Service]
-EnvironmentFile=%h/.Chiper/.env
+EnvironmentFile=%h/.chiper/.env
 ExecStart=/path/to/venv/bin/python -m chiper_cli.main dashboard \
     --host 0.0.0.0 --port 9119 --no-open
 ```
 
-with `~/.Chiper/.env` containing:
+with `~/.chiper/.env` containing:
 
 ```bash
 CHIPER_DASHBOARD_BASIC_AUTH_USERNAME=admin
@@ -285,7 +285,7 @@ Create and manage [profiles](../profiles.md) — isolated Chiper instances with 
 
 ### Skills
 
-Browse, search, and toggle installed skills and toolsets, and install new ones from the hub. Skills are loaded from `~/.Chiper/skills/` and grouped by category.
+Browse, search, and toggle installed skills and toolsets, and install new ones from the hub. Skills are loaded from `~/.chiper/skills/` and grouped by category.
 
 - **Search** — filter installed skills and toolsets by name, description, or category
 - **Category filter** — click category pills to narrow the list (e.g. MLOps, MCP, Red Teaming, AI)
@@ -351,7 +351,7 @@ the API server and webhook endpoints) with its live connection status.
 - **Configure** — open a per-platform form with exactly the fields that channel needs (bot token, app token, server URL, allowlist, etc.). Secrets render as password inputs and are stored redacted; leaving a field blank keeps the existing value. Required fields are marked and validated. A "Setup guide" link points to the platform's credential docs.
 - **Enable / disable** — toggle a channel on or off. The credential stays on disk; only the active state changes.
 - **Test** — check whether the channel is configured, enabled, and reporting a live connection from the gateway.
-- **Restart gateway** — credentials are written to `~/.Chiper/.env` and the enabled flag to `config.yaml`; the gateway connects each enabled channel on its next restart, which you can trigger right from the page.
+- **Restart gateway** — credentials are written to `~/.chiper/.env` and the enabled flag to `config.yaml`; the gateway connects each enabled channel on its next restart, which you can trigger right from the page.
 
 ![Channels admin page — every messaging platform with status, enable toggles, and per-platform setup forms](/img/dashboard/admin-channels.png)
 
@@ -392,7 +392,7 @@ You → /reload
   Reloaded .env (3 var(s) updated)
 ```
 
-This re-reads `~/.Chiper/.env` into the running process's environment. Useful when you've added a new provider key via the dashboard and want to use it immediately.
+This re-reads `~/.chiper/.env` into the running process's environment. Useful when you've added a new provider key via the dashboard and want to use it immediately.
 
 ## REST API
 
@@ -593,12 +593,12 @@ Because every login is verified against Nous Portal and protected by your Nous a
 
 To use the Nous provider you need an OAuth client ID (shape `agent:{id}`). There are two ways to get one:
 
-- **CLI — `chiper dashboard register`.** Run it on the host where the dashboard lives. It resolves your existing Nous login (run `chiper setup` first if you're not logged in), registers a self-hosted OAuth client with the Portal, and writes `CHIPER_DASHBOARD_OAUTH_CLIENT_ID` into `~/.Chiper/.env` for you. Optional flags: `--name` (a human-readable label, otherwise auto-generated) and `--redirect-uri` (a public HTTPS callback URL for an internet-facing host).
+- **CLI — `chiper dashboard register`.** Run it on the host where the dashboard lives. It resolves your existing Nous login (run `chiper setup` first if you're not logged in), registers a self-hosted OAuth client with the Portal, and writes `CHIPER_DASHBOARD_OAUTH_CLIENT_ID` into `~/.chiper/.env` for you. Optional flags: `--name` (a human-readable label, otherwise auto-generated) and `--redirect-uri` (a public HTTPS callback URL for an internet-facing host).
 
   ```bash
   chiper dashboard register
   # ✓ Registered dashboard "swift_falcon"
-  # …writes CHIPER_DASHBOARD_OAUTH_CLIENT_ID to ~/.Chiper/.env
+  # …writes CHIPER_DASHBOARD_OAUTH_CLIENT_ID to ~/.chiper/.env
   ```
 
 - **GUI — the Local Dashboards page.** Open [`/local-dashboards`](https://portal.Chiper.com/local-dashboards) in the Nous Portal to register, name, manage, and revoke self-hosted dashboards from the browser. Copy the resulting `agent:{id}` client ID into `CHIPER_DASHBOARD_OAUTH_CLIENT_ID` (env) or `dashboard.oauth.client_id` (config.yaml). This is also where you revoke a dashboard registered via the CLI.
@@ -621,7 +621,7 @@ dashboard:
 |---------|-----------|--------|----------------|
 | `CHIPER_DASHBOARD_OAUTH_CLIENT_ID` | `dashboard.oauth.client_id` | `agent:{instance_id}` | `chiper dashboard register` |
 
-Per the Chiper Agent convention (`~/.Chiper/.env` is for API keys / secrets only), **`config.yaml` is the recommended place to set these values** for local dev, on-prem, and any deployment you control directly. The environment-variable path exists so a hosting platform's secret injection can push per-deploy `client_id`s without anyone having to edit `config.yaml` inside the image — that's its primary purpose.
+Per the Chiper Agent convention (`~/.chiper/.env` is for API keys / secrets only), **`config.yaml` is the recommended place to set these values** for local dev, on-prem, and any deployment you control directly. The environment-variable path exists so a hosting platform's secret injection can push per-deploy `client_id`s without anyone having to edit `config.yaml` inside the image — that's its primary purpose.
 
 Empty environment values are treated as unset, so a provisioned-but-not-populated platform secret can't accidentally shadow a valid `config.yaml` entry.
 
@@ -647,13 +647,13 @@ networks).
 
 From a logged-in Chiper install to a Nous-gated dashboard in three steps.
 
-**1. Log in and register the dashboard.** `chiper dashboard register` uses your existing Nous login to provision an OAuth client and writes `CHIPER_DASHBOARD_OAUTH_CLIENT_ID` into `~/.Chiper/.env` for you:
+**1. Log in and register the dashboard.** `chiper dashboard register` uses your existing Nous login to provision an OAuth client and writes `CHIPER_DASHBOARD_OAUTH_CLIENT_ID` into `~/.chiper/.env` for you:
 
 ```bash
 chiper setup            # if you're not already logged into Nous Portal
 chiper dashboard register
 # ✓ Registered dashboard "swift_falcon"
-# …writes CHIPER_DASHBOARD_OAUTH_CLIENT_ID to ~/.Chiper/.env
+# …writes CHIPER_DASHBOARD_OAUTH_CLIENT_ID to ~/.chiper/.env
 ```
 
 **2. Run the dashboard on a reachable address.** A non-loopback bind without `--insecure` engages the OAuth gate, and the `client_id` just written activates the `nous` provider:
@@ -721,18 +721,18 @@ The `/auth/password-login` endpoint is rate-limited per client IP (default 10 at
 
 From nothing to a password-gated dashboard on a trusted network in three steps.
 
-**1. Set credentials in `~/.Chiper/.env`.** Hash the password so no plaintext sits at rest, and set a stable signing secret so sessions survive restarts:
+**1. Set credentials in `~/.chiper/.env`.** Hash the password so no plaintext sits at rest, and set a stable signing secret so sessions survive restarts:
 
 ```bash
 # Compute a scrypt hash of your chosen password:
 HASH=$(python -c "from plugins.dashboard_auth.basic import hash_password; print(hash_password('choose-a-strong-password'))")
 
-cat >> ~/.Chiper/.env <<EOF
+cat >> ~/.chiper/.env <<EOF
 CHIPER_DASHBOARD_BASIC_AUTH_USERNAME=admin
 CHIPER_DASHBOARD_BASIC_AUTH_PASSWORD_HASH=$HASH
 CHIPER_DASHBOARD_BASIC_AUTH_SECRET=$(openssl rand -base64 32)
 EOF
-chmod 600 ~/.Chiper/.env
+chmod 600 ~/.chiper/.env
 ```
 
 **2. Run the dashboard on a reachable address.** A non-loopback bind without `--insecure` engages the gate, and the username + hash activate the `basic` provider:
@@ -942,7 +942,7 @@ Every login start, success, failure, and session-verify failure is written as a 
 To plug a non-Nous OAuth provider (e.g. Google, GitHub, custom OIDC), create a plugin that registers a `DashboardAuthProvider`:
 
 ```python
-# ~/.Chiper/plugins/dashboard-auth-myidp/__init__.py
+# ~/.chiper/plugins/dashboard-auth-myidp/__init__.py
 from chiper_cli.dashboard_auth import DashboardAuthProvider, Session, LoginStart
 
 class MyIdPProvider(DashboardAuthProvider):
@@ -996,14 +996,14 @@ The recipe below uses the username/password path because it's the quickest to st
 ### On the backend (the remote machine)
 
 ```bash
-# 1. Set the dashboard login credentials in ~/.Chiper/.env (secrets file, 0600).
-cat >> ~/.Chiper/.env <<'EOF'
+# 1. Set the dashboard login credentials in ~/.chiper/.env (secrets file, 0600).
+cat >> ~/.chiper/.env <<'EOF'
 CHIPER_DASHBOARD_BASIC_AUTH_USERNAME=admin
 CHIPER_DASHBOARD_BASIC_AUTH_PASSWORD=choose-a-strong-password
 # Recommended: a stable signing secret so sessions survive restarts.
 CHIPER_DASHBOARD_BASIC_AUTH_SECRET=$(openssl rand -base64 32)
 EOF
-chmod 600 ~/.Chiper/.env
+chmod 600 ~/.chiper/.env
 
 # 2. Run the dashboard bound to a reachable address. The non-loopback bind
 #    engages the auth gate; the username/password provider handles login.
@@ -1012,7 +1012,7 @@ chiper dashboard --no-open --host 0.0.0.0 --port 9119
 
 Prefer no plaintext at rest? Use `CHIPER_DASHBOARD_BASIC_AUTH_PASSWORD_HASH` with a scrypt hash instead — see [Username/password provider](#usernamepassword-provider-no-oauth-idp) for the full surface.
 
-If you run the dashboard as a systemd service, `~/.Chiper/.env` is picked up automatically when the unit has `EnvironmentFile=%h/.Chiper/.env`, so the credentials are in the environment at boot.
+If you run the dashboard as a systemd service, `~/.chiper/.env` is picked up automatically when the unit has `EnvironmentFile=%h/.chiper/.env`, so the credentials are in the environment at boot.
 
 :::warning
 The dashboard reads and writes your `.env` (API keys, secrets) and can run agent commands. The **username/password** setup shown here is for a trusted network — never expose a password-protected dashboard directly to the open internet. Put it behind a VPN. [Tailscale](https://tailscale.com/) is the clean option: bind to the machine's tailscale IP (`--host <tailscale-ip>`) and use `http://<tailscale-ip>:9119` as the Remote URL. Only devices on your tailnet can reach it. To reach a backend over the public internet, use the **OAuth (Nous Portal)** provider instead.

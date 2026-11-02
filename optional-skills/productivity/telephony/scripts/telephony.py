@@ -69,7 +69,7 @@ class OwnedTwilioNumber:
 
 
 def _chiper_home() -> Path:
-    return Path(os.environ.get("CHIPER_HOME", "~/.Chiper")).expanduser()
+    return Path(os.environ.get("CHIPER_HOME", "~/.chiper")).expanduser()
 
 
 def _env_path() -> Path:

@@ -53,7 +53,7 @@ chiper model
 chiper
 ```
 
-首次登录后，凭据存储在 `~/.Chiper/auth.json` 中，并在过期前自动刷新。
+首次登录后，凭据存储在 `~/.chiper/auth.json` 中，并在过期前自动刷新。
 
 ## 手动登录
 
@@ -98,7 +98,7 @@ chiper model --manual-paste
 
 1. Chiper 在浏览器中打开 `accounts.x.ai`。
 2. 你登录（或确认现有会话）并批准访问。
-3. xAI 重定向回 Chiper，token 保存到 `~/.Chiper/auth.json`。
+3. xAI 重定向回 Chiper，token 保存到 `~/.chiper/auth.json`。
 4. 此后，Chiper 在后台刷新 access token——你将保持登录状态，直到执行 `chiper auth remove xai-oauth` 或在 xAI 账号设置中撤销访问。
 
 ## 检查登录状态
@@ -126,7 +126,7 @@ chiper config set model.provider xai-oauth
 
 ## 配置参考
 
-登录后，`~/.Chiper/config.yaml` 将包含：
+登录后，`~/.chiper/config.yaml` 将包含：
 
 ```yaml
 model:

@@ -4,7 +4,7 @@ set -euo pipefail
 # Bootstrap Open WebUI against Chiper Agent's OpenAI-compatible API server.
 #
 # Idempotent by design:
-# - ensures ~/.Chiper/.env has API server settings
+# - ensures ~/.chiper/.env has API server settings
 # - installs Open WebUI into ~/.local/open-webui-venv
 # - writes a reusable launcher at ~/.local/bin/start-open-webui-chiper.sh
 # - optionally installs a user service (launchd on macOS, systemd --user on Linux)
@@ -31,14 +31,14 @@ OPEN_WEBUI_ENABLE_SIGNUP="${OPEN_WEBUI_ENABLE_SIGNUP:-true}"
 OPEN_WEBUI_ENABLE_SERVICE="${OPEN_WEBUI_ENABLE_SERVICE:-auto}"
 OPEN_WEBUI_VENV="${OPEN_WEBUI_VENV:-$HOME/.local/open-webui-venv}"
 OPEN_WEBUI_DATA_DIR="${OPEN_WEBUI_DATA_DIR:-$HOME/.local/share/open-webui/data}"
-CHIPER_ENV_FILE="${CHIPER_ENV_FILE:-$HOME/.Chiper/.env}"
+CHIPER_ENV_FILE="${CHIPER_ENV_FILE:-$HOME/.chiper/.env}"
 CHIPER_API_PORT="${CHIPER_API_PORT:-8642}"
 CHIPER_API_HOST="${CHIPER_API_HOST:-127.0.0.1}"
 CHIPER_API_CONNECT_HOST="${CHIPER_API_CONNECT_HOST:-127.0.0.1}"
 CHIPER_API_MODEL_NAME="${CHIPER_API_MODEL_NAME:-Chiper Agent}"
 CHIPER_API_BASE_URL="http://${CHIPER_API_CONNECT_HOST}:${CHIPER_API_PORT}/v1"
 LAUNCHER_PATH="$HOME/.local/bin/start-open-webui-chiper.sh"
-LOG_DIR="$HOME/.Chiper/logs"
+LOG_DIR="$HOME/.chiper/logs"
 
 log() {
   printf '[open-webui-bootstrap] %s\n' "$*"
@@ -184,7 +184,7 @@ set -euo pipefail
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 API_KEY=\$(python3 - <<'PY'
 from pathlib import Path
-p = Path.home()/'.Chiper'/'.env'
+p = Path.home()/'.chiper'/'.env'
 for raw in p.read_text().splitlines():
     line = raw.strip()
     if line.startswith('API_SERVER_KEY='):
@@ -271,8 +271,8 @@ ExecStart=/bin/bash %h/.local/bin/start-open-webui-chiper.sh
 Restart=always
 RestartSec=3
 WorkingDirectory=%h
-StandardOutput=append:%h/.Chiper/logs/openwebui.log
-StandardError=append:%h/.Chiper/logs/openwebui.error.log
+StandardOutput=append:%h/.chiper/logs/openwebui.log
+StandardError=append:%h/.chiper/logs/openwebui.error.log
 
 [Install]
 WantedBy=default.target

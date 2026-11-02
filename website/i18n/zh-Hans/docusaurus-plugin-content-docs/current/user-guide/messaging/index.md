@@ -170,7 +170,7 @@ chiper gateway status --system         # 仅 Linux：显式检查系统服务
 | 空闲 | 1440 分钟 | 空闲 N 分钟后重置 |
 | 两者 | （组合） | 以先触发者为准 |
 
-在 `~/.Chiper/gateway.json` 中配置各平台的覆盖设置：
+在 `~/.chiper/gateway.json` 中配置各平台的覆盖设置：
 
 ```json
 {
@@ -287,7 +287,7 @@ display:
 
 ## 工具进度通知
 
-在 `~/.Chiper/config.yaml` 中控制显示多少工具活动信息：
+在 `~/.chiper/config.yaml` 中控制显示多少工具活动信息：
 
 ```yaml
 display:
@@ -330,7 +330,7 @@ Chiper 立即确认：
 
 ### 后台进程通知
 
-当运行后台会话的 agent 使用 `terminal(background=true)` 启动长时间运行的进程（服务器、构建等）时，网关可以向你的聊天推送状态更新。通过 `~/.Chiper/config.yaml` 中的 `display.background_process_notifications` 控制：
+当运行后台会话的 agent 使用 `terminal(background=true)` 启动长时间运行的进程（服务器、构建等）时，网关可以向你的聊天推送状态更新。通过 `~/.chiper/config.yaml` 中的 `display.background_process_notifications` 控制：
 
 ```yaml
 display:
@@ -387,7 +387,7 @@ journalctl -u chiper-gateway -f
 除非你确实有此需要，否则避免同时安装用户和系统网关单元。Chiper 检测到两者同时存在时会发出警告，因为 start/stop/status 行为会变得不明确。
 
 :::info 多个安装
-如果你在同一台机器上运行多个 Chiper 安装（使用不同的 `CHIPER_HOME` 目录），每个安装都有自己的 systemd 服务名称。默认的 `~/.Chiper` 使用 `chiper-gateway`；其他安装使用 `chiper-gateway-<hash>`。`chiper gateway` 命令会自动针对当前 `CHIPER_HOME` 对应的正确服务。
+如果你在同一台机器上运行多个 Chiper 安装（使用不同的 `CHIPER_HOME` 目录），每个安装都有自己的 systemd 服务名称。默认的 `~/.chiper` 使用 `chiper-gateway`；其他安装使用 `chiper-gateway-<hash>`。`chiper gateway` 命令会自动针对当前 `CHIPER_HOME` 对应的正确服务。
 :::
 
 ### macOS（launchd）
@@ -397,7 +397,7 @@ chiper gateway install               # 安装为 launchd agent
 chiper gateway start                 # 启动服务
 chiper gateway stop                  # 停止服务
 chiper gateway status                # 检查状态
-tail -f ~/.Chiper/logs/gateway.log   # 查看日志
+tail -f ~/.chiper/logs/gateway.log   # 查看日志
 ```
 
 生成的 plist 文件位于 `~/Library/LaunchAgents/ai.chiper.gateway.plist`。它包含三个环境变量：
@@ -411,7 +411,7 @@ launchd plist 是静态的——如果你在配置网关后安装了新工具（
 :::
 
 :::info 多个安装
-与 Linux systemd 服务类似，每个 `CHIPER_HOME` 目录都有自己的 launchd 标签。默认的 `~/.Chiper` 使用 `ai.chiper.gateway`；其他安装使用 `ai.chiper.gateway-<suffix>`。
+与 Linux systemd 服务类似，每个 `CHIPER_HOME` 目录都有自己的 launchd 标签。默认的 `~/.chiper` 使用 `ai.chiper.gateway`；其他安装使用 `ai.chiper.gateway-<suffix>`。
 :::
 
 ## 平台专属工具集
@@ -472,7 +472,7 @@ launchd plist 是静态的——如果你在配置网关后安装了新工具（
 
 当适配器暂停时，检查：
 
-1. **网关日志**（`~/.Chiper/logs/gateway.log` 或 systemd / launchd 单元日志）。搜索平台名称以及 `circuit breaker`、`paused` 或 `disabled`。触发事件包含失败次数和最后一个错误。
+1. **网关日志**（`~/.chiper/logs/gateway.log` 或 systemd / launchd 单元日志）。搜索平台名称以及 `circuit breaker`、`paused` 或 `disabled`。触发事件包含失败次数和最后一个错误。
 2. **`/platform list`** 输出——显示当前状态和最后原因。
 3. **提供商状态页面**（Telegram bot API 状态、Discord 状态等）。熔断器触发是因为平台不健康；在平台恢复之前不要尝试恢复。
 

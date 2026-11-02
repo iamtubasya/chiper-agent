@@ -283,7 +283,7 @@ class ModalEnvironment(BaseEnvironment):
         logger.info("Modal: sandbox created (task=%s)", self._task_id)
 
         self._sync_manager = FileSyncManager(
-            get_files_fn=lambda: iter_sync_files("/root/.Chiper"),
+            get_files_fn=lambda: iter_sync_files("/root/.chiper"),
             upload_fn=self._modal_upload,
             delete_fn=self._modal_delete,
             bulk_upload_fn=self._modal_bulk_upload,
@@ -369,12 +369,12 @@ class ModalEnvironment(BaseEnvironment):
     def _modal_bulk_download(self, dest: Path) -> None:
         """Download remote .chiper/ as a tar archive.
 
-        Modal sandboxes always run as root, so /root/.Chiper is hardcoded
+        Modal sandboxes always run as root, so /root/.chiper is hardcoded
         (consistent with iter_sync_files call on line 269).
         """
         async def _download():
             proc = await self._sandbox.exec.aio(
-                "bash", "-c", "tar cf - -C / root/.Chiper"
+                "bash", "-c", "tar cf - -C / root/.chiper"
             )
             data = await proc.stdout.read.aio()
             exit_code = await proc.wait.aio()

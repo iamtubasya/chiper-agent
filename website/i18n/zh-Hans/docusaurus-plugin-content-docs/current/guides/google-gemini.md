@@ -24,7 +24,7 @@ Chiper 还支持独立的 **Google Gemini（OAuth）** provider，使用与 Goog
 
 ```bash
 # 添加 Gemini API 密钥
-echo "GOOGLE_API_KEY=..." >> ~/.Chiper/.env
+echo "GOOGLE_API_KEY=..." >> ~/.chiper/.env
 
 # 选择 Gemini 作为 provider
 chiper model
@@ -47,7 +47,7 @@ model:
 
 ## 配置
 
-运行 `chiper model` 后，`~/.Chiper/config.yaml` 将包含：
+运行 `chiper model` 后，`~/.chiper/config.yaml` 将包含：
 
 ```yaml
 model:
@@ -56,7 +56,7 @@ model:
   base_url: https://generativelanguage.googleapis.com/v1beta
 ```
 
-`~/.Chiper/.env` 中：
+`~/.chiper/.env` 中：
 
 ```bash
 GOOGLE_API_KEY=...
@@ -218,7 +218,7 @@ gateway 读取 `config.yaml` 并使用相同的 Gemini provider 配置。
 
 ### "Gemini native client requires an API key"
 
-Chiper 找不到可用的 API 密钥。请将以下任一项添加到 `~/.Chiper/.env`：
+Chiper 找不到可用的 API 密钥。请将以下任一项添加到 `~/.chiper/.env`：
 
 ```bash
 GOOGLE_API_KEY=...
@@ -244,7 +244,7 @@ chiper model
 
 ### Gemma 模型未显示在 `chiper model` 中
 
-Chiper 默认可能会在选择器中隐藏低吞吐量的 Gemma 模型。如果你有意评估某个模型，请直接在 `~/.Chiper/config.yaml` 中设置模型 ID。
+Chiper 默认可能会在选择器中隐藏低吞吐量的 Gemma 模型。如果你有意评估某个模型，请直接在 `~/.chiper/config.yaml` 中设置模型 ID。
 
 ### Gemma 出现 "429 quota exceeded"
 
@@ -252,7 +252,7 @@ Chiper 默认可能会在选择器中隐藏低吞吐量的 Gemma 模型。如果
 
 ### 已配置 OpenAI 兼容端点
 
-检查 `~/.Chiper/.env` 中是否存在：
+检查 `~/.chiper/.env` 中是否存在：
 
 ```bash
 GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/

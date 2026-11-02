@@ -30,7 +30,7 @@ def test_recommended_update_command_defaults_to_chiper_update(monkeypatch):
     monkeypatch.delenv("CHIPER_MANAGED", raising=False)
 
     # Also short-circuit the .managed marker path — CI runners may have an
-    # ambient ~/.Chiper/.managed if a prior test left CHIPER_HOME pointing
+    # ambient ~/.chiper/.managed if a prior test left CHIPER_HOME pointing
     # somewhere with that marker, which would make get_managed_update_command()
     # return "Update your Nix flake input ..." instead of falling through to
     # detect_install_method().

@@ -183,7 +183,7 @@ Each rung adds more permanent surface than the one above. Choose the highest
    only appears when a prerequisite is configured. Zero footprint otherwise.
    Examples: Home Assistant tools (gated on token), memory-provider tools.
 4. **Plugin** — third-party/niche/user-specific capability that doesn't ship in
-   core. Lives in `~/.Chiper/plugins/` or a pip package, discovered at runtime.
+   core. Lives in `~/.chiper/plugins/` or a pip package, discovered at runtime.
 5. **MCP server (in the catalog)** — if the capability genuinely needs to be a
    tool (structured I/O the agent invokes) but isn't core-fundamental, prefer
    building it as an MCP server and adding it to the MCP catalog over growing
@@ -207,7 +207,7 @@ source .venv/bin/activate   # or: source venv/bin/activate
 ```
 
 `scripts/run_tests.sh` probes `.venv` first, then `venv`, then
-`$HOME/.Chiper/chiper-agent/venv` (for worktrees that share a venv with the
+`$HOME/.chiper/chiper-agent/venv` (for worktrees that share a venv with the
 main checkout).
 
 ## Project Structure
@@ -258,8 +258,8 @@ chiper-agent/
 └── tests/                # Pytest suite (~17k tests across ~900 files as of May 2026)
 ```
 
-**User config:** `~/.Chiper/config.yaml` (settings), `~/.Chiper/.env` (API keys only).
-**Logs:** `~/.Chiper/logs/` — `agent.log` (INFO+), `errors.log` (WARNING+),
+**User config:** `~/.chiper/config.yaml` (settings), `~/.chiper/.env` (API keys only).
+**Logs:** `~/.chiper/logs/` — `agent.log` (INFO+), `errors.log` (WARNING+),
 `gateway.log` when running the gateway. Profile-aware via `get_chiper_home()`.
 Browse with `chiper logs [--follow] [--level ...] [--session ...]`.
 
@@ -367,7 +367,7 @@ Reasoning content is stored in `assistant_msg["reasoning"]`.
 - `load_cli_config()` in cli.py merges hardcoded defaults + user config YAML
 - **Skin engine** (`chiper_cli/skin_engine.py`) — data-driven CLI theming; initialized from `display.skin` config key at startup; skins customize banner colors, spinner faces/verbs/wings, tool prefix, response box, branding text
 - `process_command()` is a method on `ChiperCLI` — dispatches on canonical command name resolved via `resolve_command()` from the central registry
-- Skill slash commands: `agent/skill_commands.py` scans `~/.Chiper/skills/`, injects as **user message** (not system prompt) to preserve prompt caching
+- Skill slash commands: `agent/skill_commands.py` scans `~/.chiper/skills/`, injects as **user message** (not system prompt) to preserve prompt caching
 
 ### Slash Command Registry (`chiper_cli/commands.py`)
 
@@ -500,8 +500,8 @@ A **separate** chat surface from both the classic CLI and the dashboard's embedd
 Before adding any tool, settle the footprint question first (see "The
 Footprint Ladder" in the Contribution Rubric): most capabilities should NOT
 be core tools. For custom or local-only tools, do **not** edit Chiper core.
-Use the plugin route instead: create `~/.Chiper/plugins/<name>/plugin.yaml`
-and `~/.Chiper/plugins/<name>/__init__.py`, then register tools with
+Use the plugin route instead: create `~/.chiper/plugins/<name>/plugin.yaml`
+and `~/.chiper/plugins/<name>/__init__.py`, then register tools with
 `ctx.register_tool(...)`. Plugin toolsets are discovered automatically and can be
 enabled or disabled without touching `tools/` or `toolsets.py`.
 
@@ -640,7 +640,7 @@ The skin engine (`chiper_cli/skin_engine.py`) provides data-driven CLI visual cu
 
 ```
 chiper_cli/skin_engine.py    # SkinConfig dataclass, built-in skins, YAML loader
-~/.Chiper/skins/*.yaml       # User-installed custom skins (drop-in)
+~/.chiper/skins/*.yaml       # User-installed custom skins (drop-in)
 ```
 
 - `init_skin_from_config()` — called at CLI startup, reads `display.skin` from config
@@ -694,7 +694,7 @@ Add to `_BUILTIN_SKINS` dict in `chiper_cli/skin_engine.py`:
 
 ### User skins (YAML)
 
-Users create `~/.Chiper/skins/<name>.yaml`:
+Users create `~/.chiper/skins/<name>.yaml`:
 
 ```yaml
 name: cyberpunk
@@ -725,11 +725,11 @@ Activate with `/skin cyberpunk` or `display.skin: cyberpunk` in config.yaml.
 
 Chiper has two plugin surfaces. Both live under `plugins/` in the repo so
 repo-shipped plugins can be discovered alongside user-installed ones in
-`~/.Chiper/plugins/` and pip-installed entry points.
+`~/.chiper/plugins/` and pip-installed entry points.
 
 ### General plugins (`chiper_cli/plugins.py` + `plugins/<name>/`)
 
-`PluginManager` discovers plugins from `~/.Chiper/plugins/`, `./.Chiper/plugins/`,
+`PluginManager` discovers plugins from `~/.chiper/plugins/`, `./.chiper/plugins/`,
 and pip entry points. Each plugin exposes a `register(ctx)` function that
 can:
 
@@ -775,7 +775,7 @@ honcho argparse from `main.py` for exactly this reason.
 **No new in-tree memory providers (policy, May 2026):** the set of
 built-in memory providers under `plugins/memory/` is closed. New memory
 backends must ship as **standalone plugin repos** that users install
-into `~/.Chiper/plugins/` (or via pip entry points) — they implement
+into `~/.chiper/plugins/` (or via pip entry points) — they implement
 the same `MemoryProvider` ABC, register through the same discovery
 path, and integrate via `chiper memory setup` / `post_setup()` without
 landing in this tree. PRs that add a new directory under
@@ -988,7 +988,7 @@ work that must outlive the current turn, use `cronjob` or
 
 Background skill-maintenance system that tracks usage on agent-created
 skills and auto-archives stale ones. Users never lose skills; archives
-go to `~/.Chiper/skills/.archive/` and are restorable.
+go to `~/.chiper/skills/.archive/` and are restorable.
 
 - **Core:** `agent/curator.py` (review loop, auto-transitions, LLM review
   prompt) + `agent/curator_backup.py` (pre-run tar.gz snapshots).
@@ -996,7 +996,7 @@ go to `~/.Chiper/skills/.archive/` and are restorable.
   verbs are: `status`, `run`, `pause`, `resume`, `pin`, `unpin`,
   `archive`, `restore`, `prune`, `backup`, `rollback`.
 - **Telemetry:** `tools/skill_usage.py` owns the sidecar
-  `~/.Chiper/skills/.usage.json` — per-skill `use_count`, `view_count`,
+  `~/.chiper/skills/.usage.json` — per-skill `use_count`, `view_count`,
   `patch_count`, `last_activity_at`, `state` (active / stale /
   archived), `pinned`.
 
@@ -1043,7 +1043,7 @@ Hardening invariants:
   cannot monopolize the scheduler.
 - Catchup window: half the job's period, clamped to 120s–2h.
 - Grace window: 120s for one-shot jobs whose fire time was missed.
-- File lock at `~/.Chiper/cron/.tick.lock` prevents duplicate ticks
+- File lock at `~/.chiper/cron/.tick.lock` prevents duplicate ticks
   across processes.
 - Cron sessions pass `skip_memory=True` by default; memory providers
   intentionally do not run during cron.
@@ -1137,7 +1137,7 @@ automatically scope to the active profile.
 ### Rules for profile-safe code
 
 1. **Use `get_chiper_home()` for all CHIPER_HOME paths.** Import from `chiper_constants`.
-   NEVER hardcode `~/.Chiper` or `Path.home() / ".chiper"` in code that reads/writes state.
+   NEVER hardcode `~/.chiper` or `Path.home() / ".chiper"` in code that reads/writes state.
    ```python
    # GOOD
    from chiper_constants import get_chiper_home
@@ -1148,14 +1148,14 @@ automatically scope to the active profile.
    ```
 
 2. **Use `display_chiper_home()` for user-facing messages.** Import from `chiper_constants`.
-   This returns `~/.Chiper` for default or `~/.Chiper/profiles/<name>` for profiles.
+   This returns `~/.chiper` for default or `~/.chiper/profiles/<name>` for profiles.
    ```python
    # GOOD
    from chiper_constants import display_chiper_home
    print(f"Config saved to {display_chiper_home()}/config.yaml")
 
    # BAD — shows wrong path for profiles
-   print("Config saved to ~/.Chiper/config.yaml")
+   print("Config saved to ~/.chiper/config.yaml")
    ```
 
 3. **Module-level constants are fine** — they cache `get_chiper_home()` at import time,
@@ -1183,9 +1183,9 @@ automatically scope to the active profile.
 
 ## Known Pitfalls
 
-### DO NOT hardcode `~/.Chiper` paths
+### DO NOT hardcode `~/.chiper` paths
 Use `get_chiper_home()` from `chiper_constants` for code paths. Use `display_chiper_home()`
-for user-facing print/log messages. Hardcoding `~/.Chiper` breaks profiles — each profile
+for user-facing print/log messages. Hardcoding `~/.chiper` breaks profiles — each profile
 has its own `CHIPER_HOME` directory. This was the source of 5 bugs fixed in PR #3575.
 
 ### DO NOT introduce new `simple_term_menu` usage
@@ -1228,8 +1228,8 @@ Unused code that was never shipped was dead for a reason. Before wiring an
 unused module into a live code path, E2E test the real resolution chain
 with actual imports (not mocks) against a temp `CHIPER_HOME`.
 
-### Tests must not write to `~/.Chiper/`
-The `_isolate_chiper_home` autouse fixture in `tests/conftest.py` redirects `CHIPER_HOME` to a temp dir. Never hardcode `~/.Chiper/` paths in tests.
+### Tests must not write to `~/.chiper/`
+The `_isolate_chiper_home` autouse fixture in `tests/conftest.py` redirects `CHIPER_HOME` to a temp dir. Never hardcode `~/.chiper/` paths in tests.
 
 **Profile tests**: When testing profile features, also mock `Path.home()` so that
 `_get_profiles_root()` and `_get_default_chiper_home()` resolve within the temp dir.
@@ -1290,7 +1290,7 @@ Five real sources of local-vs-CI drift the script closes:
 | | Without wrapper | With wrapper |
 |---|---|---|
 | Provider API keys | Whatever is in your env (auto-detects pool) | All `*_API_KEY`/`*_TOKEN`/etc. unset |
-| HOME / `~/.Chiper/` | Your real config+auth.json | Temp dir per test |
+| HOME / `~/.chiper/` | Your real config+auth.json | Temp dir per test |
 | Timezone | Local TZ (PDT etc.) | UTC |
 | Locale | Whatever is set | C.UTF-8 |
 | xdist workers | `-n auto` = all cores | `-n auto` (safe — subprocess isolation prevents cross-worker flakes) |

@@ -92,7 +92,7 @@ class TestPluginDiscovery:
     """Tests for plugin discovery from directories and entry points."""
 
     def test_discover_user_plugins(self, tmp_path, monkeypatch):
-        """Plugins in ~/.Chiper/plugins/ are discovered."""
+        """Plugins in ~/.chiper/plugins/ are discovered."""
         plugins_dir = tmp_path / "chiper_test" / "plugins"
         _make_plugin_dir(plugins_dir, "hello_plugin")
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "chiper_test"))
@@ -321,7 +321,7 @@ class TestPluginDiscovery:
         assert result.payload["lock"] is args["lock"]
 
     def test_discover_project_plugins(self, tmp_path, monkeypatch):
-        """Plugins in ./.Chiper/plugins/ are discovered."""
+        """Plugins in ./.chiper/plugins/ are discovered."""
         project_dir = tmp_path / "project"
         project_dir.mkdir()
         monkeypatch.chdir(project_dir)

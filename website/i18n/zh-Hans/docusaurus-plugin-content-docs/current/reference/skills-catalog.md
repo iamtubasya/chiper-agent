@@ -6,9 +6,9 @@ description: "随 Chiper Agent 附带的内置技能目录"
 
 # 内置技能目录
 
-Chiper 附带一个大型内置技能库，安装时会复制到 `~/.Chiper/skills/`。下方每个技能均链接至专属页面，包含完整定义、配置和用法说明。
+Chiper 附带一个大型内置技能库，安装时会复制到 `~/.chiper/skills/`。下方每个技能均链接至专属页面，包含完整定义、配置和用法说明。
 
-Chiper 在执行 `chiper update` 时也会同步内置技能，但同步清单会尊重本地删除和用户编辑。如果此处列出的某个技能在你的 `~/.Chiper/skills/` 目录树中缺失，它仍随 Chiper 一同发布；可通过 `chiper skills reset <name> --restore` 恢复。
+Chiper 在执行 `chiper update` 时也会同步内置技能，但同步清单会尊重本地删除和用户编辑。如果此处列出的某个技能在你的 `~/.chiper/skills/` 目录树中缺失，它仍随 Chiper 一同发布；可通过 `chiper skills reset <name> --restore` 恢复。
 
 如果某个技能未出现在此列表中但存在于仓库中，目录由 `website/scripts/generate-skill-docs.py` 重新生成。
 

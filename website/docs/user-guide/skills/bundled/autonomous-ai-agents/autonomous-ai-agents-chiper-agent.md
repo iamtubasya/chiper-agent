@@ -305,7 +305,7 @@ The registry of record is `chiper_cli/commands.py` — every consumer
 /toolsets            List toolsets (CLI)
 /skills              Search/install skills (CLI)
 /skill <name>        Load a skill into session
-/reload-skills       Re-scan ~/.Chiper/skills/ for added/removed skills
+/reload-skills       Re-scan ~/.chiper/skills/ for added/removed skills
 /reload              Reload .env variables into the running session (CLI)
 /reload-mcp          Reload MCP servers
 /cron                Manage cron jobs (CLI)
@@ -359,17 +359,17 @@ The registry of record is `chiper_cli/commands.py` — every consumer
 ## Key Paths & Config
 
 ```
-~/.Chiper/config.yaml       Main configuration
-~/.Chiper/.env              API keys and secrets
+~/.chiper/config.yaml       Main configuration
+~/.chiper/.env              API keys and secrets
 $CHIPER_HOME/skills/        Installed skills
-~/.Chiper/sessions/         Gateway routing index, request dumps, *.jsonl transcripts (and optional per-session JSON snapshots when sessions.write_json_snapshots: true)
-~/.Chiper/state.db          Canonical session store (SQLite + FTS5)
-~/.Chiper/logs/             Gateway and error logs
-~/.Chiper/auth.json         OAuth tokens and credential pools
-~/.Chiper/chiper-agent/     Source code (if git-installed)
+~/.chiper/sessions/         Gateway routing index, request dumps, *.jsonl transcripts (and optional per-session JSON snapshots when sessions.write_json_snapshots: true)
+~/.chiper/state.db          Canonical session store (SQLite + FTS5)
+~/.chiper/logs/             Gateway and error logs
+~/.chiper/auth.json         OAuth tokens and credential pools
+~/.chiper/chiper-agent/     Source code (if git-installed)
 ```
 
-Profiles use `~/.Chiper/profiles/<name>/` with the same layout.
+Profiles use `~/.chiper/profiles/<name>/` with the same layout.
 
 ### Config Sections
 
@@ -513,7 +513,7 @@ Note: YOLO / `approvals.mode: off` does NOT turn off secret redaction. They are 
 
 ### Shell hooks allowlist
 
-Some shell-hook integrations require explicit allowlisting before they fire. Managed via `~/.Chiper/shell-hooks-allowlist.json` — prompted interactively the first time a hook wants to run.
+Some shell-hook integrations require explicit allowlisting before they fire. Managed via `~/.chiper/shell-hooks-allowlist.json` — prompted interactively the first time a hook wants to run.
 
 ### Disabling the web/browser/image-gen tools
 
@@ -694,7 +694,7 @@ so nothing is lost.
   Bundled + hub-installed skills are off-limits. **Never deletes** —
   max destructive action is archive. Pinned skills are exempt from
   every auto-transition and every LLM review pass.
-- **Telemetry:** sidecar at `~/.Chiper/skills/.usage.json` holds
+- **Telemetry:** sidecar at `~/.chiper/skills/.usage.json` holds
   per-skill `use_count`, `view_count`, `patch_count`,
   `last_activity_at`, `state`, `pinned`.
 
@@ -854,7 +854,7 @@ and logs — avoids shell-escaping backslashes in bash.
 ### Gateway issues
 Check logs first:
 ```bash
-grep -i "failed to send\|error" ~/.Chiper/logs/gateway.log | tail -20
+grep -i "failed to send\|error" ~/.chiper/logs/gateway.log | tail -20
 ```
 
 Common gateway problems:
@@ -892,9 +892,9 @@ chiper config set auxiliary.vision.model <model_name>
 | Memory | `chiper memory status` or [Memory docs](https://chiper-agent.Chiper.com/docs/user-guide/features/memory) |
 | Env variables | `chiper config env-path` or [Env vars reference](https://chiper-agent.Chiper.com/docs/reference/environment-variables) |
 | CLI commands | `chiper --help` or [CLI reference](https://chiper-agent.Chiper.com/docs/reference/cli-commands) |
-| Gateway logs | `~/.Chiper/logs/gateway.log` |
+| Gateway logs | `~/.chiper/logs/gateway.log` |
 | Session files | `chiper sessions browse` (reads state.db) |
-| Source code | `~/.Chiper/chiper-agent/` |
+| Source code | `~/.chiper/chiper-agent/` |
 
 ---
 
@@ -927,7 +927,7 @@ chiper-agent/
 ```
 <!-- ascii-guard-ignore-end -->
 
-Config: `~/.Chiper/config.yaml` (settings), `~/.Chiper/.env` (API keys).
+Config: `~/.chiper/config.yaml` (settings), `~/.chiper/.env` (API keys).
 
 ### Adding a Tool (3 files)
 
@@ -957,7 +957,7 @@ registry.register(
 
 Auto-discovery: any `tools/*.py` file with a top-level `registry.register()` call is imported automatically — no manual list needed.
 
-All handlers must return JSON strings. Use `get_chiper_home()` for paths, never hardcode `~/.Chiper`.
+All handlers must return JSON strings. Use `get_chiper_home()` for paths, never hardcode `~/.chiper`.
 
 ### Adding a Slash Command
 
@@ -986,7 +986,7 @@ python -m pytest tests/ -o 'addopts=' -q   # Full suite
 python -m pytest tests/tools/ -q            # Specific area
 ```
 
-- Tests auto-redirect `CHIPER_HOME` to temp dirs — never touch real `~/.Chiper/`
+- Tests auto-redirect `CHIPER_HOME` to temp dirs — never touch real `~/.chiper/`
 - Run full suite before pushing any change
 - Use `-o 'addopts='` to clear any baked-in pytest flags
 

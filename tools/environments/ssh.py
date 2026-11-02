@@ -70,7 +70,7 @@ class SSHEnvironment(BaseEnvironment):
 
         self._ensure_remote_dirs()
         self._sync_manager = FileSyncManager(
-            get_files_fn=lambda: iter_sync_files(f"{self._remote_home}/.Chiper"),
+            get_files_fn=lambda: iter_sync_files(f"{self._remote_home}/.chiper"),
             upload_fn=self._scp_upload,
             delete_fn=self._ssh_delete,
             bulk_upload_fn=self._ssh_bulk_upload,
@@ -141,8 +141,8 @@ class SSHEnvironment(BaseEnvironment):
     # ------------------------------------------------------------------
 
     def _ensure_remote_dirs(self) -> None:
-        """Create base ~/.Chiper directory tree on remote in one SSH call."""
-        base = f"{self._remote_home}/.Chiper"
+        """Create base ~/.chiper directory tree on remote in one SSH call."""
+        base = f"{self._remote_home}/.chiper"
         dirs = [base, f"{base}/skills", f"{base}/credentials", f"{base}/cache"]
         cmd = self._build_ssh_command()
         cmd.append(quoted_mkdir_command(dirs))
@@ -199,7 +199,7 @@ class SSHEnvironment(BaseEnvironment):
         if not files:
             return
 
-        base = f"{self._remote_home}/.Chiper"
+        base = f"{self._remote_home}/.chiper"
         parents = unique_parent_dirs(files)
         if parents:
             cmd = self._build_ssh_command()
@@ -303,8 +303,8 @@ class SSHEnvironment(BaseEnvironment):
     def _ssh_bulk_download(self, dest: Path) -> None:
         """Download remote .chiper/ as a tar archive."""
         # Tar from / with the full path so archive entries preserve absolute
-        # paths (e.g. home/user/.Chiper/skills/f.py), matching _pushed_hashes keys.
-        rel_base = f"{self._remote_home}/.Chiper".lstrip("/")
+        # paths (e.g. home/user/.chiper/skills/f.py), matching _pushed_hashes keys.
+        rel_base = f"{self._remote_home}/.chiper".lstrip("/")
         ssh_cmd = self._build_ssh_command()
         ssh_cmd.append(f"tar cf - -C / {shlex.quote(rel_base)}")
         with open(dest, "wb") as f:

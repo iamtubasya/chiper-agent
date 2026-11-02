@@ -539,7 +539,7 @@ def _looks_like_test_tempdir(path: str) -> bool:
     codex-routed chiper-tools call fails silently once the directory is GC'd.
 
     We err on the side of refusing — losing a (very unlikely) real
-    ``~/.Chiper`` symlink that happens to live under ``/private/var/folders``
+    ``~/.chiper`` symlink that happens to live under ``/private/var/folders``
     is much less harmful than silently bricking codex's tool surface.
     """
     if not path:
@@ -619,7 +619,7 @@ def migrate(
     ~/.codex/config.toml.
 
     Args:
-        chiper_config: full ~/.Chiper/config.yaml dict
+        chiper_config: full ~/.chiper/config.yaml dict
         codex_home: override CODEX_HOME (defaults to ~/.codex)
         dry_run: skip the actual write; report what would happen
         discover_plugins: when True (default), query `plugin/list` against

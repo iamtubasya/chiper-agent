@@ -149,8 +149,8 @@ You can switch providers at any time with `chiper model` — no lock-in. For a f
 
 Chiper separates secrets from normal config:
 
-- **Secrets and tokens** → `~/.Chiper/.env`
-- **Non-secret settings** → `~/.Chiper/config.yaml`
+- **Secrets and tokens** → `~/.chiper/.env`
+- **Non-secret settings** → `~/.chiper/config.yaml`
 
 The easiest way to set values correctly is through the CLI:
 
@@ -268,8 +268,8 @@ chiper config set terminal.backend ssh       # Remote server
 
 ```bash
 # From the Chiper install directory (the curl installer placed it at
-# ~/.Chiper/chiper-agent on Linux/macOS or %LOCALAPPDATA%\chiper\chiper-agent on Windows):
-cd ~/.Chiper/chiper-agent
+# ~/.chiper/chiper-agent on Linux/macOS or %LOCALAPPDATA%\chiper\chiper-agent on Windows):
+cd ~/.chiper/chiper-agent
 uv pip install -e ".[voice]"
 # Includes faster-whisper for free local speech-to-text
 ```
@@ -280,7 +280,7 @@ Then in the CLI: `/voice on`. Press `Ctrl+B` to record. See [Voice Mode](../user
 
 Skills are on-demand instruction documents that teach Chiper how to do a specific task — deploy to Kubernetes, open a GitHub PR, fine-tune a model, search for GIFs. Each is a `SKILL.md` file with a name, a description, and a step-by-step procedure. The agent reads the short descriptions for free and only loads a skill's full content when a task actually calls for it, so adding skills doesn't bloat every request.
 
-Chiper ships with a catalog of bundled skills already installed in `~/.Chiper/skills/`. You can add more from the Skills Hub, or write your own.
+Chiper ships with a catalog of bundled skills already installed in `~/.chiper/skills/`. You can add more from the Skills Hub, or write your own.
 
 **Browse and install from the hub:**
 
@@ -306,7 +306,7 @@ See [Skills System](../user-guide/features/skills.md) for writing your own, exte
 ### MCP servers
 
 ```yaml
-# Add to ~/.Chiper/config.yaml
+# Add to ~/.chiper/config.yaml
 mcp_servers:
   github:
     command: npx
@@ -323,7 +323,7 @@ ACP support ships with the standard `[all]` extras, so the curl installer alread
 chiper acp
 ```
 
-(If you installed without `[all]`, run `cd ~/.Chiper/chiper-agent && uv pip install -e ".[acp]"` first.)
+(If you installed without `[all]`, run `cd ~/.chiper/chiper-agent && uv pip install -e ".[acp]"` first.)
 
 See [ACP Editor Integration](../user-guide/features/acp.md).
 

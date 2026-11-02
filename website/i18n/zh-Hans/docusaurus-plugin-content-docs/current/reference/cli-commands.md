@@ -27,7 +27,7 @@ chiper [global-options] <command> [subcommand/options]
 | `--worktree`, `-w` | 在隔离的 git worktree 中启动，用于并行 agent 工作流。 |
 | `--yolo` | 跳过危险命令的审批提示。 |
 | `--pass-session-id` | 在 agent 的 system prompt（系统提示词）中包含会话 ID。 |
-| `--ignore-user-config` | 忽略 `~/.Chiper/config.yaml`，回退到内置默认值。`.env` 中的凭据仍会加载。 |
+| `--ignore-user-config` | 忽略 `~/.chiper/config.yaml`，回退到内置默认值。`.env` 中的凭据仍会加载。 |
 | `--ignore-rules` | 跳过 `AGENTS.md`、`SOUL.md`、`.cursorrules`、memory（记忆）和预加载 skill 的自动注入。 |
 | `--tui` | 启动 [TUI](../user-guide/tui.md) 而非经典 CLI。等同于 `CHIPER_TUI=1`。 |
 | `--dev` | 与 `--tui` 配合使用：通过 `tsx` 直接运行 TypeScript 源码而非预构建包（供 TUI 贡献者使用）。 |
@@ -57,7 +57,7 @@ chiper [global-options] <command> [subcommand/options]
 | `chiper dump` | 可直接复制粘贴的设置摘要，用于支持/调试。 |
 | `chiper debug` | 调试工具——上传日志和系统信息以获取支持。 |
 | `chiper backup` | 将 Chiper 主目录备份为 zip 文件。 |
-| `chiper checkpoints` | 检查/修剪/清除 `~/.Chiper/checkpoints/`（`/rollback` 使用的影子存储）。不带参数运行可查看状态概览。 |
+| `chiper checkpoints` | 检查/修剪/清除 `~/.chiper/checkpoints/`（`/rollback` 使用的影子存储）。不带参数运行可查看状态概览。 |
 | `chiper import` | 从 zip 文件恢复 Chiper 备份。 |
 | `chiper logs` | 查看、跟踪和过滤 agent/gateway/错误日志文件。 |
 | `chiper config` | 显示、编辑、迁移和查询配置文件。 |
@@ -105,7 +105,7 @@ chiper chat [options]
 | `--checkpoints` | 在破坏性文件变更前启用文件系统 checkpoint。 |
 | `--yolo` | 跳过审批提示。 |
 | `--pass-session-id` | 将会话 ID 传入 system prompt。 |
-| `--ignore-user-config` | 忽略 `~/.Chiper/config.yaml`，使用内置默认值。`.env` 中的凭据仍会加载。适用于隔离的 CI 运行、可复现的 bug 报告和第三方集成。 |
+| `--ignore-user-config` | 忽略 `~/.chiper/config.yaml`，使用内置默认值。`.env` 中的凭据仍会加载。适用于隔离的 CI 运行、可复现的 bug 报告和第三方集成。 |
 | `--ignore-rules` | 跳过 `AGENTS.md`、`SOUL.md`、`.cursorrules`、持久 memory 和预加载 skill 的自动注入。与 `--ignore-user-config` 组合可实现完全隔离的运行。 |
 | `--source <tag>` | 用于过滤的会话来源标签（默认：`cli`）。对于不应出现在用户会话列表中的第三方集成，使用 `tool`。 |
 | `--max-turns <N>` | 每个对话轮次的最大工具调用迭代次数（默认：90，或 config 中的 `agent.max_turns`）。 |
@@ -134,7 +134,7 @@ chiper -z "What's the capital of France?"
 answer=$(chiper -z "summarize this" < /path/to/file.txt)
 ```
 
-单次运行覆盖（不修改 `~/.Chiper/config.yaml`）：
+单次运行覆盖（不修改 `~/.chiper/config.yaml`）：
 
 | 标志 | 等效环境变量 | 用途 |
 |---|---|---|
@@ -309,7 +309,7 @@ chiper whatsapp
 
 ```bash
 chiper slack manifest              # 将 manifest 打印到 stdout
-chiper slack manifest --write      # 写入 ~/.Chiper/slack-manifest.json
+chiper slack manifest --write      # 写入 ~/.chiper/slack-manifest.json
 chiper slack manifest --slashes-only  # 仅输出 features.slash_commands 数组
 ```
 
@@ -385,7 +385,7 @@ chiper cron <list|create|edit|pause|resume|run|remove|status|tick>
 chiper kanban [--board <slug>] <action> [options]
 ```
 
-多 profile、多项目协作看板。每个安装可托管多个看板（每个项目、仓库或领域一个）；每个看板是独立的队列，拥有自己的 SQLite 数据库和调度器作用域。新安装从名为 `default` 的单个看板开始，其数据库为 `~/.Chiper/kanban.db`（向后兼容）；其他看板位于 `~/.Chiper/kanban/boards/<slug>/kanban.db`。嵌入在 gateway 中的调度器每次 tick 扫描所有看板。
+多 profile、多项目协作看板。每个安装可托管多个看板（每个项目、仓库或领域一个）；每个看板是独立的队列，拥有自己的 SQLite 数据库和调度器作用域。新安装从名为 `default` 的单个看板开始，其数据库为 `~/.chiper/kanban.db`（向后兼容）；其他看板位于 `~/.chiper/kanban/boards/<slug>/kanban.db`。嵌入在 gateway 中的调度器每次 tick 扫描所有看板。
 
 **全局标志（适用于以下所有操作）：**
 
@@ -400,7 +400,7 @@ chiper kanban [--board <slug>] <action> [options]
 | `init` | 如果缺少则创建 `kanban.db`。幂等操作。 |
 | `boards list` / `boards ls` | 列出所有看板及任务数量。支持 `--json`、`--all`（包含已归档）。 |
 | `boards create <slug>` | 创建新看板。标志：`--name`、`--description`、`--icon`、`--color`、`--switch`（设为活跃）。Slug 为 kebab-case，自动转小写。 |
-| `boards switch <slug>` / `boards use` | 将 `<slug>` 持久化为活跃看板（写入 `~/.Chiper/kanban/current`）。 |
+| `boards switch <slug>` / `boards use` | 将 `<slug>` 持久化为活跃看板（写入 `~/.chiper/kanban/current`）。 |
 | `boards show` / `boards current` | 打印当前活跃看板的名称、数据库路径和任务数量。 |
 | `boards rename <slug> "<name>"` | 更改看板的显示名称。Slug 不可变。 |
 | `boards rm <slug>` | 归档（默认）或硬删除看板。`--delete` 跳过归档步骤。已归档看板移至 `boards/_archived/<slug>-<ts>/`。`default` 看板拒绝此操作。 |
@@ -440,7 +440,7 @@ chiper kanban boards rm atm10-server
 chiper kanban boards rm atm10-server --delete
 ```
 
-看板解析顺序（优先级从高到低）：`--board <slug>` 标志 → `CHIPER_KANBAN_BOARD` 环境变量 → `~/.Chiper/kanban/current` 文件 → `default`。
+看板解析顺序（优先级从高到低）：`--board <slug>` 标志 → `CHIPER_KANBAN_BOARD` 环境变量 → `~/.chiper/kanban/current` 文件 → `default`。
 
 所有操作也可作为 gateway 中的斜杠命令使用（`/kanban …`），参数界面相同——包括 `boards` 子命令和 `--board` 标志。
 
@@ -478,7 +478,7 @@ chiper webhook subscribe <name> [options]
 | `--secret` | 自定义 HMAC 密钥。省略时自动生成。 |
 | `--deliver-only` | 跳过 agent——将渲染后的 `--prompt` 作为字面消息投递。零 LLM 成本，亚秒级投递。要求 `--deliver` 为真实目标（非 `log`）。 |
 
-订阅持久化到 `~/.Chiper/webhook_subscriptions.json`，webhook 适配器无需重启 gateway 即可热重载。
+订阅持久化到 `~/.chiper/webhook_subscriptions.json`，webhook 适配器无需重启 gateway 即可热重载。
 
 ## `chiper doctor`
 
@@ -526,7 +526,7 @@ os:               Linux 6.14.0-37-generic x86_64
 python:           3.11.14
 openai_sdk:       2.24.0
 profile:          default
-chiper_home:      ~/.Chiper
+chiper_home:      ~/.chiper
 model:            anthropic/claude-opus-4.6
 provider:         openrouter
 terminal:         local
@@ -630,7 +630,7 @@ chiper backup --quick --label "pre-upgrade"  # 带标签的快速快照
 chiper checkpoints [COMMAND]
 ```
 
-检查和管理 `~/.Chiper/checkpoints/` 处的影子 git 存储——会话内 `/rollback` 命令的存储层。可随时安全运行；不需要 agent 正在运行。
+检查和管理 `~/.chiper/checkpoints/` 处的影子 git 存储——会话内 `/rollback` 命令的存储层。可随时安全运行；不需要 agent 正在运行。
 
 | 子命令 | 说明 |
 |------------|-------------|
@@ -690,7 +690,7 @@ chiper import ~/chiper-backup-20260423.zip --force   # 不提示直接覆盖
 chiper logs [log_name] [options]
 ```
 
-查看、跟踪和过滤 Chiper 日志文件。所有日志存储在 `~/.Chiper/logs/`（非默认 profile 存储在 `<profile>/logs/`）。
+查看、跟踪和过滤 Chiper 日志文件。所有日志存储在 `~/.chiper/logs/`（非默认 profile 存储在 `<profile>/logs/`）。
 
 ### 日志文件
 
@@ -842,7 +842,7 @@ chiper skills reset google-workspace --restore --yes
 chiper bundles <subcommand>
 ```
 
-Skill bundle 将多个 skill 归组到一个 `/<bundle-name>` 斜杠命令下。调用 bundle 会将每个引用的 skill 加载到单个合并的用户消息中。存储位置：`~/.Chiper/skill-bundles/<slug>.yaml`。YAML schema 和行为请参阅 [Skill Bundles](../user-guide/features/skills.md#skill-bundles)。
+Skill bundle 将多个 skill 归组到一个 `/<bundle-name>` 斜杠命令下。调用 bundle 会将每个引用的 skill 加载到单个合并的用户消息中。存储位置：`~/.chiper/skill-bundles/<slug>.yaml`。YAML schema 和行为请参阅 [Skill Bundles](../user-guide/features/skills.md#skill-bundles)。
 
 子命令：
 
@@ -852,7 +852,7 @@ Skill bundle 将多个 skill 归组到一个 `/<bundle-name>` 斜杠命令下。
 | `show <name>` | 显示某个 bundle 的名称、描述、skill 和文件路径 |
 | `create <name>` | 创建新 bundle。传入 `--skill <id>`（可重复）或省略以进行交互式输入。支持 `--description`、`--instruction`、`--force`。 |
 | `delete <name>` | 删除 bundle 文件 |
-| `reload` | 重新扫描 `~/.Chiper/skill-bundles/` 并报告新增/删除的 bundle |
+| `reload` | 重新扫描 `~/.chiper/skill-bundles/` 并报告新增/删除的 bundle |
 
 示例：
 
@@ -884,8 +884,8 @@ Curator 是一个辅助模型后台任务，定期审查 agent 创建的 skill�
 | `run` | 立即触发 curator 审查（阻塞直到 LLM 处理完成） |
 | `run --background` | 在后台线程中启动 LLM 处理并立即返回 |
 | `run --dry-run` | 仅预览——生成审查报告但不进行任何修改 |
-| `backup` | 手动对 `~/.Chiper/skills/` 进行 tar.gz 快照（curator 在每次真实运行前也会自动快照） |
-| `rollback` | 从快照恢复 `~/.Chiper/skills/`（默认使用最新快照） |
+| `backup` | 手动对 `~/.chiper/skills/` 进行 tar.gz 快照（curator 在每次真实运行前也会自动快照） |
+| `rollback` | 从快照恢复 `~/.chiper/skills/`（默认使用最新快照） |
 | `rollback --list` | 列出可用快照 |
 | `rollback --id <ts>` | 按 id 恢复特定快照 |
 | `rollback -y` | 跳过确认提示 |
@@ -925,7 +925,7 @@ chiper fallback <subcommand>
 chiper hooks <subcommand>
 ```
 
-检查 `~/.Chiper/config.yaml` 中声明的 shell 脚本 hook，针对合成 payload 测试它们，并管理 `~/.Chiper/shell-hooks-allowlist.json` 处的首次使用同意许可名单。
+检查 `~/.chiper/config.yaml` 中声明的 shell 脚本 hook，针对合成 payload 测试它们，并管理 `~/.chiper/shell-hooks-allowlist.json` 处的首次使用同意许可名单。
 
 | 子命令 | 说明 |
 |------------|-------------|
@@ -1093,7 +1093,7 @@ chiper insights [--days N] [--source platform]
 chiper claw migrate [options]
 ```
 
-将 OpenClaw 设置迁移到 Chiper。从 `~/.openclaw`（或自定义路径）读取并写入 `~/.Chiper`。自动检测旧版目录名（`~/.clawdbot`、`~/.moltbot`）和配置文件名（`clawdbot.json`、`moltbot.json`）。
+将 OpenClaw 设置迁移到 Chiper。从 `~/.openclaw`（或自定义路径）读取并写入 `~/.chiper`。自动检测旧版目录名（`~/.clawdbot`、`~/.moltbot`）和配置文件名（`clawdbot.json`、`moltbot.json`）。
 
 | 选项 | 说明 |
 |--------|-------------|
@@ -1101,7 +1101,7 @@ chiper claw migrate [options]
 | `--preset <name>` | 迁移预设：`full`（所有兼容设置）或 `user-data`（排除基础设施配置）。两种预设都不导入密钥——需要显式传入 `--migrate-secrets`。 |
 | `--overwrite` | 在冲突时覆盖现有 Chiper 文件（默认：当计划有冲突时拒绝应用）。 |
 | `--migrate-secrets` | 在迁移中包含 API 密钥。即使在 `--preset full` 下也需要显式指定。 |
-| `--no-backup` | 跳过迁移前对 `~/.Chiper/` 的 zip 快照（默认情况下，在应用前会将单个还原点归档写入 `~/.Chiper/backups/pre-migration-*.zip`；可用 `chiper import` 恢复）。 |
+| `--no-backup` | 跳过迁移前对 `~/.chiper/` 的 zip 快照（默认情况下，在应用前会将单个还原点归档写入 `~/.chiper/backups/pre-migration-*.zip`；可用 `chiper import` 恢复）。 |
 | `--source <path>` | 自定义 OpenClaw 目录（默认：`~/.openclaw`）。 |
 | `--workspace-target <path>` | 工作区说明（AGENTS.md）的目标目录。 |
 | `--skill-conflict <mode>` | 处理 skill 名称冲突：`skip`（默认）、`overwrite` 或 `rename`。 |
@@ -1239,7 +1239,7 @@ chiper update [--check] [--backup] [--restart-gateway]
 
 附加行为：
 
-- **配对数据快照。** 即使 `--backup` 关闭，`chiper update` 也会在 `git pull` 前对 `~/.Chiper/pairing/` 和 Feishu 评论规则进行轻量快照。如果拉取覆盖了你正在编辑的文件，可以用 `chiper backup restore --state pre-update` 回滚。
+- **配对数据快照。** 即使 `--backup` 关闭，`chiper update` 也会在 `git pull` 前对 `~/.chiper/pairing/` 和 Feishu 评论规则进行轻量快照。如果拉取覆盖了你正在编辑的文件，可以用 `chiper backup restore --state pre-update` 回滚。
 - **旧版 `chiper.service` 警告。** 如果 Chiper 检测到预重命名的 `chiper.service` systemd 单元（而非当前的 `chiper-gateway.service`），会打印一次性迁移提示，帮助你避免循环重启问题。
 - **退出码。** 成功时为 `0`，拉取/安装/安装后错误时为 `1`，阻止 `git pull` 的意外工作树变更时为 `2`。
 

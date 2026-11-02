@@ -182,7 +182,7 @@ SKILLS_GUIDANCE = (
 KANBAN_GUIDANCE = (
     "# Kanban task execution protocol\n"
     "You have been assigned ONE task from "
-    "the shared board at `~/.Chiper/kanban.db`. Your task id is in "
+    "the shared board at `~/.chiper/kanban.db`. Your task id is in "
     "`$CHIPER_KANBAN_TASK`; your workspace is `$CHIPER_KANBAN_WORKSPACE`. "
     "The `kanban_*` tools in your schema are your primary coordination surface — "
     "they write directly to the shared SQLite DB and work regardless of terminal "
@@ -1256,7 +1256,7 @@ def build_skills_system_prompt(
     Falls back to a full filesystem scan when both layers miss.
 
     External skill directories (``skills.external_dirs`` in config.yaml) are
-    scanned alongside the local ``~/.Chiper/skills/`` directory.  External dirs
+    scanned alongside the local ``~/.chiper/skills/`` directory.  External dirs
     are read-only — they appear in the index but new skills are always created
     in the local dir.  Local skills take precedence when names collide.
 

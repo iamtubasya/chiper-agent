@@ -158,7 +158,7 @@ web:
 
 ### Self-hosted gateway (advanced)
 
-Running your own Nous-compatible gateway? Override endpoints in `~/.Chiper/.env`:
+Running your own Nous-compatible gateway? Override endpoints in `~/.chiper/.env`:
 
 ```bash
 TOOL_GATEWAY_DOMAIN=your-domain.example.com

@@ -47,9 +47,9 @@ from chiper_cli.config import DEFAULT_CONFIG
 def profile_env(tmp_path, monkeypatch):
     """Set up an isolated environment for profile tests.
 
-    * Path.home() -> tmp_path  (so _get_profiles_root() = tmp_path/.Chiper/profiles)
+    * Path.home() -> tmp_path  (so _get_profiles_root() = tmp_path/.chiper/profiles)
     * CHIPER_HOME  -> tmp_path/.chiper  (so get_chiper_home() agrees)
-    * Creates the bare-minimum ~/.Chiper directory.
+    * Creates the bare-minimum ~/.chiper directory.
     """
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     default_home = tmp_path / ".chiper"
@@ -268,7 +268,7 @@ class TestCreateProfile:
         assert not (profile_dir / "processes.json").exists()
 
     def test_clone_all_excludes_sibling_profiles_tree(self, profile_env):
-        """--clone-all from default ~/.Chiper must not copy profiles/* (nested explosion)."""
+        """--clone-all from default ~/.chiper must not copy profiles/* (nested explosion)."""
         tmp_path = profile_env
         default_home = tmp_path / ".chiper"
         profiles_root = default_home / "profiles"
@@ -1333,7 +1333,7 @@ class TestInternalHelpers:
         assert home == tmp_path / ".chiper"
 
     def test_profiles_root_docker_deployment(self, tmp_path, monkeypatch):
-        """In Docker (CHIPER_HOME outside ~/.Chiper), profiles go under CHIPER_HOME."""
+        """In Docker (CHIPER_HOME outside ~/.chiper), profiles go under CHIPER_HOME."""
         docker_home = tmp_path / "opt" / "data"
         docker_home.mkdir(parents=True)
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -1351,7 +1351,7 @@ class TestInternalHelpers:
         assert home == docker_home
 
     def test_profiles_root_profile_mode(self, tmp_path, monkeypatch):
-        """In profile mode (CHIPER_HOME under ~/.Chiper), profiles root is still ~/.Chiper/profiles."""
+        """In profile mode (CHIPER_HOME under ~/.chiper), profiles root is still ~/.chiper/profiles."""
         native = tmp_path / ".chiper"
         profile_dir = native / "profiles" / "coder"
         profile_dir.mkdir(parents=True)

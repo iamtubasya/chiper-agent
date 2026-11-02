@@ -91,7 +91,7 @@ chiper acp --setup-browser --yes     # 非交互式接受下载
 
 具体操作：
 
-- 若缺少 Node.js 22 LTS，将其安装到 `~/.Chiper/node/`
+- 若缺少 Node.js 22 LTS，将其安装到 `~/.chiper/node/`
 - 将 `npm install -g agent-browser @askjo/camofox-browser` 安装到该前缀（无需 sudo — `npm` 的 `--prefix` 指向用户可写的 Chiper 管理 Node）
 - 安装 Playwright Chromium，或在检测到系统 Chrome/Chromium 时使用已有版本
 
@@ -133,7 +133,7 @@ Zed v0.221.x 及更新版本通过官方 ACP Registry 安装外部 agent。
 
 前提条件：
 
-- 先通过 `chiper model` 配置 Chiper provider 凭据，或在 `~/.Chiper/.env` / `~/.Chiper/config.yaml` 中设置。
+- 先通过 `chiper model` 配置 Chiper provider 凭据，或在 `~/.chiper/.env` / `~/.chiper/config.yaml` 中设置。
 - 安装 `uv`，以便 registry 启动器可以运行 `uvx --from 'chiper-agent[acp]==<version>' chiper-acp`。
 
 在 registry 条目可用之前进行本地开发时，在 Zed 设置中使用自定义 agent 服务器：
@@ -181,10 +181,10 @@ Registry CI 会验证固定版本是否存在于 PyPI，因此清单的 `version
 
 ACP 模式使用与 CLI 相同的 Chiper 配置：
 
-- `~/.Chiper/.env`
-- `~/.Chiper/config.yaml`
-- `~/.Chiper/skills/`
-- `~/.Chiper/state.db`
+- `~/.chiper/.env`
+- `~/.chiper/config.yaml`
+- `~/.chiper/skills/`
+- `~/.chiper/state.db`
 
 Provider 解析使用 Chiper 的正常运行时解析器，因此 ACP 继承当前配置的 provider 和凭据。Chiper 还为首次运行的 registry 客户端提供终端认证方法（`--setup`）；这将打开 Chiper 的交互式模型/provider 设置。
 
@@ -262,7 +262,7 @@ ACP 模式使用 Chiper 现有的 provider 设置。通过以下方式配置凭�
 chiper model
 ```
 
-或编辑 `~/.Chiper/.env`。Registry 客户端也可以触发 Chiper 的终端认证流程，该流程运行相同的交互式 provider/模型设置。
+或编辑 `~/.chiper/.env`。Registry 客户端也可以触发 Chiper 的终端认证流程，该流程运行相同的交互式 provider/模型设置。
 
 ### Zed registry 启动器找不到 uv
 

@@ -15,7 +15,7 @@ Security features (based on OWASP + NIST SP 800-63-4 guidance):
   - File permissions: chmod 0600 on all data files
   - Codes are never logged to stdout
 
-Storage: ~/.Chiper/pairing/
+Storage: ~/.chiper/pairing/
 """
 
 import hashlib

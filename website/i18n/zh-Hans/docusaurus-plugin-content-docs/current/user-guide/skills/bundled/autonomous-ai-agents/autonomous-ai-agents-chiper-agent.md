@@ -294,7 +294,7 @@ chiper uninstall            Uninstall Chiper
 /toolsets            List toolsets (CLI)
 /skills              Search/install skills (CLI)
 /skill <name>        Load a skill into session
-/reload-skills       Re-scan ~/.Chiper/skills/ for added/removed skills
+/reload-skills       Re-scan ~/.chiper/skills/ for added/removed skills
 /reload              Reload .env variables into the running session (CLI)
 /reload-mcp          Reload MCP servers
 /cron                Manage cron jobs (CLI)
@@ -348,16 +348,16 @@ chiper uninstall            Uninstall Chiper
 ## 关键路径与配置
 
 ```
-~/.Chiper/config.yaml       Main configuration
-~/.Chiper/.env              API keys and secrets
+~/.chiper/config.yaml       Main configuration
+~/.chiper/.env              API keys and secrets
 $CHIPER_HOME/skills/        Installed skills
-~/.Chiper/sessions/         Session transcripts
-~/.Chiper/logs/             Gateway and error logs
-~/.Chiper/auth.json         OAuth tokens and credential pools
-~/.Chiper/chiper-agent/     Source code (if git-installed)
+~/.chiper/sessions/         Session transcripts
+~/.chiper/logs/             Gateway and error logs
+~/.chiper/auth.json         OAuth tokens and credential pools
+~/.chiper/chiper-agent/     Source code (if git-installed)
 ```
 
-Profiles 使用 `~/.Chiper/profiles/<name>/`，布局相同。
+Profiles 使用 `~/.chiper/profiles/<name>/`，布局相同。
 
 ### 配置节
 
@@ -501,7 +501,7 @@ chiper config set approvals.mode off         # 绕过一切（不推荐）
 
 ### Shell hook 允许列表
 
-某些 shell hook 集成在触发前需要明确加入允许列表。通过 `~/.Chiper/shell-hooks-allowlist.json` 管理——在 hook 首次尝试运行时以交互方式提示。
+某些 shell hook 集成在触发前需要明确加入允许列表。通过 `~/.chiper/shell-hooks-allowlist.json` 管理——在 hook 首次尝试运行时以交互方式提示。
 
 ### 禁用 web/browser/image-gen 工具
 
@@ -658,7 +658,7 @@ agent 创建的 skill 的后台维护。跟踪使用情况，将闲置 skill 标
 - **CLI：** `chiper curator <verb>` — `status`、`run`、`pause`、`resume`、`pin`、`unpin`、`archive`、`restore`、`prune`、`backup`、`rollback`。
 - **斜杠命令：** `/curator <subcommand>` 与 CLI 对应。
 - **范围：** 仅处理 `created_by: "agent"` 来源的 skill。内置和 hub 安装的 skill 不在范围内。**从不删除** — 最具破坏性的操作是归档。已固定的 skill 不受任何自动转换和任何 LLM 审查的影响。
-- **遥测：** `~/.Chiper/skills/.usage.json` 中的 sidecar 保存每个 skill 的 `use_count`、`view_count`、`patch_count`、`last_activity_at`、`state`、`pinned`。
+- **遥测：** `~/.chiper/skills/.usage.json` 中的 sidecar 保存每个 skill 的 `use_count`、`view_count`、`patch_count`、`last_activity_at`、`state`、`pinned`。
 
 配置：`curator.*`（`enabled`、`interval_hours`、`min_idle_hours`、`stale_after_days`、`archive_after_days`、`backup.*`）。
 用户文档：https://chiper-agent.Chiper.com/docs/user-guide/features/curator
@@ -755,7 +755,7 @@ export PYTHONPATH="$(pwd)"
 ### Gateway 问题
 首先检查日志：
 ```bash
-grep -i "failed to send\|error" ~/.Chiper/logs/gateway.log | tail -20
+grep -i "failed to send\|error" ~/.chiper/logs/gateway.log | tail -20
 ```
 
 常见 gateway 问题：
@@ -793,9 +793,9 @@ chiper config set auxiliary.vision.model <model_name>
 | 记忆 | `chiper memory status` 或[记忆文档](https://chiper-agent.Chiper.com/docs/user-guide/features/memory) |
 | 环境变量 | `chiper config env-path` 或[环境变量参考](https://chiper-agent.Chiper.com/docs/reference/environment-variables) |
 | CLI 命令 | `chiper --help` 或[CLI 参考](https://chiper-agent.Chiper.com/docs/reference/cli-commands) |
-| Gateway 日志 | `~/.Chiper/logs/gateway.log` |
-| 会话文件 | `~/.Chiper/sessions/` 或 `chiper sessions browse` |
-| 源代码 | `~/.Chiper/chiper-agent/` |
+| Gateway 日志 | `~/.chiper/logs/gateway.log` |
+| 会话文件 | `~/.chiper/sessions/` 或 `chiper sessions browse` |
+| 源代码 | `~/.chiper/chiper-agent/` |
 
 ---
 
@@ -828,7 +828,7 @@ chiper-agent/
 ```
 <!-- ascii-guard-ignore-end -->
 
-配置：`~/.Chiper/config.yaml`（设置）、`~/.Chiper/.env`（API key）。
+配置：`~/.chiper/config.yaml`（设置）、`~/.chiper/.env`（API key）。
 
 ### 添加工具（3 个文件）
 
@@ -858,7 +858,7 @@ registry.register(
 
 自动发现：任何包含顶层 `registry.register()` 调用的 `tools/*.py` 文件都会自动导入——无需手动列出。
 
-所有处理器必须返回 JSON 字符串。路径使用 `get_chiper_home()`，永远不要硬编码 `~/.Chiper`。
+所有处理器必须返回 JSON 字符串。路径使用 `get_chiper_home()`，永远不要硬编码 `~/.chiper`。
 
 ### 添加斜杠命令
 
@@ -887,7 +887,7 @@ python -m pytest tests/ -o 'addopts=' -q   # 完整套件
 python -m pytest tests/tools/ -q            # 特定区域
 ```
 
-- 测试自动将 `CHIPER_HOME` 重定向到临时目录——永远不会触及真实的 `~/.Chiper/`
+- 测试自动将 `CHIPER_HOME` 重定向到临时目录——永远不会触及真实的 `~/.chiper/`
 - 推送任何变更前运行完整套件
 - 使用 `-o 'addopts='` 清除任何内置的 pytest 标志
 

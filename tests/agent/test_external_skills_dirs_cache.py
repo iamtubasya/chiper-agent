@@ -25,7 +25,7 @@ from agent.skill_utils import (
 
 @pytest.fixture
 def chiper_home_with_config(tmp_path, monkeypatch):
-    """Isolated ``~/.Chiper/`` with a config.yaml referencing one external dir."""
+    """Isolated ``~/.chiper/`` with a config.yaml referencing one external dir."""
     home = tmp_path / ".chiper"
     home.mkdir()
     external = tmp_path / "external_skills"

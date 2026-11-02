@@ -32,7 +32,7 @@ class TestWriteDenyExactPaths:
 
     def test_chiper_env(self):
         # ``.env`` under the active CHIPER_HOME (profile-aware, not just
-        # ``~/.Chiper``) must be write-denied. The hermetic test conftest
+        # ``~/.chiper``) must be write-denied. The hermetic test conftest
         # points CHIPER_HOME at a tempdir — resolve via get_chiper_home()
         # to match the denylist.
         from chiper_constants import get_chiper_home
@@ -45,7 +45,7 @@ class TestWriteDenyExactPaths:
 
         Before the fix, ``build_write_denied_paths`` only added
         ``<active_profile>/.env`` to the deny list, so the global
-        ``~/.Chiper/.env`` (whose credentials are inherited by every profile)
+        ``~/.chiper/.env`` (whose credentials are inherited by every profile)
         could be silently overwritten by ``write_file`` while a profile was
         active.
         """

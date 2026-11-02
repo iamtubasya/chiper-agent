@@ -153,18 +153,18 @@ Each profile writes to its own log files:
 
 ```bash
 # Default profile
-tail -f ~/.Chiper/logs/gateway.log
-tail -f ~/.Chiper/logs/gateway.error.log
+tail -f ~/.chiper/logs/gateway.log
+tail -f ~/.chiper/logs/gateway.error.log
 
 # Named profile
-tail -f ~/.Chiper/profiles/<name>/logs/gateway.log
-tail -f ~/.Chiper/profiles/<name>/logs/gateway.error.log
+tail -f ~/.chiper/profiles/<name>/logs/gateway.log
+tail -f ~/.chiper/profiles/<name>/logs/gateway.error.log
 ```
 
 Stream every profile's log simultaneously:
 
 ```bash
-tail -f ~/.Chiper/logs/gateway.log ~/.Chiper/profiles/*/logs/gateway.log
+tail -f ~/.chiper/logs/gateway.log ~/.chiper/profiles/*/logs/gateway.log
 ```
 
 The CLI also has a structured log viewer:
@@ -189,13 +189,13 @@ systemctl --user list-units 'chiper-gateway-*'   # Linux — units
 Every profile keeps its config inside its own directory:
 
 ```
-~/.Chiper/profiles/<name>/
+~/.chiper/profiles/<name>/
 ├── .env              # API keys, bot tokens (chmod 600)
 ├── config.yaml       # model, provider, toolsets, gateway settings
 └── SOUL.md           # personality / system prompt
 ```
 
-The default profile uses `~/.Chiper/` directly with the same three files.
+The default profile uses `~/.chiper/` directly with the same three files.
 
 Edit them with any editor or via the CLI:
 
@@ -224,7 +224,7 @@ to sleep when idle. Two patterns:
 ```bash
 caffeinate -dis                    # block display, idle, and system sleep
 caffeinate -dis -t 28800           # same, auto-exit after 8 hours
-caffeinate -i -w $(cat ~/.Chiper/gateway.pid) &   # awake while default gateway runs
+caffeinate -i -w $(cat ~/.chiper/gateway.pid) &   # awake while default gateway runs
 
 # Persistent: run in background and forget
 nohup caffeinate -dis >/dev/null 2>&1 &
@@ -276,7 +276,7 @@ To audit:
 
 ```bash
 grep -H 'TELEGRAM_BOT_TOKEN\|DISCORD_BOT_TOKEN' \
-     ~/.Chiper/.env ~/.Chiper/profiles/*/.env
+     ~/.chiper/.env ~/.chiper/profiles/*/.env
 ```
 
 ## Updating the code
@@ -307,7 +307,7 @@ If a profile's gateway shows `not running` but a process is still alive:
 
 ```bash
 ps -ef | grep "chiper_cli.*-p <profile>"
-cat ~/.Chiper/profiles/<profile>/gateway.pid
+cat ~/.chiper/profiles/<profile>/gateway.pid
 kill -TERM <pid>          # graceful
 kill -KILL <pid>          # if that fails after a few seconds
 <profile> gateway start

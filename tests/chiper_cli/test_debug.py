@@ -917,7 +917,7 @@ class TestScheduleAutoDelete:
     were observed in production.
 
     The new implementation is stateless: it records pending deletions to
-    ``~/.Chiper/pastes/pending.json`` and lets ``_sweep_expired_pastes``
+    ``~/.chiper/pastes/pending.json`` and lets ``_sweep_expired_pastes``
     handle the DELETE requests synchronously on the next ``chiper debug``
     invocation.
     """

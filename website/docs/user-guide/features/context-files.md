@@ -83,7 +83,7 @@ This is a Next.js 14 web application with a Python FastAPI backend.
 
 **Location:**
 
-- `~/.Chiper/SOUL.md`
+- `~/.chiper/SOUL.md`
 - or `$CHIPER_HOME/SOUL.md` if you run Chiper with a custom home directory
 
 Important details:

@@ -69,10 +69,10 @@ class TestEnvFileReadBlocking:
     def test_allowed_chiper_env(self):
         """Chiper' own .env inside CHIPER_HOME is NOT blocked by this rule
         (it's handled by other mechanisms). Only project-local .env is blocked."""
-        # Note: chiper internal .env is in ~/.Chiper/.env which is NOT a project-local
+        # Note: chiper internal .env is in ~/.chiper/.env which is NOT a project-local
         # path, but the basename check applies to ANY .env. This is intentional —
-        # even ~/.Chiper/.env should not be readable via read_file.
-        error = get_read_block_error(os.path.expanduser("~/.Chiper/.env"))
+        # even ~/.chiper/.env should not be readable via read_file.
+        error = get_read_block_error(os.path.expanduser("~/.chiper/.env"))
         assert error is not None
 
     def test_blocked_set_is_lowercase(self):

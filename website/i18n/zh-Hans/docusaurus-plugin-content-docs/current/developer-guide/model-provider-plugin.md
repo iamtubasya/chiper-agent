@@ -158,7 +158,7 @@ class AcmeProfile(ProviderProfile):
 
 ## 用户覆盖——不修改仓库替换内置提供商
 
-假设你想将 `gmi` 指向私有测试端点进行测试。创建 `~/.Chiper/plugins/model-providers/gmi/__init__.py`：
+假设你想将 `gmi` 指向私有测试端点进行测试。创建 `~/.chiper/plugins/model-providers/gmi/__init__.py`：
 
 ```python
 from providers import register_provider

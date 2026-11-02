@@ -1,7 +1,7 @@
 """Tests for credential_pool .env fallback and auth credential_pool lookup.
 
 Covers the fix from #15914 / PR #15920:
-- _seed_from_env reads API keys from ~/.Chiper/.env when not in os.environ
+- _seed_from_env reads API keys from ~/.chiper/.env when not in os.environ
 - _resolve_api_key_provider_secret falls back to credential_pool when env vars are empty
 - env vars take priority over .env file (handled by get_env_value itself)
 - env vars take priority over credential pool (fallback only kicks in when env is empty)
@@ -52,13 +52,13 @@ def isolated_chiper_home(tmp_path, monkeypatch):
 
 
 def _write_env_file(home: Path, **kwargs) -> None:
-    """Write key=value pairs to ~/.Chiper/.env."""
+    """Write key=value pairs to ~/.chiper/.env."""
     lines = [f"{k}={v}" for k, v in kwargs.items()]
     (home / ".env").write_text("\n".join(lines) + "\n")
 
 
 class TestCredentialPoolSeedsFromDotEnv:
-    """_seed_from_env must read keys from ~/.Chiper/.env, not just os.environ.
+    """_seed_from_env must read keys from ~/.chiper/.env, not just os.environ.
 
     This is the load-bearing behaviour for the fix: when a user adds a key to
     .env mid-session or via a non-CLI entry point that doesn't run
@@ -109,7 +109,7 @@ class TestCredentialPoolSeedsFromDotEnv:
 
 
 class TestAuthResolvesFromDotEnv:
-    """_resolve_api_key_provider_secret must also read from ~/.Chiper/.env."""
+    """_resolve_api_key_provider_secret must also read from ~/.chiper/.env."""
 
     def test_key_from_dotenv_only(self, isolated_chiper_home):
         """Key in .env but not os.environ → _resolve returns it with the env var source."""

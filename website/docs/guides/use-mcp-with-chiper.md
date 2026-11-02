@@ -42,7 +42,7 @@ If you installed Chiper with the standard install script, MCP support is already
 If you installed without extras and need to add MCP separately:
 
 ```bash
-cd ~/.Chiper/chiper-agent
+cd ~/.chiper/chiper-agent
 uv pip install -e ".[mcp]"
 ```
 

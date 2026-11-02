@@ -105,7 +105,7 @@ chiper --tui
 | `/details` | 切换详细工具调用详情（全局或按区块） |
 | `/usage` | 丰富的 token / 费用 / 上下文面板 |
 | `/agents`（别名 `/tasks`） | 可观测性浮层——带终止/暂停控制的实时子 agent 树、按分支的费用/token/文件汇总、逐轮历史记录 |
-| `/reload` | 将 `~/.Chiper/.env` 重新读入运行中的 TUI 进程，使新添加的 API 密钥无需重启即可生效 |
+| `/reload` | 将 `~/.chiper/.env` 重新读入运行中的 TUI 进程，使新添加的 API 密钥无需重启即可生效 |
 | `/mouse [on\|off\|toggle\|wheel\|buttons\|all]` | 在运行时选择鼠标跟踪预设（同时持久化到 `config.yaml` 的 `display.mouse_tracking`）。`wheel`（1000+1006）保留滚轮滚动而不产生悬停事件，避免在 tmux 中向 prompt 行发送"No image in clipboard"垃圾信息；`buttons` 添加 1002 以支持终端侧拖拽选择；`all` 是带悬停 UI 的默认值。 |
 
 其他所有斜杠命令（包括已安装的 skill、快捷命令和 personality 切换）与 classic CLI 完全一致。请参阅[斜杠命令参考](../reference/slash-commands.md)。
@@ -177,7 +177,7 @@ TUI 的状态栏实时跟踪 agent 状态：
 
 ## 配置
 
-TUI 遵循所有标准 Chiper 配置：`~/.Chiper/config.yaml`、profile、personality、skin、快捷命令、凭证池、内存提供商、工具/skill 启用状态。不存在 TUI 专属配置文件。
+TUI 遵循所有标准 Chiper 配置：`~/.chiper/config.yaml`、profile、personality、skin、快捷命令、凭证池、内存提供商、工具/skill 启用状态。不存在 TUI 专属配置文件。
 
 少数键专门用于调整 TUI 界面：
 
@@ -225,7 +225,7 @@ TUI 附带有主见的按区块默认值，将轮次以实时转录形式流式�
 
 ## 会话
 
-会话在 TUI 和 classic CLI 之间共享——两者均写入同一个 `~/.Chiper/state.db`。可以在一个界面开始会话，在另一个界面恢复。会话选择器显示来自两个来源的会话，并带有来源标签。
+会话在 TUI 和 classic CLI 之间共享——两者均写入同一个 `~/.chiper/state.db`。可以在一个界面开始会话，在另一个界面恢复。会话选择器显示来自两个来源的会话，并带有来源标签。
 
 会话生命周期、搜索、压缩和导出，请参阅[会话](sessions.md)。
 
@@ -237,7 +237,7 @@ TUI 附带有主见的按区块默认值，将轮次以实时转录形式流式�
 
 不存在通用的"将任意 TUI 指向任意独立 gateway 端口"的模式。特别是，OpenAI 兼容 API 服务器（`chiper gateway` / `api_server` 平台）**不**提供 `/api/ws`——它是模型后端接口（`/v1/chat/completions`、`/v1/models` 等），并刻意不暴露 TUI 的 JSON-RPC 控制通道。将 `CHIPER_TUI_GATEWAY_URL` 设置为该端口将返回 404。
 
-如果你希望多个界面共享同一组会话，请使用共享的 `~/.Chiper/state.db`（参见[会话](sessions.md)）或 Web 仪表板的内嵌聊天（参见 [Web Dashboard](features/web-dashboard.md#chat)）——而不是手动设置 gateway URL。
+如果你希望多个界面共享同一组会话，请使用共享的 `~/.chiper/state.db`（参见[会话](sessions.md)）或 Web 仪表板的内嵌聊天（参见 [Web Dashboard](features/web-dashboard.md#chat)）——而不是手动设置 gateway URL。
 
 ## 回退到 Classic CLI
 

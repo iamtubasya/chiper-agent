@@ -6,8 +6,8 @@ depth, NOT a security boundary — but it prevents the agent from silently
 corrupting a profile that belongs to a different session.
 
 Reference: May 2026 incident — a chiper-security profile session
-accidentally edited skills under both ~/.Chiper/profiles/chiper-security/skills/
-AND ~/.Chiper/skills/ (the default profile's skills), realizing only
+accidentally edited skills under both ~/.chiper/profiles/chiper-security/skills/
+AND ~/.chiper/skills/ (the default profile's skills), realizing only
 afterwards that the second path belonged to a different profile.
 """
 from __future__ import annotations

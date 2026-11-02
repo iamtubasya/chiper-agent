@@ -3,9 +3,9 @@ Profile management for multiple isolated Chiper instances.
 
 Each profile is a fully independent CHIPER_HOME directory with its own
 config.yaml, .env, memory, sessions, skills, gateway, cron, and logs.
-Profiles live under ``~/.Chiper/profiles/<name>/`` by default.
+Profiles live under ``~/.chiper/profiles/<name>/`` by default.
 
-The "default" profile is ``~/.Chiper`` itself — backward compatible,
+The "default" profile is ``~/.chiper`` itself — backward compatible,
 zero migration needed.
 
 Usage::
@@ -77,7 +77,7 @@ _CLONE_ALL_STRIP: list[str] = [
 ]
 
 # Infrastructure artifacts excluded from --clone-all when the source is the
-# default profile (``~/.Chiper``).  Named profiles never contain these
+# default profile (``~/.chiper``).  Named profiles never contain these
 # directories at root, so the exclusion is gated to avoid silently dropping
 # user data from a named-profile source.
 #
@@ -150,7 +150,7 @@ def _clone_all_copytree_ignore(source_dir: Path):
          and should never carry into a fresh clone.  Applies to any source.
       2. Root-level entries in ``_CLONE_ALL_DEFAULT_EXCLUDE_ROOT`` — known
          Chiper infrastructure directories that only the default profile
-         (``~/.Chiper``) ever contains.  Gated on ``source_dir`` actually
+         (``~/.chiper``) ever contains.  Gated on ``source_dir`` actually
          being the default profile so a named-profile source never has its
          own data silently dropped.
       3. Universal exclusions at any depth — Python bytecode caches that
@@ -195,7 +195,7 @@ def _clone_all_copytree_ignore(source_dir: Path):
     return _ignore
 
 
-# Directories/files to exclude when exporting the default (~/.Chiper) profile.
+# Directories/files to exclude when exporting the default (~/.chiper) profile.
 # The default profile contains infrastructure (repo checkout, worktrees, DBs,
 # caches, binaries) that named profiles don't have.  We exclude those so the
 # export is a portable, reasonable-size archive of actual profile data.
@@ -249,7 +249,7 @@ def _get_profiles_root() -> Path:
     can see all profiles.
 
     In Docker/custom deployments where CHIPER_HOME points outside
-    ``~/.Chiper``, profiles live under ``CHIPER_HOME/profiles/`` so
+    ``~/.chiper``, profiles live under ``CHIPER_HOME/profiles/`` so
     they persist on the mounted volume.
     """
     return _get_default_chiper_home() / "profiles"
@@ -258,8 +258,8 @@ def _get_profiles_root() -> Path:
 def _get_default_chiper_home() -> Path:
     """Return the default (pre-profile) CHIPER_HOME path.
 
-    In standard deployments this is ``~/.Chiper``.
-    In Docker/custom deployments where CHIPER_HOME is outside ``~/.Chiper``
+    In standard deployments this is ``~/.chiper``.
+    In Docker/custom deployments where CHIPER_HOME is outside ``~/.chiper``
     (e.g. ``/opt/data``), returns CHIPER_HOME directly.
     """
     from chiper_constants import get_default_chiper_root
@@ -309,12 +309,12 @@ def validate_profile_name(name: str) -> None:
 
     Also rejects names in :data:`_RESERVED_NAMES` (``chiper``, ``test``,
     ``tmp``, ``root``, ``sudo``) that would create confusing on-disk
-    collisions (a ``chiper`` profile inside ``~/.Chiper/``) or get refused
+    collisions (a ``chiper`` profile inside ``~/.chiper/``) or get refused
     at alias-creation time anyway. ``default`` is a special pass-through —
     it's a valid alias for the built-in root profile.
     """
     if name == "default":
-        return  # special alias for ~/.Chiper
+        return  # special alias for ~/.chiper
     if not _PROFILE_ID_RE.match(name):
         raise ValueError(
             f"Invalid profile name {name!r}. Must match "
@@ -827,7 +827,7 @@ def create_profile(
 
     if canon == "default":
         raise ValueError(
-            "Cannot create a profile named 'default' — it is the built-in profile (~/.Chiper)."
+            "Cannot create a profile named 'default' — it is the built-in profile (~/.chiper)."
         )
 
     profile_dir = get_profile_dir(canon)
@@ -851,7 +851,7 @@ def create_profile(
             )
 
     if clone_all and source_dir:
-        # Full copy of source profile (exclude sibling ~/.Chiper/profiles/)
+        # Full copy of source profile (exclude sibling ~/.chiper/profiles/)
         shutil.copytree(
             source_dir,
             profile_dir,
@@ -1083,7 +1083,7 @@ def delete_profile(name: str, yes: bool = False) -> Path:
 
     if canon == "default":
         raise ValueError(
-            "Cannot delete the default profile (~/.Chiper).\n"
+            "Cannot delete the default profile (~/.chiper).\n"
             "To remove everything, use: chiper uninstall"
         )
 
@@ -1414,7 +1414,7 @@ def get_active_profile() -> str:
 def set_active_profile(name: str) -> None:
     """Set the sticky active profile.
 
-    Writes to ``~/.Chiper/active_profile``. Use ``"default"`` to clear.
+    Writes to ``~/.chiper/active_profile``. Use ``"default"`` to clear.
     """
     canon = normalize_profile_name(name)
     validate_profile_name(canon)
@@ -1439,8 +1439,8 @@ def set_active_profile(name: str) -> None:
 def get_active_profile_name() -> str:
     """Infer the current profile name from CHIPER_HOME.
 
-    Returns ``"default"`` if CHIPER_HOME is not set or points to ``~/.Chiper``.
-    Returns the profile name if CHIPER_HOME points into ``~/.Chiper/profiles/<name>``.
+    Returns ``"default"`` if CHIPER_HOME is not set or points to ``~/.chiper``.
+    Returns the profile name if CHIPER_HOME points into ``~/.chiper/profiles/<name>``.
     Returns ``"custom"`` if CHIPER_HOME is set to an unrecognized path.
     """
     from chiper_constants import get_chiper_home
@@ -1509,7 +1509,7 @@ def export_profile(name: str, output_path: str) -> Path:
     base = str(output).removesuffix(".tar.gz").removesuffix(".tgz")
 
     if canon == "default":
-        # The default profile IS ~/.Chiper itself — its parent is ~/ and its
+        # The default profile IS ~/.chiper itself — its parent is ~/ and its
         # directory name is ".chiper", not "default".  We stage a clean copy
         # under a temp dir so the archive contains ``default/...``.
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -1638,13 +1638,13 @@ def import_profile(archive_path: str, name: Optional[str] = None) -> Path:
         )
 
     # Archives exported from the default profile have "default/" as top-level
-    # dir.  Importing as "default" would target ~/.Chiper itself — disallow
+    # dir.  Importing as "default" would target ~/.chiper itself — disallow
     # that and guide the user toward a named profile.
     canon = normalize_profile_name(inferred_name)
     validate_profile_name(canon)
     if canon == "default":
         raise ValueError(
-            "Cannot import as 'default' — that is the built-in root profile (~/.Chiper). "
+            "Cannot import as 'default' — that is the built-in root profile (~/.chiper). "
             "Specify a different name: chiper profile import <archive> --name <name>"
         )
 

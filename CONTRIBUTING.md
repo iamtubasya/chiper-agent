@@ -51,7 +51,7 @@ If your skill is specialized, community-contributed, or niche, it's better suite
 
 ## Memory Providers: Ship as a Standalone Plugin
 
-**We are no longer accepting new memory providers into this repo.** The set of built-in providers under `plugins/memory/` (honcho, mem0, supermemory, byterover, hindsight, holographic, openviking, retaindb) is closed. If you want to add a new memory backend, publish it as a **standalone plugin repo** that users install into `~/.Chiper/plugins/` (or via a pip entry point).
+**We are no longer accepting new memory providers into this repo.** The set of built-in providers under `plugins/memory/` (honcho, mem0, supermemory, byterover, hindsight, holographic, openviking, retaindb) is closed. If you want to add a new memory backend, publish it as a **standalone plugin repo** that users install into `~/.chiper/plugins/` (or via a pip entry point).
 
 Standalone memory plugins:
 
@@ -84,7 +84,7 @@ For most contributors, the best development bootstrap is the same path users
 take: run the standard installer, then work inside the repository it cloned.
 The installer creates the Chiper venv, wires the `chiper` command, stamps the
 install method for `chiper update`, and clones the full git project into
-`$CHIPER_HOME/chiper-agent` (usually `~/.Chiper/chiper-agent`). That keeps your
+`$CHIPER_HOME/chiper-agent` (usually `~/.chiper/chiper-agent`). That keeps your
 development environment on the same layout the CLI, updater, lazy dependency
 installer, gateway, and docs assume.
 
@@ -132,12 +132,12 @@ npm install
 ### Configure for development
 
 ```bash
-mkdir -p ~/.Chiper/{cron,sessions,logs,memories,skills}
-cp cli-config.yaml.example ~/.Chiper/config.yaml
-touch ~/.Chiper/.env
+mkdir -p ~/.chiper/{cron,sessions,logs,memories,skills}
+cp cli-config.yaml.example ~/.chiper/config.yaml
+touch ~/.chiper/.env
 
 # Add at minimum an LLM provider key:
-echo "OPENROUTER_API_KEY=***" >> ~/.Chiper/.env
+echo "OPENROUTER_API_KEY=***" >> ~/.chiper/.env
 ```
 
 ### Run
@@ -229,28 +229,28 @@ chiper-agent/
 │   ├── install.ps1               # Windows PowerShell installer
 │   └── whatsapp-bridge/          # Node.js WhatsApp bridge (Baileys)
 │
-├── skills/                   # Bundled skills (copied to ~/.Chiper/skills/ on install)
+├── skills/                   # Bundled skills (copied to ~/.chiper/skills/ on install)
 ├── optional-skills/          # Official optional skills (discoverable via hub, not activated by default)
 ├── tests/                    # Test suite
 ├── website/                  # Documentation site (chiper-agent.Chiper.com)
 │
-├── cli-config.yaml.example   # Example configuration (copied to ~/.Chiper/config.yaml)
+├── cli-config.yaml.example   # Example configuration (copied to ~/.chiper/config.yaml)
 └── AGENTS.md                 # Development guide for AI coding assistants
 ```
 
-### User configuration (stored in `~/.Chiper/`)
+### User configuration (stored in `~/.chiper/`)
 
 | Path | Purpose |
 |------|---------|
-| `~/.Chiper/config.yaml` | Settings (model, terminal, toolsets, compression, etc.) |
-| `~/.Chiper/.env` | API keys and secrets |
-| `~/.Chiper/auth.json` | OAuth credentials (Nous Portal) |
-| `~/.Chiper/skills/` | All active skills (bundled + hub-installed + agent-created) |
-| `~/.Chiper/memories/` | Persistent memory (MEMORY.md, USER.md) |
-| `~/.Chiper/state.db` | SQLite session database |
-| `~/.Chiper/sessions/` | Gateway routing index (`sessions.json`), request-dump breadcrumbs, gateway `*.jsonl` transcripts, and (optionally) per-session JSON snapshots when `sessions.write_json_snapshots: true` is set. The per-session snapshots are off by default; state.db is canonical. |
-| `~/.Chiper/cron/` | Scheduled job data |
-| `~/.Chiper/whatsapp/session/` | WhatsApp bridge credentials |
+| `~/.chiper/config.yaml` | Settings (model, terminal, toolsets, compression, etc.) |
+| `~/.chiper/.env` | API keys and secrets |
+| `~/.chiper/auth.json` | OAuth credentials (Nous Portal) |
+| `~/.chiper/skills/` | All active skills (bundled + hub-installed + agent-created) |
+| `~/.chiper/memories/` | Persistent memory (MEMORY.md, USER.md) |
+| `~/.chiper/state.db` | SQLite session database |
+| `~/.chiper/sessions/` | Gateway routing index (`sessions.json`), request-dump breadcrumbs, gateway `*.jsonl` transcripts, and (optionally) per-session JSON snapshots when `sessions.write_json_snapshots: true` is set. The per-session snapshots are off by default; state.db is canonical. |
+| `~/.chiper/cron/` | Scheduled job data |
+| `~/.chiper/whatsapp/session/` | WhatsApp bridge credentials |
 
 ---
 
@@ -277,7 +277,7 @@ User message → AIAgent._run_agent_loop()
 
 - **Self-registering tools**: Each tool file calls `registry.register()` at import time. `model_tools.py` triggers discovery by importing all tool modules.
 - **Toolset grouping**: Tools are grouped into toolsets (`web`, `terminal`, `file`, `browser`, etc.) that can be enabled/disabled per platform.
-- **Session persistence**: All conversations are stored in SQLite (`chiper_state.py`) with full-text search and unique session titles. Per-session JSON snapshots in `~/.Chiper/sessions/` were superseded by the SQLite store and are off by default; opt back in with `sessions.write_json_snapshots: true` if you have external tooling that consumes the JSON files directly.
+- **Session persistence**: All conversations are stored in SQLite (`chiper_state.py`) with full-text search and unique session titles. Per-session JSON snapshots in `~/.chiper/sessions/` were superseded by the SQLite store and are off by default; opt back in with `sessions.write_json_snapshots: true` if you have external tooling that consumes the JSON files directly.
 - **Ephemeral injection**: System prompts and prefill messages are injected at API call time, never persisted to the database or logs.
 - **Provider abstraction**: The agent works with any OpenAI-compatible API. Provider resolution happens at init time (Nous Portal OAuth, OpenRouter API key, or custom endpoint).
 - **Provider routing**: When using OpenRouter, `provider_routing` in config.yaml controls provider selection (sort by throughput/latency/price, allow/ignore specific providers, data retention policies). These are injected as `extra_body.provider` in API requests.
@@ -501,7 +501,7 @@ prerequisites:
   commands: [curl, jq]            # Advisory CLI checks
 ```
 
-Gateway and messaging sessions never collect secrets in-band; they instruct the user to run `chiper setup` or update `~/.Chiper/.env` locally.
+Gateway and messaging sessions never collect secrets in-band; they instruct the user to run `chiper setup` or update `~/.chiper/.env` locally.
 
 **When to declare required environment variables:**
 - The skill uses an API key or token that should be collected securely at load time
@@ -580,7 +580,7 @@ Chiper uses a data-driven skin system — no code changes needed to add a new sk
 
 **Option A: User skin (YAML file)**
 
-Create `~/.Chiper/skins/<name>.yaml`:
+Create `~/.chiper/skins/<name>.yaml`:
 
 ```yaml
 name: mytheme

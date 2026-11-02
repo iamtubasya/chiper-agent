@@ -44,7 +44,7 @@ chiper setup
 chiper chat
 ```
 
-After `nix profile install`, `chiper`, `chiper-agent`, and `chiper-acp` are on your PATH. From here, the workflow is identical to the [standard installation](./installation.md) — `chiper setup` walks you through provider selection, `chiper gateway install` sets up a launchd (macOS) or systemd user service, and config lives in `~/.Chiper/`.
+After `nix profile install`, `chiper`, `chiper-agent`, and `chiper-acp` are on your PATH. From here, the workflow is identical to the [standard installation](./installation.md) — `chiper setup` walks you through provider selection, `chiper gateway install` sets up a launchd (macOS) or systemd user service, and config lives in `~/.chiper/`.
 
 :::warning Messaging platforms (Discord, Telegram, Slack)
 The default package doesn't include messaging platform libraries — they were moved to on-demand installation, which can't work in Nix's read-only environment. If you plan to connect the agent to Discord, Telegram, or Slack, install the `messaging` variant:
@@ -135,7 +135,7 @@ services.chiper-agent.environmentFiles = [ "/var/lib/chiper/env" ];
 :::
 
 :::tip addToSystemPackages
-Setting `addToSystemPackages = true` does two things: puts the `chiper` CLI on your system PATH **and** sets `CHIPER_HOME` system-wide so the interactive CLI shares state (sessions, skills, cron) with the gateway service. Without it, running `chiper` in your shell creates a separate `~/.Chiper/` directory.
+Setting `addToSystemPackages = true` does two things: puts the `chiper` CLI on your system PATH **and** sets `CHIPER_HOME` system-wide so the interactive CLI shares state (sessions, skills, cron) with the gateway service. Without it, running `chiper` in your shell creates a separate `~/.chiper/` directory.
 :::
 
 ### Container-aware CLI
@@ -148,7 +148,7 @@ When `container.enable = true` and `addToSystemPackages = true`, **every** `chip
 - If the container isn't running, the CLI retries briefly (5s with a spinner for interactive use, 10s silently for scripts) then fails with a clear error — no silent fallback
 - For developers working on the chiper codebase, set `CHIPER_DEV=1` to bypass container routing and run the local checkout directly
 
-Set `container.hostUsers` to create a `~/.Chiper` symlink to the service state directory, so the host CLI and the container share sessions, config, and memories:
+Set `container.hostUsers` to create a `~/.chiper` symlink to the service state directory, so the host CLI and the container share sessions, config, and memories:
 
 ```nix
 services.chiper-agent = {
@@ -333,7 +333,7 @@ Quick reference for the most common things Nix users want to customize:
 | Change the LLM model | `settings.model.default` | `"anthropic/claude-sonnet-4"` |
 | Use a different provider endpoint | `settings.model.base_url` | `"https://openrouter.ai/api/v1"` |
 | Add API keys | `environmentFiles` | `[ config.sops.secrets."chiper-env".path ]` |
-| Give the agent a personality | `${services.chiper-agent.stateDir}/.Chiper/SOUL.md` | manage the file directly |
+| Give the agent a personality | `${services.chiper-agent.stateDir}/.chiper/SOUL.md` | manage the file directly |
 | Add MCP tool servers | `mcpServers.<name>` | See [MCP Servers](#mcp-servers) |
 | Enable Discord/Telegram/Slack | `extraDependencyGroups` | `[ "messaging" ]` |
 | Mount host directories into container | `container.extraVolumes` | `[ "/data:/data:rw" ]` |
@@ -418,7 +418,7 @@ The `documents` option installs files into the agent's working directory (the `w
 - **`USER.md`** — context about the user the agent is interacting with.
 - Any other files you place here are visible to the agent as workspace files.
 
-The agent identity file is separate: Chiper loads its primary `SOUL.md` from `$CHIPER_HOME/SOUL.md`, which in the NixOS module is `${services.chiper-agent.stateDir}/.Chiper/SOUL.md`. Putting `SOUL.md` in `documents` only creates a workspace file and will not replace the main persona file.
+The agent identity file is separate: Chiper loads its primary `SOUL.md` from `$CHIPER_HOME/SOUL.md`, which in the NixOS module is `${services.chiper-agent.stateDir}/.chiper/SOUL.md`. Putting `SOUL.md` in `documents` only creates a workspace file and will not replace the main persona file.
 
 ```nix
 {
@@ -508,8 +508,8 @@ The container uses `--network=host`, so the OAuth callback listener on `127.0.0.
 
 ```bash
 chiper mcp add my-oauth-server --url https://mcp.example.com/mcp --auth oauth
-scp ~/.Chiper/mcp-tokens/my-oauth-server{,.client}.json \
-    server:/var/lib/chiper/.Chiper/mcp-tokens/
+scp ~/.chiper/mcp-tokens/my-oauth-server{,.client}.json \
+    server:/var/lib/chiper/.chiper/mcp-tokens/
 # Ensure: chown chiper:chiper, chmod 0600
 ```
 
@@ -570,7 +570,7 @@ When container mode is enabled, chiper runs inside a persistent Ubuntu container
 Host                                    Container
 ────                                    ─────────
 /nix/store/...-chiper-agent-0.1.0  ──►  /nix/store/... (ro)
-~/.Chiper -> /var/lib/chiper/.chiper       (symlink bridge, per hostUsers)
+~/.chiper -> /var/lib/chiper/.chiper       (symlink bridge, per hostUsers)
 /var/lib/chiper/                    ──►  /data/          (rw)
   ├── current-package -> /nix/store/...    (symlink, updated each rebuild)
   ├── .gc-root -> /nix/store/...           (prevents nix-collect-garbage)
@@ -894,7 +894,7 @@ nix build .#checks.x86_64-linux.config-roundtrip    # merge script preserves use
 | `container.image` | `str` | `"ubuntu:24.04"` | Base image (pulled at runtime) |
 | `container.extraVolumes` | `listOf str` | `[]` | Extra volume mounts (`host:container:mode`) |
 | `container.extraOptions` | `listOf str` | `[]` | Extra args passed to `docker create` |
-| `container.hostUsers` | `listOf str` | `[]` | Interactive users who get a `~/.Chiper` symlink to the service stateDir and are auto-added to the `chiper` group |
+| `container.hostUsers` | `listOf str` | `[]` | Interactive users who get a `~/.chiper` symlink to the service stateDir and are auto-added to the `chiper` group |
 
 ---
 
@@ -994,10 +994,10 @@ If the agent starts but can't authenticate with the LLM provider, check that the
 
 ```bash
 # Native mode
-sudo -u chiper cat /var/lib/chiper/.Chiper/.env
+sudo -u chiper cat /var/lib/chiper/.chiper/.env
 
 # Container mode
-docker exec chiper-agent cat /data/.Chiper/.env
+docker exec chiper-agent cat /data/.chiper/.env
 ```
 
 ### GC Root Verification

@@ -8,7 +8,7 @@ description: "为 Chiper Web Dashboard 构建主题和插件——调色板、�
 
 Chiper Web Dashboard（`chiper dashboard`）在设计上支持换肤和扩展，无需 fork 代码库。对外暴露三个层次：
 
-1. **主题（Themes）** — YAML 文件，用于重绘 dashboard 的调色板、字体排版、布局以及各组件的外观。将文件放入 `~/.Chiper/dashboard-themes/`，即可在主题切换器中看到它。
+1. **主题（Themes）** — YAML 文件，用于重绘 dashboard 的调色板、字体排版、布局以及各组件的外观。将文件放入 `~/.chiper/dashboard-themes/`，即可在主题切换器中看到它。
 2. **UI 插件（UI plugins）** — 一个包含 `manifest.json` 和 JavaScript bundle 的目录，可注册标签页、替换内置页面、通过页面级插槽增强内置页面，或向命名 shell 插槽注入组件。
 3. **后端插件（Backend plugins）** — 插件目录内的 Python 文件，暴露一个 FastAPI `router`；路由挂载在 `/api/plugins/<name>/` 下，由插件的 UI 调用。
 
@@ -54,16 +54,16 @@ Chiper Web Dashboard（`chiper dashboard`）在设计上支持换肤和扩展，
 
 ## 主题
 
-主题是存储在 `~/.Chiper/dashboard-themes/` 中的 YAML 文件。文件名无关紧要（系统使用主题的 `name:` 字段），但惯例是 `<name>.yaml`。所有字段均为可选——缺失的键会回退到内置的 `default` 主题，因此一个主题可以只包含一个颜色。
+主题是存储在 `~/.chiper/dashboard-themes/` 中的 YAML 文件。文件名无关紧要（系统使用主题的 `name:` 字段），但惯例是 `<name>.yaml`。所有字段均为可选——缺失的键会回退到内置的 `default` 主题，因此一个主题可以只包含一个颜色。
 
 ### 快速上手——你的第一个主题
 
 ```bash
-mkdir -p ~/.Chiper/dashboard-themes
+mkdir -p ~/.chiper/dashboard-themes
 ```
 
 ```yaml
-# ~/.Chiper/dashboard-themes/neon.yaml
+# ~/.chiper/dashboard-themes/neon.yaml
 name: neon
 label: Neon
 description: Pure magenta on black
@@ -279,7 +279,7 @@ CSS 在主题应用时以单个带作用域的 `<style data-chiper-theme-css>` �
 所有配置项汇总在一个文件中——复制后删除不需要的部分：
 
 ```yaml
-# ~/.Chiper/dashboard-themes/ocean.yaml
+# ~/.chiper/dashboard-themes/ocean.yaml
 name: ocean
 label: Ocean Deep
 description: Deep sea blues with coral accents
@@ -341,7 +341,7 @@ customCSS: |
 
 ## 插件
 
-Dashboard 插件是一个包含 `manifest.json`、预构建 JS bundle，以及可选的 CSS 文件和带 FastAPI 路由的 Python 文件的目录。插件与其他 Chiper 插件一起存放在 `~/.Chiper/plugins/<name>/`——dashboard 扩展是该插件目录内的 `dashboard/` 子文件夹，因此一个插件可以从单次安装中同时扩展 CLI/gateway 和 dashboard。
+Dashboard 插件是一个包含 `manifest.json`、预构建 JS bundle，以及可选的 CSS 文件和带 FastAPI 路由的 Python 文件的目录。插件与其他 Chiper 插件一起存放在 `~/.chiper/plugins/<name>/`——dashboard 扩展是该插件目录内的 `dashboard/` 子文件夹，因此一个插件可以从单次安装中同时扩展 CLI/gateway 和 dashboard。
 
 插件不打包 React 或 UI 组件，而是使用暴露在 `window.__CHIPER_PLUGIN_SDK__` 上的 **Plugin SDK**。这使插件 bundle 保持极小体积（通常只有几 KB），并避免版本冲突。
 
@@ -350,13 +350,13 @@ Dashboard 插件是一个包含 `manifest.json`、预构建 JS bundle，以及�
 创建目录结构：
 
 ```bash
-mkdir -p ~/.Chiper/plugins/my-plugin/dashboard/dist
+mkdir -p ~/.chiper/plugins/my-plugin/dashboard/dist
 ```
 
 编写 manifest：
 
 ```json
-// ~/.Chiper/plugins/my-plugin/dashboard/manifest.json
+// ~/.chiper/plugins/my-plugin/dashboard/manifest.json
 {
   "name": "my-plugin",
   "label": "My Plugin",
@@ -373,7 +373,7 @@ mkdir -p ~/.Chiper/plugins/my-plugin/dashboard/dist
 编写 JS bundle（普通 IIFE——无需构建步骤）：
 
 ```javascript
-// ~/.Chiper/plugins/my-plugin/dashboard/dist/index.js
+// ~/.chiper/plugins/my-plugin/dashboard/dist/index.js
 (function () {
   "use strict";
 
@@ -407,7 +407,7 @@ mkdir -p ~/.Chiper/plugins/my-plugin/dashboard/dist
 ### 目录结构
 
 ```
-~/.Chiper/plugins/my-plugin/
+~/.chiper/plugins/my-plugin/
 ├── plugin.yaml              # optional — existing CLI/gateway plugin manifest
 ├── __init__.py              # optional — existing CLI/gateway hooks
 └── dashboard/               # dashboard extension
@@ -642,7 +642,7 @@ Shell 只为上述插槽渲染 `<PluginSlot name="..." />`。注册表接受额�
 最简示例——在 Sessions 页面顶部固定一个横幅：
 
 ```json
-// ~/.Chiper/plugins/session-notes/dashboard/manifest.json
+// ~/.chiper/plugins/session-notes/dashboard/manifest.json
 {
   "name": "session-notes",
   "label": "Session Notes",
@@ -653,7 +653,7 @@ Shell 只为上述插槽渲染 `<PluginSlot name="..." />`。注册表接受额�
 ```
 
 ```javascript
-// ~/.Chiper/plugins/session-notes/dashboard/dist/index.js
+// ~/.chiper/plugins/session-notes/dashboard/dist/index.js
 (function () {
   const SDK = window.__CHIPER_PLUGIN_SDK__;
   const { React } = SDK;
@@ -708,7 +708,7 @@ Bundle 仍需调用带占位符组件的 `register()`（以防有人直接访问
 插件可通过在 manifest 中设置 `api` 来注册 FastAPI 路由。创建文件并导出 `router`：
 
 ```python
-# ~/.Chiper/plugins/my-plugin/dashboard/plugin_api.py
+# ~/.chiper/plugins/my-plugin/dashboard/plugin_api.py
 from fastapi import APIRouter
 
 router = APIRouter()
@@ -788,10 +788,10 @@ Dashboard 扫描三个目录中的 `dashboard/manifest.json`：
 
 | 优先级 | 目录 | 来源标签 |
 |----------|-----------|--------------|
-| 1（冲突时优先） | `~/.Chiper/plugins/<name>/dashboard/` | `user` |
+| 1（冲突时优先） | `~/.chiper/plugins/<name>/dashboard/` | `user` |
 | 2 | `<repo>/plugins/memory/<name>/dashboard/` | `bundled` |
 | 2 | `<repo>/plugins/<name>/dashboard/` | `bundled` |
-| 3 | `./.Chiper/plugins/<name>/dashboard/` | `project`——仅在设置 `CHIPER_ENABLE_PROJECT_PLUGINS` 时生效 |
+| 3 | `./.chiper/plugins/<name>/dashboard/` | `project`——仅在设置 `CHIPER_ENABLE_PROJECT_PLUGINS` 时生效 |
 
 发现结果在每个 dashboard 进程中缓存。添加新插件后，可以：
 
@@ -836,10 +836,10 @@ git clone https://github.com/Chiper/chiper-example-plugins.git
 
 # Theme
 cp chiper-example-plugins/strike-freedom-cockpit/theme/strike-freedom.yaml \
-   ~/.Chiper/dashboard-themes/
+   ~/.chiper/dashboard-themes/
 
 # Plugin
-cp -r chiper-example-plugins/strike-freedom-cockpit ~/.Chiper/plugins/
+cp -r chiper-example-plugins/strike-freedom-cockpit ~/.chiper/plugins/
 ```
 
 打开 dashboard，从主题切换器中选择 **Strike Freedom**。驾驶舱侧边栏出现，徽标显示在顶栏，标语替换底栏。切换回 **Chiper Teal**，插件仍然安装但不可见（`sidebar` 插槽仅在 `cockpit` 布局变体下渲染）。
@@ -879,10 +879,10 @@ cp -r chiper-example-plugins/strike-freedom-cockpit ~/.Chiper/plugins/
 ## 故障排查
 
 **我的主题没有出现在选择器中。**
-检查文件是否在 `~/.Chiper/dashboard-themes/` 中且以 `.yaml` 或 `.yml` 结尾。刷新页面。运行 `curl http://127.0.0.1:9119/api/dashboard/themes`——你的主题应出现在响应中。如果 YAML 有解析错误，dashboard 会记录到 `~/.Chiper/logs/` 下的 `errors.log`。
+检查文件是否在 `~/.chiper/dashboard-themes/` 中且以 `.yaml` 或 `.yml` 结尾。刷新页面。运行 `curl http://127.0.0.1:9119/api/dashboard/themes`——你的主题应出现在响应中。如果 YAML 有解析错误，dashboard 会记录到 `~/.chiper/logs/` 下的 `errors.log`。
 
 **我的插件标签页没有显示。**
-1. 检查 manifest 是否在 `~/.Chiper/plugins/<name>/dashboard/manifest.json`（注意 `dashboard/` 子目录）。
+1. 检查 manifest 是否在 `~/.chiper/plugins/<name>/dashboard/manifest.json`（注意 `dashboard/` 子目录）。
 2. 运行 `curl http://127.0.0.1:9119/api/dashboard/plugins/rescan` 强制重新发现。
 3. 打开浏览器开发工具 → Network——确认 `manifest.json`、`index.js` 和任何 CSS 均无 404 加载成功。
 4. 打开浏览器开发工具 → Console——查找 IIFE 执行期间的错误或 `window.__CHIPER_PLUGINS__ is undefined`（表示 SDK 未初始化，通常是更早的 React 渲染崩溃导致）。
@@ -895,7 +895,7 @@ cp -r chiper-example-plugins/strike-freedom-cockpit ~/.Chiper/plugins/
 1. 确认 manifest 中有 `"api": "plugin_api.py"` 且指向 `dashboard/` 内的现有文件。
 2. 重启 `chiper dashboard`——插件 API 路由在启动时挂载一次，**不会**在重新扫描时挂载。
 3. 检查 `plugin_api.py` 是否导出了模块级的 `router = APIRouter()`。其他导出名称不会被识别。
-4. 查看 `~/.Chiper/logs/errors.log` 中的 `Failed to load plugin <name> API routes`——导入错误会记录在那里。
+4. 查看 `~/.chiper/logs/errors.log` 中的 `Failed to load plugin <name> API routes`——导入错误会记录在那里。
 
 **切换主题后我的颜色覆盖丢失了。**
 `colorOverrides` 的作用域限于激活主题，切换主题时会被清除——这是设计行为。如果你希望覆盖持久化，请将其写入主题的 YAML，而非实时切换器。
@@ -904,4 +904,4 @@ cp -r chiper-example-plugins/strike-freedom-cockpit ~/.Chiper/plugins/
 `customCSS` 块每个主题上限为 32 KiB。可将大型样式表拆分到多个主题中，或改用通过 `css` 字段注入完整样式表的插件（无大小限制）。
 
 **我想在 PyPI 上发布插件。**
-Dashboard 插件通过目录结构安装，而非 pip 入口点。目前最简洁的分发方式是用户克隆到 `~/.Chiper/plugins/` 的 git 仓库。基于 pip 的 dashboard 插件安装器目前尚未实现。
+Dashboard 插件通过目录结构安装，而非 pip 入口点。目前最简洁的分发方式是用户克隆到 `~/.chiper/plugins/` 的 git 仓库。基于 pip 的 dashboard 插件安装器目前尚未实现。

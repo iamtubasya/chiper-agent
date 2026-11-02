@@ -17,7 +17,7 @@ Web search is one of several **backend plugins** Chiper supports. The others (wi
 Chiper scans for web-search backends in three places:
 
 1. **Bundled** — `<repo>/plugins/web/<name>/` (auto-loaded with `kind: backend`, always available)
-2. **User** — `~/.Chiper/plugins/web/<name>/` (opt-in via `plugins.enabled` or `chiper plugins enable <name>`)
+2. **User** — `~/.chiper/plugins/web/<name>/` (opt-in via `plugins.enabled` or `chiper plugins enable <name>`)
 3. **Pip** — packages declaring a `chiper_agent.plugins` entry point
 
 Each plugin's `register(ctx)` function calls `ctx.register_web_search_provider(...)` — that puts the instance into the registry in `agent/web_search_registry.py`. The active provider for each capability is picked by config:
@@ -209,7 +209,7 @@ Both `search()` and `extract()` may be `async def` — the dispatcher detects co
 Chiper routes calls to the right provider based on the `supports_*` flags. A common multi-provider setup:
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 web:
   search_backend: "brave-free"     # search-only, fast, free 2k/mo
   extract_backend: "firecrawl"     # extract + crawl, paid quota

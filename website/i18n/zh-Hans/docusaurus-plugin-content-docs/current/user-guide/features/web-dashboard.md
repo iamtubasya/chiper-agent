@@ -170,7 +170,7 @@ Chat 标签页是每次 `chiper dashboard` 启动的一部分——内嵌的浏�
 
 ### Skills（技能）
 
-浏览、搜索和切换技能与工具集。技能从 `~/.Chiper/skills/` 加载，并按类别分组。
+浏览、搜索和切换技能与工具集。技能从 `~/.chiper/skills/` 加载，并按类别分组。
 
 - **Search** — 按名称、描述或类别过滤技能和工具集
 - **Category filter** — 点击类别标签缩小列表范围（如 MLOps、MCP、Red Teaming、AI）
@@ -190,7 +190,7 @@ You → /reload
   Reloaded .env (3 var(s) updated)
 ```
 
-这会将 `~/.Chiper/.env` 重新读取到运行中进程的环境中。当你通过 Dashboard 添加了新的提供商密钥并希望立即使用时非常有用。
+这会将 `~/.chiper/.env` 重新读取到运行中进程的环境中。当你通过 Dashboard 添加了新的提供商密钥并希望立即使用时非常有用。
 
 ## REST API
 

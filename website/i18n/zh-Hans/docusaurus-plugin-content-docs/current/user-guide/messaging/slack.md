@@ -33,7 +33,7 @@ description: "使用 Socket Mode 将 Chiper Agent 设置为 Slack 机器人"
    ```bash
    chiper slack manifest --write
    ```
-   此命令会将 `~/.Chiper/slack-manifest.json` 写入磁盘并打印粘贴说明。
+   此命令会将 `~/.chiper/slack-manifest.json` 写入磁盘并打印粘贴说明。
 2. 前往 [https://api.slack.com/apps](https://api.slack.com/apps) →
    **Create New App** → **From an app manifest**
 3. 选择你的工作区，粘贴 JSON 内容，检查后点击 **Next** → **Create**
@@ -168,7 +168,7 @@ Member ID 格式类似 `U01ABC2DEF3`。你至少需要自己的 Member ID。
 
 ## 第八步：配置 Chiper
 
-将以下内容添加到你的 `~/.Chiper/.env` 文件：
+将以下内容添加到你的 `~/.chiper/.env` 文件：
 
 ```bash
 # 必需
@@ -227,7 +227,7 @@ chiper slack manifest --write
 1. 打开 [https://api.slack.com/apps](https://api.slack.com/apps) →
    你的 Chiper 应用
 2. **Features → App Manifest → Edit**
-3. 粘贴 `~/.Chiper/slack-manifest.json` 的新内容
+3. 粘贴 `~/.chiper/slack-manifest.json` 的新内容
 4. **保存**。如果权限范围或斜杠命令有变化，Slack 会提示重新安装应用。
 
 ### 旧版 `/chiper <子命令>` 仍然有效
@@ -272,7 +272,7 @@ chiper slack manifest --slashes-only > /tmp/slashes.json
 
 ## 配置选项
 
-除了第八步中的必需环境变量外，你还可以通过 `~/.Chiper/config.yaml` 自定义 Slack 机器人行为。
+除了第八步中的必需环境变量外，你还可以通过 `~/.chiper/config.yaml` 自定义 Slack 机器人行为。
 
 ### 话题与回复行为
 
@@ -458,7 +458,7 @@ SLACK_BOT_TOKEN=xoxb-workspace1-token,xoxb-workspace2-token,xoxb-workspace3-toke
 SLACK_APP_TOKEN=xapp-your-app-token
 ```
 
-或在 `~/.Chiper/config.yaml` 中：
+或在 `~/.chiper/config.yaml` 中：
 
 ```yaml
 platforms:
@@ -471,7 +471,7 @@ platforms:
 除了环境变量或配置中的 token 外，Chiper 还会从以下位置的 **OAuth token 文件**加载 token：
 
 ```
-~/.Chiper/slack_tokens.json
+~/.chiper/slack_tokens.json
 ```
 
 此文件是一个将团队 ID 映射到 token 条目的 JSON 对象：
@@ -587,7 +587,7 @@ slack:
 **始终设置 `SLACK_ALLOWED_USERS`**，填入授权用户的 Member ID。没有此设置，gateway 默认会**拒绝所有消息**作为安全措施。切勿分享你的 bot token——像密码一样对待它们。
 :::
 
-- Token 应存储在 `~/.Chiper/.env` 中（文件权限 `600`）
+- Token 应存储在 `~/.chiper/.env` 中（文件权限 `600`）
 - 定期通过 Slack 应用设置轮换 token
 - 审计谁有权访问你的 Chiper 配置目录
 - Socket Mode 意味着不暴露公开端点——减少一个攻击面

@@ -13,7 +13,7 @@ def _chiper_home_path() -> Path:
         from chiper_constants import get_chiper_home  # local import to avoid cycles
         return get_chiper_home()
     except Exception:
-        return Path(os.path.expanduser("~/.Chiper"))
+        return Path(os.path.expanduser("~/.chiper"))
 
 
 def _chiper_root_path() -> Path:
@@ -22,7 +22,7 @@ def _chiper_root_path() -> Path:
         from chiper_constants import get_default_chiper_root  # local import to avoid cycles
         return get_default_chiper_root()
     except Exception:
-        return Path(os.path.expanduser("~/.Chiper"))
+        return Path(os.path.expanduser("~/.chiper"))
 
 
 def build_write_denied_paths(home: str) -> set[str]:
@@ -170,7 +170,7 @@ def get_read_block_error(path: str) -> Optional[str]:
 
     **This is NOT a security boundary.** The terminal tool runs as the
     same OS user with shell access; the agent can still ``cat auth.json``
-    or ``cat ~/.Chiper/.env`` and exfiltrate the file. The read-deny exists
+    or ``cat ~/.chiper/.env`` and exfiltrate the file. The read-deny exists
     as defense-in-depth that:
 
       * Returns a clear error to models that respect tool denials, which
@@ -308,8 +308,8 @@ def get_read_block_error(path: str) -> Optional[str]:
 # exists, and explicit user direction is required to cross it.
 #
 # Reference: May 2026 incident where a chiper-security profile session
-# edited skills under both ``~/.Chiper/profiles/chiper-security/skills/``
-# AND ``~/.Chiper/skills/`` (the default profile's skills) without realizing
+# edited skills under both ``~/.chiper/profiles/chiper-security/skills/``
+# AND ``~/.chiper/skills/`` (the default profile's skills) without realizing
 # the second path belonged to a different profile.
 # ---------------------------------------------------------------------------
 
@@ -322,8 +322,8 @@ PROFILE_SCOPED_AREAS = ("skills", "plugins", "cron", "memories")
 def _resolve_active_profile_name() -> str:
     """Return the active profile name derived from CHIPER_HOME.
 
-    ``~/.Chiper``              -> ``"default"``
-    ``~/.Chiper/profiles/X``  -> ``"X"``
+    ``~/.chiper``              -> ``"default"``
+    ``~/.chiper/profiles/X``  -> ``"X"``
 
     Falls back to ``"default"`` on any resolution failure so the guard
     never raises into the tool path.
@@ -442,7 +442,7 @@ def get_cross_profile_warning(path: str) -> Optional[str]:
 # Non-local terminal backends (Docker, Daytona, etc.) bind a sandbox-local
 # directory to the container's ``$HOME``. The on-disk layout looks like
 #
-#   <CHIPER_HOME>/profiles/<name>/sandboxes/<backend>/<task>/home/.Chiper/...
+#   <CHIPER_HOME>/profiles/<name>/sandboxes/<backend>/<task>/home/.chiper/...
 #
 # When the agent (running host-side) speculates that authoritative profile
 # state lives at one of those sandbox-mirror paths, the write lands on the
@@ -451,10 +451,10 @@ def get_cross_profile_warning(path: str) -> Optional[str]:
 # disk two divergent copies accumulate. See #32049 for evidence.
 #
 # This guard is path-shape-only: it detects the
-# ``…/sandboxes/<backend>/<task>/home/.Chiper/…`` segment and warns
+# ``…/sandboxes/<backend>/<task>/home/.chiper/…`` segment and warns
 # regardless of which Chiper profile is active. It does NOT cover the
 # inner-container case where the bind mount strips the ``sandboxes/`` prefix
-# (the agent's view inside the container is plain ``/root/.Chiper/...``);
+# (the agent's view inside the container is plain ``/root/.chiper/...``);
 # that case needs a separate dispatch-layer or host-side ``profile_state``
 # tool.
 # ---------------------------------------------------------------------------
@@ -463,7 +463,7 @@ def get_cross_profile_warning(path: str) -> Optional[str]:
 def _find_sandbox_mirror_segments(parts: tuple) -> Optional[int]:
     """Return the index of the inner ``.chiper`` part in a sandbox-mirror path.
 
-    Matches ``…/sandboxes/<backend>/<task>/home/.Chiper/…`` and returns the
+    Matches ``…/sandboxes/<backend>/<task>/home/.chiper/…`` and returns the
     index where the inner Chiper-state portion starts. Returns ``None`` for
     paths that do not contain the sandbox-mirror shape.
     """
@@ -473,7 +473,7 @@ def _find_sandbox_mirror_segments(parts: tuple) -> Optional[int]:
         # Need at least: sandboxes / <backend> / <task> / home / .chiper / <thing>
         if i + 5 >= len(parts):
             continue
-        if parts[i + 3] == "home" and parts[i + 4] == ".Chiper":
+        if parts[i + 3] == "home" and parts[i + 4] == ".chiper":
             return i + 4
     return None
 
@@ -550,9 +550,9 @@ def get_sandbox_mirror_warning(path: str) -> Optional[str]:
 # Container-context mirror guard (inner-container case — #32049 follow-up)
 #
 # Brian's shape-based detector (#32213) catches paths that still carry the
-# full ``…/sandboxes/<backend>/<task>/home/.Chiper/…`` prefix on the host.
+# full ``…/sandboxes/<backend>/<task>/home/.chiper/…`` prefix on the host.
 # But when file tools execute *inside* the container the bind-mount strips
-# that prefix: the agent sees plain ``/root/.Chiper/…``.  The root:root
+# that prefix: the agent sees plain ``/root/.chiper/…``.  The root:root
 # ownership on the divergent SOUL.md in #32049 confirms this is the primary
 # failure mode.
 #

@@ -1,7 +1,7 @@
 """
 Backup and import commands for chiper CLI.
 
-`chiper backup` creates a zip archive of the entire ~/.Chiper/ directory
+`chiper backup` creates a zip archive of the entire ~/.chiper/ directory
 (excluding the chiper-agent repo and transient files).
 
 `chiper import` restores from a backup zip, overlaying onto the current
@@ -357,7 +357,7 @@ def _detect_prefix(zf: zipfile.ZipFile) -> str:
     if len(first_parts) == 1:
         prefix = first_parts.pop()
         # Only strip if it looks like a chiper dir name
-        if prefix in {".Chiper", "chiper"}:
+        if prefix in {".chiper", "chiper"}:
             return prefix + "/"
 
     return ""

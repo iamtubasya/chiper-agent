@@ -54,15 +54,15 @@ chiper teams-pipeline maintain-subscriptions --dry-run
 
 #### 方式一：Chiper cron（若已运行 Chiper gateway，推荐此方式）
 
-Chiper 内置 cron 调度器。`--no-agent` 模式以脚本作为任务执行（而非使用 LLM），`--script` 必须指向 `~/.Chiper/scripts/` 下的文件。首先创建脚本：
+Chiper 内置 cron 调度器。`--no-agent` 模式以脚本作为任务执行（而非使用 LLM），`--script` 必须指向 `~/.chiper/scripts/` 下的文件。首先创建脚本：
 
 ```bash
-mkdir -p ~/.Chiper/scripts
-cat > ~/.Chiper/scripts/maintain-teams-subscriptions.sh <<'EOF'
+mkdir -p ~/.chiper/scripts
+cat > ~/.chiper/scripts/maintain-teams-subscriptions.sh <<'EOF'
 #!/usr/bin/env bash
 exec chiper teams-pipeline maintain-subscriptions
 EOF
-chmod +x ~/.Chiper/scripts/maintain-teams-subscriptions.sh
+chmod +x ~/.chiper/scripts/maintain-teams-subscriptions.sh
 ```
 
 然后注册一个每 12 小时运行一次的纯脚本 cron 任务（相对于 72 小时过期窗口有 6 倍余量）：
@@ -127,7 +127,7 @@ systemctl list-timers chiper-teams-pipeline-maintain.timer
 0 */12 * * * /usr/local/bin/chiper teams-pipeline maintain-subscriptions >> /var/log/chiper/teams-pipeline-maintain.log 2>&1
 ```
 
-确保 cron 环境中包含 `MSGRAPH_*` 凭据。最简单的方法：在 crontab 调用的包装脚本顶部 source `~/.Chiper/.env`。
+确保 cron 环境中包含 `MSGRAPH_*` 凭据。最简单的方法：在 crontab 调用的包装脚本顶部 source `~/.chiper/.env`。
 
 #### 验证续期是否正常工作
 

@@ -43,7 +43,7 @@ Plugins are opt-in. Add it to your allow-list:
 
 ```bash
 chiper plugins enable security-guidance
-# or edit ~/.Chiper/config.yaml manually:
+# or edit ~/.chiper/config.yaml manually:
 plugins:
   enabled:
     - security-guidance

@@ -34,7 +34,7 @@ pytestmark = pytest.mark.skipif(
 
 
 # ---------------------------------------------------------------------------
-# _save_auth_store  (~/.Chiper/auth.json — every native OAuth provider)
+# _save_auth_store  (~/.chiper/auth.json — every native OAuth provider)
 # ---------------------------------------------------------------------------
 
 

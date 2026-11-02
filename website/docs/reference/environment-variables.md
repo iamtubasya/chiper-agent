@@ -6,7 +6,7 @@ description: "Complete reference of all environment variables used by Chiper Age
 
 # Environment Variables Reference
 
-All variables go in `~/.Chiper/.env`. You can also set them with `chiper config set VAR value`.
+All variables go in `~/.chiper/.env`. You can also set them with `chiper config set VAR value`.
 
 ## LLM Providers
 
@@ -103,11 +103,11 @@ All variables go in `~/.Chiper/.env`. You can also set them with `chiper config 
 | `VOICE_TOOLS_OPENAI_KEY` | Preferred OpenAI key for OpenAI speech-to-text and text-to-speech providers |
 | `CHIPER_LOCAL_STT_COMMAND` | Optional local speech-to-text command template. Supports `{input_path}`, `{output_dir}`, `{language}`, and `{model}` placeholders |
 | `CHIPER_LOCAL_STT_LANGUAGE` | Default language passed to `CHIPER_LOCAL_STT_COMMAND` or auto-detected local `whisper` CLI fallback (default: `en`) |
-| `CHIPER_HOME` | Override Chiper config directory (default: `~/.Chiper`). Also scopes the gateway PID file and systemd service name, so multiple installations can run concurrently |
+| `CHIPER_HOME` | Override Chiper config directory (default: `~/.chiper`). Also scopes the gateway PID file and systemd service name, so multiple installations can run concurrently |
 | `CHIPER_GIT_BASH_PATH` | **Windows only.** Override `bash.exe` discovery for the terminal tool. Points at any bash — full Git-for-Windows install, WSL bash via symlink, MSYS2, Cygwin. The installer sets this automatically to the PortableGit it provisioned. See the [Windows (Native) Guide](../user-guide/windows-native.md#how-chiper-runs-shell-commands-on-windows) |
 | `CHIPER_DISABLE_WINDOWS_UTF8` | **Windows only.** Set to `1` to disable the UTF-8 stdio shim (`configure_windows_stdio()`) and fall back to the console's locale code page. Useful for bisecting encoding bugs; rarely the right setting in normal operation |
 | `CHIPER_KANBAN_HOME` | Override the shared Chiper root that anchors the kanban board (db + workspaces + worker logs). Falls back to `get_default_chiper_root()` (the parent of any active profile). Useful for tests and unusual deployments |
-| `CHIPER_KANBAN_BOARD` | Pin the active kanban board for this process. Takes precedence over `~/.Chiper/kanban/current`; the dispatcher injects this into worker subprocess env so workers physically cannot see tasks on other boards. Defaults to `default`. Slug validation: lowercase alphanumerics + hyphens + underscores, 1-64 chars |
+| `CHIPER_KANBAN_BOARD` | Pin the active kanban board for this process. Takes precedence over `~/.chiper/kanban/current`; the dispatcher injects this into worker subprocess env so workers physically cannot see tasks on other boards. Defaults to `default`. Slug validation: lowercase alphanumerics + hyphens + underscores, 1-64 chars |
 | `CHIPER_KANBAN_DB` | Pin the kanban database file path directly (highest precedence; beats `CHIPER_KANBAN_BOARD` and `CHIPER_KANBAN_HOME`). The dispatcher injects this into worker subprocess env so profile workers converge on the dispatcher's board |
 | `CHIPER_KANBAN_WORKSPACES_ROOT` | Pin the kanban workspaces root directly (highest precedence for workspaces; beats `CHIPER_KANBAN_HOME`). The dispatcher injects this into worker subprocess env |
 | `CHIPER_KANBAN_DISPATCH_IN_GATEWAY` | Runtime override for `kanban.dispatch_in_gateway`. Set to `0`, `false`, `no`, or `off` to keep the gateway from starting the embedded Kanban dispatcher; any other non-empty value enables it. Useful when a separate dispatcher process owns the board. |
@@ -164,7 +164,7 @@ For native Anthropic auth, Chiper prefers Claude Code's own credential files whe
 
 ### Langfuse Observability
 
-Environment variables for the bundled [`observability/langfuse`](/user-guide/features/built-in-plugins#observabilitylangfuse) plugin. Set these in `~/.Chiper/.env`. The plugin must also be enabled (`chiper plugins enable observability/langfuse`, or check the box in `chiper plugins`) before any of these take effect.
+Environment variables for the bundled [`observability/langfuse`](/user-guide/features/built-in-plugins#observabilitylangfuse) plugin. Set these in `~/.chiper/.env`. The plugin must also be enabled (`chiper plugins enable observability/langfuse`, or check the box in `chiper plugins`) before any of these take effect.
 
 | Variable | Description |
 |----------|-------------|
@@ -227,7 +227,7 @@ For cloud sandbox backends, persistence is filesystem-oriented. `TERMINAL_LIFETI
 | `TERMINAL_CONTAINER_MEMORY` | Memory in MB (default: 5120) |
 | `TERMINAL_CONTAINER_DISK` | Disk in MB (default: 51200) |
 | `TERMINAL_CONTAINER_PERSISTENT` | Persist container filesystem across sessions (default: `true`) |
-| `TERMINAL_SANDBOX_DIR` | Host directory for workspaces and overlays (default: `~/.Chiper/sandboxes/`) |
+| `TERMINAL_SANDBOX_DIR` | Host directory for workspaces and overlays (default: `~/.chiper/sandboxes/`) |
 
 ## Persistent Shell
 
@@ -458,7 +458,7 @@ For cloud sandbox backends, persistence is filesystem-oriented. `TERMINAL_LIFETI
 
 ### Web Dashboard & Chiper Desktop
 
-Auth for the [web dashboard](/user-guide/features/web-dashboard) and for connecting [Chiper Desktop to a remote backend](/user-guide/features/web-dashboard#connecting-chiper-desktop-to-a-remote-backend). Per the secrets-only convention, credentials belong in `~/.Chiper/.env`; the OAuth `client_id` is better set under `dashboard.oauth` in `config.yaml` (env wins when set).
+Auth for the [web dashboard](/user-guide/features/web-dashboard) and for connecting [Chiper Desktop to a remote backend](/user-guide/features/web-dashboard#connecting-chiper-desktop-to-a-remote-backend). Per the secrets-only convention, credentials belong in `~/.chiper/.env`; the OAuth `client_id` is better set under `dashboard.oauth` in `config.yaml` (env wins when set).
 
 Three dashboard-auth providers ship in the box. For a remote Chiper Desktop connection or any internet-facing dashboard, the recommended provider is **OAuth (Nous Portal)** — set `CHIPER_DASHBOARD_OAUTH_CLIENT_ID` (provision it with `chiper dashboard register`). The bundled **username/password** provider (`CHIPER_DASHBOARD_BASIC_AUTH_*`) is the quickest option for a backend on a trusted LAN or behind a VPN, but is not suitable for direct public-internet exposure. To authenticate against your own identity provider, use the **self-hosted OIDC** provider (`CHIPER_DASHBOARD_OIDC_*`). Either way, a non-loopback bind (`chiper dashboard --host 0.0.0.0`) engages the auth gate. See [Web Dashboard → Authentication](/user-guide/features/web-dashboard#authentication-gated-mode) for the full picture.
 
@@ -484,7 +484,7 @@ App-only credentials for the Microsoft Graph REST client used by the upcoming Te
 |----------|-------------|
 | `MSGRAPH_TENANT_ID` | Azure AD tenant ID (directory GUID) for the Graph app registration. |
 | `MSGRAPH_CLIENT_ID` | Application (client) ID of the Azure app registration. |
-| `MSGRAPH_CLIENT_SECRET` | Client secret value for the app registration. Store in `~/.Chiper/.env` with `chmod 600`; rotate periodically via the Azure portal. |
+| `MSGRAPH_CLIENT_SECRET` | Client secret value for the app registration. Store in `~/.chiper/.env` with `chmod 600`; rotate periodically via the Azure portal. |
 | `MSGRAPH_SCOPE` | OAuth2 scope for the client-credentials token request (default: `https://graph.microsoft.com/.default`). |
 | `MSGRAPH_AUTHORITY_URL` | Microsoft identity platform authority (default: `https://login.microsoftonline.com`). Override only for national/sovereign clouds (e.g. `https://login.microsoftonline.us` for GCC High). |
 
@@ -593,7 +593,7 @@ Advanced per-platform knobs for throttling the outbound message batcher. Most us
 | `CHIPER_INFERENCE_MODEL` | Override model name at process level (takes priority over `config.yaml` for the session). Also settable via `-m`/`--model` flag. |
 | `CHIPER_YOLO_MODE` | Set to `1` to bypass dangerous-command approval prompts. Equivalent to `--yolo`. |
 | `CHIPER_ACCEPT_HOOKS` | Auto-approve any unseen shell hooks declared in `config.yaml` without a TTY prompt. Equivalent to `--accept-hooks` or `hooks_auto_accept: true`. |
-| `CHIPER_IGNORE_USER_CONFIG` | Skip `~/.Chiper/config.yaml` and use built-in defaults (credentials in `.env` still load). Equivalent to `--ignore-user-config`. |
+| `CHIPER_IGNORE_USER_CONFIG` | Skip `~/.chiper/config.yaml` and use built-in defaults (credentials in `.env` still load). Equivalent to `--ignore-user-config`. |
 | `CHIPER_IGNORE_RULES` | Skip auto-injection of `AGENTS.md`, `SOUL.md`, `.cursorrules`, memory, and preloaded skills. Equivalent to `--ignore-rules`. |
 | `CHIPER_SAFE_MODE` | Troubleshooting mode: disable ALL customizations — skips plugin discovery and MCP server loading. Set automatically by `--safe-mode` (which also sets the two flags above). |
 | `CHIPER_MD_NAMES` | Comma-separated list of rules-file names to auto-inject (default: `AGENTS.md,CLAUDE.md,.cursorrules,SOUL.md`). |
@@ -615,7 +615,7 @@ Advanced per-platform knobs for throttling the outbound message batcher. Most us
 | `CHIPER_AGENT_NOTIFY_INTERVAL` | Gateway: interval in seconds between progress notifications on long-running agent turns. |
 | `CHIPER_CHECKPOINT_TIMEOUT` | Timeout for filesystem checkpoint creation in seconds (default: `30`). |
 | `CHIPER_EXEC_ASK` | Enable execution approval prompts in gateway mode (`true`/`false`) |
-| `CHIPER_ENABLE_PROJECT_PLUGINS` | Enable auto-discovery of repo-local plugins from `./.Chiper/plugins/` for both the agent loader and the dashboard web server. Accepts the standard truthy set: `1` / `true` / `yes` / `on` (case-insensitive). Everything else — including `0`, `false`, `no`, `off`, and the empty string — is treated as **disabled** (default). Note: as of GHSA-5qr3-c538-wm9j (#29156) the dashboard web server refuses to auto-import a project plugin's Python `api` file even when this var is enabled — project plugins may extend the UI via static JS/CSS but their backend routes are only loaded when moved under `~/.Chiper/plugins/`. |
+| `CHIPER_ENABLE_PROJECT_PLUGINS` | Enable auto-discovery of repo-local plugins from `./.chiper/plugins/` for both the agent loader and the dashboard web server. Accepts the standard truthy set: `1` / `true` / `yes` / `on` (case-insensitive). Everything else — including `0`, `false`, `no`, `off`, and the empty string — is treated as **disabled** (default). Note: as of GHSA-5qr3-c538-wm9j (#29156) the dashboard web server refuses to auto-import a project plugin's Python `api` file even when this var is enabled — project plugins may extend the UI via static JS/CSS but their backend routes are only loaded when moved under `~/.chiper/plugins/`. |
 | `CHIPER_PLUGINS_DEBUG` | `1`/`true` to surface verbose plugin-discovery logs on stderr — directories scanned, manifests parsed, skip reasons, and full tracebacks on parse or `register()` failure. Aimed at plugin authors. |
 | `CHIPER_BACKGROUND_NOTIFICATIONS` | Background process notification mode in gateway: `all` (default), `result`, `error`, `off` |
 | `CHIPER_EPHEMERAL_SYSTEM_PROMPT` | Ephemeral system prompt injected at API-call time (never persisted to sessions) |
@@ -632,7 +632,7 @@ Advanced per-platform knobs for throttling the outbound message batcher. Most us
 | `CHIPER_DUMP_REQUESTS` | Dump API request payloads to log files (`true`/`false`) |
 | `CHIPER_DUMP_REQUEST_STDOUT` | Dump API request payloads to stdout instead of log files. |
 | `CHIPER_OAUTH_TRACE` | Set to `1` to log OAuth token exchange and refresh attempts. Includes redacted timing info. |
-| `CHIPER_OAUTH_FILE` | Override the path used for OAuth credential storage (default: `~/.Chiper/auth.json`). |
+| `CHIPER_OAUTH_FILE` | Override the path used for OAuth credential storage (default: `~/.chiper/auth.json`). |
 | `CHIPER_AGENT_HELP_GUIDANCE` | Append additional guidance text to the system prompt for custom deployments. |
 | `CHIPER_AGENT_LOGO` | Override the ASCII banner logo at CLI startup. |
 | `DELEGATION_MAX_CONCURRENT_CHILDREN` | Max parallel subagents per `delegate_task` batch (default: `3`, floor of 1, no ceiling). Also configurable via `delegation.max_concurrent_children` in `config.yaml` — the config value takes priority. |
@@ -702,7 +702,7 @@ See [Fallback Providers](/user-guide/features/fallback-providers) for full detai
 
 ## Provider Routing (config.yaml only)
 
-These go in `~/.Chiper/config.yaml` under the `provider_routing` section:
+These go in `~/.chiper/config.yaml` under the `provider_routing` section:
 
 | Key | Description |
 |-----|-------------|

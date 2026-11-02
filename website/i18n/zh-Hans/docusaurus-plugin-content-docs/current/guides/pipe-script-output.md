@@ -137,7 +137,7 @@ fi
 ```bash
 # Crontab 条目
 0 9 * * * /usr/local/bin/generate-metrics.sh \
-  | /home/me/.Chiper/bin/chiper send \
+  | /home/me/.chiper/bin/chiper send \
       --to telegram --subject "Daily metrics $(date +%Y-%m-%d)"
 ```
 
@@ -167,7 +167,7 @@ msg_id=$(chiper send --to discord:#ops --json "build started" \
 
 ## `chiper send` 需要 gateway 运行吗？
 
-**通常不需要。** 对于所有基于 bot token 的平台——Telegram、Discord、Slack、Signal、SMS、WhatsApp Cloud API 等——`chiper send` 直接使用 `~/.Chiper/.env` 和 `~/.Chiper/config.yaml` 中的凭据调用平台的 REST 接口。它是一个独立的子进程，消息投递完成后即退出。
+**通常不需要。** 对于所有基于 bot token 的平台——Telegram、Discord、Slack、Signal、SMS、WhatsApp Cloud API 等——`chiper send` 直接使用 `~/.chiper/.env` 和 `~/.chiper/config.yaml` 中的凭据调用平台的 REST 接口。它是一个独立的子进程，消息投递完成后即退出。
 
 只有依赖持久适配器连接的**插件平台**才需要运行中的 gateway（例如，某个保持长连接 WebSocket 的自定义插件）。此时你会收到明确的错误提示，指引你启动 gateway；执行 `chiper gateway start` 后重试即可。
 
@@ -188,7 +188,7 @@ chiper send --list telegram
 chiper send --list --json
 ```
 
-列表数据来源于 `~/.Chiper/channel_directory.json`，gateway 运行期间每隔几分钟刷新一次。如果看到"尚未发现频道"，请先启动一次 gateway（`chiper gateway start`）以填充缓存。
+列表数据来源于 `~/.chiper/channel_directory.json`，gateway 运行期间每隔几分钟刷新一次。如果看到"尚未发现频道"，请先启动一次 gateway（`chiper gateway start`）以填充缓存。
 
 易读名称（`discord:#ops`、`slack:#engineering`）在发送时通过该缓存解析，无需记忆数字 ID。
 

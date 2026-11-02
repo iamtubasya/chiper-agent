@@ -337,7 +337,7 @@ class TestBaseUrlValidation:
         # User types a shell command instead of a URL at the base URL prompt
         with patch("chiper_cli.auth._prompt_model_selection", return_value="glm-5"), \
              patch("chiper_cli.auth.deactivate_provider"), \
-             patch("builtins.input", return_value="nano ~/.Chiper/.env"):
+             patch("builtins.input", return_value="nano ~/.chiper/.env"):
             _model_flow_api_key_provider(load_config(), "zai", "old-model")
 
         # The garbage value should NOT have been saved

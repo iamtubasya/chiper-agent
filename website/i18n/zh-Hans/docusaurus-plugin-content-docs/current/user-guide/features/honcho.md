@@ -39,13 +39,13 @@ chiper memory setup    # 从 provider 列表中选择 "honcho"
 或手动配置：
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 memory:
   provider: honcho
 ```
 
 ```bash
-echo 'HONCHO_API_KEY=***' >> ~/.Chiper/.env
+echo 'HONCHO_API_KEY=***' >> ~/.chiper/.env
 ```
 
 在 [honcho.dev](https://honcho.dev) 获取 API key。

@@ -11,7 +11,7 @@
 #   * Env vars blanked (conftest.py also does this, but this
 #     is belt-and-suspenders for anyone running pytest outside our
 #     conftest path — e.g. on a single file)
-#   * Proper venv activation (probes .venv, venv, then ~/.Chiper/...)
+#   * Proper venv activation (probes .venv, venv, then ~/.chiper/...)
 #
 # Usage:
 #   scripts/run_tests.sh                            # full suite
@@ -34,7 +34,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # ── Activate venv ───────────────────────────────────────────────────────────
 VENV=""
-for candidate in "$REPO_ROOT/.venv" "$REPO_ROOT/venv" "$HOME/.Chiper/chiper-agent/venv"; do
+for candidate in "$REPO_ROOT/.venv" "$REPO_ROOT/venv" "$HOME/.chiper/chiper-agent/venv"; do
   if [ -f "$candidate/bin/activate" ]; then
     VENV="$candidate"
     break
@@ -52,8 +52,8 @@ PYTHON="$VENV/bin/python"
 # ── Live-gateway plugin (computed before we drop env) ───────────────────────
 EXTRA_PYTHONPATH=""
 EXTRA_PYTEST_PLUGINS=""
-if [ -f "$HOME/.Chiper/pytest_live_guard.py" ]; then
-  EXTRA_PYTHONPATH="$HOME/.Chiper"
+if [ -f "$HOME/.chiper/pytest_live_guard.py" ]; then
+  EXTRA_PYTHONPATH="$HOME/.chiper"
   EXTRA_PYTEST_PLUGINS="pytest_live_guard"
 fi
 

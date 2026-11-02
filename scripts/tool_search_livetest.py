@@ -34,7 +34,7 @@ from typing import Any, Dict, List, Tuple
 
 # Force-isolate the test environment BEFORE any chiper imports.
 ORIGINAL_HOME = os.environ.get("CHIPER_HOME")
-ORIGINAL_AUTH = Path.home() / ".Chiper" / "auth.json"
+ORIGINAL_AUTH = Path.home() / ".chiper" / "auth.json"
 
 _THIS_DIR = Path(__file__).resolve().parent
 _WORKTREE_ROOT = _THIS_DIR.parent
@@ -249,13 +249,13 @@ SCENARIOS: List[Dict[str, Any]] = [
 
 
 def setup_isolated_home(enabled: bool) -> Path:
-    """Create a fresh ~/.Chiper/ for one test, copying minimal credentials.
+    """Create a fresh ~/.chiper/ for one test, copying minimal credentials.
 
-    Also reads OPENROUTER_API_KEY from the user's real ``~/.Chiper/.env`` so
+    Also reads OPENROUTER_API_KEY from the user's real ``~/.chiper/.env`` so
     the agent can authenticate against OpenRouter inside the isolated home.
     """
     home_dir = Path(tempfile.mkdtemp(prefix="chiper_ts_live_"))
-    chiper_home = home_dir / ".Chiper"
+    chiper_home = home_dir / ".chiper"
     chiper_home.mkdir(parents=True)
 
     if ORIGINAL_AUTH.exists():
@@ -263,7 +263,7 @@ def setup_isolated_home(enabled: bool) -> Path:
 
     # Copy .env so OPENROUTER_API_KEY (or others) are visible to the agent
     # running inside the isolated home.
-    real_env_file = Path.home() / ".Chiper" / ".env"
+    real_env_file = Path.home() / ".chiper" / ".env"
     if real_env_file.exists():
         shutil.copy(real_env_file, chiper_home / ".env")
         # Also load the real user env into this process so the provider
@@ -273,7 +273,7 @@ def setup_isolated_home(enabled: bool) -> Path:
         # this module, which both avoids a hand-rolled parser bug and keeps
         # static analysis from tainting the transcript records with the key.
         from chiper_cli.env_loader import load_chiper_dotenv
-        load_chiper_dotenv(chiper_home=str(Path.home() / ".Chiper"))
+        load_chiper_dotenv(chiper_home=str(Path.home() / ".chiper"))
 
     cfg = {
         "model": {

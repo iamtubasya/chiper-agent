@@ -335,8 +335,8 @@ export const zhHant: Translations = {
     providersHint:
       "會寫入 config.yaml：memory.provider（留空為內建）與 context.engine。下一個工作階段生效。",
     refreshDashboard: "重新掃描儀表板擴充功能",
-    removeConfirm: "從 ~/.Chiper/plugins/ 移除此外掛？",
-    removeHint: "僅可移除位於 ~/.Chiper/plugins 下使用者安裝的外掛。",
+    removeConfirm: "從 ~/.chiper/plugins/ 移除此外掛？",
+    removeHint: "僅可移除位於 ~/.chiper/plugins 下使用者安裝的外掛。",
     rescanHeading: "SPA 外掛註冊表",
     rescanHint: "在磁碟新增檔案後重新掃描，使儀表板側邊欄載入新的 manifest。",
     runtimeHeading: "閘道執行階段（YAML 外掛）",
@@ -358,7 +358,7 @@ export const zhHant: Translations = {
     all: "全部",
     categories: "分類",
     filters: "篩選",
-    noSkills: "找不到技能。技能由 ~/.Chiper/skills/ 載入",
+    noSkills: "找不到技能。技能由 ~/.chiper/skills/ 載入",
     noSkillsMatch: "沒有符合搜尋或篩選條件的技能。",
     skillCount: "{count} 個技能",
     resultCount: "{count} 個結果",
@@ -372,7 +372,7 @@ export const zhHant: Translations = {
   },
 
   config: {
-    configPath: "~/.Chiper/config.yaml",
+    configPath: "~/.chiper/config.yaml",
     filters: "篩選",
     sections: "分類",
     exportConfig: "匯出設定為 JSON",

@@ -1758,7 +1758,7 @@ function Set-PathVariable {
     
     # Set CHIPER_HOME so the Python code finds config/data in the right place.
     # Only needed on Windows where we install to %LOCALAPPDATA%\Chiper instead
-    # of the Unix default ~/.Chiper
+    # of the Unix default ~/.chiper
     $currentChiperHome = [Environment]::GetEnvironmentVariable("CHIPER_HOME", "User")
     if (-not $currentChiperHome -or $currentChiperHome -ne $ChiperHome) {
         [Environment]::SetEnvironmentVariable("CHIPER_HOME", $ChiperHome, "User")
@@ -2592,7 +2592,7 @@ function New-DesktopShortcuts {
 
 function Install-PlatformSdks {
     # Ensure messaging-platform SDKs matching tokens the user added to
-    # ~/.Chiper/.env are importable.  Two problems this solves:
+    # ~/.chiper/.env are importable.  Two problems this solves:
     #
     # 1. The tiered `uv pip install` cascade above can fall through to a
     #    lower tier when the first fails (common when RL git deps choke),

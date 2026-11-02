@@ -53,7 +53,7 @@ chiper gateway setup
 2. 在终端中显示二维码（或提供 URL）
 3. 等待你用微信手机端扫描二维码
 4. 提示你在手机上确认登录
-5. 自动将账号凭据保存至 `~/.Chiper/weixin/accounts/`
+5. 自动将账号凭据保存至 `~/.chiper/weixin/accounts/`
 
 确认后，你将看到如下消息：
 
@@ -65,7 +65,7 @@ chiper gateway setup
 
 ### 2. 配置环境变量
 
-完成首次扫码登录后，在 `~/.Chiper/.env` 中至少设置账号 ID：
+完成首次扫码登录后，在 `~/.chiper/.env` 中至少设置账号 ID：
 
 ```bash
 WEIXIN_ACCOUNT_ID=your-account-id
@@ -210,7 +210,7 @@ WEIXIN_GROUP_ALLOWED_USERS=group_id_1,group_id_2
 
 iLink Bot API 要求在每条出站消息中回传 `context_token`（针对特定对话方）。适配器维护一个基于磁盘的上下文 token 存储：
 
-- Token 按账号+对话方保存至 `~/.Chiper/weixin/accounts/<account_id>.context-tokens.json`
+- Token 按账号+对话方保存至 `~/.chiper/weixin/accounts/<account_id>.context-tokens.json`
 - 启动时恢复之前保存的 token
 - 每条入站消息都会更新该发送方的已存储 token
 - 出站消息自动包含最新的上下文 token

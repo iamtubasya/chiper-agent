@@ -1710,7 +1710,7 @@ class TestSystemUnitChiperHome:
     def test_system_unit_remaps_profile_to_target_user(self, monkeypatch):
         # Simulate sudo with a profile: CHIPER_HOME was resolved under root
         monkeypatch.setattr(Path, "home", staticmethod(lambda: Path("/root")))
-        monkeypatch.setenv("CHIPER_HOME", "/root/.Chiper/profiles/coder")
+        monkeypatch.setenv("CHIPER_HOME", "/root/.chiper/profiles/coder")
         monkeypatch.setattr(
             gateway_cli, "_system_service_identity",
             lambda run_as_user=None: ("alice", "alice", "/home/alice"),
@@ -1722,7 +1722,7 @@ class TestSystemUnitChiperHome:
 
         unit = gateway_cli.generate_systemd_unit(system=True, run_as_user="alice")
 
-        assert 'CHIPER_HOME=/home/alice/.Chiper/profiles/coder' in unit
+        assert 'CHIPER_HOME=/home/alice/.chiper/profiles/coder' in unit
         assert '/root/' not in unit
 
     def test_system_unit_preserves_custom_chiper_home(self, monkeypatch):
@@ -1762,10 +1762,10 @@ class TestChiperHomeForTargetUser:
 
     def test_remaps_profile_path(self, monkeypatch):
         monkeypatch.setattr(Path, "home", staticmethod(lambda: Path("/root")))
-        monkeypatch.setenv("CHIPER_HOME", "/root/.Chiper/profiles/coder")
+        monkeypatch.setenv("CHIPER_HOME", "/root/.chiper/profiles/coder")
 
         result = gateway_cli._chiper_home_for_target_user("/home/alice")
-        assert result == "/home/alice/.Chiper/profiles/coder"
+        assert result == "/home/alice/.chiper/profiles/coder"
 
     def test_keeps_custom_path(self, monkeypatch):
         monkeypatch.setattr(Path, "home", staticmethod(lambda: Path("/root")))
@@ -2069,7 +2069,7 @@ class TestProfileArg:
     """Tests for _profile_arg — returns '--profile <name>' for named profiles."""
 
     def test_default_chiper_home_returns_empty(self, tmp_path, monkeypatch):
-        """Default ~/.Chiper should not produce a --profile flag."""
+        """Default ~/.chiper should not produce a --profile flag."""
         chiper_home = tmp_path / ".chiper"
         chiper_home.mkdir()
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -2078,7 +2078,7 @@ class TestProfileArg:
         assert result == ""
 
     def test_named_profile_returns_flag(self, tmp_path, monkeypatch):
-        """~/.Chiper/profiles/mybot should return '--profile mybot'."""
+        """~/.chiper/profiles/mybot should return '--profile mybot'."""
         profile_dir = tmp_path / ".chiper" / "profiles" / "mybot"
         profile_dir.mkdir(parents=True)
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -2106,7 +2106,7 @@ class TestProfileArg:
         assert result == ""
 
     def test_nested_profile_path_returns_empty(self, tmp_path, monkeypatch):
-        """~/.Chiper/profiles/mybot/subdir should NOT match — too deep."""
+        """~/.chiper/profiles/mybot/subdir should NOT match — too deep."""
         nested = tmp_path / ".chiper" / "profiles" / "mybot" / "subdir"
         nested.mkdir(parents=True)
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -2260,7 +2260,7 @@ class TestSystemUnitPathRemapping:
         # checkout is the rot bug fixed alongside this: a relocated/removed
         # checkout would crash-loop the unit on CHDIR (status=200).
         assert "WorkingDirectory=/home/alice/.chiper" in unit
-        assert "WorkingDirectory=/home/alice/.Chiper/chiper-agent" not in unit
+        assert "WorkingDirectory=/home/alice/.chiper/chiper-agent" not in unit
 
 
 class TestDockerAwareGateway:

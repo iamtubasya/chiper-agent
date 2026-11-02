@@ -32,7 +32,7 @@ def _state_path() -> str:
         from chiper_constants import get_chiper_home
         base = get_chiper_home()
     except ImportError:
-        base = os.path.join(os.path.expanduser("~"), ".Chiper")
+        base = os.path.join(os.path.expanduser("~"), ".chiper")
     return os.path.join(base, _STATE_SUBDIR, _STATE_FILENAME)
 
 

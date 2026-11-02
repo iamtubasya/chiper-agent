@@ -59,15 +59,15 @@ chiper cron list   # 将 next_run 时间与本地时间对比
 
 | 目标 | 所需配置 |
 |--------|----------|
-| `telegram` | `~/.Chiper/.env` 中的 `TELEGRAM_BOT_TOKEN` |
-| `discord` | `~/.Chiper/.env` 中的 `DISCORD_BOT_TOKEN` |
-| `slack` | `~/.Chiper/.env` 中的 `SLACK_BOT_TOKEN` |
+| `telegram` | `~/.chiper/.env` 中的 `TELEGRAM_BOT_TOKEN` |
+| `discord` | `~/.chiper/.env` 中的 `DISCORD_BOT_TOKEN` |
+| `slack` | `~/.chiper/.env` 中的 `SLACK_BOT_TOKEN` |
 | `whatsapp` | 已配置 WhatsApp gateway |
 | `signal` | 已配置 Signal gateway |
 | `matrix` | 已配置 Matrix homeserver |
 | `email` | `config.yaml` 中已配置 SMTP |
 | `sms` | 已配置 SMS 提供商 |
-| `local` | 对 `~/.Chiper/cron/output/` 有写权限 |
+| `local` | 对 `~/.chiper/cron/output/` 有写权限 |
 | `origin` | 投递到创建该任务的聊天会话 |
 
 其他支持的平台包括 `mattermost`、`homeassistant`、`dingtalk`、`feishu`、`wecom`、`weixin`、`bluebubbles`、`qqbot` 和 `webhook`。你也可以使用 `platform:chat_id` 语法指定特定聊天（例如 `telegram:-1001234567890`）。
@@ -138,7 +138,7 @@ Cron 任务运行时，`cronjob`、`messaging` 和 `clarify` 工具集均被禁�
 若任务运行后失败，可在以下位置查看错误上下文：
 
 1. 任务投递的聊天会话（若投递成功）
-2. `~/.Chiper/logs/agent.log`（调度器消息）或 `errors.log`（警告信息）
+2. `~/.chiper/logs/agent.log`（调度器消息）或 `errors.log`（警告信息）
 3. 通过 `chiper cron list` 查看任务的 `last_run` 元数据
 
 ### 检查 2：常见错误模式
@@ -146,8 +146,8 @@ Cron 任务运行时，`cronjob`、`messaging` 和 `clarify` 工具集均被禁�
 **脚本报 "No such file or directory"**
 `script` 路径必须为绝对路径（或相对于 Chiper 配置目录的路径）。验证：
 ```bash
-ls ~/.Chiper/scripts/your-script.py   # 必须存在
-chiper cron edit <job_id> --script ~/.Chiper/scripts/your-script.py
+ls ~/.chiper/scripts/your-script.py   # 必须存在
+chiper cron edit <job_id> --script ~/.chiper/scripts/your-script.py
 ```
 
 **任务执行时报 "Skill not found"**
@@ -171,11 +171,11 @@ ps aux | grep chiper
 
 ### 检查 4：jobs.json 的权限
 
-任务存储在 `~/.Chiper/cron/jobs.json`。若该文件对当前用户不可读写，调度器将静默失败：
+任务存储在 `~/.chiper/cron/jobs.json`。若该文件对当前用户不可读写，调度器将静默失败：
 
 ```bash
-ls -la ~/.Chiper/cron/jobs.json
-chmod 600 ~/.Chiper/cron/jobs.json   # 应由你的用户拥有
+ls -la ~/.chiper/cron/jobs.json
+chmod 600 ~/.chiper/cron/jobs.json   # 应由你的用户拥有
 ```
 
 ---
@@ -213,7 +213,7 @@ chiper skills list                  # 确认已安装的 skill
 若你已按本指南逐项排查，问题仍未解决：
 
 1. 使用 `chiper cron run <job_id>` 运行任务（在下次 gateway tick 时触发），观察聊天输出中的错误
-2. 查看 `~/.Chiper/logs/agent.log` 中的调度器消息和 `~/.Chiper/logs/errors.log` 中的警告
+2. 查看 `~/.chiper/logs/agent.log` 中的调度器消息和 `~/.chiper/logs/errors.log` 中的警告
 3. 在 [github.com/Chiper/chiper-agent](https://github.com/Chiper/chiper-agent) 提交 issue，并附上：
    - 任务 ID 和调度表达式
    - 投递目标

@@ -16,7 +16,7 @@ Built-in TTS providers:
 
 Custom command providers:
 - Users can declare any number of named providers with ``type: command``
-  under ``tts.providers.<name>`` in ``~/.Chiper/config.yaml``. Chiper
+  under ``tts.providers.<name>`` in ``~/.chiper/config.yaml``. Chiper
   writes the input text to a temp file and runs the configured shell
   command, which must produce the audio file at the expected path.
   See the Local Command section of ``website/docs/user-guide/features/tts.md``.
@@ -25,7 +25,7 @@ Output formats:
 - Opus (.ogg) for Telegram voice bubbles (requires ffmpeg for Edge TTS)
 - MP3 (.mp3) for everything else (CLI, Discord, WhatsApp)
 
-Configuration is loaded from ~/.Chiper/config.yaml under the 'tts:' key.
+Configuration is loaded from ~/.chiper/config.yaml under the 'tts:' key.
 The user chooses the provider and voice; the model just sends text.
 
 Usage:
@@ -316,11 +316,11 @@ def _resolve_max_text_length(
 
 
 # ===========================================================================
-# Config loader -- reads tts: section from ~/.Chiper/config.yaml
+# Config loader -- reads tts: section from ~/.chiper/config.yaml
 # ===========================================================================
 def _load_tts_config() -> Dict[str, Any]:
     """
-    Load TTS configuration from ~/.Chiper/config.yaml.
+    Load TTS configuration from ~/.chiper/config.yaml.
 
     Returns a dict with provider settings. Falls back to defaults
     for any missing fields.
@@ -1809,7 +1809,7 @@ def _check_piper_available() -> bool:
 def _get_piper_voices_dir() -> Path:
     """Return the directory where Chiper caches Piper voice models.
 
-    Resolves to ``~/.Chiper/cache/piper-voices/`` under the active
+    Resolves to ``~/.chiper/cache/piper-voices/`` under the active
     CHIPER_HOME so voice downloads follow profile boundaries.
     """
     from chiper_constants import get_chiper_dir
@@ -2022,7 +2022,7 @@ def text_to_speech_tool(
     """
     Convert text to speech audio.
 
-    Reads provider/voice config from ~/.Chiper/config.yaml (tts: section).
+    Reads provider/voice config from ~/.chiper/config.yaml (tts: section).
     The model sends text; the user configures voice and provider.
 
     On messaging platforms, the returned MEDIA:<path> tag is intercepted

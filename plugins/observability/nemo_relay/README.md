@@ -58,7 +58,7 @@ loads `observability/nemo_relay` explicitly another way.
 
 `CHIPER_HOME` is the Chiper profile/config home used by both
 `chiper plugins enable ...` and the later `chiper chat ...` run. If unset,
-Chiper uses the user's default home, usually `~/.Chiper`. For isolated smoke
+Chiper uses the user's default home, usually `~/.chiper`. For isolated smoke
 tests, choose any writable temporary directory and use the same value for every
 command in that test:
 

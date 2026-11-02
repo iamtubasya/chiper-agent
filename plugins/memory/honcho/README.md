@@ -19,7 +19,7 @@ chiper memory setup          # generic picker, choose Honcho from the list
 Or manually:
 ```bash
 chiper config set memory.provider honcho
-echo "HONCHO_API_KEY=***" >> ~/.Chiper/.env
+echo "HONCHO_API_KEY=***" >> ~/.chiper/.env
 ```
 
 > `chiper honcho setup` also works, but only **after** Honcho is the active
@@ -110,7 +110,7 @@ Config is read from the first file that exists:
 | Priority | Path | Scope |
 |----------|------|-------|
 | 1 | `$CHIPER_HOME/honcho.json` | Profile-local (isolated Chiper instances) |
-| 2 | `~/.Chiper/honcho.json` | Default profile (shared host blocks) |
+| 2 | `~/.chiper/honcho.json` | Default profile (shared host blocks) |
 | 3 | `~/.honcho/config.json` | Global (cross-app interop) |
 
 Host key is derived from the active Chiper profile: `chiper` (default) or `chiper_<profile>`.

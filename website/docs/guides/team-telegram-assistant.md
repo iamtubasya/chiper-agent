@@ -26,7 +26,7 @@ Before starting, make sure you have:
 
 - **Chiper Agent installed** on a server or VPS (not your laptop — the bot needs to stay running). Follow the [installation guide](/getting-started/installation) if you haven't yet.
 - **A Telegram account** for yourself (the bot owner)
-- **An LLM provider configured** — at minimum, an API key for OpenAI, Anthropic, or another supported provider in `~/.Chiper/.env`
+- **An LLM provider configured** — at minimum, an API key for OpenAI, Anthropic, or another supported provider in `~/.chiper/.env`
 
 :::tip
 A $5/month VPS is plenty for running the gateway. Chiper itself is lightweight — the LLM API calls are what cost money, and those happen remotely.
@@ -93,7 +93,7 @@ This walks you through everything with arrow-key selection. Pick **Telegram**, p
 
 ### Option B: Manual Configuration
 
-Add these lines to `~/.Chiper/.env`:
+Add these lines to `~/.chiper/.env`:
 
 ```bash
 # Telegram bot token from BotFather
@@ -170,7 +170,7 @@ journalctl -u chiper-gateway -f
 # macOS — manage the service
 chiper gateway start
 chiper gateway stop
-tail -f ~/.Chiper/logs/gateway.log
+tail -f ~/.chiper/logs/gateway.log
 ```
 
 :::tip macOS PATH
@@ -196,7 +196,7 @@ Now let's give your teammates access. There are two approaches.
 Collect each team member's Telegram user ID (have them message [@userinfobot](https://t.me/userinfobot)) and add them as a comma-separated list:
 
 ```bash
-# In ~/.Chiper/.env
+# In ~/.chiper/.env
 TELEGRAM_ALLOWED_USERS=123456789,987654321,555555555
 ```
 
@@ -260,7 +260,7 @@ A **home channel** is where the bot delivers cron job results and proactive mess
 
 **Option 1:** Use the `/sethome` command in any Telegram group or chat where the bot is a member.
 
-**Option 2:** Set it manually in `~/.Chiper/.env`:
+**Option 2:** Set it manually in `~/.chiper/.env`:
 
 ```bash
 TELEGRAM_HOME_CHANNEL=-1001234567890
@@ -271,7 +271,7 @@ To find a channel ID, add [@userinfobot](https://t.me/userinfobot) to the group 
 
 ### Configure Tool Progress Display
 
-Control how much detail the bot shows when using tools. In `~/.Chiper/config.yaml`:
+Control how much detail the bot shows when using tools. In `~/.chiper/config.yaml`:
 
 ```yaml
 display:
@@ -289,7 +289,7 @@ Users can also change this per-session with the `/verbose` command in chat.
 
 ### Set Up a Personality with SOUL.md
 
-Customize how the bot communicates by editing `~/.Chiper/SOUL.md`:
+Customize how the bot communicates by editing `~/.chiper/SOUL.md`:
 
 For a full guide, see [Use SOUL.md with Chiper](/guides/use-soul-with-chiper).
 
@@ -306,7 +306,7 @@ before guessing at solutions.
 If your team works on specific projects, create context files so the bot knows your stack:
 
 ```markdown
-<!-- ~/.Chiper/AGENTS.md -->
+<!-- ~/.chiper/AGENTS.md -->
 # Team Context
 - We use Python 3.12 with FastAPI and SQLAlchemy
 - Frontend is React with TypeScript
@@ -373,12 +373,12 @@ Cron job prompts run in completely fresh sessions with no memory of prior conver
 On a shared team bot, use Docker as the terminal backend so agent commands run in a container instead of on your host:
 
 ```bash
-# In ~/.Chiper/.env
+# In ~/.chiper/.env
 TERMINAL_BACKEND=docker
 TERMINAL_DOCKER_IMAGE=nikolaik/python-nodejs:python3.11-nodejs20
 ```
 
-Or in `~/.Chiper/config.yaml`:
+Or in `~/.chiper/config.yaml`:
 
 ```yaml
 terminal:
@@ -400,7 +400,7 @@ chiper gateway status
 journalctl --user -u chiper-gateway -f
 
 # Watch live logs (macOS)
-tail -f ~/.Chiper/logs/gateway.log
+tail -f ~/.chiper/logs/gateway.log
 ```
 
 ### Keep Chiper Updated
@@ -416,11 +416,11 @@ chiper gateway stop && chiper gateway start
 
 | What | Location |
 |------|----------|
-| Gateway logs | `journalctl --user -u chiper-gateway` (Linux) or `~/.Chiper/logs/gateway.log` (macOS) |
-| Cron job output | `~/.Chiper/cron/output/{job_id}/{timestamp}.md` |
-| Cron job definitions | `~/.Chiper/cron/jobs.json` |
-| Pairing data | `~/.Chiper/pairing/` |
-| Session history | `~/.Chiper/sessions/` |
+| Gateway logs | `journalctl --user -u chiper-gateway` (Linux) or `~/.chiper/logs/gateway.log` (macOS) |
+| Cron job output | `~/.chiper/cron/output/{job_id}/{timestamp}.md` |
+| Cron job definitions | `~/.chiper/cron/jobs.json` |
+| Pairing data | `~/.chiper/pairing/` |
+| Session history | `~/.chiper/sessions/` |
 
 ---
 

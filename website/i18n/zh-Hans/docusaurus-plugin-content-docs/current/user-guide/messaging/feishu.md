@@ -107,7 +107,7 @@ chiper gateway setup
 
 ### 方式 B：手动配置
 
-在 `~/.Chiper/.env` 中添加以下内容：
+在 `~/.chiper/.env` 中添加以下内容：
 
 ```bash
 FEISHU_APP_ID=cli_xxx
@@ -296,7 +296,7 @@ Gateway 驱动的更新提示使用原生飞书 `Yes` / `No` 卡片，而非回�
 - **`allowlist`** — 静态用户/租户列表。
 - **`pairing`** — 静态列表 ∪ 运行时审批存储。适用于管理员可实时授权的灰度发布场景。
 
-规则存储在 `~/.Chiper/feishu_comment_rules.json`（pairing 授权存储在 `~/.Chiper/feishu_comment_pairing.json`），支持基于 mtime 缓存的热重载——编辑后无需重启 gateway，下一个评论事件即生效。
+规则存储在 `~/.chiper/feishu_comment_rules.json`（pairing 授权存储在 `~/.chiper/feishu_comment_pairing.json`），支持基于 mtime 缓存的热重载——编辑后无需重启 gateway，下一个评论事件即生效。
 
 CLI：
 
@@ -473,7 +473,7 @@ platforms:
 
 ## 去重
 
-入站消息使用消息 ID 去重，TTL 为 24 小时。去重状态持久化到 `~/.Chiper/feishu_seen_message_ids.json`，重启后仍有效。
+入站消息使用消息 ID 去重，TTL 为 24 小时。去重状态持久化到 `~/.chiper/feishu_seen_message_ids.json`，重启后仍有效。
 
 | 设置 | 环境变量 | 默认值 |
 |---------|---------|---------|

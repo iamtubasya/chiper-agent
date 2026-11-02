@@ -24,7 +24,7 @@ import pytest
 @pytest.fixture(autouse=True)
 def _isolate_channel_aliases(tmp_path_factory):
     """Point the alias overlay at a nonexistent path by default so a real
-    ~/.Chiper/channel_aliases.json never leaks into directory tests. Tests
+    ~/.chiper/channel_aliases.json never leaks into directory tests. Tests
     that exercise aliases patch CHANNEL_ALIASES_PATH themselves inside the
     test body, which takes precedence over this outer patch."""
     missing = tmp_path_factory.mktemp("aliases") / "none.json"

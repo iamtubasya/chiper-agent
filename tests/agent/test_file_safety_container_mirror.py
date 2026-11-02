@@ -1,9 +1,9 @@
 """Tests for the container-context sandbox-mirror guard (#32049 follow-up).
 
 Brian's shape-based guard (#32213) catches paths that carry the full
-``…/sandboxes/<backend>/<task>/home/.Chiper/…`` prefix. This covers the
+``…/sandboxes/<backend>/<task>/home/.chiper/…`` prefix. This covers the
 complementary inner-container case: when file tools execute inside Docker,
-the bind-mount strips that prefix and the guard sees plain ``/root/.Chiper/…``.
+the bind-mount strips that prefix and the guard sees plain ``/root/.chiper/…``.
 The root:root ownership on the divergent SOUL.md in #32049 confirms this
 is the primary failure mode.
 """
@@ -14,17 +14,17 @@ import pytest
 
 class TestClassifyContainerMirrorTarget:
     def test_returns_none_without_context(self):
-        """No Docker context — /root/.Chiper/… must not be flagged."""
+        """No Docker context — /root/.chiper/… must not be flagged."""
         from agent.file_safety import classify_container_mirror_target
 
-        assert classify_container_mirror_target("/root/.Chiper/profiles/group1/SOUL.md") is None
+        assert classify_container_mirror_target("/root/.chiper/profiles/group1/SOUL.md") is None
 
     def test_catches_soul_md_with_context(self):
         """Primary failure mode from #32049: agent writes SOUL.md via container path."""
         from agent.file_safety import classify_container_mirror_target
 
         result = classify_container_mirror_target(
-            "/root/.Chiper/profiles/group1/SOUL.md",
+            "/root/.chiper/profiles/group1/SOUL.md",
             mirror_prefix="/root/.chiper",
         )
         assert result is not None
@@ -39,7 +39,7 @@ class TestClassifyContainerMirrorTarget:
         from agent.file_safety import classify_container_mirror_target
 
         result = classify_container_mirror_target(
-            f"/root/.Chiper/{inner}",
+            f"/root/.chiper/{inner}",
             mirror_prefix="/root/.chiper",
         )
         assert result is not None
@@ -63,7 +63,7 @@ class TestGetContainerMirrorWarning:
         from agent.file_safety import get_container_mirror_warning
 
         warn = get_container_mirror_warning(
-            "/root/.Chiper/profiles/group1/SOUL.md",
+            "/root/.chiper/profiles/group1/SOUL.md",
             mirror_prefix="/root/.chiper",
         )
         assert warn is not None
@@ -78,7 +78,7 @@ class TestOrthogonality:
         """No sandboxes/ segment — shape guard passes, context guard blocks."""
         from agent.file_safety import classify_container_mirror_target
 
-        path = "/root/.Chiper/profiles/group1/SOUL.md"
+        path = "/root/.chiper/profiles/group1/SOUL.md"
 
         assert classify_container_mirror_target(path) is None  # no context
         assert classify_container_mirror_target(path, mirror_prefix="/root/.chiper") is not None
@@ -97,7 +97,7 @@ class TestFileToolIntegration:
         )
 
         warning = file_tools._check_cross_profile_path(
-            "/root/.Chiper/profiles/group1/SOUL.md",
+            "/root/.chiper/profiles/group1/SOUL.md",
             task_id="new-task",
         )
 

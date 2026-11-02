@@ -7,8 +7,8 @@ Usage::
     chiper hooks revoke <command>
     chiper hooks doctor
 
-Consent records live under ``~/.Chiper/shell-hooks-allowlist.json`` and
-hook definitions come from the ``hooks:`` block in ``~/.Chiper/config.yaml``
+Consent records live under ``~/.chiper/shell-hooks-allowlist.json`` and
+hook definitions come from the ``hooks:`` block in ``~/.chiper/config.yaml``
 (the same config read by the CLI / gateway at startup).
 
 This module is a thin CLI shell over :mod:`agent.shell_hooks`; every
@@ -55,7 +55,7 @@ def _cmd_list(_args) -> None:
     specs = shell_hooks.iter_configured_hooks(load_config())
 
     if not specs:
-        print("No shell hooks configured in ~/.Chiper/config.yaml.")
+        print("No shell hooks configured in ~/.chiper/config.yaml.")
         print("See `chiper hooks --help` or")
         print("    website/docs/user-guide/features/hooks.md")
         print("for the config schema and worked examples.")

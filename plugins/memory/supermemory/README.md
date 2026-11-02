@@ -17,7 +17,7 @@ Or manually:
 
 ```bash
 chiper config set memory.provider supermemory
-echo 'SUPERMEMORY_API_KEY=***' >> ~/.Chiper/.env
+echo 'SUPERMEMORY_API_KEY=***' >> ~/.chiper/.env
 ```
 
 ## Config

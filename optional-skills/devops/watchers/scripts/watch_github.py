@@ -9,7 +9,7 @@ Usage (via cron with --no-agent):
       --script-args "--name chiper-issues --repo Chiper/chiper-agent --scope issues"
 
 Set GITHUB_TOKEN (or GH_TOKEN) in the Chiper .env file
-(``${CHIPER_HOME:-~/.Chiper}/.env``) to avoid the 60 req/hr
+(``${CHIPER_HOME:-~/.chiper}/.env``) to avoid the 60 req/hr
 anonymous rate limit.
 
 Scopes: issues | pulls | releases | commits.  Or pass --search QUERY to

@@ -2,7 +2,7 @@
 """
 Skills Sync -- Manifest-based seeding and updating of bundled skills.
 
-Copies bundled skills from the repo's skills/ directory into ~/.Chiper/skills/
+Copies bundled skills from the repo's skills/ directory into ~/.chiper/skills/
 and uses a manifest to track which skills have been synced and their origin hash.
 
 Manifest format (v2): each line is "skill_name:origin_hash" where origin_hash
@@ -18,7 +18,7 @@ Update logic:
   - DELETED by user (in manifest, absent from user dir): respected, not re-added.
   - REMOVED from bundled (in manifest, gone from repo): cleaned from manifest.
 
-The manifest lives at ~/.Chiper/skills/.bundled_manifest.
+The manifest lives at ~/.chiper/skills/.bundled_manifest.
 """
 
 import hashlib
@@ -41,7 +41,7 @@ SKILLS_DIR = CHIPER_HOME / "skills"
 MANIFEST_FILE = SKILLS_DIR / ".bundled_manifest"
 
 # Marker file written by `chiper profile create --no-skills` (named profiles)
-# and by the installer's `--no-skills` flag (the default ~/.Chiper profile).
+# and by the installer's `--no-skills` flag (the default ~/.chiper profile).
 # When present in CHIPER_HOME, sync_skills() is a no-op so neither the
 # installer, `chiper update`, nor a direct sync re-injects bundled skills.
 # Delete the file to opt back in. Mirrors
@@ -96,7 +96,7 @@ def _read_suppressed_names() -> set:
     """Built-in skills the curator pruned — must NOT be re-seeded on sync.
 
     Delegates to ``tools.skill_usage`` (single source of truth) and falls back
-    to reading ``~/.Chiper/skills/.curator_suppressed`` directly if that import
+    to reading ``~/.chiper/skills/.curator_suppressed`` directly if that import
     is unavailable in a packaged/update context.
     """
     try:
@@ -194,7 +194,7 @@ def _discover_bundled_skills(bundled_dir: Path) -> List[Tuple[str, Path]]:
 def _compute_relative_dest(skill_dir: Path, bundled_dir: Path) -> Path:
     """
     Compute the destination path in SKILLS_DIR preserving the category structure.
-    e.g., bundled/skills/mlops/axolotl -> ~/.Chiper/skills/mlops/axolotl
+    e.g., bundled/skills/mlops/axolotl -> ~/.chiper/skills/mlops/axolotl
     """
     rel = skill_dir.relative_to(bundled_dir)
     return SKILLS_DIR / rel
@@ -453,13 +453,13 @@ def _backfill_optional_provenance(quiet: bool = False) -> List[str]:
 
 def sync_skills(quiet: bool = False) -> dict:
     """
-    Sync bundled skills into ~/.Chiper/skills/ using the manifest.
+    Sync bundled skills into ~/.chiper/skills/ using the manifest.
 
     Returns:
         dict with keys: copied (list), updated (list), skipped (int),
                         user_modified (list), cleaned (list), total_bundled (int)
     """
-    # Opt-out: a profile (named or the default ~/.Chiper) that wrote the
+    # Opt-out: a profile (named or the default ~/.chiper) that wrote the
     # .no-bundled-skills marker gets zero bundled-skill seeding. Returning the
     # empty-result shape with skipped_opt_out lets callers report "opted out"
     # instead of "synced 0 / failed". This is the default-profile counterpart
@@ -495,7 +495,7 @@ def sync_skills(quiet: bool = False) -> dict:
 
     for skill_name, skill_src in bundled_skills:
         # Curator-pruned built-ins: do not re-seed. The suppression list
-        # (~/.Chiper/skills/.curator_suppressed) is written when the curator
+        # (~/.chiper/skills/.curator_suppressed) is written when the curator
         # archives a bundled skill with curator.prune_builtins enabled. Without
         # this skip, every `chiper update` would resurrect a skill the user
         # deliberately pruned. Restoring the skill clears its suppression entry.
@@ -673,14 +673,14 @@ def _rmtree_writable(path: Path) -> None:
     """
     # Defense in depth (#48200): refuse to rmtree anything outside
     # ``CHIPER_HOME/skills/`` to prevent the catastrophic wipe of
-    # ``~/.Chiper/`` (``.env``, ``MEMORY.md``, ``kanban.db``, custom
+    # ``~/.chiper/`` (``.env``, ``MEMORY.md``, ``kanban.db``, custom
     # skills, scripts, …) that an earlier incident observed. Five call
     # sites in this file invoke this helper; if any one of them ever
     # computes a destination outside the skills root — through a bad
     # path join, a missing ``CHIPER_HOME`` default, a malicious
     # bundled-manifest entry, or a mid-flight exception that leaves a
     # stale path in scope — this guard turns the resulting
-    # ``shutil.rmtree(~/.Chiper)`` into a loud, recoverable ``ValueError``
+    # ``shutil.rmtree(~/.chiper)`` into a loud, recoverable ``ValueError``
     # instead of silently destroying the user's install.
     target = Path(path).resolve()
     skills_root = SKILLS_DIR.resolve()
@@ -1103,7 +1103,7 @@ def remove_pristine_bundled_skills(dry_run: bool = False) -> dict:
 
 
 if __name__ == "__main__":
-    print("Syncing bundled skills into ~/.Chiper/skills/ ...")
+    print("Syncing bundled skills into ~/.chiper/skills/ ...")
     result = sync_skills(quiet=False)
     parts = [
         f"{len(result['copied'])} new",

@@ -52,7 +52,7 @@ BOLD='\033[1m'
 # Configuration
 REPO_URL_SSH="git@github.com:iamtubasya/chiper-agent.git"
 REPO_URL_HTTPS="https://github.com/iamtubasya/chiper-agent.git"
-CHIPER_HOME="${CHIPER_HOME:-$HOME/.Chiper}"
+CHIPER_HOME="${CHIPER_HOME:-$HOME/.chiper}"
 # INSTALL_DIR is resolved AFTER arg parsing and OS detection so we can pick an
 # FHS-style layout for root installs.  Track whether the user gave us an
 # explicit directory — if so we never override it.
@@ -68,7 +68,7 @@ NODE_VERSION="22"
 
 # FHS-style root install layout (set by resolve_install_layout when applicable):
 #   code at /usr/local/lib/chiper-agent, command at /usr/local/bin/chiper,
-#   data still at /root/.Chiper (CHIPER_HOME).  Matches Claude Code / Codex CLI
+#   data still at /root/.chiper (CHIPER_HOME).  Matches Claude Code / Codex CLI
 #   and keeps Docker bind-mounted /root/ volumes lean.
 ROOT_FHS_LAYOUT=false
 DETECTED_BROWSER_EXECUTABLE=""
@@ -137,9 +137,9 @@ while [[ $# -gt 0 ]]; do
             echo "  --skip-browser Skip Playwright/Chromium install (browser tools won't work)"
             echo "  --branch NAME  Git branch to install (default: main)"
             echo "  --dir PATH     Installation directory"
-            echo "                   default (non-root):  ~/.Chiper/chiper-agent"
+            echo "                   default (non-root):  ~/.chiper/chiper-agent"
             echo "                   default (root, Linux): /usr/local/lib/chiper-agent"
-            echo "  --chiper-home PATH  Data directory (default: ~/.Chiper, or \$CHIPER_HOME)"
+            echo "  --chiper-home PATH  Data directory (default: ~/.chiper, or \$CHIPER_HOME)"
             echo "  -h, --help     Show this help"
             echo ""
             echo "Notes:"
@@ -147,7 +147,7 @@ while [[ $# -gt 0 ]]; do
             echo "  /usr/local/lib/chiper-agent and links the command into"
             echo "  /usr/local/bin/chiper (FHS layout — matches Claude Code / Codex CLI)."
             echo "  Data, config, sessions, and logs still live in \$CHIPER_HOME"
-            echo "  (default /root/.Chiper).  This keeps Docker bind-mounted volumes"
+            echo "  (default /root/.chiper).  This keeps Docker bind-mounted volumes"
             echo "  small and ensures the command is on PATH for all shells."
             echo "  Existing installs at \$CHIPER_HOME/chiper-agent are preserved in-place."
             echo "  --ensure DEPS  Install only specified deps (comma-separated)"
@@ -696,7 +696,7 @@ install_node() {
         return 0
     fi
 
-    log_info "Extracting to ~/.Chiper/node/..."
+    log_info "Extracting to ~/.chiper/node/..."
     if [[ "$tarball_name" == *.tar.xz ]]; then
         tar xf "$tmp_dir/$tarball_name" -C "$tmp_dir"
     else
@@ -713,7 +713,7 @@ install_node() {
         return 0
     fi
 
-    # Place into ~/.Chiper/node/ and symlink binaries to ~/.local/bin/
+    # Place into ~/.chiper/node/ and symlink binaries to ~/.local/bin/
     rm -rf "$CHIPER_HOME/node"
     mkdir -p "$CHIPER_HOME"
     mv "$extracted_dir" "$CHIPER_HOME/node"
@@ -728,7 +728,7 @@ install_node() {
 
     local installed_ver
     installed_ver=$("$CHIPER_HOME/node/bin/node" --version 2>/dev/null)
-    log_success "Node.js $installed_ver installed to ~/.Chiper/node/"
+    log_success "Node.js $installed_ver installed to ~/.chiper/node/"
     HAS_NODE=true
 }
 
@@ -1484,20 +1484,20 @@ EOF
 copy_config_templates() {
     log_info "Setting up configuration files..."
 
-    # Create ~/.Chiper directory structure (config at top level, code in subdir)
+    # Create ~/.chiper directory structure (config at top level, code in subdir)
     mkdir -p "$CHIPER_HOME"/{cron,sessions,logs,pairing,hooks,image_cache,audio_cache,memories,skills}
 
-    # Create .env at ~/.Chiper/.env (top level, easy to find)
+    # Create .env at ~/.chiper/.env (top level, easy to find)
     if [ ! -f "$CHIPER_HOME/.env" ]; then
         if [ -f "$INSTALL_DIR/.env.example" ]; then
             cp "$INSTALL_DIR/.env.example" "$CHIPER_HOME/.env"
-            log_success "Created ~/.Chiper/.env from template"
+            log_success "Created ~/.chiper/.env from template"
         else
             touch "$CHIPER_HOME/.env"
-            log_success "Created ~/.Chiper/.env"
+            log_success "Created ~/.chiper/.env"
         fi
     else
-        log_info "~/.Chiper/.env already exists, keeping it"
+        log_info "~/.chiper/.env already exists, keeping it"
     fi
     # Restrict .env permissions — this file holds API keys and tokens.
     # 0600 ensures only the file owner can read/write, matching standard
@@ -1505,14 +1505,14 @@ copy_config_templates() {
     chmod 600 "$CHIPER_HOME/.env"
     configure_browser_env_from_system_browser
 
-    # Create config.yaml at ~/.Chiper/config.yaml (top level, easy to find)
+    # Create config.yaml at ~/.chiper/config.yaml (top level, easy to find)
     if [ ! -f "$CHIPER_HOME/config.yaml" ]; then
         if [ -f "$INSTALL_DIR/cli-config.yaml.example" ]; then
             cp "$INSTALL_DIR/cli-config.yaml.example" "$CHIPER_HOME/config.yaml"
-            log_success "Created ~/.Chiper/config.yaml from template"
+            log_success "Created ~/.chiper/config.yaml from template"
         fi
     else
-        log_info "~/.Chiper/config.yaml already exists, keeping it"
+        log_info "~/.chiper/config.yaml already exists, keeping it"
     fi
 
     # Create SOUL.md if it doesn't exist (global persona file)
@@ -1534,20 +1534,20 @@ This file is loaded fresh each message -- no restart needed.
 Delete the contents (or this file) to use the default personality.
 -->
 SOUL_EOF
-        log_success "Created ~/.Chiper/SOUL.md (edit to customize personality)"
+        log_success "Created ~/.chiper/SOUL.md (edit to customize personality)"
     fi
 
-    log_success "Configuration directory ready: ~/.Chiper/"
+    log_success "Configuration directory ready: ~/.chiper/"
 
-    # Seed bundled skills into ~/.Chiper/skills/ (manifest-based, one-time per skill)
-    log_info "Syncing bundled skills to ~/.Chiper/skills/ ..."
+    # Seed bundled skills into ~/.chiper/skills/ (manifest-based, one-time per skill)
+    log_info "Syncing bundled skills to ~/.chiper/skills/ ..."
     if "$INSTALL_DIR/venv/bin/python" "$INSTALL_DIR/tools/skills_sync.py" 2>/dev/null; then
-        log_success "Skills synced to ~/.Chiper/skills/"
+        log_success "Skills synced to ~/.chiper/skills/"
     else
         # Fallback: simple directory copy if Python sync fails
         if [ -d "$INSTALL_DIR/skills" ] && [ ! "$(ls -A "$CHIPER_HOME/skills/" 2>/dev/null | grep -v '.bundled_manifest')" ]; then
             cp -r "$INSTALL_DIR/skills/"* "$CHIPER_HOME/skills/" 2>/dev/null || true
-            log_success "Skills copied to ~/.Chiper/skills/"
+            log_success "Skills copied to ~/.chiper/skills/"
         fi
     fi
 }
@@ -1874,7 +1874,7 @@ maybe_start_gateway() {
             fi
             nohup $CHIPER_CMD gateway > "$CHIPER_HOME/logs/gateway.log" 2>&1 &
             GATEWAY_PID=$!
-            log_success "Gateway started (PID $GATEWAY_PID). Logs: ~/.Chiper/logs/gateway.log"
+            log_success "Gateway started (PID $GATEWAY_PID). Logs: ~/.chiper/logs/gateway.log"
             log_info "To stop: kill $GATEWAY_PID"
             log_info "To restart later: chiper gateway"
             if [ "$DISTRO" = "termux" ]; then

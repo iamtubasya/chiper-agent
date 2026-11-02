@@ -124,7 +124,7 @@ This is usually the best place to start.
 
 ### Environment file example
 
-Add to `~/.Chiper/.env`:
+Add to `~/.chiper/.env`:
 
 ```bash
 # Cloud STT options (local needs no key)

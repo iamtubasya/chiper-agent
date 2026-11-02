@@ -7,7 +7,7 @@ referenced skill's full content into a single user message, the same way
 
 Storage
 -------
-Bundles live in ``~/.Chiper/skill-bundles/*.yaml`` (and the equivalent
+Bundles live in ``~/.chiper/skill-bundles/*.yaml`` (and the equivalent
 profile-aware directory under ``CHIPER_HOME``). Each file looks like::
 
     name: backend-dev

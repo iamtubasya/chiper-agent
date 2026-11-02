@@ -66,7 +66,7 @@ class MemoryProvider(ABC):
 
         kwargs always include:
           - chiper_home (str): The active CHIPER_HOME directory path. Use this
-            for profile-scoped storage instead of hardcoding ``~/.Chiper``.
+            for profile-scoped storage instead of hardcoding ``~/.chiper``.
           - platform (str): "cli", "telegram", "discord", "cron", etc.
 
         kwargs may also include:

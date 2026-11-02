@@ -61,7 +61,7 @@ _SENSITIVE_BODY_KEYS = frozenset({
 # need raw credential values in tool output (e.g. working on the redactor
 # itself) can opt out via `security.redact_secrets: false` in config.yaml
 # (bridged to this env var in chiper_cli/main.py, gateway/run.py, and
-# cli.py) or `CHIPER_REDACT_SECRETS=false` in ~/.Chiper/.env. An opt-out
+# cli.py) or `CHIPER_REDACT_SECRETS=false` in ~/.chiper/.env. An opt-out
 # warning is logged at gateway and CLI startup so operators see the
 # downgrade — see `_log_redaction_status()` in gateway/run.py and cli.py.
 _REDACT_ENABLED = os.getenv("CHIPER_REDACT_SECRETS", "true").lower() in {"1", "true", "yes", "on"}

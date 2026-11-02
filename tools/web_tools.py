@@ -134,7 +134,7 @@ def _has_env(name: str) -> bool:
     return bool(_env_value(name))
 
 def _load_web_config() -> dict:
-    """Load the ``web:`` section from ~/.Chiper/config.yaml."""
+    """Load the ``web:`` section from ~/.chiper/config.yaml."""
     try:
         from chiper_cli.config import load_config
         return load_config().get("web", {})

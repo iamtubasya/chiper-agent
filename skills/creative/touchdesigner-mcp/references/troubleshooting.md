@@ -137,7 +137,7 @@ actual = str(n.width) + 'x' + str(n.height)
 
 ### Config location
 
-`$CHIPER_HOME/config.yaml` (defaults to `~/.Chiper/config.yaml` when `CHIPER_HOME` is unset)
+`$CHIPER_HOME/config.yaml` (defaults to `~/.chiper/config.yaml` when `CHIPER_HOME` is unset)
 
 ### MCP entry format
 

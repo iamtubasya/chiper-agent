@@ -27,7 +27,7 @@ chiper [global-options] <command> [subcommand/options]
 | `--worktree`, `-w` | Start in an isolated git worktree for parallel-agent workflows. |
 | `--yolo` | Bypass dangerous-command approval prompts. |
 | `--pass-session-id` | Include the session ID in the agent's system prompt. |
-| `--ignore-user-config` | Ignore `~/.Chiper/config.yaml` and fall back to built-in defaults. Credentials in `.env` are still loaded. |
+| `--ignore-user-config` | Ignore `~/.chiper/config.yaml` and fall back to built-in defaults. Credentials in `.env` are still loaded. |
 | `--ignore-rules` | Skip auto-injection of `AGENTS.md`, `SOUL.md`, `.cursorrules`, memory, and preloaded skills. |
 | `--tui` | Launch the [TUI](../user-guide/tui.md) instead of the classic CLI. Equivalent to `CHIPER_TUI=1`. Always wins over `display.interface`. |
 | `--cli` | Force the classic prompt_toolkit REPL. Use this to override `display.interface: tui` for a single invocation. |
@@ -49,7 +49,7 @@ chiper [global-options] <command> [subcommand/options]
 | `chiper auth` | Manage credentials — add, list, remove, reset, set strategy. Handles OAuth flows for Codex/Nous/Anthropic. |
 | `chiper login` / `logout` | **Deprecated** — use `chiper auth` instead. |
 | `chiper send` | Send a one-shot message to a configured messaging platform (Telegram, Discord, Slack, Signal, SMS, …). Useful from shell scripts, cron jobs, CI hooks, and monitoring daemons — no agent loop, no LLM. |
-| `chiper secrets` | Manage external secret sources (currently Bitwarden Secrets Manager) for pulling API keys at process startup instead of from `~/.Chiper/.env`. |
+| `chiper secrets` | Manage external secret sources (currently Bitwarden Secrets Manager) for pulling API keys at process startup instead of from `~/.chiper/.env`. |
 | `chiper migrate` | Diagnose and (optionally) rewrite `config.yaml` to replace references to retired models or deprecated settings (e.g. `migrate xai`). |
 | `chiper status` | Show agent, auth, and platform status. |
 | `chiper cron` | Inspect and tick the cron scheduler. |
@@ -62,7 +62,7 @@ chiper [global-options] <command> [subcommand/options]
 | `chiper prompt-size` | Show a byte breakdown of the system prompt + tool schemas (skills index, memory, profile). Runs offline. |
 | `chiper debug` | Debug tools — upload logs and system info for support. |
 | `chiper backup` | Back up Chiper home directory to a zip file. |
-| `chiper checkpoints` | Inspect / prune / clear `~/.Chiper/checkpoints/` (the shadow store used by `/rollback`). Run with no args for a status overview. |
+| `chiper checkpoints` | Inspect / prune / clear `~/.chiper/checkpoints/` (the shadow store used by `/rollback`). Run with no args for a status overview. |
 | `chiper import` | Restore a Chiper backup from a zip file. |
 | `chiper logs` | View, tail, and filter agent/gateway/error log files. |
 | `chiper config` | Show, edit, migrate, and query configuration files. |
@@ -110,7 +110,7 @@ Common options:
 | `--checkpoints` | Enable filesystem checkpoints before destructive file changes. |
 | `--yolo` | Skip approval prompts. |
 | `--pass-session-id` | Pass the session ID into the system prompt. |
-| `--ignore-user-config` | Ignore `~/.Chiper/config.yaml` and use built-in defaults. Credentials in `.env` are still loaded. Useful for isolated CI runs, reproducible bug reports, and third-party integrations. |
+| `--ignore-user-config` | Ignore `~/.chiper/config.yaml` and use built-in defaults. Credentials in `.env` are still loaded. Useful for isolated CI runs, reproducible bug reports, and third-party integrations. |
 | `--ignore-rules` | Skip auto-injection of `AGENTS.md`, `SOUL.md`, `.cursorrules`, persistent memory, and preloaded skills. Combine with `--ignore-user-config` for a fully isolated run. |
 | `--safe-mode` | Troubleshooting mode: disable ALL customizations — user config, rules/memory injection, plugins, and MCP servers (implies `--ignore-user-config` and `--ignore-rules`). Use to isolate whether a problem comes from your setup or from Chiper itself. |
 | `--source <tag>` | Session source tag for filtering (default: `cli`). Use `tool` for third-party integrations that should not appear in user session lists. |
@@ -141,7 +141,7 @@ chiper -z "What's the capital of France?"
 answer=$(chiper -z "summarize this" < /path/to/file.txt)
 ```
 
-Per-run overrides (no mutation to `~/.Chiper/config.yaml`):
+Per-run overrides (no mutation to `~/.chiper/config.yaml`):
 
 | Flag | Equivalent env var | Purpose |
 |---|---|---|
@@ -324,7 +324,7 @@ Runs the WhatsApp pairing/setup flow, including mode selection and QR-code pairi
 
 ```bash
 chiper slack manifest              # print manifest to stdout
-chiper slack manifest --write      # write to ~/.Chiper/slack-manifest.json
+chiper slack manifest --write      # write to ~/.chiper/slack-manifest.json
 chiper slack manifest --slashes-only  # just the features.slash_commands array
 ```
 
@@ -356,7 +356,7 @@ echo "message" | chiper send --to <target>
 chiper send --list [platform]
 ```
 
-Send a one-shot message to a configured messaging platform without spinning up an agent or gateway loop. Reuses the gateway's already-configured credentials (`~/.Chiper/.env` + `~/.Chiper/config.yaml`) so ops scripts, cron jobs, CI hooks, and monitoring daemons can post status updates without reimplementing each platform's REST client.
+Send a one-shot message to a configured messaging platform without spinning up an agent or gateway loop. Reuses the gateway's already-configured credentials (`~/.chiper/.env` + `~/.chiper/config.yaml`) so ops scripts, cron jobs, CI hooks, and monitoring daemons can post status updates without reimplementing each platform's REST client.
 
 For bot-token platforms (Telegram, Discord, Slack, Signal, SMS, WhatsApp-CloudAPI) no running gateway is required — `chiper send` talks directly to the platform's REST endpoint. Plugin platforms that need a persistent adapter still require a live gateway.
 
@@ -406,7 +406,7 @@ chiper secrets bitwarden <subcommand>
 chiper secrets bw <subcommand>          # short alias
 ```
 
-Pull API keys from an external secret manager at process startup instead of storing them in `~/.Chiper/.env`. Currently supports **Bitwarden Secrets Manager**. See the full guide: [Bitwarden integration](../user-guide/secrets/bitwarden.md).
+Pull API keys from an external secret manager at process startup instead of storing them in `~/.chiper/.env`. Currently supports **Bitwarden Secrets Manager**. See the full guide: [Bitwarden integration](../user-guide/secrets/bitwarden.md).
 
 `bitwarden` (alias `bw`) subcommands:
 
@@ -462,7 +462,7 @@ Run a local OpenAI-compatible HTTP server that forwards requests to an OAuth-aut
 chiper security <subcommand>
 ```
 
-On-demand vulnerability scan against [OSV.dev](https://osv.dev). Covers the Chiper venv (installed PyPI distributions), Python dependencies declared by plugins under `~/.Chiper/plugins/`, and pinned `npx`/`uvx` MCP servers in `config.yaml`. Does NOT scan globally-installed packages or editor/browser extensions.
+On-demand vulnerability scan against [OSV.dev](https://osv.dev). Covers the Chiper venv (installed PyPI distributions), Python dependencies declared by plugins under `~/.chiper/plugins/`, and pinned `npx`/`uvx` MCP servers in `config.yaml`. Does NOT scan globally-installed packages or editor/browser extensions.
 
 | Subcommand | Description |
 |------------|-------------|
@@ -539,7 +539,7 @@ chiper cron <list|create|edit|pause|resume|run|remove|status|tick>
 chiper kanban [--board <slug>] <action> [options]
 ```
 
-Multi-profile, multi-project collaboration board. Each install can host many boards (one per project, repo, or domain); each board is a standalone queue with its own SQLite DB and dispatcher scope. New installs start with one board called `default`, whose DB is `~/.Chiper/kanban.db` for back-compat; additional boards live at `~/.Chiper/kanban/boards/<slug>/kanban.db`. The gateway-embedded dispatcher sweeps every board per tick.
+Multi-profile, multi-project collaboration board. Each install can host many boards (one per project, repo, or domain); each board is a standalone queue with its own SQLite DB and dispatcher scope. New installs start with one board called `default`, whose DB is `~/.chiper/kanban.db` for back-compat; additional boards live at `~/.chiper/kanban/boards/<slug>/kanban.db`. The gateway-embedded dispatcher sweeps every board per tick.
 
 **Global flags (apply to every action below):**
 
@@ -554,7 +554,7 @@ Multi-profile, multi-project collaboration board. Each install can host many boa
 | `init` | Create `kanban.db` if missing. Idempotent. |
 | `boards list` / `boards ls` | List all boards with task counts. `--json`, `--all` (include archived). |
 | `boards create <slug>` | Create a new board. Flags: `--name`, `--description`, `--icon`, `--color`, `--switch` (make active). Slug is kebab-case, auto-downcased. |
-| `boards switch <slug>` / `boards use` | Persist `<slug>` as the active board (writes `~/.Chiper/kanban/current`). |
+| `boards switch <slug>` / `boards use` | Persist `<slug>` as the active board (writes `~/.chiper/kanban/current`). |
 | `boards show` / `boards current` | Print the currently-active board's name, DB path, and task counts. |
 | `boards rename <slug> "<name>"` | Change a board's display name. Slug is immutable. |
 | `boards rm <slug>` | Archive (default) or hard-delete a board. `--delete` skips the archive step. Archived boards move to `boards/_archived/<slug>-<ts>/`. Refused for `default`. |
@@ -594,7 +594,7 @@ chiper kanban boards rm atm10-server
 chiper kanban boards rm atm10-server --delete
 ```
 
-Board resolution order (highest precedence first): `--board <slug>` flag → `CHIPER_KANBAN_BOARD` env var → `~/.Chiper/kanban/current` file → `default`.
+Board resolution order (highest precedence first): `--board <slug>` flag → `CHIPER_KANBAN_BOARD` env var → `~/.chiper/kanban/current` file → `default`.
 
 All actions are also available as a slash command in the gateway (`/kanban …`), with the same argument surface — including `boards` subcommands and the `--board` flag.
 
@@ -632,7 +632,7 @@ chiper webhook subscribe <name> [options]
 | `--secret` | Custom HMAC secret. Auto-generated if omitted. |
 | `--deliver-only` | Skip the agent — deliver the rendered `--prompt` as the literal message. Zero LLM cost, sub-second delivery. Requires `--deliver` to be a real target (not `log`). |
 
-Subscriptions persist to `~/.Chiper/webhook_subscriptions.json` and are hot-reloaded by the webhook adapter without a gateway restart.
+Subscriptions persist to `~/.chiper/webhook_subscriptions.json` and are hot-reloaded by the webhook adapter without a gateway restart.
 
 ## `chiper doctor`
 
@@ -680,7 +680,7 @@ os:               Linux 6.14.0-37-generic x86_64
 python:           3.11.14
 openai_sdk:       2.24.0
 profile:          default
-chiper_home:      ~/.Chiper
+chiper_home:      ~/.chiper
 model:            anthropic/claude-opus-4.6
 provider:         openrouter
 terminal:         local
@@ -784,7 +784,7 @@ chiper backup --quick --label "pre-upgrade"  # Quick snapshot with label
 chiper checkpoints [COMMAND]
 ```
 
-Inspect and manage the shadow git store at `~/.Chiper/checkpoints/` — the storage layer behind the in-session `/rollback` command. Safe to run any time; does not require the agent to be running.
+Inspect and manage the shadow git store at `~/.chiper/checkpoints/` — the storage layer behind the in-session `/rollback` command. Safe to run any time; does not require the agent to be running.
 
 | Subcommand | Description |
 |------------|-------------|
@@ -844,7 +844,7 @@ chiper import ~/chiper-backup-20260423.zip --force   # Overwrite without prompti
 chiper logs [log_name] [options]
 ```
 
-View, tail, and filter Chiper log files. All logs are stored in `~/.Chiper/logs/` (or `<profile>/logs/` for non-default profiles).
+View, tail, and filter Chiper log files. All logs are stored in `~/.chiper/logs/` (or `<profile>/logs/` for non-default profiles).
 
 ### Log files
 
@@ -1047,7 +1047,7 @@ Notes:
 chiper bundles <subcommand>
 ```
 
-Skill bundles group several skills under one `/<bundle-name>` slash command. Invoking the bundle loads every referenced skill into a single combined user message. Storage: `~/.Chiper/skill-bundles/<slug>.yaml`. See [Skill Bundles](../user-guide/features/skills.md#skill-bundles) for the YAML schema and behavior.
+Skill bundles group several skills under one `/<bundle-name>` slash command. Invoking the bundle loads every referenced skill into a single combined user message. Storage: `~/.chiper/skill-bundles/<slug>.yaml`. See [Skill Bundles](../user-guide/features/skills.md#skill-bundles) for the YAML schema and behavior.
 
 Subcommands:
 
@@ -1057,7 +1057,7 @@ Subcommands:
 | `show <name>` | Show one bundle's name, description, skills, and file path |
 | `create <name>` | Create a new bundle. Pass `--skill <id>` (repeat) or omit for interactive entry. `--description`, `--instruction`, `--force` available. |
 | `delete <name>` | Remove a bundle file |
-| `reload` | Re-scan `~/.Chiper/skill-bundles/` and report added/removed bundles |
+| `reload` | Re-scan `~/.chiper/skill-bundles/` and report added/removed bundles |
 
 Examples:
 
@@ -1089,8 +1089,8 @@ The curator is an auxiliary-model background task that periodically reviews agen
 | `run` | Trigger a curator review now (blocks until the LLM pass finishes) |
 | `run --background` | Start the LLM pass in a background thread and return immediately |
 | `run --dry-run` | Preview only — produce the review report with no mutations |
-| `backup` | Take a manual tar.gz snapshot of `~/.Chiper/skills/` (curator also snapshots automatically before every real run) |
-| `rollback` | Restore `~/.Chiper/skills/` from a snapshot (defaults to newest) |
+| `backup` | Take a manual tar.gz snapshot of `~/.chiper/skills/` (curator also snapshots automatically before every real run) |
+| `rollback` | Restore `~/.chiper/skills/` from a snapshot (defaults to newest) |
 | `rollback --list` | List available snapshots |
 | `rollback --id <ts>` | Restore a specific snapshot by id |
 | `rollback -y` | Skip the confirmation prompt |
@@ -1130,7 +1130,7 @@ See [Fallback Providers](../user-guide/features/fallback-providers.md).
 chiper hooks <subcommand>
 ```
 
-Inspect shell-script hooks declared in `~/.Chiper/config.yaml`, test them against synthetic payloads, and manage the first-use consent allowlist at `~/.Chiper/shell-hooks-allowlist.json`.
+Inspect shell-script hooks declared in `~/.chiper/config.yaml`, test them against synthetic payloads, and manage the first-use consent allowlist at `~/.chiper/shell-hooks-allowlist.json`.
 
 | Subcommand | Description |
 |------------|-------------|
@@ -1309,7 +1309,7 @@ chiper insights [--days N] [--source platform]
 chiper claw migrate [options]
 ```
 
-Migrate your OpenClaw setup to Chiper. Reads from `~/.openclaw` (or a custom path) and writes to `~/.Chiper`. Automatically detects legacy directory names (`~/.clawdbot`, `~/.moltbot`) and config filenames (`clawdbot.json`, `moltbot.json`).
+Migrate your OpenClaw setup to Chiper. Reads from `~/.openclaw` (or a custom path) and writes to `~/.chiper`. Automatically detects legacy directory names (`~/.clawdbot`, `~/.moltbot`) and config filenames (`clawdbot.json`, `moltbot.json`).
 
 | Option | Description |
 |--------|-------------|
@@ -1317,7 +1317,7 @@ Migrate your OpenClaw setup to Chiper. Reads from `~/.openclaw` (or a custom pat
 | `--preset <name>` | Migration preset: `full` (all compatible settings) or `user-data` (excludes infrastructure config). Neither preset imports secrets — pass `--migrate-secrets` explicitly. |
 | `--overwrite` | Overwrite existing Chiper files on conflicts (default: refuse to apply when the plan has conflicts). |
 | `--migrate-secrets` | Include API keys in migration. Required even under `--preset full`. |
-| `--no-backup` | Skip the pre-migration zip snapshot of `~/.Chiper/` (by default a single restore-point archive is written to `~/.Chiper/backups/pre-migration-*.zip` before apply; restorable with `chiper import`). |
+| `--no-backup` | Skip the pre-migration zip snapshot of `~/.chiper/` (by default a single restore-point archive is written to `~/.chiper/backups/pre-migration-*.zip` before apply; restorable with `chiper import`). |
 | `--source <path>` | Custom OpenClaw directory (default: `~/.openclaw`). |
 | `--workspace-target <path>` | Target directory for workspace instructions (AGENTS.md). |
 | `--skill-conflict <mode>` | Handle skill name collisions: `skip` (default), `overwrite`, or `rename`. |
@@ -1467,7 +1467,7 @@ Additional behavior:
 - **Gateway restart.** After a successful update, Chiper attempts to restart all running gateway profiles automatically so they pick up the new code. Use `chiper gateway restart` when you want to restart a gateway without applying an update.
 - **Local source changes.** For git installs, dirty tracked files and untracked files are auto-stashed before branch checkout or pull (`git stash push --include-untracked`). Interactive terminal updates ask before restoring the stash. Non-interactive updates restore it by default; set `updates.non_interactive_local_changes: discard` only on managed installs where local source edits should be thrown away after a successful pull. If stash restore conflicts or the pull fails, the stash is left in place for manual recovery.
 - **npm lockfile churn.** Before stashing or switching branches, Chiper makes a best-effort cleanup of tracked `package-lock.json` diffs produced by npm install/build steps. Commit or manually stash intentional lockfile edits before running `chiper update`.
-- **Pairing data snapshot.** Even when `--backup` is off, `chiper update` takes a lightweight snapshot of `~/.Chiper/pairing/` and the Feishu comment rules before `git pull`. You can roll it back with `chiper backup restore --state pre-update` if a pull rewrites a file you were editing.
+- **Pairing data snapshot.** Even when `--backup` is off, `chiper update` takes a lightweight snapshot of `~/.chiper/pairing/` and the Feishu comment rules before `git pull`. You can roll it back with `chiper backup restore --state pre-update` if a pull rewrites a file you were editing.
 - **Legacy `chiper.service` warning.** If Chiper detects a pre-rename `chiper.service` systemd unit (instead of the current `chiper-gateway.service`), it prints a one-time migration hint so you can avoid flap-loop issues.
 - **Exit codes.** `0` on success, `1` on pull/install/post-install errors, `2` on unexpected working-tree changes that block `git pull`.
 

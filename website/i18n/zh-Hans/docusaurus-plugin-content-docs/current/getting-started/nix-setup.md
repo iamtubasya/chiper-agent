@@ -44,7 +44,7 @@ chiper setup
 chiper chat
 ```
 
-执行 `nix profile install` 后，`chiper`、`chiper-agent` 和 `chiper-acp` 将出现在你的 PATH 中。之后的工作流与[标准安装](./installation.md)完全相同——`chiper setup` 引导你完成提供商选择，`chiper gateway install` 设置 launchd（macOS）或 systemd 用户服务，配置存放在 `~/.Chiper/`。
+执行 `nix profile install` 后，`chiper`、`chiper-agent` 和 `chiper-acp` 将出现在你的 PATH 中。之后的工作流与[标准安装](./installation.md)完全相同——`chiper setup` 引导你完成提供商选择，`chiper gateway install` 设置 launchd（macOS）或 systemd 用户服务，配置存放在 `~/.chiper/`。
 
 <details>
 <summary><strong>从本地克隆构建</strong></summary>
@@ -119,7 +119,7 @@ services.chiper-agent.environmentFiles = [ "/var/lib/chiper/env" ];
 :::
 
 :::tip addToSystemPackages
-设置 `addToSystemPackages = true` 有两个作用：将 `chiper` CLI 添加到系统 PATH，**并**在系统范围内设置 `CHIPER_HOME`，使交互式 CLI 与 gateway 服务共享状态（会话、技能、cron）。不设置此项时，在 shell 中运行 `chiper` 会创建独立的 `~/.Chiper/` 目录。
+设置 `addToSystemPackages = true` 有两个作用：将 `chiper` CLI 添加到系统 PATH，**并**在系统范围内设置 `CHIPER_HOME`，使交互式 CLI 与 gateway 服务共享状态（会话、技能、cron）。不设置此项时，在 shell 中运行 `chiper` 会创建独立的 `~/.chiper/` 目录。
 :::
 
 ### 容器感知 CLI
@@ -132,7 +132,7 @@ services.chiper-agent.environmentFiles = [ "/var/lib/chiper/env" ];
 - 如果容器未运行，CLI 会短暂重试（交互式使用时显示 5 秒 spinner，脚本中静默等待 10 秒），然后以明确的错误退出——不会静默回退
 - 对于在 chiper 代码库上工作的开发者，设置 `CHIPER_DEV=1` 可绕过容器路由，直接运行本地检出版本
 
-设置 `container.hostUsers` 可创建 `~/.Chiper` 到服务状态目录的符号链接，使主机 CLI 和容器共享会话、配置和记忆：
+设置 `container.hostUsers` 可创建 `~/.chiper` 到服务状态目录的符号链接，使主机 CLI 和容器共享会话、配置和记忆：
 
 ```nix
 services.chiper-agent = {
@@ -317,7 +317,7 @@ Nix 用户最常见自定义需求的快速参考：
 | 更改 LLM 模型 | `settings.model.default` | `"anthropic/claude-sonnet-4"` |
 | 使用不同的提供商端点 | `settings.model.base_url` | `"https://openrouter.ai/api/v1"` |
 | 添加 API 密钥 | `environmentFiles` | `[ config.sops.secrets."chiper-env".path ]` |
-| 给 Agent 设置个性 | `${services.chiper-agent.stateDir}/.Chiper/SOUL.md` | 直接管理该文件 |
+| 给 Agent 设置个性 | `${services.chiper-agent.stateDir}/.chiper/SOUL.md` | 直接管理该文件 |
 | 添加 MCP 工具服务器 | `mcpServers.<name>` | 参见 [MCP 服务器](#mcp-servers) |
 | 将主机目录挂载到容器 | `container.extraVolumes` | `[ "/data:/data:rw" ]` |
 | 为容器传入 GPU 访问 | `container.extraOptions` | `[ "--gpus" "all" ]` |
@@ -401,7 +401,7 @@ chiper-env: |
 - **`USER.md`** — 关于 Agent 正在交互的用户的上下文信息。
 - 你放置在此处的任何其他文件对 Agent 都可见，作为工作区文件。
 
-Agent 身份文件是独立的：Chiper 从 `$CHIPER_HOME/SOUL.md` 加载其主要 `SOUL.md`，在 NixOS 模块中对应 `${services.chiper-agent.stateDir}/.Chiper/SOUL.md`。将 `SOUL.md` 放入 `documents` 只会创建一个工作区文件，不会替换主角色文件。
+Agent 身份文件是独立的：Chiper 从 `$CHIPER_HOME/SOUL.md` 加载其主要 `SOUL.md`，在 NixOS 模块中对应 `${services.chiper-agent.stateDir}/.chiper/SOUL.md`。将 `SOUL.md` 放入 `documents` 只会创建一个工作区文件，不会替换主角色文件。
 
 ```nix
 {
@@ -491,8 +491,8 @@ sudo -u chiper CHIPER_HOME=/var/lib/chiper/.chiper \
 
 ```bash
 chiper mcp add my-oauth-server --url https://mcp.example.com/mcp --auth oauth
-scp ~/.Chiper/mcp-tokens/my-oauth-server{,.client}.json \
-    server:/var/lib/chiper/.Chiper/mcp-tokens/
+scp ~/.chiper/mcp-tokens/my-oauth-server{,.client}.json \
+    server:/var/lib/chiper/.chiper/mcp-tokens/
 # 确保：chown chiper:chiper，chmod 0600
 ```
 
@@ -553,7 +553,7 @@ scp ~/.Chiper/mcp-tokens/my-oauth-server{,.client}.json \
 主机                                    容器
 ────                                    ─────────
 /nix/store/...-chiper-agent-0.1.0  ──►  /nix/store/... (ro)
-~/.Chiper -> /var/lib/chiper/.chiper       （符号链接桥接，按 hostUsers）
+~/.chiper -> /var/lib/chiper/.chiper       （符号链接桥接，按 hostUsers）
 /var/lib/chiper/                    ──►  /data/          (rw)
   ├── current-package -> /nix/store/...    （符号链接，每次重建更新）
   ├── .gc-root -> /nix/store/...           （防止 nix-collect-garbage）
@@ -849,7 +849,7 @@ nix build .#checks.x86_64-linux.config-roundtrip    # 合并脚本保留用户�
 | `container.image` | `str` | `"ubuntu:24.04"` | 基础镜像（运行时拉取） |
 | `container.extraVolumes` | `listOf str` | `[]` | 额外卷挂载（`host:container:mode`） |
 | `container.extraOptions` | `listOf str` | `[]` | 传递给 `docker create` 的额外参数 |
-| `container.hostUsers` | `listOf str` | `[]` | 获得 `~/.Chiper` 符号链接（指向服务 stateDir）的交互式用户，自动加入 `chiper` 组 |
+| `container.hostUsers` | `listOf str` | `[]` | 获得 `~/.chiper` 符号链接（指向服务 stateDir）的交互式用户，自动加入 `chiper` 组 |
 
 ---
 
@@ -949,10 +949,10 @@ sudo systemctl start chiper-agent
 
 ```bash
 # 原生模式
-sudo -u chiper cat /var/lib/chiper/.Chiper/.env
+sudo -u chiper cat /var/lib/chiper/.chiper/.env
 
 # 容器模式
-docker exec chiper-agent cat /data/.Chiper/.env
+docker exec chiper-agent cat /data/.chiper/.env
 ```
 
 ### GC Root 验证

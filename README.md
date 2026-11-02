@@ -63,7 +63,7 @@ chiper doctor       # Diagnose masalah
 
 ## Konfigurasi
 
-Edit `~/.Chiper/.env` untuk API keys:
+Edit `~/.chiper/.env` untuk API keys:
 
 ```env
 # LLM Provider (pilih salah satu)
@@ -105,7 +105,7 @@ chiper-agent/
 | Aspek | Chiper Agent Agent |
 |-------|-------------|------------------|
 | Command | `chiper` |
-| Data Dir | `~/.chiper` | `~/.Chiper` |
+| Data Dir | `~/.chiper` | `~/.chiper` |
 | Code Dir | `/usr/local/lib/chiper-agent` | `/usr/local/lib/chiper-agent` |
 | Developer | Chiper | Chiper / Tubasya |
 

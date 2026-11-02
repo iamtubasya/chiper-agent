@@ -1,7 +1,7 @@
 """`chiper checkpoints` CLI subcommand.
 
 Gives users direct visibility and control over the filesystem checkpoint
-store at ``~/.Chiper/checkpoints/``.  Actions:
+store at ``~/.chiper/checkpoints/``.  Actions:
 
     chiper checkpoints               # same as `status`
     chiper checkpoints status        # total size, project count, breakdown

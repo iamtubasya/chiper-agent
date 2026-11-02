@@ -48,7 +48,7 @@ Responsibilities:
 - expose age and staleness checks
 
 Storage path:
-- `~/.Chiper/plugins/chiper-achievements/scan_snapshot.json`
+- `~/.chiper/plugins/chiper-achievements/scan_snapshot.json`
 
 Methods (conceptual):
 - `get()` -> snapshot | null
@@ -125,7 +125,7 @@ Compatibility guidance:
 - Add metadata keys without breaking old callers.
 
 Checkpoint file (new):
-- `~/.Chiper/plugins/chiper-achievements/scan_checkpoint.json`
+- `~/.chiper/plugins/chiper-achievements/scan_checkpoint.json`
 
 Suggested checkpoint shape:
 ```json
@@ -204,9 +204,9 @@ Notes:
 - frontend request hygiene: `dashboard/dist/index.js` (or source if available)
 - plugin metadata: `dashboard/manifest.json`
 - persisted runtime files:
-  - `~/.Chiper/plugins/chiper-achievements/state.json` (existing unlock state)
-  - `~/.Chiper/plugins/chiper-achievements/scan_snapshot.json` (new)
-  - `~/.Chiper/plugins/chiper-achievements/scan_checkpoint.json` (new)
+  - `~/.chiper/plugins/chiper-achievements/state.json` (existing unlock state)
+  - `~/.chiper/plugins/chiper-achievements/scan_snapshot.json` (new)
+  - `~/.chiper/plugins/chiper-achievements/scan_checkpoint.json` (new)
 
 ---
 

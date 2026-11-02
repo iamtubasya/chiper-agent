@@ -6,7 +6,7 @@ Usage:
     chiper webhook remove <name>
     chiper webhook test <name> [--payload '{"key": "value"}']
 
-Subscriptions persist to ~/.Chiper/webhook_subscriptions.json and are
+Subscriptions persist to ~/.chiper/webhook_subscriptions.json and are
 hot-reloaded by the webhook adapter without a gateway restart.
 """
 

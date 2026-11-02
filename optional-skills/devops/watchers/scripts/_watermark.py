@@ -32,8 +32,8 @@ def _state_dir() -> Path:
     override = os.environ.get("WATCHER_STATE_DIR")
     if override:
         return Path(override)
-    # Default: $CHIPER_HOME/watcher-state/, falling back to ~/.Chiper/watcher-state/.
-    chiper_home = os.environ.get("CHIPER_HOME") or str(Path.home() / ".Chiper")
+    # Default: $CHIPER_HOME/watcher-state/, falling back to ~/.chiper/watcher-state/.
+    chiper_home = os.environ.get("CHIPER_HOME") or str(Path.home() / ".chiper")
     return Path(chiper_home) / "watcher-state"
 
 

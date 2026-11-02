@@ -220,7 +220,7 @@ if command -v gh &>/dev/null && gh auth status &>/dev/null; then
   echo "AUTH_METHOD=gh"
 elif [ -n "$GITHUB_TOKEN" ]; then
   echo "AUTH_METHOD=curl"
-elif _chiper_env="${CHIPER_HOME:-$HOME/.Chiper}/.env"; [ -f "$_chiper_env" ] && grep -q "^GITHUB_TOKEN=" "$_chiper_env"; then
+elif _chiper_env="${CHIPER_HOME:-$HOME/.chiper}/.env"; [ -f "$_chiper_env" ] && grep -q "^GITHUB_TOKEN=" "$_chiper_env"; then
   export GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_chiper_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
   echo "AUTH_METHOD=curl"
 elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then

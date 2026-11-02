@@ -39,9 +39,9 @@ It uses `scripts/openclaw_to_chiper.py` to:
 - transform OpenClaw `MEMORY.md` and `USER.md` into Chiper memory entries
 - merge OpenClaw command approval patterns into Chiper `command_allowlist`
 - migrate Chiper-compatible messaging settings such as `TELEGRAM_ALLOWED_USERS`, and map OpenClaw workspace settings to Chiper working-directory configuration
-- copy OpenClaw skills into `~/.Chiper/skills/openclaw-imports/`
+- copy OpenClaw skills into `~/.chiper/skills/openclaw-imports/`
 - optionally copy the OpenClaw workspace instructions file into a chosen Chiper workspace
-- mirror compatible workspace assets such as `workspace/tts/` into `~/.Chiper/tts/`
+- mirror compatible workspace assets such as `workspace/tts/` into `~/.chiper/tts/`
 - archive non-secret docs that do not have a direct Chiper destination
 - produce a structured report listing migrated items, conflicts, skipped items, and reasons
 
@@ -53,13 +53,13 @@ The helper script lives in this skill directory at:
 
 When this skill is installed from the Skills Hub, the normal location is:
 
-- `~/.Chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py`
+- `~/.chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py`
 
-Do not guess a shorter path like `~/.Chiper/skills/openclaw-migration/...`.
+Do not guess a shorter path like `~/.chiper/skills/openclaw-migration/...`.
 
 Before running the helper:
 
-1. Prefer the installed path under `~/.Chiper/skills/migration/openclaw-migration/`.
+1. Prefer the installed path under `~/.chiper/skills/migration/openclaw-migration/`.
 2. If that path fails, inspect the installed skill directory and resolve the script relative to the installed `SKILL.md`.
 3. Only use `find` as a fallback if the installed location is missing or the skill was moved manually.
 4. When calling the terminal tool, do not pass `workdir: "~"`. Use an absolute directory such as the user's home directory, or omit `workdir` entirely.
@@ -229,37 +229,37 @@ The helper script still supports category-level `--include` / `--exclude`, but t
 Dry run with full discovery:
 
 ```bash
-python3 ~/.Chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py
+python3 ~/.chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py
 ```
 
 When using the terminal tool, prefer an absolute invocation pattern such as:
 
 ```json
-{"command":"python3 /home/USER/.Chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py","workdir":"/home/USER"}
+{"command":"python3 /home/USER/.chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py","workdir":"/home/USER"}
 ```
 
 Dry run with the user-data preset:
 
 ```bash
-python3 ~/.Chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py --preset user-data
+python3 ~/.chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py --preset user-data
 ```
 
 Execute a user-data migration:
 
 ```bash
-python3 ~/.Chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py --execute --preset user-data --skill-conflict skip
+python3 ~/.chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py --execute --preset user-data --skill-conflict skip
 ```
 
 Execute a full compatible migration:
 
 ```bash
-python3 ~/.Chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py --execute --preset full --migrate-secrets --skill-conflict skip
+python3 ~/.chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py --execute --preset full --migrate-secrets --skill-conflict skip
 ```
 
 Execute with workspace instructions included:
 
 ```bash
-python3 ~/.Chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py --execute --preset user-data --skill-conflict rename --workspace-target "/absolute/workspace/path"
+python3 ~/.chiper/skills/migration/openclaw-migration/scripts/openclaw_to_chiper.py --execute --preset user-data --skill-conflict rename --workspace-target "/absolute/workspace/path"
 ```
 
 Do not use `$PWD` or the home directory as the workspace target by default. Ask for an explicit workspace path first.
@@ -294,5 +294,5 @@ After a successful run, the user should have:
 
 - Chiper persona state imported
 - Chiper memory files populated with converted OpenClaw knowledge
-- OpenClaw skills available under `~/.Chiper/skills/openclaw-imports/`
+- OpenClaw skills available under `~/.chiper/skills/openclaw-imports/`
 - a migration report showing any conflicts, omissions, or unsupported data

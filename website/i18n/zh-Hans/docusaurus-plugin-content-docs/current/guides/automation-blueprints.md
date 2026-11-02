@@ -142,7 +142,7 @@ Report any gaps where code changed but docs didn't. If everything is in sync, re
 chiper cron create "0 6 * * *" \
   "Run a dependency security audit on the chiper-agent project.
 
-1. cd ~/.Chiper/chiper-agent && source .venv/bin/activate
+1. cd ~/.chiper/chiper-agent && source .venv/bin/activate
 2. Run: pip audit --format json 2>/dev/null || pip audit 2>&1
 3. Run: npm audit --json 2>/dev/null (in website/ directory if it exists)
 4. Check for any CVEs with CVSS score >= 7.0
@@ -228,7 +228,7 @@ Be concise. This goes to the on-call channel." \
 
 **触发方式：** 定时（每 30 分钟）
 
-```python title="~/.Chiper/scripts/check-uptime.py"
+```python title="~/.chiper/scripts/check-uptime.py"
 import urllib.request, json, time
 
 ENDPOINTS = [
@@ -261,7 +261,7 @@ else:
 ```bash
 chiper cron create "every 30m" \
   "If the script reports OUTAGE DETECTED, summarize which services are down and suggest likely causes. If NO_ISSUES, respond with [SILENT]." \
-  --script ~/.Chiper/scripts/check-uptime.py \
+  --script ~/.chiper/scripts/check-uptime.py \
   --name "Uptime monitor" \
   --deliver telegram
 ```

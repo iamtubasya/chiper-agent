@@ -12,7 +12,7 @@ Chiper runs natively on Windows 10 and Windows 11 — no WSL, no Cygwin, no Dock
 If you just want to install, the one-liner on the [landing page](/) or [Installation page](../getting-started/installation#windows-native-powershell) is all you need. Come back here when something surprises you.
 
 :::tip Want WSL instead?
-If you prefer a real POSIX environment (for the dashboard's embedded terminal, `fork` semantics, Linux-style file watchers, etc.), see the **[Windows (WSL2) Guide](./windows-wsl-quickstart.md)**. Both coexist cleanly: native data lives under `%LOCALAPPDATA%\chiper`, WSL data lives under `~/.Chiper`.
+If you prefer a real POSIX environment (for the dashboard's embedded terminal, `fork` semantics, Linux-style file watchers, etc.), see the **[Windows (WSL2) Guide](./windows-wsl-quickstart.md)**. Both coexist cleanly: native data lives under `%LOCALAPPDATA%\chiper`, WSL data lives under `~/.chiper`.
 :::
 
 ## Quick install
@@ -208,7 +208,7 @@ Services require admin rights to install and tie the gateway's lifecycle to mach
 | `%LOCALAPPDATA%\chiper\bin\` | Chiper's managed `uv.exe` (the Python manager it uses for updates). |
 | `%LOCALAPPDATA%\chiper\` (root) | Your config, auth, skills, sessions, logs (`config.yaml`, `.env`, `skills\`, `sessions\`, `logs\`, …). **Survives reinstalls.** |
 
-On native Windows the installer sets `CHIPER_HOME=%LOCALAPPDATA%\chiper`, so your data and the disposable install live under the **same** `%LOCALAPPDATA%\chiper` root: the install/runtime is the `chiper-agent\`, `git\`, `node\`, and `bin\` subdirectories, while your data files sit directly in `%LOCALAPPDATA%\chiper`. Reinstalling only replaces the `chiper-agent\` checkout, so your data survives — but because the two share a root, **don't** `Remove-Item -Recurse %LOCALAPPDATA%\chiper` if you want to keep your data; delete the `chiper-agent\` subdirectory instead. Your data directory is identical in shape to a Linux `~/.Chiper`, so you can mirror it between machines.
+On native Windows the installer sets `CHIPER_HOME=%LOCALAPPDATA%\chiper`, so your data and the disposable install live under the **same** `%LOCALAPPDATA%\chiper` root: the install/runtime is the `chiper-agent\`, `git\`, `node\`, and `bin\` subdirectories, while your data files sit directly in `%LOCALAPPDATA%\chiper`. Reinstalling only replaces the `chiper-agent\` checkout, so your data survives — but because the two share a root, **don't** `Remove-Item -Recurse %LOCALAPPDATA%\chiper` if you want to keep your data; delete the `chiper-agent\` subdirectory instead. Your data directory is identical in shape to a Linux `~/.chiper`, so you can mirror it between machines.
 
 **Override `CHIPER_HOME`:** set the environment variable to point at a different data dir (e.g. `%USERPROFILE%\.chiper` to match a Linux/WSL layout). Works the same as on Linux.
 

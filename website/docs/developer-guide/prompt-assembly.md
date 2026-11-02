@@ -46,7 +46,7 @@ When `skip_context_files` is set (e.g., subagent delegation), SOUL.md is not loa
 Here is a simplified view of what the final system prompt looks like when all layers are present (comments show the source of each section):
 
 ```
-# Layer 1: Agent Identity (from ~/.Chiper/SOUL.md)
+# Layer 1: Agent Identity (from ~/.chiper/SOUL.md)
 You are Chiper, an AI assistant created by Chiper.
 You are an expert software engineer and researcher.
 You value correctness, clarity, and efficiency.
@@ -118,7 +118,7 @@ renderable inside a terminal.
 
 ## How SOUL.md appears in the prompt
 
-`SOUL.md` lives at `~/.Chiper/SOUL.md` and serves as the agent's identity — the very first section of the system prompt. The loading logic in `prompt_builder.py` works as follows:
+`SOUL.md` lives at `~/.chiper/SOUL.md` and serves as the agent's identity — the very first section of the system prompt. The loading logic in `prompt_builder.py` works as follows:
 
 ```python
 # From agent/prompt_builder.py (simplified)
@@ -238,8 +238,8 @@ Most users should treat `agent/prompt_builder.py` as implementation code, not a 
 
 ### Use these surfaces first
 
-- `~/.Chiper/SOUL.md` — replace the built-in default identity block with your own agent persona and standing behavior.
-- `~/.Chiper/MEMORY.md` and `~/.Chiper/USER.md` — provide durable cross-session facts and user profile data that should be snapshotted into new sessions.
+- `~/.chiper/SOUL.md` — replace the built-in default identity block with your own agent persona and standing behavior.
+- `~/.chiper/MEMORY.md` and `~/.chiper/USER.md` — provide durable cross-session facts and user profile data that should be snapshotted into new sessions.
 - Project context files such as `.chiper.md`, `CHIPER.md`, `AGENTS.md`, `CLAUDE.md`, or `.cursorrules` — inject repo-specific working rules.
 - Skills — package reusable workflows and references without editing core prompt code.
 - Optional system prompt config / API overrides — add deployment-specific instruction text without forking Chiper.

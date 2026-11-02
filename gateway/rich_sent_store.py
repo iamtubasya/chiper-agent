@@ -25,7 +25,7 @@ _MAX_TEXT_CHARS = 2000
 
 
 def _store_path() -> str:
-    home = os.environ.get("CHIPER_HOME") or os.path.expanduser("~/.Chiper")
+    home = os.environ.get("CHIPER_HOME") or os.path.expanduser("~/.chiper")
     return os.path.join(home, "state", "rich_sent_index.json")
 
 

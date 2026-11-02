@@ -3,7 +3,7 @@ Skills configuration for Chiper Agent.
 `chiper skills` enters this module.
 
 Toggle individual skills or categories on/off, globally or per-platform.
-Config stored in ~/.Chiper/config.yaml under:
+Config stored in ~/.chiper/config.yaml under:
 
   skills:
     disabled: [skill-a, skill-b]          # global disabled list

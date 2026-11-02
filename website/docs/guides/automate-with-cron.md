@@ -30,14 +30,14 @@ The `script` parameter is the secret weapon here. A Python script runs before ea
 Create the monitoring script:
 
 ```bash
-mkdir -p ~/.Chiper/scripts
+mkdir -p ~/.chiper/scripts
 ```
 
-```python title="~/.Chiper/scripts/watch-site.py"
+```python title="~/.chiper/scripts/watch-site.py"
 import hashlib, json, os, urllib.request
 
 URL = "https://example.com/pricing"
-STATE_FILE = os.path.expanduser("~/.Chiper/scripts/.watch-site-state.json")
+STATE_FILE = os.path.expanduser("~/.chiper/scripts/.watch-site-state.json")
 
 # Fetch current content
 req = urllib.request.Request(URL, headers={"User-Agent": "Chiper-Monitor/1.0"})
@@ -67,7 +67,7 @@ else:
 Set up the cron job:
 
 ```bash
-/cron add "every 1h" "If the script output says CHANGE DETECTED, summarize what changed on the page and why it might matter. If it says NO_CHANGE, respond with just [SILENT]." --script ~/.Chiper/scripts/watch-site.py --name "Pricing monitor" --deliver telegram
+/cron add "every 1h" "If the script output says CHANGE DETECTED, summarize what changed on the page and why it might matter. If it says NO_CHANGE, respond with just [SILENT]." --script ~/.chiper/scripts/watch-site.py --name "Pricing monitor" --deliver telegram
 ```
 
 :::tip The [SILENT] Trick
@@ -132,11 +132,11 @@ Notice how the prompt includes the exact `gh` commands. The cron agent has no me
 
 Scrape data at regular intervals, save to files, and detect trends over time. This pattern combines a script (for collection) with the agent (for analysis).
 
-```python title="~/.Chiper/scripts/collect-prices.py"
+```python title="~/.chiper/scripts/collect-prices.py"
 import json, os, urllib.request
 from datetime import datetime
 
-DATA_DIR = os.path.expanduser("~/.Chiper/data/prices")
+DATA_DIR = os.path.expanduser("~/.chiper/data/prices")
 os.makedirs(DATA_DIR, exist_ok=True)
 
 # Fetch current data (example: crypto prices)
@@ -169,7 +169,7 @@ for r in recent[-6:]:
 
 If prices are flat and nothing notable, respond with [SILENT].
 If there's a significant move, explain what happened." \
-  --script ~/.Chiper/scripts/collect-prices.py \
+  --script ~/.chiper/scripts/collect-prices.py \
   --name "Price tracker" \
   --deliver telegram
 ```

@@ -82,7 +82,7 @@ class TestUnifiedDashboardRouting:
         assert argv[argv.index("--open-profile") + 1] == "worker_x"
         # The child is pinned to the machine ROOT, not the launching profile's
         # CHIPER_HOME.  For a standard install (CHIPER_HOME unset) that root is
-        # the platform-native default (~/.Chiper), NOT dropped — see the Docker
+        # the platform-native default (~/.chiper), NOT dropped — see the Docker
         # test below for why we resolve explicitly instead of popping.
         from chiper_constants import get_default_chiper_root
         assert env.get("CHIPER_HOME") == str(get_default_chiper_root())

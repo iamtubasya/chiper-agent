@@ -75,10 +75,10 @@ The setup, in order:
    your agent.
 6. **Runs `npm install`** inside the plugin's sidecar directory.
 
-Runtime credentials are written to `~/.Chiper/.env`
+Runtime credentials are written to `~/.chiper/.env`
 (`PHOTON_PROJECT_ID` = the Spectrum project id, `PHOTON_PROJECT_SECRET`),
 the same place every other channel keeps its token. Management metadata
-(device token, dashboard project id) lives in `~/.Chiper/auth.json` under
+(device token, dashboard project id) lives in `~/.chiper/auth.json` under
 `credential_pool.photon` / `credential_pool.photon_project`.
 
 ## Authorizing users
@@ -95,13 +95,13 @@ chiper pairing approve photon <CODE>
 
 Use `chiper pairing list` to see pending codes and approved users.
 
-**Pre-authorize specific numbers** (in `~/.Chiper/.env`):
+**Pre-authorize specific numbers** (in `~/.chiper/.env`):
 
 ```bash
 PHOTON_ALLOWED_USERS=+15551234567,+15559876543
 ```
 
-**Open access** (dev only, in `~/.Chiper/.env`):
+**Open access** (dev only, in `~/.chiper/.env`):
 
 ```bash
 PHOTON_ALLOW_ALL_USERS=true

@@ -117,7 +117,7 @@ class TestFromGlobalConfig:
                 }
             }
         }))
-        # Isolate from real ~/.Chiper/honcho.json
+        # Isolate from real ~/.chiper/honcho.json
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path / "isolated"))
 
         config = HonchoClientConfig.from_global_config(config_path=config_file)
@@ -352,8 +352,8 @@ class TestResolveConfigPath:
         assert result == local_cfg
 
     def test_falls_back_to_default_profile_when_no_local(self, tmp_path, monkeypatch):
-        # Profile mode: CHIPER_HOME points at ~/.Chiper/profiles/<name>, so
-        # _get_default_chiper_home() must resolve back to ~/.Chiper — that's
+        # Profile mode: CHIPER_HOME points at ~/.chiper/profiles/<name>, so
+        # _get_default_chiper_home() must resolve back to ~/.chiper — that's
         # the bug the HOME-anchored helper fixes (vs. blindly using Path.home()).
         fake_home = tmp_path / "fakehome"
         fake_home.mkdir()

@@ -47,7 +47,7 @@ DeleteFn = Callable[[list[str]], None]  # (remote_paths) -> raises on failure
 GetFilesFn = Callable[[], list[tuple[str, str]]]  # () -> [(host_path, remote_path), ...]
 
 
-def iter_sync_files(container_base: str = "/root/.Chiper") -> list[tuple[str, str]]:
+def iter_sync_files(container_base: str = "/root/.chiper") -> list[tuple[str, str]]:
     """Enumerate all files that should be synced to a remote environment.
 
     Combines credentials, skills, and cache into a single flat list of
@@ -66,7 +66,7 @@ def iter_sync_files(container_base: str = "/root/.Chiper") -> list[tuple[str, st
     files: list[tuple[str, str]] = []
     for entry in get_credential_file_mounts():
         remote = entry["container_path"].replace(
-            "/root/.Chiper", container_base, 1
+            "/root/.chiper", container_base, 1
         )
         files.append((entry["host_path"], remote))
     for entry in iter_skills_files(container_base=container_base):
@@ -389,9 +389,9 @@ class FileSyncManager:
 
         Uses the existing file mapping to find a remote->host directory
         pair, then applies the same prefix substitution to the new file.
-        For example, if the mapping has ``/root/.Chiper/skills/a.md`` →
-        ``~/.Chiper/skills/a.md``, a new remote file at
-        ``/root/.Chiper/skills/b.md`` maps to ``~/.Chiper/skills/b.md``.
+        For example, if the mapping has ``/root/.chiper/skills/a.md`` →
+        ``~/.chiper/skills/a.md``, a new remote file at
+        ``/root/.chiper/skills/b.md`` maps to ``~/.chiper/skills/b.md``.
         """
         mapping = file_mapping if file_mapping is not None else []
         for host, remote in mapping:

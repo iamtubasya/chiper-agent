@@ -12,7 +12,7 @@ Why tools instead of just shelling out to ``chiper kanban``?
    / Modal / Singularity / SSH would run ``chiper kanban complete …``
    inside the container, where ``chiper`` isn't installed and the DB
    isn't mounted. Tools run in the agent's Python process, so they
-   always reach ``~/.Chiper/kanban.db`` regardless of terminal backend.
+   always reach ``~/.chiper/kanban.db`` regardless of terminal backend.
 
 2. **No shell-quoting footguns.** Passing ``--metadata '{"x": [...]}'``
    through shlex+argparse is fragile. Structured tool args skip it.

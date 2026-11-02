@@ -73,11 +73,11 @@ MIGRATION_OPTION_METADATA: Dict[str, Dict[str, str]] = {
     },
     "skills": {
         "label": "User skills",
-        "description": "Copy OpenClaw skills into ~/.Chiper/skills/openclaw-imports/.",
+        "description": "Copy OpenClaw skills into ~/.chiper/skills/openclaw-imports/.",
     },
     "tts-assets": {
         "label": "TTS assets",
-        "description": "Copy compatible workspace TTS assets into ~/.Chiper/tts/.",
+        "description": "Copy compatible workspace TTS assets into ~/.chiper/tts/.",
     },
     "discord-settings": {
         "label": "Discord settings",
@@ -402,7 +402,7 @@ def backup_existing(path: Path, backup_root: Path) -> Optional[Path]:
 #
 # Case-preserving: ``OpenClaw`` → ``Chiper`` (prose), but lowercase matches
 # like ``openclaw`` → ``chiper`` (so filesystem paths like ``~/.openclaw``
-# become ``~/.Chiper`` — the real Chiper home — not the broken ``~/.Chiper``).
+# become ``~/.chiper`` — the real Chiper home — not the broken ``~/.chiper``).
 _REBRAND_PATTERNS: List[Tuple[re.Pattern, str]] = [
     (re.compile(r'\bOpen[\s-]?Claw\b', re.IGNORECASE), 'Chiper'),
     (re.compile(r'\bClawdBot\b', re.IGNORECASE), 'Chiper'),
@@ -416,8 +416,8 @@ def _case_preserving_replacement(replacement: str):
 
     Keeps ``OpenClaw`` → ``Chiper`` but maps ``openclaw`` → ``chiper`` so a
     filesystem path like ``~/.openclaw/config.yaml`` rewrites to
-    ``~/.Chiper/config.yaml`` (the real Chiper home) instead of the broken
-    ``~/.Chiper/config.yaml``.
+    ``~/.chiper/config.yaml`` (the real Chiper home) instead of the broken
+    ``~/.chiper/config.yaml``.
     """
     def _sub(match: "re.Match[str]") -> str:
         matched = match.group(0)
@@ -2946,7 +2946,7 @@ class Migrator:
 
         notes.extend([
             "- Run `chiper gateway install` if you need the gateway service",
-            "- Review `~/.Chiper/config.yaml` for any adjustments",
+            "- Review `~/.chiper/config.yaml` for any adjustments",
             "",
         ])
 
@@ -2960,7 +2960,7 @@ class Migrator:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Migrate OpenClaw user state into Chiper Agent.")
     parser.add_argument("--source", default=str(Path.home() / ".openclaw"), help="OpenClaw home directory")
-    parser.add_argument("--target", default=os.environ.get("CHIPER_HOME") or str(Path.home() / ".Chiper"), help="Chiper home directory")
+    parser.add_argument("--target", default=os.environ.get("CHIPER_HOME") or str(Path.home() / ".chiper"), help="Chiper home directory")
     parser.add_argument(
         "--workspace-target",
         help="Optional workspace root where the workspace instructions file should be copied",
@@ -3067,7 +3067,7 @@ def main() -> int:
             seen_kinds.add(label)
             dest = item.get("destination") or ""
             if dest.startswith(str(report["target_root"])):
-                dest = "~/.Chiper/" + dest[len(str(report["target_root"])) + 1:]
+                dest = "~/.chiper/" + dest[len(str(report["target_root"])) + 1:]
             meta = MIGRATION_OPTION_METADATA.get(label, {})
             display = meta.get("label", label)
             print(f"    ✔ {display:<35s} -> {dest}")
@@ -3113,7 +3113,7 @@ def main() -> int:
     if args.execute:
         print()
         print("  Next steps:")
-        print("    1. Review ~/.Chiper/config.yaml")
+        print("    1. Review ~/.chiper/config.yaml")
         print("    2. Run: chiper mcp list")
         if any(i["kind"] == "cron-jobs" and i["status"] == "archived" for i in items):
             print("    3. Recreate cron jobs: chiper cron")

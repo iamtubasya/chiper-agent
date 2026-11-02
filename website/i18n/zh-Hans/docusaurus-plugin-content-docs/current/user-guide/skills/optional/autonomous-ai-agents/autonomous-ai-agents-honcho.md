@@ -404,7 +404,7 @@ Honcho 在注入前对 `memory-context` 块进行净化，以防止 prompt 注�
 ## 故障排查
 
 ### "Honcho not configured"
-运行 `chiper honcho setup`。确保 `~/.Chiper/config.yaml` 中包含 `memory.provider: honcho`。
+运行 `chiper honcho setup`。确保 `~/.chiper/config.yaml` 中包含 `memory.provider: honcho`。
 
 ### 记忆未跨会话持久化
 检查 `chiper honcho status` -- 验证 `saveMessages: true` 且 `writeFrequency` 不是 `session`（该选项仅在退出时写入）。

@@ -16,7 +16,7 @@ import pytest
 # ---------------------------------------------------------------------------
 
 def _make_chiper_tree(root: Path) -> None:
-    """Create a realistic ~/.Chiper directory structure for testing."""
+    """Create a realistic ~/.chiper directory structure for testing."""
     (root / "config.yaml").write_text("model:\n  provider: openrouter\n")
     (root / ".env").write_text("OPENROUTER_API_KEY=sk-test-123\n")
     (root / "memory_store.db").write_bytes(b"fake-sqlite")
@@ -1730,7 +1730,7 @@ class TestRunPreUpdateBackup:
         """With the new safe default (``pre_update_backup: true``), every
         ``chiper update`` creates a backup before any destructive step
         runs — the cost is a few minutes of zip time vs. the alternative
-        of silent total data loss of ``~/.Chiper/`` observed in #48200
+        of silent total data loss of ``~/.chiper/`` observed in #48200
         when an update step computes a wrong path and the user had no
         safety net.
         """
@@ -1819,7 +1819,7 @@ class TestRunPreUpdateBackup:
 
 class TestPreMigrationBackup:
     """Tests for create_pre_migration_backup — the auto-backup
-    ``chiper claw migrate`` runs before mutating ~/.Chiper/."""
+    ``chiper claw migrate`` runs before mutating ~/.chiper/."""
 
     @pytest.fixture
     def chiper_home(self, tmp_path):
@@ -1891,7 +1891,7 @@ class TestPreMigrationBackup:
         assert len(remaining) <= 3, f"expected <=3 backups retained, got {len(remaining)}"
 
     def test_missing_chiper_home_returns_none(self, tmp_path):
-        """Fresh install with no ~/.Chiper yet — nothing to back up."""
+        """Fresh install with no ~/.chiper yet — nothing to back up."""
         from chiper_cli.backup import create_pre_migration_backup
         missing = tmp_path / "does-not-exist"
         out = create_pre_migration_backup(chiper_home=missing)

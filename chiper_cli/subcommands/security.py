@@ -18,7 +18,7 @@ def build_security_parser(subparsers, *, cmd_security: Callable) -> None:
         description=(
             "On-demand vulnerability scan against OSV.dev. Covers the Chiper "
             "venv (installed PyPI dists), Python deps declared by plugins under "
-            "~/.Chiper/plugins/, and pinned npx/uvx MCP servers in config.yaml. "
+            "~/.chiper/plugins/, and pinned npx/uvx MCP servers in config.yaml. "
             "Does NOT scan globally-installed packages or editor/browser extensions."
         ),
     )

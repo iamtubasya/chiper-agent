@@ -41,7 +41,7 @@ chiper chat
 
 ## Configuration
 
-After running `chiper model`, your `~/.Chiper/config.yaml` will contain:
+After running `chiper model`, your `~/.chiper/config.yaml` will contain:
 
 ```yaml
 model:

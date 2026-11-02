@@ -3,13 +3,13 @@
 Official skills maintained by Chiper that are **not activated by default**.
 
 These skills ship with the chiper-agent repository but are not copied to
-`~/.Chiper/skills/` during setup. They are discoverable via the Skills Hub:
+`~/.chiper/skills/` during setup. They are discoverable via the Skills Hub:
 
 ```bash
 chiper skills browse               # browse all skills, official shown first
 chiper skills browse --source official  # browse only official optional skills
 chiper skills search <query>       # finds optional skills labeled "official"
-chiper skills install <identifier> # copies to ~/.Chiper/skills/ and activates
+chiper skills install <identifier> # copies to ~/.chiper/skills/ and activates
 ```
 
 ## Why optional?

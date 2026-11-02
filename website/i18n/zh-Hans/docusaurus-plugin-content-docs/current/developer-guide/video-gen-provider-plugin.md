@@ -26,7 +26,7 @@ description: "如何为 Chiper Agent 构建视频生成后端插件"
 Chiper 在三个位置扫描视频生成后端：
 
 1. **内置** — `<repo>/plugins/video_gen/<name>/`（通过 `kind: backend` 自动加载）
-2. **用户** — `~/.Chiper/plugins/video_gen/<name>/`（通过 `plugins.enabled` 选择启用）
+2. **用户** — `~/.chiper/plugins/video_gen/<name>/`（通过 `plugins.enabled` 选择启用）
 3. **Pip** — 声明了 `chiper_agent.plugins` 入口点的包
 
 每个插件的 `register(ctx)` 函数调用 `ctx.register_video_gen_provider(...)`。活跃 provider 由 `config.yaml` 中的 `video_gen.provider` 指定；`chiper tools` → Video Generation 引导用户完成选择。与 `image_generate` 不同，此处没有内置的遗留后端——每个 provider 都是插件。

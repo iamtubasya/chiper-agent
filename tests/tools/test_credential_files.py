@@ -43,7 +43,7 @@ class TestRegisterCredentialFiles:
         mounts = get_credential_file_mounts()
         assert len(mounts) == 1
         assert mounts[0]["host_path"] == str(chiper_home / "token.json")
-        assert mounts[0]["container_path"] == "/root/.Chiper/token.json"
+        assert mounts[0]["container_path"] == "/root/.chiper/token.json"
 
     def test_dict_with_name_key_fallback(self, tmp_path):
         """Skills use 'name' instead of 'path' — both should work."""
@@ -114,7 +114,7 @@ class TestSkillsDirectoryMount:
 
         assert len(mounts) >= 1
         assert mounts[0]["host_path"] == str(skills_dir)
-        assert mounts[0]["container_path"] == "/root/.Chiper/skills"
+        assert mounts[0]["container_path"] == "/root/.chiper/skills"
 
     def test_returns_none_when_no_skills_dir(self, tmp_path):
         chiper_home = tmp_path / ".chiper"
@@ -134,7 +134,7 @@ class TestSkillsDirectoryMount:
         with patch.dict(os.environ, {"CHIPER_HOME": str(chiper_home)}):
             mounts = get_skills_directory_mount(container_base="/home/user/.chiper")
 
-        assert mounts[0]["container_path"] == "/home/user/.Chiper/skills"
+        assert mounts[0]["container_path"] == "/home/user/.chiper/skills"
 
     def test_symlinks_are_sanitized(self, tmp_path):
         """Symlinks in skills dir should be excluded from the mount."""
@@ -191,8 +191,8 @@ class TestIterSkillsFiles:
             files = iter_skills_files()
 
         paths = {f["container_path"] for f in files}
-        assert "/root/.Chiper/skills/cat/myskill/SKILL.md" in paths
-        assert "/root/.Chiper/skills/cat/myskill/scripts/run.sh" in paths
+        assert "/root/.chiper/skills/cat/myskill/SKILL.md" in paths
+        assert "/root/.chiper/skills/cat/myskill/scripts/run.sh" in paths
         # Symlink should be excluded
         assert not any("evil" in f["container_path"] for f in files)
 
@@ -383,9 +383,9 @@ class TestCacheDirectoryMounts:
 
         mounts = get_cache_directory_mounts()
         paths = {m["container_path"] for m in mounts}
-        assert "/root/.Chiper/cache/documents" in paths
-        assert "/root/.Chiper/cache/audio" in paths
-        assert "/root/.Chiper/cache/videos" in paths
+        assert "/root/.chiper/cache/documents" in paths
+        assert "/root/.chiper/cache/audio" in paths
+        assert "/root/.chiper/cache/videos" in paths
 
     def test_skips_nonexistent_dirs(self, tmp_path, monkeypatch):
         """Dirs that don't exist on disk are not returned."""
@@ -397,7 +397,7 @@ class TestCacheDirectoryMounts:
 
         mounts = get_cache_directory_mounts()
         assert len(mounts) == 1
-        assert mounts[0]["container_path"] == "/root/.Chiper/cache/documents"
+        assert mounts[0]["container_path"] == "/root/.chiper/cache/documents"
 
     def test_legacy_dir_names_resolved(self, tmp_path, monkeypatch):
         """Old-style dir names (e.g. document_cache) are resolved correctly."""
@@ -414,8 +414,8 @@ class TestCacheDirectoryMounts:
         assert str(chiper_home / "image_cache") in host_paths
         # Container paths always use the new layout
         container_paths = {m["container_path"] for m in mounts}
-        assert "/root/.Chiper/cache/documents" in container_paths
-        assert "/root/.Chiper/cache/images" in container_paths
+        assert "/root/.chiper/cache/documents" in container_paths
+        assert "/root/.chiper/cache/images" in container_paths
 
     def test_empty_chiper_home(self, tmp_path, monkeypatch):
         """No cache dirs → empty list."""
@@ -438,7 +438,7 @@ class TestMapCachePathToContainer:
 
         assert (
             map_cache_path_to_container(host_path)
-            == "/root/.Chiper/cache/images/generated.png"
+            == "/root/.chiper/cache/images/generated.png"
         )
 
     def test_custom_container_base_for_remote_home(self, tmp_path, monkeypatch):
@@ -450,7 +450,7 @@ class TestMapCachePathToContainer:
 
         assert (
             map_cache_path_to_container(host_path, container_base="/home/agent/.chiper")
-            == "/home/agent/.Chiper/cache/images/remote.png"
+            == "/home/agent/.chiper/cache/images/remote.png"
         )
 
     def test_returns_none_when_outside_cache_dirs(self, tmp_path, monkeypatch):
@@ -511,7 +511,7 @@ class TestIterCacheFiles:
 
         entries = iter_cache_files()
         assert len(entries) == 1
-        assert entries[0]["container_path"] == "/root/.Chiper/cache/screenshots/session_abc/screen1.png"
+        assert entries[0]["container_path"] == "/root/.chiper/cache/screenshots/session_abc/screen1.png"
 
     def test_empty_cache(self, tmp_path, monkeypatch):
         """No cache dirs → empty list."""

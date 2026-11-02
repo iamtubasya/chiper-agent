@@ -96,7 +96,7 @@ Select **Signal** from the platform menu. The wizard will:
 
 ### Manual Configuration
 
-Add to `~/.Chiper/.env`:
+Add to `~/.chiper/.env`:
 
 ```bash
 # Required

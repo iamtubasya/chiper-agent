@@ -2,7 +2,7 @@
 
 Provides a single ``setup_logging()`` entry point that both the CLI and
 gateway call early in their startup path.  All log files live under
-``~/.Chiper/logs/`` (profile-aware via ``get_chiper_home()``).
+``~/.chiper/logs/`` (profile-aware via ``get_chiper_home()``).
 
 Log files produced:
     agent.log   — INFO+, all agent/tool/session activity (the main log)

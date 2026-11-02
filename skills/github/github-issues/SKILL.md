@@ -28,7 +28,7 @@ if command -v gh &>/dev/null && gh auth status &>/dev/null; then
 else
   AUTH="git"
   if [ -z "$GITHUB_TOKEN" ]; then
-    if _chiper_env="${CHIPER_HOME:-$HOME/.Chiper}/.env"; [ -f "$_chiper_env" ] && grep -q "^GITHUB_TOKEN=" "$_chiper_env"; then
+    if _chiper_env="${CHIPER_HOME:-$HOME/.chiper}/.env"; [ -f "$_chiper_env" ] && grep -q "^GITHUB_TOKEN=" "$_chiper_env"; then
       GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_chiper_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
     elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
       GITHUB_TOKEN=$(grep "github.com" ~/.git-credentials 2>/dev/null | head -1 | sed 's|https://[^:]*:\([^@]*\)@.*|\1|')

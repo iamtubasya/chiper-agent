@@ -26,7 +26,7 @@ Select **ntfy** and follow the prompts.
 
 ### Via environment variables
 
-Add these to `~/.Chiper/.env`:
+Add these to `~/.chiper/.env`:
 
 ```
 NTFY_TOPIC=chiper-myname-2026
@@ -66,8 +66,8 @@ In all cases, do not put sensitive data through ntfy unless the underlying topic
 2. On your phone: install the [ntfy app](https://ntfy.sh/docs/subscribe/phone/), tap **+**, enter `chiper-myname-2026`
 3. On the host:
    ```bash
-   echo 'NTFY_TOPIC=chiper-myname-2026' >> ~/.Chiper/.env
-   echo 'NTFY_ALLOWED_USERS=chiper-myname-2026' >> ~/.Chiper/.env
+   echo 'NTFY_TOPIC=chiper-myname-2026' >> ~/.chiper/.env
+   echo 'NTFY_ALLOWED_USERS=chiper-myname-2026' >> ~/.chiper/.env
    chiper gateway restart
    ```
 4. From the ntfy app, send a message to the topic. The agent's reply lands as a push notification.

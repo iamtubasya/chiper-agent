@@ -365,7 +365,7 @@ class TestTeePattern:
         assert key is not None
 
     def test_tee_chiper_env(self):
-        dangerous, key, desc = detect_dangerous_command("echo x | tee ~/.Chiper/.env")
+        dangerous, key, desc = detect_dangerous_command("echo x | tee ~/.chiper/.env")
         assert dangerous is True
         assert key is not None
 
@@ -398,37 +398,37 @@ class TestTeePattern:
 
 class TestChiperConfigWriteProtection:
     """Terminal-side pairing for the file_tools write_file/patch deny on
-    ~/.Chiper/config.yaml (#14639). config.yaml IS the security policy
+    ~/.chiper/config.yaml (#14639). config.yaml IS the security policy
     (approvals.mode/yolo live there, mtime-keyed cache reloads mid-session),
     so a write_file deny without terminal-side coverage is unpaired theater.
     These pin every terminal write idiom against the config file."""
 
     def test_redirect_overwrite(self):
-        dangerous, key, desc = detect_dangerous_command("echo 'approvals:' > ~/.Chiper/config.yaml")
+        dangerous, key, desc = detect_dangerous_command("echo 'approvals:' > ~/.chiper/config.yaml")
         assert dangerous is True
         assert key is not None
 
     def test_append(self):
-        dangerous, key, desc = detect_dangerous_command("echo '  mode: off' >> ~/.Chiper/config.yaml")
+        dangerous, key, desc = detect_dangerous_command("echo '  mode: off' >> ~/.chiper/config.yaml")
         assert dangerous is True
 
     def test_tee(self):
-        dangerous, key, desc = detect_dangerous_command("echo x | tee ~/.Chiper/config.yaml")
+        dangerous, key, desc = detect_dangerous_command("echo x | tee ~/.chiper/config.yaml")
         assert dangerous is True
 
     def test_cp_over_config(self):
-        dangerous, key, desc = detect_dangerous_command("cp /tmp/evil.yaml ~/.Chiper/config.yaml")
+        dangerous, key, desc = detect_dangerous_command("cp /tmp/evil.yaml ~/.chiper/config.yaml")
         assert dangerous is True
 
     def test_sed_in_place(self):
         # The gap the pairing closes: sed -i mutates the file directly,
         # bypassing the redirection/tee patterns.
-        dangerous, key, desc = detect_dangerous_command("sed -i 's/manual/off/' ~/.Chiper/config.yaml")
+        dangerous, key, desc = detect_dangerous_command("sed -i 's/manual/off/' ~/.chiper/config.yaml")
         assert dangerous is True
         assert "chiper config" in desc.lower() or "in-place" in desc.lower()
 
     def test_sed_in_place_long_flag(self):
-        dangerous, key, desc = detect_dangerous_command("sed --in-place 's/manual/off/' ~/.Chiper/config.yaml")
+        dangerous, key, desc = detect_dangerous_command("sed --in-place 's/manual/off/' ~/.chiper/config.yaml")
         assert dangerous is True
 
     def test_sed_in_place_absolute_chiper_home_config(self):
@@ -455,7 +455,7 @@ class TestChiperConfigWriteProtection:
         # perl -i performs the same in-place mutation as sed -i but was not
         # caught by the -e/-c pattern (which targets code evaluation).
         dangerous, key, desc = detect_dangerous_command(
-            "perl -i -pe 's/approvals.mode: on/approvals.mode: off/' ~/.Chiper/config.yaml"
+            "perl -i -pe 's/approvals.mode: on/approvals.mode: off/' ~/.chiper/config.yaml"
         )
         assert dangerous is True
         assert "in-place" in desc.lower() or "perl" in desc.lower()
@@ -470,7 +470,7 @@ class TestChiperConfigWriteProtection:
 
     def test_ruby_in_place_config(self):
         dangerous, key, desc = detect_dangerous_command(
-            "ruby -i -pe 'gsub(/manual/, \"off\")' ~/.Chiper/config.yaml"
+            "ruby -i -pe 'gsub(/manual/, \"off\")' ~/.chiper/config.yaml"
         )
         assert dangerous is True
 
@@ -489,7 +489,7 @@ class TestChiperConfigWriteProtection:
 
     def test_perl_in_place_env(self):
         dangerous, key, desc = detect_dangerous_command(
-            "perl -i -pe 's/SECRET=old/SECRET=new/' ~/.Chiper/.env"
+            "perl -i -pe 's/SECRET=old/SECRET=new/' ~/.chiper/.env"
         )
         assert dangerous is True
 
@@ -498,14 +498,14 @@ class TestChiperConfigWriteProtection:
         # splits the in-place flag out as its own token after -p; the pattern
         # must catch it the same as `perl -i -pe`.
         dangerous, key, desc = detect_dangerous_command(
-            "perl -p -i -e 's/approvals.mode: on/approvals.mode: off/' ~/.Chiper/config.yaml"
+            "perl -p -i -e 's/approvals.mode: on/approvals.mode: off/' ~/.chiper/config.yaml"
         )
         assert dangerous is True
 
     def test_perl_in_place_backup_suffix(self):
         # `perl -i.bak` keeps a backup but still mutates the file in place.
         dangerous, key, desc = detect_dangerous_command(
-            "perl -i.bak -pe 's/x/y/' ~/.Chiper/config.yaml"
+            "perl -i.bak -pe 's/x/y/' ~/.chiper/config.yaml"
         )
         assert dangerous is True
 
@@ -513,13 +513,13 @@ class TestChiperConfigWriteProtection:
         # `perl -e` with no -i flag is code evaluation, not file mutation —
         # the perl/ruby -i pattern must not fire on it.
         dangerous, key, desc = detect_dangerous_command(
-            "perl -wne 'print' ~/.Chiper/config.yaml"
+            "perl -wne 'print' ~/.chiper/config.yaml"
         )
         assert dangerous is False
 
     def test_read_is_safe(self):
         # Reading config is not a write — must not trip.
-        dangerous, key, desc = detect_dangerous_command("cat ~/.Chiper/config.yaml")
+        dangerous, key, desc = detect_dangerous_command("cat ~/.chiper/config.yaml")
         assert dangerous is False
 
     def test_normal_yaml_write_safe(self):
@@ -667,7 +667,7 @@ class TestProjectSensitiveCopyPattern:
 
 class TestSensitiveCopyMovePattern:
     """cp/mv/install OVERWRITING ~/.ssh/*, credential files (~/.netrc etc.),
-    shell rc files, or ~/.Chiper/config.yaml/.env must require approval — the
+    shell rc files, or ~/.chiper/config.yaml/.env must require approval — the
     tee/redirection forms were already gated (#14639 family / commit 4e9d886d),
     but cp/mv/install on these targets was an unpaired half-door (key implant /
     shell-rc command injection slipped through auto-approve)."""
@@ -690,7 +690,7 @@ class TestSensitiveCopyMovePattern:
         assert dangerous is True
 
     def test_cp_to_chiper_config(self):
-        dangerous, key, desc = detect_dangerous_command("cp /tmp/evil.yaml ~/.Chiper/config.yaml")
+        dangerous, key, desc = detect_dangerous_command("cp /tmp/evil.yaml ~/.chiper/config.yaml")
         assert dangerous is True
 
     def test_cp_from_ssh_is_safe(self):
@@ -852,7 +852,7 @@ class TestGatewayProtection:
     """Prevent agents from starting the gateway outside systemd management."""
 
     def test_gateway_run_with_disown_detected(self):
-        cmd = "kill 1605 && cd ~/.Chiper/chiper-agent && source venv/bin/activate && python -m chiper_cli.main gateway run --replace &disown; echo done"
+        cmd = "kill 1605 && cd ~/.chiper/chiper-agent && source venv/bin/activate && python -m chiper_cli.main gateway run --replace &disown; echo done"
         dangerous, key, desc = detect_dangerous_command(cmd)
         assert dangerous is True
         assert "systemctl" in desc

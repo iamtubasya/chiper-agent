@@ -594,7 +594,7 @@
           type = types.listOf types.str;
           default = [ ];
           description = ''
-            Interactive users who get a ~/.Chiper symlink to the service
+            Interactive users who get a ~/.chiper symlink to the service
             stateDir. These users are automatically added to the chiper group.
           '';
           example = [ "sidbin" ];
@@ -651,10 +651,10 @@
       # ── Host CLI ──────────────────────────────────────────────────────
       # Add the chiper CLI to system PATH and export CHIPER_HOME system-wide
       # so interactive shells share state (sessions, skills, cron) with the
-      # gateway service instead of creating a separate ~/.Chiper/.
+      # gateway service instead of creating a separate ~/.chiper/.
       (lib.mkIf cfg.addToSystemPackages {
         environment.systemPackages = [ effectivePackage ];
-        environment.variables.CHIPER_HOME = "${cfg.stateDir}/.Chiper";
+        environment.variables.CHIPER_HOME = "${cfg.stateDir}/.chiper";
       })
 
       # ── Host user group membership ─────────────────────────────────────
@@ -711,12 +711,12 @@
       {
         systemd.tmpfiles.rules = [
           "d ${cfg.stateDir}                2770 ${cfg.user} ${cfg.group} - -"
-          "d ${cfg.stateDir}/.Chiper        2770 ${cfg.user} ${cfg.group} - -"
-          "d ${cfg.stateDir}/.Chiper/cron   2770 ${cfg.user} ${cfg.group} - -"
-          "d ${cfg.stateDir}/.Chiper/sessions 2770 ${cfg.user} ${cfg.group} - -"
-          "d ${cfg.stateDir}/.Chiper/logs   2770 ${cfg.user} ${cfg.group} - -"
-          "d ${cfg.stateDir}/.Chiper/memories 2770 ${cfg.user} ${cfg.group} - -"
-          "d ${cfg.stateDir}/.Chiper/plugins 2770 ${cfg.user} ${cfg.group} - -"
+          "d ${cfg.stateDir}/.chiper        2770 ${cfg.user} ${cfg.group} - -"
+          "d ${cfg.stateDir}/.chiper/cron   2770 ${cfg.user} ${cfg.group} - -"
+          "d ${cfg.stateDir}/.chiper/sessions 2770 ${cfg.user} ${cfg.group} - -"
+          "d ${cfg.stateDir}/.chiper/logs   2770 ${cfg.user} ${cfg.group} - -"
+          "d ${cfg.stateDir}/.chiper/memories 2770 ${cfg.user} ${cfg.group} - -"
+          "d ${cfg.stateDir}/.chiper/plugins 2770 ${cfg.user} ${cfg.group} - -"
           "d ${cfg.stateDir}/home           0750 ${cfg.user} ${cfg.group} - -"
           "d ${cfg.workingDirectory}         2770 ${cfg.user} ${cfg.group} - -"
         ];
@@ -726,24 +726,24 @@
       {
         system.activationScripts."chiper-agent-setup" = lib.stringAfter ([ "users" ] ++ lib.optional (config.system.activationScripts ? setupSecrets) "setupSecrets") ''
           # Ensure directories exist (activation runs before tmpfiles)
-          mkdir -p ${cfg.stateDir}/.Chiper
+          mkdir -p ${cfg.stateDir}/.chiper
           mkdir -p ${cfg.stateDir}/home
           mkdir -p ${cfg.workingDirectory}
-          chown ${cfg.user}:${cfg.group} ${cfg.stateDir} ${cfg.stateDir}/.Chiper ${cfg.stateDir}/home ${cfg.workingDirectory}
-          chmod 2770 ${cfg.stateDir} ${cfg.stateDir}/.Chiper ${cfg.workingDirectory}
+          chown ${cfg.user}:${cfg.group} ${cfg.stateDir} ${cfg.stateDir}/.chiper ${cfg.stateDir}/home ${cfg.workingDirectory}
+          chmod 2770 ${cfg.stateDir} ${cfg.stateDir}/.chiper ${cfg.workingDirectory}
           chmod 0750 ${cfg.stateDir}/home
 
           # Create subdirs, set setgid + group-writable, migrate existing files.
           # Nix-managed .env/.managed stay 0640/0644; config.yaml uses
           # configYamlMode (0660 under addToSystemPackages, else 0640).
-          find ${cfg.stateDir}/.Chiper -maxdepth 1 \
+          find ${cfg.stateDir}/.chiper -maxdepth 1 \
             \( -name "*.db" -o -name "*.db-wal" -o -name "*.db-shm" -o -name "SOUL.md" \) \
             -exec chmod g+rw {} + 2>/dev/null || true
           for _subdir in cron sessions logs memories plugins; do
-            mkdir -p "${cfg.stateDir}/.Chiper/$_subdir"
-            chown ${cfg.user}:${cfg.group} "${cfg.stateDir}/.Chiper/$_subdir"
-            chmod 2770 "${cfg.stateDir}/.Chiper/$_subdir"
-            find "${cfg.stateDir}/.Chiper/$_subdir" -type f \
+            mkdir -p "${cfg.stateDir}/.chiper/$_subdir"
+            chown ${cfg.user}:${cfg.group} "${cfg.stateDir}/.chiper/$_subdir"
+            chmod 2770 "${cfg.stateDir}/.chiper/$_subdir"
+            find "${cfg.stateDir}/.chiper/$_subdir" -type f \
               -exec chmod g+rw {} + 2>/dev/null || true
           done
 
@@ -753,41 +753,41 @@
           # Mode is configYamlMode (0660 under addToSystemPackages so interactive
           # chiper-group users can save settings via the CLI/TUI, else 0640).
           ${if cfg.configFile != null then ''
-            install -o ${cfg.user} -g ${cfg.group} -m ${configYamlMode} -D ${configFile} ${cfg.stateDir}/.Chiper/config.yaml
+            install -o ${cfg.user} -g ${cfg.group} -m ${configYamlMode} -D ${configFile} ${cfg.stateDir}/.chiper/config.yaml
           '' else ''
-            ${configMergeScript} ${generatedConfigFile} ${cfg.stateDir}/.Chiper/config.yaml
-            chown ${cfg.user}:${cfg.group} ${cfg.stateDir}/.Chiper/config.yaml
-            chmod ${configYamlMode} ${cfg.stateDir}/.Chiper/config.yaml
+            ${configMergeScript} ${generatedConfigFile} ${cfg.stateDir}/.chiper/config.yaml
+            chown ${cfg.user}:${cfg.group} ${cfg.stateDir}/.chiper/config.yaml
+            chmod ${configYamlMode} ${cfg.stateDir}/.chiper/config.yaml
           ''}
 
           # Managed mode marker (so interactive shells also detect NixOS management)
-          touch ${cfg.stateDir}/.Chiper/.managed
-          chown ${cfg.user}:${cfg.group} ${cfg.stateDir}/.Chiper/.managed
-          chmod 0644 ${cfg.stateDir}/.Chiper/.managed
+          touch ${cfg.stateDir}/.chiper/.managed
+          chown ${cfg.user}:${cfg.group} ${cfg.stateDir}/.chiper/.managed
+          chmod 0644 ${cfg.stateDir}/.chiper/.managed
 
           # Container mode metadata — tells the host CLI to exec into the
           # container instead of running locally. Removed when container mode
           # is disabled so the host CLI falls back to native execution.
           ${if cfg.container.enable then ''
-            cat > ${cfg.stateDir}/.Chiper/.container-mode <<'CHIPER_CONTAINER_MODE_EOF'
+            cat > ${cfg.stateDir}/.chiper/.container-mode <<'CHIPER_CONTAINER_MODE_EOF'
     # Written by NixOS activation script. Do not edit manually.
     backend=${cfg.container.backend}
     container_name=${containerName}
     exec_user=${cfg.user}
     chiper_bin=${containerDataDir}/current-package/bin/chiper
     CHIPER_CONTAINER_MODE_EOF
-            chown ${cfg.user}:${cfg.group} ${cfg.stateDir}/.Chiper/.container-mode
-            chmod 0644 ${cfg.stateDir}/.Chiper/.container-mode
+            chown ${cfg.user}:${cfg.group} ${cfg.stateDir}/.chiper/.container-mode
+            chmod 0644 ${cfg.stateDir}/.chiper/.container-mode
           '' else ''
-            rm -f ${cfg.stateDir}/.Chiper/.container-mode
+            rm -f ${cfg.stateDir}/.chiper/.container-mode
 
             # Remove symlink bridge for hostUsers
             ${lib.concatStringsSep "\n" (map (user:
               let
                 userHome = config.users.users.${user}.home;
-                symlinkPath = "${userHome}/.Chiper";
+                symlinkPath = "${userHome}/.chiper";
               in ''
-                if [ -L "${symlinkPath}" ] && [ "$(readlink "${symlinkPath}")" = "${cfg.stateDir}/.Chiper" ]; then
+                if [ -L "${symlinkPath}" ] && [ "$(readlink "${symlinkPath}")" = "${cfg.stateDir}/.chiper" ]; then
                   rm -f "${symlinkPath}"
                   echo "chiper-agent: removed symlink ${symlinkPath}"
                 fi
@@ -795,15 +795,15 @@
           ''}
 
           # ── Symlink bridge for interactive users ───────────────────────
-          # Create ~/.Chiper -> stateDir/.Chiper for each hostUser so the
+          # Create ~/.chiper -> stateDir/.chiper for each hostUser so the
           # host CLI shares state with the container service.
           # Only runs when container mode is enabled.
           ${lib.optionalString cfg.container.enable
             (lib.concatStringsSep "\n" (map (user:
               let
                 userHome = config.users.users.${user}.home;
-                symlinkPath = "${userHome}/.Chiper";
-                target = "${cfg.stateDir}/.Chiper";
+                symlinkPath = "${userHome}/.chiper";
+                target = "${cfg.stateDir}/.chiper";
               in ''
                 if [ -d "${symlinkPath}" ] && [ ! -L "${symlinkPath}" ]; then
                   # Real directory — back it up, then create symlink.
@@ -821,10 +821,10 @@
           # Seed auth file if provided
           ${lib.optionalString (cfg.authFile != null) ''
             ${if cfg.authFileForceOverwrite then ''
-              install -o ${cfg.user} -g ${cfg.group} -m 0600 ${cfg.authFile} ${cfg.stateDir}/.Chiper/auth.json
+              install -o ${cfg.user} -g ${cfg.group} -m 0600 ${cfg.authFile} ${cfg.stateDir}/.chiper/auth.json
             '' else ''
-              if [ ! -f ${cfg.stateDir}/.Chiper/auth.json ]; then
-                install -o ${cfg.user} -g ${cfg.group} -m 0600 ${cfg.authFile} ${cfg.stateDir}/.Chiper/auth.json
+              if [ ! -f ${cfg.stateDir}/.chiper/auth.json ]; then
+                install -o ${cfg.user} -g ${cfg.group} -m 0600 ${cfg.authFile} ${cfg.stateDir}/.chiper/auth.json
               fi
             ''}
           ''}
@@ -833,7 +833,7 @@
           # Chiper reads $CHIPER_HOME/.env at startup via load_chiper_dotenv(),
           # so this is the single source of truth for both native and container mode.
           ${lib.optionalString (cfg.environment != {} || cfg.environmentFiles != []) ''
-            ENV_FILE="${cfg.stateDir}/.Chiper/.env"
+            ENV_FILE="${cfg.stateDir}/.chiper/.env"
             install -o ${cfg.user} -g ${cfg.group} -m 0640 /dev/null "$ENV_FILE"
             cat > "$ENV_FILE" <<'CHIPER_NIX_ENV_EOF'
     ${envFileContent}
@@ -853,7 +853,7 @@
 
         # ── Declarative plugins ─────────────────────────────────────────
         # Remove stale managed symlinks (plugins removed from config)
-        find ${cfg.stateDir}/.Chiper/plugins -maxdepth 1 -type l -name 'nix-managed-*' -delete 2>/dev/null || true
+        find ${cfg.stateDir}/.chiper/plugins -maxdepth 1 -type l -name 'nix-managed-*' -delete 2>/dev/null || true
 
         ${lib.concatStringsSep "\n" (map (plugin:
           let
@@ -863,8 +863,8 @@
               echo "ERROR: extraPlugins entry '${plugin}' has no plugin.yaml" >&2
               exit 1
             fi
-            ln -sfn ${plugin} ${cfg.stateDir}/.Chiper/plugins/nix-managed-${name}
-            chown -h ${cfg.user}:${cfg.group} ${cfg.stateDir}/.Chiper/plugins/nix-managed-${name}
+            ln -sfn ${plugin} ${cfg.stateDir}/.chiper/plugins/nix-managed-${name}
+            chown -h ${cfg.user}:${cfg.group} ${cfg.stateDir}/.chiper/plugins/nix-managed-${name}
           '') cfg.extraPlugins)}
         '';
       }
@@ -881,7 +881,7 @@
 
           environment = {
             HOME = cfg.stateDir;
-            CHIPER_HOME = "${cfg.stateDir}/.Chiper";
+            CHIPER_HOME = "${cfg.stateDir}/.chiper";
             CHIPER_MANAGED = "true";
             MESSAGING_CWD = cfg.workingDirectory;
           };
@@ -977,7 +977,7 @@
                 ${lib.concatStringsSep " " (map (v: "--volume ${v}") cfg.container.extraVolumes)} \
                 --env CHIPER_UID="$CHIPER_UID" \
                 --env CHIPER_GID="$CHIPER_GID" \
-                --env CHIPER_HOME=${containerDataDir}/.Chiper \
+                --env CHIPER_HOME=${containerDataDir}/.chiper \
                 --env CHIPER_MANAGED=true \
                 --env HOME=${containerHomeDir} \
                 --env MESSAGING_CWD=${containerWorkDir} \

@@ -1,4 +1,4 @@
-"""Tests for xAI Grok OAuth — tokens stored in Chiper auth store (~/.Chiper/auth.json)."""
+"""Tests for xAI Grok OAuth — tokens stored in Chiper auth store (~/.chiper/auth.json)."""
 
 import base64
 import json

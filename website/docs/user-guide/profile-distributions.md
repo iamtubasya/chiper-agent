@@ -84,14 +84,14 @@ Build and refine the agent like any other profile:
 ```bash
 chiper profile create research-bot
 research-bot setup                    # configure model, API keys
-# Edit ~/.Chiper/profiles/research-bot/SOUL.md
+# Edit ~/.chiper/profiles/research-bot/SOUL.md
 # Install skills, wire up MCP servers, schedule cron jobs, etc.
 research-bot chat                     # dogfood until it feels right
 ```
 
 ### Step 2 — Add a `distribution.yaml`
 
-Create `~/.Chiper/profiles/research-bot/distribution.yaml`:
+Create `~/.chiper/profiles/research-bot/distribution.yaml`:
 
 ```yaml
 name: research-bot
@@ -119,7 +119,7 @@ That's the whole manifest. Every field except `name` has a sensible default.
 ### Step 3 — Push to a git repo
 
 ```bash
-cd ~/.Chiper/profiles/research-bot
+cd ~/.chiper/profiles/research-bot
 git init
 git add .
 git commit -m "v1.0.0"
@@ -204,7 +204,7 @@ What happens:
 2. Reads `distribution.yaml`, shows you the manifest (name, version, description, author, required env vars).
 3. Checks each required env var against your shell environment and the target profile's existing `.env`. Marks each as `✓ set` or `needs setting` so you know exactly what to configure.
 4. Asks for confirmation. Pass `-y` / `--yes` to skip.
-5. Copies distribution-owned files into `~/.Chiper/profiles/research-bot/` (or wherever the manifest's `name` resolves).
+5. Copies distribution-owned files into `~/.chiper/profiles/research-bot/` (or wherever the manifest's `name` resolves).
 6. Writes `.env.EXAMPLE` with the required keys commented out — copy to `.env` and fill in.
 7. With `--alias`, creates a wrapper so you can run `research-bot chat` directly.
 
@@ -263,7 +263,7 @@ OPENAI_API_KEY=
 Copy it:
 
 ```bash
-cp ~/.Chiper/profiles/research-bot/.env.EXAMPLE ~/.Chiper/profiles/research-bot/.env
+cp ~/.chiper/profiles/research-bot/.env.EXAMPLE ~/.chiper/profiles/research-bot/.env
 # Edit .env, paste your real keys
 ```
 
@@ -327,7 +327,7 @@ The delete prompt surfaces distribution info before asking you to confirm:
 
 ```
 Profile: research-bot
-Path:    ~/.Chiper/profiles/research-bot
+Path:    ~/.chiper/profiles/research-bot
 Model:   claude-opus-4 (anthropic)
 Skills:  12
 Distribution: research-bot@1.0.0
@@ -352,7 +352,7 @@ You built a research assistant on your laptop. You want the same agent on your w
 
 ```bash
 # Laptop
-cd ~/.Chiper/profiles/research-bot
+cd ~/.chiper/profiles/research-bot
 git init && git add . && git commit -m "initial"
 git remote add origin git@github.com:you/research-bot.git
 git push -u origin main
@@ -370,7 +370,7 @@ Your engineering team wants a shared PR-review bot with a specific SOUL, specifi
 
 ```bash
 # Engineering lead
-cd ~/.Chiper/profiles/pr-reviewer
+cd ~/.chiper/profiles/pr-reviewer
 # ... build and tune ...
 git init && git add . && git commit -m "v1.0 PR reviewer"
 git tag v1.0.0
@@ -390,7 +390,7 @@ You built something novel — maybe a "Polymarket trader" or an "academic paper 
 
 ```bash
 # You
-cd ~/.Chiper/profiles/polymarket-trader
+cd ~/.chiper/profiles/polymarket-trader
 # Write a solid README.md at the repo root — GitHub shows it on the repo page
 git init && git add . && git commit -m "v1.0"
 git tag v1.0.0
@@ -475,7 +475,7 @@ git ls-remote --tags https://github.com/you/research-bot | tail -5
 The default update behavior already does this: `config.yaml` is preserved. To be safe, write your local tweaks to a file the distribution doesn't own:
 
 ```yaml
-# ~/.Chiper/profiles/research-bot/local/my-overrides.yaml
+# ~/.chiper/profiles/research-bot/local/my-overrides.yaml
 # (distribution never touches local/)
 ```
 
@@ -500,7 +500,7 @@ The standard git workflow — distributions are just repos:
 # Fork the repo on GitHub, then install your fork
 chiper profile install github.com/yourname/forked-research-bot --alias
 
-# Iterate locally in ~/.Chiper/profiles/forked-research-bot/
+# Iterate locally in ~/.chiper/profiles/forked-research-bot/
 # Edit SOUL.md, commit, push to your fork
 # Upstream changes: pull them into your fork the usual way
 ```
@@ -511,11 +511,11 @@ From the author's machine:
 
 ```bash
 # Install from a local directory (no git push needed)
-chiper profile install ~/.Chiper/profiles/research-bot --name research-bot-test --alias
+chiper profile install ~/.chiper/profiles/research-bot --name research-bot-test --alias
 
 # Tweak, delete, re-install until it's right
 chiper profile delete research-bot-test --yes
-chiper profile install ~/.Chiper/profiles/research-bot --name research-bot-test
+chiper profile install ~/.chiper/profiles/research-bot --name research-bot-test
 ```
 
 ---

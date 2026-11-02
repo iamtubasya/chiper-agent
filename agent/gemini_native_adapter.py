@@ -847,7 +847,7 @@ class GeminiNativeClient:
         if not (api_key or "").strip():
             raise RuntimeError(
                 "Gemini native client requires an API key, but none was provided. "
-                "Set GOOGLE_API_KEY or GEMINI_API_KEY in your environment / ~/.Chiper/.env "
+                "Set GOOGLE_API_KEY or GEMINI_API_KEY in your environment / ~/.chiper/.env "
                 "(get one at https://aistudio.google.com/app/apikey), or run `chiper setup` "
                 "to configure the Google provider."
             )

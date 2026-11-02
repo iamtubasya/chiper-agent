@@ -644,8 +644,8 @@ class TestPrintMigrationReport:
         report = {
             "summary": {"migrated": 2, "skipped": 1, "conflict": 1, "error": 0},
             "items": [
-                {"kind": "soul", "status": "migrated", "destination": "/home/user/.Chiper/SOUL.md"},
-                {"kind": "memory", "status": "migrated", "destination": "/home/user/.Chiper/memories/MEMORY.md"},
+                {"kind": "soul", "status": "migrated", "destination": "/home/user/.chiper/SOUL.md"},
+                {"kind": "memory", "status": "migrated", "destination": "/home/user/.chiper/memories/MEMORY.md"},
                 {"kind": "skills", "status": "conflict", "reason": "already exists"},
                 {"kind": "tts-assets", "status": "skipped", "reason": "not found"},
             ],
@@ -662,9 +662,9 @@ class TestPrintMigrationReport:
         report = {
             "summary": {"migrated": 3, "skipped": 0, "conflict": 0, "error": 0},
             "items": [
-                {"kind": "soul", "status": "migrated", "destination": "/home/user/.Chiper/SOUL.md"},
+                {"kind": "soul", "status": "migrated", "destination": "/home/user/.chiper/SOUL.md"},
             ],
-            "output_dir": "/home/user/.Chiper/migration/openclaw/20250312T120000",
+            "output_dir": "/home/user/.chiper/migration/openclaw/20250312T120000",
         }
         claw_mod._print_migration_report(report, dry_run=False)
         captured = capsys.readouterr()

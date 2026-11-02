@@ -16,7 +16,7 @@ chiper memory setup    # select "mem0"
 Or manually:
 ```bash
 chiper config set memory.provider mem0
-echo "MEM0_API_KEY=your-key" >> ~/.Chiper/.env
+echo "MEM0_API_KEY=your-key" >> ~/.chiper/.env
 ```
 
 ## Config

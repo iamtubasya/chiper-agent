@@ -1,8 +1,8 @@
 """Curator snapshot + rollback.
 
-A pre-run snapshot of ``~/.Chiper/skills/`` (excluding ``.curator_backups/``
+A pre-run snapshot of ``~/.chiper/skills/`` (excluding ``.curator_backups/``
 itself) is taken before any mutating curator pass. Snapshots are tar.gz
-files under ``~/.Chiper/skills/.curator_backups/<utc-iso>/`` with a
+files under ``~/.chiper/skills/.curator_backups/<utc-iso>/`` with a
 companion ``manifest.json`` describing the snapshot (reason, time, size,
 counted skill files). Rollback picks a snapshot, moves the current
 ``skills/`` tree aside into another snapshot so even the rollback itself
@@ -25,7 +25,7 @@ It DOES include:
     the re-seeder must leave archived)
 
 Alongside the skills tarball, each snapshot also captures a copy of
-``~/.Chiper/cron/jobs.json`` as ``cron-jobs.json`` when it exists. Cron
+``~/.chiper/cron/jobs.json`` as ``cron-jobs.json`` when it exists. Cron
 jobs reference skills by name in their ``skills``/``skill`` fields; the
 curator's consolidation pass rewrites those in place via
 ``cron.jobs.rewrite_skill_refs()``. Without capturing the pre-run state,
@@ -76,7 +76,7 @@ def _skills_dir() -> Path:
 
 
 def _cron_jobs_file() -> Path:
-    """Source path for the live cron jobs store (``~/.Chiper/cron/jobs.json``)."""
+    """Source path for the live cron jobs store (``~/.chiper/cron/jobs.json``)."""
     return get_chiper_home() / "cron" / "jobs.json"
 
 
@@ -209,7 +209,7 @@ def _write_manifest(dest: Path, reason: str, archive_path: Path,
 
 
 def snapshot_skills(reason: str = "manual", *, protect_ids: Optional[Set[str]] = None) -> Optional[Path]:
-    """Create a tar.gz snapshot of ``~/.Chiper/skills/`` and prune old ones.
+    """Create a tar.gz snapshot of ``~/.chiper/skills/`` and prune old ones.
 
     Returns the snapshot directory path, or ``None`` if the snapshot was
     skipped (backup disabled, skills dir missing, or an IO error occurred —
@@ -226,7 +226,7 @@ def snapshot_skills(reason: str = "manual", *, protect_ids: Optional[Set[str]] =
 
     skills = _skills_dir()
     if not skills.exists():
-        logger.debug("No ~/.Chiper/skills/ directory — nothing to back up")
+        logger.debug("No ~/.chiper/skills/ directory — nothing to back up")
         return None
 
     backups = _backups_dir()
@@ -537,7 +537,7 @@ def _restore_cron_skill_links(snapshot_dir: Path) -> Dict[str, Any]:
 
 
 def rollback(backup_id: Optional[str] = None) -> Tuple[bool, str, Optional[Path]]:
-    """Restore ``~/.Chiper/skills/`` from a snapshot.
+    """Restore ``~/.chiper/skills/`` from a snapshot.
 
     Strategy:
       1. Resolve the target snapshot (explicit id or newest regular).
@@ -546,7 +546,7 @@ def rollback(backup_id: Optional[str] = None) -> Tuple[bool, str, Optional[Path]
          undoable.
       3. Move all current top-level entries (except ``.curator_backups``
          and ``.hub``) into a tempdir.
-      4. Extract the chosen snapshot into ``~/.Chiper/skills/``.
+      4. Extract the chosen snapshot into ``~/.chiper/skills/``.
       5. On failure during 4, move the tempdir contents back (best-effort)
          and return failure.
 

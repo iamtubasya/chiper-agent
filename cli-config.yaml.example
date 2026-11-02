@@ -225,7 +225,7 @@ terminal:
 #   # chosen docker_image expects to start as root.
 #   docker_run_as_host_user: true
 #   # Optional: explicitly forward selected env vars into Docker.
-#   # These values come from your current shell first, then ~/.Chiper/.env.
+#   # These values come from your current shell first, then ~/.chiper/.env.
 #   # Warning: anything forwarded here is visible to commands run in the container.
 #   docker_forward_env:
 #     - "GITHUB_TOKEN"
@@ -582,9 +582,9 @@ skills:
   creation_nudge_interval: 15
 
   # External skill directories — share skills across tools/agents without
-  # copying them into ~/.Chiper/skills/.  Each path is expanded (~ and ${VAR})
+  # copying them into ~/.chiper/skills/.  Each path is expanded (~ and ${VAR})
   # and resolved to an absolute path.  External dirs are read-only: skill
-  # creation always writes to ~/.Chiper/skills/.  Local skills take precedence
+  # creation always writes to ~/.chiper/skills/.  Local skills take precedence
   # when names collide.
   # external_dirs:
   #   - ~/.agents/skills
@@ -851,7 +851,7 @@ platform_toolsets:
 # =============================================================================
 # Text-to-Speech
 # =============================================================================
-# TTS defaults to Edge TTS unless changed in ~/.Chiper/config.yaml.
+# TTS defaults to Edge TTS unless changed in ~/.chiper/config.yaml.
 # Gemini TTS supports persona/director prompt files, and Gemini 3.1 Flash TTS
 # can use a hidden auxiliary rewrite pass to insert expressive square-bracket
 # audio tags into the TTS script without showing tags in chat.
@@ -862,7 +862,7 @@ platform_toolsets:
 #     model: "gemini-3.1-flash-tts-preview"
 #     voice: "Kore"
 #     audio_tags: false
-#     persona_prompt_file: ""  # e.g. ~/.Chiper/tts/radio-host.md
+#     persona_prompt_file: ""  # e.g. ~/.chiper/tts/radio-host.md
 
 # =============================================================================
 # Voice Transcription (Speech-to-Text)
@@ -946,7 +946,7 @@ delegation:
 #
 # Requires: pip install honcho-ai
 # Config: ~/.honcho/config.json (shared with Claude Code, Cursor, etc.)
-# API key: HONCHO_API_KEY in ~/.Chiper/.env or ~/.honcho/config.json
+# API key: HONCHO_API_KEY in ~/.chiper/.env or ~/.honcho/config.json
 #
 # Chiper-specific overrides (optional — most config comes from ~/.honcho/config.json):
 # honcho: {}
@@ -1078,7 +1078,7 @@ display:
   #   sisyphus       — Earthy stone-and-moss theme
   #   charizard      — Fiery orange dragon theme
   #
-  # Custom skins: drop a YAML file in ~/.Chiper/skins/<name>.yaml
+  # Custom skins: drop a YAML file in ~/.chiper/skins/<name>.yaml
   # Schema (all fields optional, missing values inherit from default):
   #
   #   name: my-theme
@@ -1153,7 +1153,7 @@ display:
 #   on_session_finalize, on_session_reset, subagent_stop
 #
 # First-use consent: each (event, command) pair prompts once on a TTY, then
-# is persisted to ~/.Chiper/shell-hooks-allowlist.json.  Non-interactive
+# is persisted to ~/.chiper/shell-hooks-allowlist.json.  Non-interactive
 # runs (gateway, cron) need --accept-hooks, CHIPER_ACCEPT_HOOKS=1, or the
 # hooks_auto_accept key below.
 #
@@ -1163,15 +1163,15 @@ display:
 # hooks:
 #   pre_tool_call:
 #     - matcher: "terminal"
-#       command: "~/.Chiper/agent-hooks/block-rm-rf.sh"
+#       command: "~/.chiper/agent-hooks/block-rm-rf.sh"
 #       timeout: 10
 #   post_tool_call:
 #     - matcher: "write_file|patch"
-#       command: "~/.Chiper/agent-hooks/auto-format.sh"
+#       command: "~/.chiper/agent-hooks/auto-format.sh"
 #   pre_llm_call:
-#     - command: "~/.Chiper/agent-hooks/inject-cwd-context.sh"
+#     - command: "~/.chiper/agent-hooks/inject-cwd-context.sh"
 #   subagent_stop:
-#     - command: "~/.Chiper/agent-hooks/log-orchestration.sh"
+#     - command: "~/.chiper/agent-hooks/log-orchestration.sh"
 #
 # hooks_auto_accept: false
 
@@ -1181,7 +1181,7 @@ display:
 # =============================================================================
 updates:
   # Create a full CHIPER_HOME zip before every `chiper update`.
-  # Backups land in ~/.Chiper/backups/ and can be restored with `chiper import`.
+  # Backups land in ~/.chiper/backups/ and can be restored with `chiper import`.
   # Off by default because large homes can add minutes to every update.
   pre_update_backup: false
 
@@ -1214,7 +1214,7 @@ updates:
 # so a provisioned-but-not-populated secret can't shadow a valid entry here.
 #
 # Local dev / on-prem deploys should typically set these via config.yaml
-# (the ~/.Chiper/.env file is reserved for API keys and secrets).
+# (the ~/.chiper/.env file is reserved for API keys and secrets).
 #
 # dashboard:
 #   oauth:

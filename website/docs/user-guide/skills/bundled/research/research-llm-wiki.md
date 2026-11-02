@@ -52,7 +52,7 @@ Use this skill when the user:
 
 ## Wiki Location
 
-**Location:** Set via `WIKI_PATH` environment variable (e.g. in `~/.Chiper/.env`).
+**Location:** Set via `WIKI_PATH` environment variable (e.g. in `~/.chiper/.env`).
 
 If unset, defaults to `~/wiki`.
 

@@ -144,7 +144,7 @@ To launch via the CLI, simply run `chiper desktop`. By default it installs works
 
 ## How it works
 
-The packaged app ships only the Electron shell. On first launch it installs the Chiper Agent runtime into `CHIPER_HOME` (`~/.Chiper`, or `%LOCALAPPDATA%\chiper` on Windows) — **the same layout a CLI install uses**, which is why the two are interchangeable. The React renderer talks to a `chiper dashboard` backend over the standard gateway APIs and reuses the agent rather than reimplementing it. Install, backend-resolution, and self-update logic live in the Electron main process.
+The packaged app ships only the Electron shell. On first launch it installs the Chiper Agent runtime into `CHIPER_HOME` (`~/.chiper`, or `%LOCALAPPDATA%\chiper` on Windows) — **the same layout a CLI install uses**, which is why the two are interchangeable. The React renderer talks to a `chiper dashboard` backend over the standard gateway APIs and reuses the agent rather than reimplementing it. Install, backend-resolution, and self-update logic live in the Electron main process.
 
 ## Connecting to a remote backend
 
@@ -165,11 +165,11 @@ The rest of this section shows the username/password path because it's the quick
 
 ### On the backend (the remote machine)
 
-Set a username and password, then start the dashboard bound to a reachable address. The credentials live in `~/.Chiper/.env` (the secrets file, mode 0600):
+Set a username and password, then start the dashboard bound to a reachable address. The credentials live in `~/.chiper/.env` (the secrets file, mode 0600):
 
 ```bash
 # 1. Set the dashboard login credentials.
-cat >> ~/.Chiper/.env <<'EOF'
+cat >> ~/.chiper/.env <<'EOF'
 CHIPER_DASHBOARD_BASIC_AUTH_USERNAME=admin
 CHIPER_DASHBOARD_BASIC_AUTH_PASSWORD=choose-a-strong-password
 # Recommended: a stable signing secret so sessions survive restarts.
@@ -177,7 +177,7 @@ CHIPER_DASHBOARD_BASIC_AUTH_PASSWORD=choose-a-strong-password
 # on every restart.
 CHIPER_DASHBOARD_BASIC_AUTH_SECRET=$(openssl rand -base64 32)
 EOF
-chmod 600 ~/.Chiper/.env
+chmod 600 ~/.chiper/.env
 
 # 2. Run the dashboard bound to a reachable address. The non-loopback bind
 #    engages the auth gate; the username/password provider handles login.
@@ -190,7 +190,7 @@ Separately, make sure the **gateway is running** on the remote host if you rely 
 
 Prefer not to keep a plaintext password at rest? Set `CHIPER_DASHBOARD_BASIC_AUTH_PASSWORD_HASH` to a scrypt hash instead — compute it with `python -c "from plugins.dashboard_auth.basic import hash_password; print(hash_password('PW'))"`. Full configuration surface (config.yaml keys, every env var, the rate limiter): [Web Dashboard → Username/password provider](./features/web-dashboard.md#usernamepassword-provider-no-oauth-idp).
 
-Running the dashboard as a systemd service? Give the unit `EnvironmentFile=%h/.Chiper/.env` so the credentials are in the environment at boot.
+Running the dashboard as a systemd service? Give the unit `EnvironmentFile=%h/.chiper/.env` so the credentials are in the environment at boot.
 
 :::warning
 The dashboard reads and writes your `.env` (API keys, secrets) and can run agent commands. The **username/password** setup shown above is for a trusted network — never expose a password-protected dashboard directly to the open internet; put it behind a VPN. [Tailscale](https://tailscale.com/) is the clean option: bind to the machine's tailscale IP (`--host <tailscale-ip>`) and use `http://<tailscale-ip>:9119` as the Remote URL so only your tailnet can reach it. To reach a backend over the public internet, use the **OAuth (Nous Portal)** provider instead.
@@ -213,7 +213,7 @@ The remote gateway host is configured per [profile](./profiles.md), so each prof
 ### Troubleshooting
 
 - **Sign-in fails with 401 / "Invalid credentials"** — the username or password doesn't match the backend's `CHIPER_DASHBOARD_BASIC_AUTH_USERNAME` / `CHIPER_DASHBOARD_BASIC_AUTH_PASSWORD`. The backend returns the same generic error for an unknown user and a wrong password (no enumeration oracle), so double-check both. Confirm the gate is on with `curl -s http://<host>:9119/api/status | jq '.auth_required, .auth_providers'` — it should report `true` and include `"basic"`.
-- **No "Sign in" button — it asks for a session token instead** — the backend's username/password provider isn't active. `/api/status` won't list `"basic"` in `auth_providers`. Make sure both the username and a password (or password hash) are set in `~/.Chiper/.env` and that the dashboard process actually loaded them.
+- **No "Sign in" button — it asks for a session token instead** — the backend's username/password provider isn't active. `/api/status` won't list `"basic"` in `auth_providers`. Make sure both the username and a password (or password hash) are set in `~/.chiper/.env` and that the dashboard process actually loaded them.
 - **Signed out on every restart** — set `CHIPER_DASHBOARD_BASIC_AUTH_SECRET` to a stable value. Without it the token-signing key is regenerated per boot, invalidating all sessions.
 - **Connection refused / times out** — the backend bound to `127.0.0.1` (the default) or a firewall/VPN is blocking the port. Bind to `0.0.0.0` or the tailscale IP and open the port to your trusted network.
 
@@ -231,10 +231,10 @@ Common resets:
 
 ```bash
 # Force a clean first-launch setup (macOS/Linux)
-rm "$HOME/.Chiper/chiper-agent/.chiper-bootstrap-complete"
+rm "$HOME/.chiper/chiper-agent/.chiper-bootstrap-complete"
 
 # Rebuild a broken Python venv (macOS/Linux)
-rm -rf "$HOME/.Chiper/chiper-agent/venv"
+rm -rf "$HOME/.chiper/chiper-agent/venv"
 
 # Reset a stuck macOS microphone prompt
 tccutil reset Microphone com.Chiper.chiper
@@ -250,7 +250,7 @@ To **choose your own mirror** (e.g. a corporate/trusted one), set `ELECTRON_MIRR
 
 ```bash
 ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ \
-  bash -c 'cd "$HOME/.Chiper/chiper-agent/apps/desktop" && CSC_IDENTITY_AUTO_DISCOVERY=false npm run pack'
+  bash -c 'cd "$HOME/.chiper/chiper-agent/apps/desktop" && CSC_IDENTITY_AUTO_DISCOVERY=false npm run pack'
 ```
 
 To clear a corrupt cached zip by hand:

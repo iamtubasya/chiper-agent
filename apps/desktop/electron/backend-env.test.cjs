@@ -13,16 +13,16 @@ const {
 
 test('desktop backend PATH adds Chiper-managed bins and missing POSIX sane entries', () => {
   const result = buildDesktopBackendPath({
-    chiperHome: '/Users/test/.Chiper',
-    venvRoot: '/Users/test/.Chiper/chiper-agent/venv',
+    chiperHome: '/Users/test/.chiper',
+    venvRoot: '/Users/test/.chiper/chiper-agent/venv',
     currentPath: '/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin',
     platform: 'darwin',
     pathModule: path.posix
   })
 
   const entries = result.split(':')
-  assert.equal(entries[0], '/Users/test/.Chiper/node/bin')
-  assert.equal(entries[1], '/Users/test/.Chiper/chiper-agent/venv/bin')
+  assert.equal(entries[0], '/Users/test/.chiper/node/bin')
+  assert.equal(entries[1], '/Users/test/.chiper/chiper-agent/venv/bin')
   assert.ok(entries.includes('/opt/homebrew/bin'), 'Apple Silicon Homebrew bin is added')
   assert.ok(entries.includes('/opt/homebrew/sbin'), 'Apple Silicon Homebrew sbin is added')
   assert.ok(entries.includes('/usr/local/sbin'), 'missing standard sbin is added')
@@ -34,8 +34,8 @@ test('desktop backend PATH adds Chiper-managed bins and missing POSIX sane entri
 
 test('desktop backend PATH preserves first occurrence and avoids duplicates', () => {
   const result = buildDesktopBackendPath({
-    chiperHome: '/Users/test/.Chiper',
-    venvRoot: '/Users/test/.Chiper/chiper-agent/venv',
+    chiperHome: '/Users/test/.chiper',
+    venvRoot: '/Users/test/.chiper/chiper-agent/venv',
     currentPath: '/opt/homebrew/bin:/usr/bin:/opt/homebrew/bin:/bin',
     platform: 'darwin',
     pathModule: path.posix
@@ -51,9 +51,9 @@ test('desktop backend PATH preserves first occurrence and avoids duplicates', ()
 
 test('buildDesktopBackendEnv extends PYTHONPATH and backend PATH together', () => {
   const env = buildDesktopBackendEnv({
-    chiperHome: '/Users/test/.Chiper',
+    chiperHome: '/Users/test/.chiper',
     pythonPathEntries: ['/repo/chiper-agent'],
-    venvRoot: '/Users/test/.Chiper/chiper-agent/venv',
+    venvRoot: '/Users/test/.chiper/chiper-agent/venv',
     currentEnv: {
       PATH: '/usr/bin:/bin',
       PYTHONPATH: '/existing/pythonpath'
@@ -63,22 +63,22 @@ test('buildDesktopBackendEnv extends PYTHONPATH and backend PATH together', () =
   })
 
   assert.equal(env.PYTHONPATH, '/repo/chiper-agent:/existing/pythonpath')
-  assert.ok(env.PATH.startsWith('/Users/test/.Chiper/node/bin:/Users/test/.Chiper/chiper-agent/venv/bin:'))
+  assert.ok(env.PATH.startsWith('/Users/test/.chiper/node/bin:/Users/test/.chiper/chiper-agent/venv/bin:'))
   assert.ok(env.PATH.includes('/opt/homebrew/bin'))
 })
 
 test('normalizeChiperHomeRoot maps profile homes back to the global Chiper root', () => {
   assert.equal(
-    normalizeChiperHomeRoot('/Users/test/.Chiper/profiles/oracle', { pathModule: path.posix }),
-    '/Users/test/.Chiper'
+    normalizeChiperHomeRoot('/Users/test/.chiper/profiles/oracle', { pathModule: path.posix }),
+    '/Users/test/.chiper'
   )
   assert.equal(
     normalizeChiperHomeRoot('C:\\Users\\test\\AppData\\Local\\chiper\\profiles\\oracle', { pathModule: path.win32 }),
     'C:\\Users\\test\\AppData\\Local\\chiper'
   )
   assert.equal(
-    normalizeChiperHomeRoot('/Users/test/.Chiper', { pathModule: path.posix }),
-    '/Users/test/.Chiper'
+    normalizeChiperHomeRoot('/Users/test/.chiper', { pathModule: path.posix }),
+    '/Users/test/.chiper'
   )
 })
 

@@ -18,7 +18,7 @@ If you want to change who Chiper is — or replace it with an entirely different
 Chiper now seeds a default `SOUL.md` automatically in:
 
 ```text
-~/.Chiper/SOUL.md
+~/.chiper/SOUL.md
 ```
 
 More precisely, it uses the current instance's `CHIPER_HOME`, so if you run Chiper with a custom home directory, it will use:
@@ -47,14 +47,14 @@ This keeps personality predictable.
 If Chiper loaded `SOUL.md` from whatever directory you happened to launch it in, your personality could change unexpectedly between projects. By loading only from `CHIPER_HOME`, the personality belongs to the Chiper instance itself.
 
 That also makes it easier to teach users:
-- "Edit `~/.Chiper/SOUL.md` to change Chiper' default personality."
+- "Edit `~/.chiper/SOUL.md` to change Chiper' default personality."
 
 ## Where to edit it
 
 For most users:
 
 ```bash
-~/.Chiper/SOUL.md
+~/.chiper/SOUL.md
 ```
 
 If you use a custom home:
@@ -211,7 +211,7 @@ These are convenient overlays, but your global `SOUL.md` still gives Chiper its 
 
 ## Custom personalities in config
 
-You can also define named custom personalities in `~/.Chiper/config.yaml` under `agent.personalities`.
+You can also define named custom personalities in `~/.chiper/config.yaml` under `agent.personalities`.
 
 ```yaml
 agent:
@@ -231,7 +231,7 @@ Then switch to it with:
 
 A strong default setup is:
 
-1. Keep a thoughtful global `SOUL.md` in `~/.Chiper/SOUL.md`
+1. Keep a thoughtful global `SOUL.md` in `~/.chiper/SOUL.md`
 2. Put project instructions in `AGENTS.md`
 3. Use `/personality` only when you want a temporary mode shift
 

@@ -22,7 +22,7 @@ If you have ever wanted Chiper to use a tool that already exists somewhere else,
 
 1. MCP support ships with the standard install — no extra step needed.
 
-2. Add an MCP server to `~/.Chiper/config.yaml`:
+2. Add an MCP server to `~/.chiper/config.yaml`:
 
 ```yaml
 mcp_servers:
@@ -76,7 +76,7 @@ merging a PR.
 Catalog entries can require:
 
 - **API key** — Chiper prompts at install time and writes the value to
-  `~/.Chiper/.env`. Non-secret values (base URLs) go to the same file.
+  `~/.chiper/.env`. Non-secret values (base URLs) go to the same file.
 - **OAuth** (remote MCP) — written as `auth: oauth` in your config; the MCP
   client opens a browser on first connection.
 - **OAuth** (third-party provider like Google/GitHub) — Chiper points you at
@@ -146,7 +146,7 @@ to install the latest Chiper when you see that.
 
 Inside an entry's `transport.command`, `transport.args`, `transport.url`,
 and `headers`, `${VAR}` placeholders are resolved at server-connect time
-from environment variables (which include everything in `~/.Chiper/.env`).
+from environment variables (which include everything in `~/.chiper/.env`).
 This is useful when a catalog entry wants to reference a value the user
 configured elsewhere — e.g. `${HOME}/foo` or `${MY_PROVIDER_TOKEN}`.
 
@@ -220,7 +220,7 @@ mcp_servers:
     auth: oauth
 ```
 
-On first connect, Chiper prints an authorize URL, opens your browser when possible, and waits for the OAuth callback on a local loopback port. Tokens are cached at `~/.Chiper/mcp-tokens/<server>.json` with 0o600 perms; subsequent runs reuse them silently until refresh fails.
+On first connect, Chiper prints an authorize URL, opens your browser when possible, and waits for the OAuth callback on a local loopback port. Tokens are cached at `~/.chiper/mcp-tokens/<server>.json` with 0o600 perms; subsequent runs reuse them silently until refresh fails.
 
 **Remote / headless hosts.** When Chiper runs on a different machine than your browser, the loopback callback can't reach your laptop. Two ways to complete the flow:
 
@@ -243,7 +243,7 @@ mcp_servers:
 
 Then run `chiper mcp login googledrive` — with the pre-registered client, Chiper skips registration and runs the normal browser authorization flow.
 
-**Pitfall — config auto-reload race.** When you edit `~/.Chiper/config.yaml` from inside a running Chiper session, the CLI auto-reloads MCP connections with a 30s timeout. That's not enough for an interactive OAuth flow. Add the entry, then run `chiper mcp login <server>` from a fresh terminal — it waits the full 5 minutes for you to complete auth.
+**Pitfall — config auto-reload race.** When you edit `~/.chiper/config.yaml` from inside a running Chiper session, the CLI auto-reloads MCP connections with a 30s timeout. That's not enough for an interactive OAuth flow. Add the entry, then run `chiper mcp login <server>` from a fresh terminal — it waits the full 5 minutes for you to complete auth.
 
 ## mTLS / client certificates
 
@@ -282,7 +282,7 @@ You can also keep the cert and key fully separate via `client_cert` (combined PE
 
 ## Basic configuration reference
 
-Chiper reads MCP config from `~/.Chiper/config.yaml` under `mcp_servers`.
+Chiper reads MCP config from `~/.chiper/config.yaml` under `mcp_servers`.
 
 ### Common keys
 
@@ -600,7 +600,7 @@ Check:
 
 ```bash
 # Verify MCP deps are installed (already included in standard install)
-cd ~/.Chiper/chiper-agent && uv pip install -e ".[mcp]"
+cd ~/.chiper/chiper-agent && uv pip install -e ".[mcp]"
 
 node --version
 npx --version
@@ -716,7 +716,7 @@ Or if you installed Chiper in a specific location:
 {
   "mcpServers": {
     "chiper": {
-      "command": "/home/user/.Chiper/chiper-agent/venv/bin/chiper",
+      "command": "/home/user/.chiper/chiper-agent/venv/bin/chiper",
       "args": ["mcp", "serve"]
     }
   }
@@ -765,7 +765,7 @@ chiper mcp serve --verbose    # Debug logging on stderr
 
 ### How it works
 
-The MCP server reads conversation data directly from Chiper's session store (`~/.Chiper/sessions/sessions.json` and the SQLite database). A background thread polls the database for new messages and maintains an in-memory event queue. For sending messages, it uses the same `send_message` infrastructure as the Chiper agent itself.
+The MCP server reads conversation data directly from Chiper's session store (`~/.chiper/sessions/sessions.json` and the SQLite database). A background thread polls the database for new messages and maintains an in-memory event queue. For sending messages, it uses the same `send_message` infrastructure as the Chiper agent itself.
 
 The gateway does NOT need to be running for read operations (listing conversations, reading history, polling events). It DOES need to be running for send operations, since the platform adapters need active connections.
 

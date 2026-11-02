@@ -8,7 +8,7 @@ OK="${GREEN}✔${NC}"; FAIL="${RED}✘${NC}"; WARN="${YELLOW}⚠${NC}"
 
 TWOZERO_URL="https://www.404zero.com/pisang/twozero.tox"
 TOX_PATH="$HOME/Downloads/twozero.tox"
-CHIPER_HOME_DIR="${CHIPER_HOME:-$HOME/.Chiper}"
+CHIPER_HOME_DIR="${CHIPER_HOME:-$HOME/.chiper}"
 CHIPER_CFG="${CHIPER_HOME_DIR}/config.yaml"
 MCP_PORT=40404
 MCP_ENDPOINT="http://localhost:${MCP_PORT}/mcp"

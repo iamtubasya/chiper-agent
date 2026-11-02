@@ -64,7 +64,7 @@ Select **WeCom** and follow the prompts. The wizard will guide you through:
 
 #### Option B: Manual Configuration
 
-Add the following to `~/.Chiper/.env`:
+Add the following to `~/.chiper/.env`:
 
 ```bash
 WECOM_BOT_ID=your-bot-id

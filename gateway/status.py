@@ -5,7 +5,7 @@ Provides PID-file based detection of whether the gateway daemon is running,
 used by send_message's check_fn to gate availability in the CLI.
 
 The PID file lives at ``{CHIPER_HOME}/gateway.pid``.  CHIPER_HOME defaults to
-``~/.Chiper`` but can be overridden via the environment variable.  This means
+``~/.chiper`` but can be overridden via the environment variable.  This means
 separate CHIPER_HOME directories naturally get separate PID files — a property
 that will be useful when we add named profiles (multiple agents running
 concurrently under distinct configurations).

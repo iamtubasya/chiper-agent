@@ -2,9 +2,9 @@
 
 Chiper seeds its credential pool from many places:
 
-    env:<VAR>     — os.environ / ~/.Chiper/.env
+    env:<VAR>     — os.environ / ~/.chiper/.env
     claude_code   — ~/.claude/.credentials.json
-    chiper_pkce   — ~/.Chiper/.anthropic_oauth.json
+    chiper_pkce   — ~/.chiper/.anthropic_oauth.json
     device_code   — auth.json providers.<provider> (nous, openai-codex, ...)
     qwen-cli      — ~/.qwen/oauth_creds.json
     gh_cli        — gh auth token
@@ -144,7 +144,7 @@ def _remove_env_source(provider: str, removed) -> RemovalResult:
     """env:<VAR> — the most common case.
 
     Handles three user situations:
-      1. Var lives only in ~/.Chiper/.env  → clear it
+      1. Var lives only in ~/.chiper/.env  → clear it
       2. Var lives only in the user's shell (shell profile, systemd
          EnvironmentFile, launchd plist) → hint them where to unset it
       3. Var lives in both → clear from .env, hint about shell
@@ -177,7 +177,7 @@ def _remove_env_source(provider: str, removed) -> RemovalResult:
     if shell_exported:
         result.hints.extend([
             f"Note: {env_var} is still set in your shell environment "
-            f"(not in ~/.Chiper/.env).",
+            f"(not in ~/.chiper/.env).",
             "  Unset it there (shell profile, systemd EnvironmentFile, "
             "launchd plist, etc.) or it will keep being visible to Chiper.",
             f"  The pool entry is now suppressed — Chiper will ignore "
@@ -205,7 +205,7 @@ def _remove_claude_code(provider: str, removed) -> RemovalResult:
 
 
 def _remove_chiper_pkce(provider: str, removed) -> RemovalResult:
-    """~/.Chiper/.anthropic_oauth.json is ours — delete it outright."""
+    """~/.chiper/.anthropic_oauth.json is ours — delete it outright."""
     from chiper_constants import get_chiper_home
 
     result = RemovalResult()
@@ -409,7 +409,7 @@ def _register_all_sources() -> None:
     register(RemovalStep(
         provider="anthropic", source_id="chiper_pkce",
         remove_fn=_remove_chiper_pkce,
-        description="~/.Chiper/.anthropic_oauth.json",
+        description="~/.chiper/.anthropic_oauth.json",
     ))
     register(RemovalStep(
         provider="nous", source_id="device_code",

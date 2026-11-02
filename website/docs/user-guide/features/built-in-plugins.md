@@ -7,7 +7,7 @@ description: "Plugins shipped with Chiper Agent that run automatically via lifec
 
 # Built-in Plugins
 
-Chiper ships a small set of plugins bundled with the repository. They live under `<repo>/plugins/<name>/` and load automatically alongside user-installed plugins in `~/.Chiper/plugins/`. They use the same plugin surface as third-party plugins — hooks, tools, slash commands — just maintained in-tree.
+Chiper ships a small set of plugins bundled with the repository. They live under `<repo>/plugins/<name>/` and load automatically alongside user-installed plugins in `~/.chiper/plugins/`. They use the same plugin surface as third-party plugins — hooks, tools, slash commands — just maintained in-tree.
 
 See the [Plugins](/user-guide/features/plugins) page for the general plugin system, and [Build a Chiper Plugin](/guides/build-a-chiper-plugin) to write your own.
 
@@ -16,8 +16,8 @@ See the [Plugins](/user-guide/features/plugins) page for the general plugin syst
 The `PluginManager` scans four sources, in order:
 
 1. **Bundled** — `<repo>/plugins/<name>/` (what this page documents)
-2. **User** — `~/.Chiper/plugins/<name>/`
-3. **Project** — `./.Chiper/plugins/<name>/` (requires `CHIPER_ENABLE_PROJECT_PLUGINS=1`)
+2. **User** — `~/.chiper/plugins/<name>/`
+3. **Project** — `./.chiper/plugins/<name>/` (requires `CHIPER_ENABLE_PROJECT_PLUGINS=1`)
 4. **Pip entry points** — `chiper_agent.plugins`
 
 On name collision, later sources win — a user plugin named `disk-cleanup` would replace the bundled one.
@@ -32,7 +32,7 @@ Bundled plugins ship disabled. Discovery finds them (they appear in `chiper plug
 chiper plugins enable disk-cleanup
 ```
 
-Or via `~/.Chiper/config.yaml`:
+Or via `~/.chiper/config.yaml`:
 
 ```yaml
 plugins:
@@ -161,7 +161,7 @@ pip install langfuse
 chiper plugins enable observability/langfuse
 ```
 
-Then put the credentials in `~/.Chiper/.env`:
+Then put the credentials in `~/.chiper/.env`:
 
 ```bash
 CHIPER_LANGFUSE_PUBLIC_KEY=pk-lf-...
@@ -212,7 +212,7 @@ Lets the agent **join, transcribe, and participate in Google Meet calls** — ta
 - A headless virtual participant that joins a Meet URL using browser automation
 - Live transcription of the meeting audio via the configured STT provider
 - A `meet_summarize` / `meet_speak` / `meet_followup` toolset the agent invokes to act on what it heard
-- Post-meeting artifacts (transcript, speaker-attributed notes, action items) saved under `~/.Chiper/cache/google_meet/<meeting_id>/`
+- Post-meeting artifacts (transcript, speaker-attributed notes, action items) saved under `~/.chiper/cache/google_meet/<meeting_id>/`
 
 **Setup:**
 
@@ -231,7 +231,7 @@ The agent kicks off the meeting join, streams the transcription back into its co
 
 **When to use it:** recurring standups where you want a bot to transcribe + summarize for async attendees; deposition-style interviews where you want structured notes; any case where you'd otherwise need Fireflies / Otter / Grain. When you'd rather not have an AI listening in — don't enable it.
 
-**Disabling:** `chiper plugins disable google_meet`. Any cached transcripts and recordings stay in `~/.Chiper/cache/google_meet/` until you remove them.
+**Disabling:** `chiper plugins disable google_meet`. Any cached transcripts and recordings stay in `~/.chiper/cache/google_meet/` until you remove them.
 
 ### chiper-achievements
 
@@ -239,7 +239,7 @@ Adds a **Steam-style achievements tab to the dashboard** — 60+ collectible, ti
 
 **How it works:**
 
-- Scans your entire `~/.Chiper/state.db` session history on the dashboard backend
+- Scans your entire `~/.chiper/state.db` session history on the dashboard backend
 - Per-session stats are cached by `(started_at, last_active)` fingerprint, so only new or changed sessions re-analyze on subsequent scans
 - First-ever scan runs in a background thread — the dashboard never blocks waiting for it, even on databases with thousands of sessions
 - Unlock state is persisted to `$CHIPER_HOME/plugins/chiper-achievements/state.json`
@@ -282,13 +282,13 @@ Adds a **Steam-style achievements tab to the dashboard** — 60+ collectible, ti
 
 **Enabling:** Nothing to enable — `chiper-achievements` is a dashboard-only plugin (no lifecycle hooks, no model-visible tools). It auto-registers as a tab in `chiper dashboard` on first launch. The `plugins.enabled` config only gates lifecycle/tool plugins; dashboard plugins are discovered purely via their `dashboard/manifest.json`.
 
-**Opting out:** Delete or rename `plugins/chiper-achievements/dashboard/manifest.json`, or override it with a user plugin of the same name in `~/.Chiper/plugins/chiper-achievements/` that ships no dashboard. The plugin's state files under `$CHIPER_HOME/plugins/chiper-achievements/` survive — reinstalling preserves your unlock history.
+**Opting out:** Delete or rename `plugins/chiper-achievements/dashboard/manifest.json`, or override it with a user plugin of the same name in `~/.chiper/plugins/chiper-achievements/` that ships no dashboard. The plugin's state files under `$CHIPER_HOME/plugins/chiper-achievements/` survive — reinstalling preserves your unlock history.
 
 ## Adding a bundled plugin
 
 Bundled plugins are written exactly like any other Chiper plugin — see [Build a Chiper Plugin](/guides/build-a-chiper-plugin). The only differences are:
 
-- Directory lives at `<repo>/plugins/<name>/` instead of `~/.Chiper/plugins/<name>/`
+- Directory lives at `<repo>/plugins/<name>/` instead of `~/.chiper/plugins/<name>/`
 - Manifest source is reported as `bundled` in `chiper plugins list`
 - User plugins with the same name override the bundled version
 

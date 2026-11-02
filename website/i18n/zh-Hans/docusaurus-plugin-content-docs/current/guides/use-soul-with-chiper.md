@@ -44,7 +44,7 @@ description: "如何使用 SOUL.md 塑造 Chiper Agent 的默认风格，哪些�
 Chiper 目前仅使用当前实例的全局 SOUL 文件：
 
 ```text
-~/.Chiper/SOUL.md
+~/.chiper/SOUL.md
 ```
 
 如果你使用自定义主目录运行 Chiper，路径变为：
@@ -212,13 +212,13 @@ How Chiper should behave when ambiguity appears.
 ## 如何编辑
 
 ```bash
-nano ~/.Chiper/SOUL.md
+nano ~/.chiper/SOUL.md
 ```
 
 或
 
 ```bash
-vim ~/.Chiper/SOUL.md
+vim ~/.chiper/SOUL.md
 ```
 
 然后重启 Chiper 或开启新会话。
@@ -238,7 +238,7 @@ vim ~/.Chiper/SOUL.md
 ### 我编辑了 SOUL.md，但 Chiper 听起来还是一样
 
 检查：
-- 你编辑的是 `~/.Chiper/SOUL.md` 或 `$CHIPER_HOME/SOUL.md`
+- 你编辑的是 `~/.chiper/SOUL.md` 或 `$CHIPER_HOME/SOUL.md`
 - 而不是某个仓库本地的 `SOUL.md`
 - 文件不为空
 - 编辑后已重启会话

@@ -12,7 +12,7 @@ Chiper Agent 自动将每次对话保存为一个 session。Session 支持对话
 
 每次对话——无论来自 CLI、Telegram、Discord、Slack、WhatsApp、Signal、Matrix、Teams 还是其他任何消息平台——都会以完整消息历史的形式存储为一个 session。Session 记录在：
 
-1. **SQLite 数据库**（`~/.Chiper/state.db`）——包含 FTS5 全文搜索的结构化 session 元数据，以及完整消息历史
+1. **SQLite 数据库**（`~/.chiper/state.db`）——包含 FTS5 全文搜索的结构化 session 元数据，以及完整消息历史
 
 SQLite 数据库存储：
 - Session ID、来源平台、用户 ID
@@ -134,7 +134,7 @@ Session ID 在退出 CLI session 时显示，也可通过 `chiper sessions list`
 - **最多**显示最近 10 轮，并以"... N earlier messages ..."指示器标注
 - 使用**暗色样式**与活跃对话区分
 
-要禁用摘要并保留最简单的单行行为，在 `~/.Chiper/config.yaml` 中设置：
+要禁用摘要并保留最简单的单行行为，在 `~/.chiper/config.yaml` 中设置：
 
 ```yaml
 display:
@@ -465,14 +465,14 @@ Gateway session 根据可配置的策略自动重置：
 
 | 内容 | 路径 | 描述 |
 |------|------|-------------|
-| SQLite 数据库 | `~/.Chiper/state.db` | 所有 session 元数据 + 带 FTS5 的消息 |
-| Gateway 消息 | `~/.Chiper/state.db` | SQLite——所有 session 消息的权威存储 |
-| Gateway 路由索引 | `~/.Chiper/sessions/sessions.json` | 将 session 键映射到活跃 session ID（来源元数据、过期标志） |
+| SQLite 数据库 | `~/.chiper/state.db` | 所有 session 元数据 + 带 FTS5 的消息 |
+| Gateway 消息 | `~/.chiper/state.db` | SQLite——所有 session 消息的权威存储 |
+| Gateway 路由索引 | `~/.chiper/sessions/sessions.json` | 将 session 键映射到活跃 session ID（来源元数据、过期标志） |
 
 SQLite 数据库使用 WAL 模式支持并发读取和单写入，非常适合 gateway 的多平台架构。
 
 :::note 遗留 JSONL 对话记录
-在 state.db 成为权威存储之前创建的 session 可能在 `~/.Chiper/sessions/` 中留有
+在 state.db 成为权威存储之前创建的 session 可能在 `~/.chiper/sessions/` 中留有
 `*.jsonl` 文件。Chiper 不再写入或读取这些文件。在确认对应 session 存在于
 state.db 后可安全删除。
 :::
@@ -495,7 +495,7 @@ state.db 后可安全删除。
 - 实际删除了行的清理操作完成后，`state.db` 会执行 `VACUUM` 以回收磁盘空间（SQLite 在普通 DELETE 后不会缩小文件）
 - 清理最多每 `sessions.min_interval_hours`（默认 24）小时运行一次；上次运行时间戳记录在 `state.db` 内部，因此在同一 `CHIPER_HOME` 下的所有 Chiper 进程间共享
 
-默认为**关闭**——session 历史对 `session_search` 召回很有价值，静默删除可能会让用户感到意外。在 `~/.Chiper/config.yaml` 中启用：
+默认为**关闭**——session 历史对 `session_search` 召回很有价值，静默删除可能会让用户感到意外。在 `~/.chiper/config.yaml` 中启用：
 
 ```yaml
 sessions:

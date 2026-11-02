@@ -3,7 +3,7 @@ Chiper Agent Uninstaller.
 
 Provides options for:
 - Full uninstall: Remove everything including configs and data
-- Keep data: Remove code but keep ~/.Chiper/ (configs, sessions, logs)
+- Keep data: Remove code but keep ~/.chiper/ (configs, sessions, logs)
 """
 
 import os
@@ -569,8 +569,8 @@ def run_uninstall(args):
     Run the uninstall process.
     
     Options:
-    - Full uninstall: removes code + ~/.Chiper/ (configs, data, logs)
-    - Keep data: removes code but keeps ~/.Chiper/ for future reinstall
+    - Full uninstall: removes code + ~/.chiper/ (configs, data, logs)
+    - Keep data: removes code but keeps ~/.chiper/ for future reinstall
     """
     project_root = get_project_root()
     chiper_home = get_chiper_home()
@@ -582,7 +582,7 @@ def run_uninstall(args):
     named_profiles = _discover_named_profiles() if is_default_profile else []
 
     # Non-interactive fast path (``--yes``): no prompts. ``--full`` selects a
-    # full wipe (code + ~/.Chiper data); otherwise keep-data. Named profiles
+    # full wipe (code + ~/.chiper data); otherwise keep-data. Named profiles
     # are NOT auto-removed here — that's a destructive, surprising default for
     # an unattended run, so it stays opt-in to the interactive flow. This is
     # the path the desktop app's detached cleanup script uses for its
@@ -805,7 +805,7 @@ def _perform_uninstall(
     # We need to be careful here
     try:
         if project_root.exists():
-            # If the install is inside ~/.Chiper/, just remove the chiper-agent subdir
+            # If the install is inside ~/.chiper/, just remove the chiper-agent subdir
             if chiper_home in project_root.parents or project_root.parent == chiper_home:
                 shutil.rmtree(project_root)
                 log_success(f"Removed {project_root}")
@@ -832,7 +832,7 @@ def _perform_uninstall(
         else:
             log_info("No Windows installer artifacts to remove")
     
-    # 5. Optionally remove ~/.Chiper/ data directory (and named profiles)
+    # 5. Optionally remove ~/.chiper/ data directory (and named profiles)
     if full_uninstall:
         # 5a. Stop and remove each named profile's gateway service and
         #     alias wrapper. The profile CHIPER_HOME dirs live under

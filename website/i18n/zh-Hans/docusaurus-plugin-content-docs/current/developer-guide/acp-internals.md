@@ -25,7 +25,7 @@ ACP 适配器将 Chiper 的同步 `AIAgent` 封装为异步 JSON-RPC stdio 服�
 chiper acp / chiper-acp / python -m acp_adapter
   -> acp_adapter.entry.main()
   -> parse --version / --check / --setup before server startup
-  -> load ~/.Chiper/.env
+  -> load ~/.chiper/.env
   -> configure stderr logging
   -> construct ChiperACPAgent
   -> acp.run_agent(agent, use_unstable_protocol=True)
@@ -172,7 +172,7 @@ ACP 在 prompt 执行期间临时在终端工具上安装审批回调，执行�
 
 ## 当前限制
 
-- ACP 会话持久化至共享的 `~/.Chiper/state.db`（SessionDB），在进程重启后透明恢复；它们会出现在 `session_search` 中
+- ACP 会话持久化至共享的 `~/.chiper/state.db`（SessionDB），在进程重启后透明恢复；它们会出现在 `session_search` 中
 - 非文本 prompt 块在请求文本提取时当前被忽略
 - 编辑器特定的 UX 因 ACP 客户端实现而异
 

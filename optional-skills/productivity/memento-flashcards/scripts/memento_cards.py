@@ -15,7 +15,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-_CHIPER_HOME = Path(os.environ.get("CHIPER_HOME", Path.home() / ".Chiper"))
+_CHIPER_HOME = Path(os.environ.get("CHIPER_HOME", Path.home() / ".chiper"))
 DATA_DIR = _CHIPER_HOME / "skills" / "productivity" / "memento-flashcards" / "data"
 CARDS_FILE = DATA_DIR / "cards.json"
 

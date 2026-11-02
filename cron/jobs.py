@@ -1,8 +1,8 @@
 """
 Cron job storage and management.
 
-Jobs are stored in ~/.Chiper/cron/jobs.json
-Output is saved to ~/.Chiper/cron/output/{job_id}/{timestamp}.md
+Jobs are stored in ~/.chiper/cron/jobs.json
+Output is saved to ~/.chiper/cron/output/{job_id}/{timestamp}.md
 """
 
 import contextlib
@@ -648,7 +648,7 @@ def create_job(
                 delivered verbatim. Without ``no_agent``, its stdout is
                 injected into the agent's prompt as context (data-collection /
                 change-detection pattern). Paths resolve under
-                ~/.Chiper/scripts/; ``.sh`` / ``.bash`` files run via bash,
+                ~/.chiper/scripts/; ``.sh`` / ``.bash`` files run via bash,
                 anything else via Python.
         context_from: Optional job ID (or list of job IDs) whose most recent output
                       is injected into the prompt as context before each run.

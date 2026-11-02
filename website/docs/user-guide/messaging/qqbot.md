@@ -35,7 +35,7 @@ Select **QQ Bot** from the platform list and follow the prompts.
 
 ### Manual configuration
 
-Set the required environment variables in `~/.Chiper/.env`:
+Set the required environment variables in `~/.chiper/.env`:
 
 ```bash
 QQ_APP_ID=your-app-id
@@ -60,7 +60,7 @@ QQ_CLIENT_SECRET=your-app-secret
 
 ## Advanced Configuration
 
-For fine-grained control, add platform settings to `~/.Chiper/config.yaml`:
+For fine-grained control, add platform settings to `~/.chiper/config.yaml`:
 
 ```yaml
 platforms:

@@ -21,7 +21,7 @@ def test_service_path_includes_node_modules_when_present(tmp_path):
 
 
 def test_service_path_includes_chiper_home_node_modules(tmp_path):
-    """Service PATH should include ~/.Chiper/node_modules/.bin when it exists."""
+    """Service PATH should include ~/.chiper/node_modules/.bin when it exists."""
     chiper_nm = tmp_path / ".chiper" / "node_modules" / ".bin"
     chiper_nm.mkdir(parents=True)
     from chiper_cli.gateway import _build_service_path_dirs

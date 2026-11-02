@@ -78,7 +78,7 @@ CLI 会自动检测多行粘贴。直接粘贴代码块或错误堆栈——不�
 
 ### SOUL.md：自定义个性
 
-想让 Chiper 拥有稳定的默认风格？编辑 `~/.Chiper/SOUL.md`（如果使用自定义 Chiper home，则为 `$CHIPER_HOME/SOUL.md`）。Chiper 现在会自动生成一个初始 SOUL 文件，并将该全局文件作为实例级个性来源。
+想让 Chiper 拥有稳定的默认风格？编辑 `~/.chiper/SOUL.md`（如果使用自定义 Chiper home，则为 `$CHIPER_HOME/SOUL.md`）。Chiper 现在会自动生成一个初始 SOUL 文件，并将该全局文件作为实例级个性来源。
 
 完整说明请参阅 [在 Chiper 中使用 SOUL.md](/guides/use-soul-with-chiper)。
 
@@ -170,7 +170,7 @@ Chiper 在会话启动时从当前工作目录加载顶层 `AGENTS.md`。子目�
 使用 `/verbose` 控制工具活动的显示详细程度。在消息平台上，通常越简洁越好——保持"new"模式只查看新的工具调用。在 CLI 中，"all" 模式可以实时查看 agent 的所有操作。
 
 :::tip
-在消息平台上，会话会在空闲一段时间后自动重置（默认 24 小时），或每天凌晨 4 点重置。如需更长的会话时间，可在 `~/.Chiper/config.yaml` 中按平台调整。
+在消息平台上，会话会在空闲一段时间后自动重置（默认 24 小时），或每天凌晨 4 点重置。如需更长的会话时间，可在 `~/.chiper/config.yaml` 中按平台调整。
 :::
 
 ## 安全

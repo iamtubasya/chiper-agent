@@ -297,7 +297,7 @@ as_chiper mkdir -p \
 # $CHIPER_HOME. detect_install_method() reads the code-scoped stamp first.
 #
 # Why we no longer stamp $CHIPER_HOME: it is a shared DATA volume, commonly
-# bind-mounted from the host (~/.Chiper:/opt/data) and sometimes shared with a
+# bind-mounted from the host (~/.chiper:/opt/data) and sometimes shared with a
 # host-side Desktop/CLI install. Stamping 'docker' here clobbered that host
 # install's marker, so its in-app updater read 'docker' and refused to run
 # 'chiper update'. To heal homes already poisoned by older images, remove a

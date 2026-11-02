@@ -16,9 +16,9 @@ from chiper_constants import display_chiper_home
 
 PROJECT_ROOT = get_project_root()
 CHIPER_HOME = get_chiper_home()
-_DHH = display_chiper_home()  # user-facing display path (e.g. ~/.Chiper or ~/.Chiper/profiles/coder)
+_DHH = display_chiper_home()  # user-facing display path (e.g. ~/.chiper or ~/.chiper/profiles/coder)
 
-# Load environment variables from ~/.Chiper/.env so API key checks work
+# Load environment variables from ~/.chiper/.env so API key checks work
 _env_path = get_env_path()
 load_chiper_dotenv(chiper_home=_env_path.parent, project_env=PROJECT_ROOT / ".env")
 
@@ -98,7 +98,7 @@ def _termux_install_all_fallback_notes() -> list[str]:
 
 
 def _has_provider_env_config(content: str) -> bool:
-    """Return True when ~/.Chiper/.env contains provider auth/base URL settings."""
+    """Return True when ~/.chiper/.env contains provider auth/base URL settings."""
     return any(key in content for key in _PROVIDER_ENV_HINTS)
 
 
@@ -496,7 +496,7 @@ def run_doctor(args):
         else:
             print(color(
                 f"  ✗ Failed to persist ack for {ack_target}. "
-                f"Check ~/.Chiper/config.yaml is writable.",
+                f"Check ~/.chiper/config.yaml is writable.",
                 Colors.RED,
             ))
             sys.exit(1)
@@ -642,7 +642,7 @@ def run_doctor(args):
             check_warn(name, "(optional, not installed)")
     
     _section("Configuration Files")
-    # Check ~/.Chiper/.env (primary location for user config)
+    # Check ~/.chiper/.env (primary location for user config)
     env_path = CHIPER_HOME / '.env'
     if env_path.exists():
         check_ok(f"{_DHH}/.env file exists")
@@ -681,7 +681,7 @@ def run_doctor(args):
                 check_info("Run 'chiper setup' to create one")
                 issues.append("Run 'chiper setup' to create .env")
     
-    # Check ~/.Chiper/config.yaml (primary) or project cli-config.yaml (fallback)
+    # Check ~/.chiper/config.yaml (primary) or project cli-config.yaml (fallback)
     config_path = CHIPER_HOME / 'config.yaml'
     if config_path.exists():
         check_ok(f"{_DHH}/config.yaml exists")
@@ -848,7 +848,7 @@ def run_doctor(args):
                     if not configured:
                         _fail_and_issue(
                             f"model.provider '{runtime_provider}' is set but no API key is configured",
-                            "(check ~/.Chiper/.env or run 'chiper setup')",
+                            "(check ~/.chiper/.env or run 'chiper setup')",
                             (
                                 f"No credentials found for provider '{runtime_provider}'. "
                                 f"Run 'chiper setup' or set the provider's API key in {_DHH}/.env, "

@@ -6,7 +6,7 @@ description: "Chiper Agent 使用的所有环境变量完整参考"
 
 # 环境变量参考
 
-所有变量均写入 `~/.Chiper/.env`。也可以使用 `chiper config set VAR value` 进行设置。
+所有变量均写入 `~/.chiper/.env`。也可以使用 `chiper config set VAR value` 进行设置。
 
 ## LLM 提供商
 
@@ -96,11 +96,11 @@ description: "Chiper Agent 使用的所有环境变量完整参考"
 | `VOICE_TOOLS_OPENAI_KEY` | OpenAI 语音转文字和文字转语音提供商的首选 OpenAI 密钥 |
 | `CHIPER_LOCAL_STT_COMMAND` | 可选的本地语音转文字命令模板。支持 `{input_path}`、`{output_dir}`、`{language}` 和 `{model}` 占位符 |
 | `CHIPER_LOCAL_STT_LANGUAGE` | 传递给 `CHIPER_LOCAL_STT_COMMAND` 或自动检测的本地 `whisper` CLI 回退的默认语言（默认：`en`） |
-| `CHIPER_HOME` | 覆盖 Chiper 配置目录（默认：`~/.Chiper`）。同时限定 gateway PID 文件和 systemd 服务名称，允许多个安装并发运行 |
+| `CHIPER_HOME` | 覆盖 Chiper 配置目录（默认：`~/.chiper`）。同时限定 gateway PID 文件和 systemd 服务名称，允许多个安装并发运行 |
 | `CHIPER_GIT_BASH_PATH` | **仅 Windows。** 覆盖终端工具的 `bash.exe` 发现路径。可指向任意 bash——完整 Git-for-Windows 安装、通过符号链接的 WSL bash、MSYS2、Cygwin。安装程序会自动将其设置为所配置的 PortableGit。参见 [Windows（原生）指南](../user-guide/windows-native.md#how-chiper-runs-shell-commands-on-windows) |
 | `CHIPER_DISABLE_WINDOWS_UTF8` | **仅 Windows。** 设为 `1` 可禁用 UTF-8 stdio shim（`configure_windows_stdio()`），回退到控制台的本地代码页。用于排查编码问题；正常操作中极少需要 |
 | `CHIPER_KANBAN_HOME` | 覆盖锚定 kanban 看板（数据库 + 工作区 + 工作日志）的共享 Chiper 根目录。回退到 `get_default_chiper_root()`（任意活动 profile 的父目录）。适用于测试和非常规部署 |
-| `CHIPER_KANBAN_BOARD` | 为当前进程固定活动 kanban 看板。优先于 `~/.Chiper/kanban/current`；调度器将其注入工作进程子进程环境，使工作进程无法看到其他看板上的任务。默认为 `default`。slug 验证：小写字母数字 + 连字符 + 下划线，1-64 字符 |
+| `CHIPER_KANBAN_BOARD` | 为当前进程固定活动 kanban 看板。优先于 `~/.chiper/kanban/current`；调度器将其注入工作进程子进程环境，使工作进程无法看到其他看板上的任务。默认为 `default`。slug 验证：小写字母数字 + 连字符 + 下划线，1-64 字符 |
 | `CHIPER_KANBAN_DB` | 直接固定 kanban 数据库文件路径（最高优先级；优先于 `CHIPER_KANBAN_BOARD` 和 `CHIPER_KANBAN_HOME`）。调度器将其注入工作进程子进程环境，使 profile 工作进程收敛到调度器的看板 |
 | `CHIPER_KANBAN_WORKSPACES_ROOT` | 直接固定 kanban 工作区根目录（工作区最高优先级；优先于 `CHIPER_KANBAN_HOME`）。调度器将其注入工作进程子进程环境 |
 | `CHIPER_KANBAN_DISPATCH_IN_GATEWAY` | `kanban.dispatch_in_gateway` 的运行时覆盖。设为 `0`、`false`、`no` 或 `off` 可阻止 gateway 启动内嵌 Kanban 调度器；任何其他非空值则启用。适用于独立调度器进程拥有看板的场景。 |
@@ -157,7 +157,7 @@ description: "Chiper Agent 使用的所有环境变量完整参考"
 
 ### Langfuse 可观测性
 
-内置 [`observability/langfuse`](/user-guide/features/built-in-plugins#observabilitylangfuse) 插件的环境变量。在 `~/.Chiper/.env` 中设置。在这些变量生效之前，还必须启用该插件（`chiper plugins enable observability/langfuse`，或在 `chiper plugins` 中勾选）。
+内置 [`observability/langfuse`](/user-guide/features/built-in-plugins#observabilitylangfuse) 插件的环境变量。在 `~/.chiper/.env` 中设置。在这些变量生效之前，还必须启用该插件（`chiper plugins enable observability/langfuse`，或在 `chiper plugins` 中勾选）。
 
 | 变量 | 描述 |
 |----------|-------------|
@@ -220,7 +220,7 @@ description: "Chiper Agent 使用的所有环境变量完整参考"
 | `TERMINAL_CONTAINER_MEMORY` | 内存（MB，默认：5120） |
 | `TERMINAL_CONTAINER_DISK` | 磁盘（MB，默认：51200） |
 | `TERMINAL_CONTAINER_PERSISTENT` | 跨会话持久化容器文件系统（默认：`true`） |
-| `TERMINAL_SANDBOX_DIR` | 工作区和 overlay 的宿主机目录（默认：`~/.Chiper/sandboxes/`） |
+| `TERMINAL_SANDBOX_DIR` | 工作区和 overlay 的宿主机目录（默认：`~/.chiper/sandboxes/`） |
 
 ## 持久 Shell
 
@@ -424,7 +424,7 @@ description: "Chiper Agent 使用的所有环境变量完整参考"
 |----------|-------------|
 | `MSGRAPH_TENANT_ID` | Graph 应用注册的 Azure AD 租户 ID（目录 GUID）。 |
 | `MSGRAPH_CLIENT_ID` | Azure 应用注册的应用程序（客户端）ID。 |
-| `MSGRAPH_CLIENT_SECRET` | 应用注册的客户端密钥值。存储在 `~/.Chiper/.env` 中并设置 `chmod 600`；定期通过 Azure 门户轮换。 |
+| `MSGRAPH_CLIENT_SECRET` | 应用注册的客户端密钥值。存储在 `~/.chiper/.env` 中并设置 `chmod 600`；定期通过 Azure 门户轮换。 |
 | `MSGRAPH_SCOPE` | 客户端凭证 token 请求的 OAuth2 范围（默认：`https://graph.microsoft.com/.default`）。 |
 | `MSGRAPH_AUTHORITY_URL` | Microsoft 身份平台 authority（默认：`https://login.microsoftonline.com`）。仅对国家/主权云覆盖（例如 GCC High 使用 `https://login.microsoftonline.us`）。 |
 
@@ -532,7 +532,7 @@ Graph 事件（Teams 会议、日历、聊天等）的入站变更通知监听�
 | `CHIPER_INFERENCE_MODEL` | 在进程级别覆盖模型名称（优先于本次会话的 `config.yaml`）。也可通过 `-m`/`--model` 标志设置。 |
 | `CHIPER_YOLO_MODE` | 设为 `1` 可绕过危险命令审批提示。等同于 `--yolo`。 |
 | `CHIPER_ACCEPT_HOOKS` | 无需 TTY 提示自动批准 `config.yaml` 中声明的任何未见过的 shell hook。等同于 `--accept-hooks` 或 `hooks_auto_accept: true`。 |
-| `CHIPER_IGNORE_USER_CONFIG` | 跳过 `~/.Chiper/config.yaml` 并使用内置默认值（`.env` 中的凭证仍会加载）。等同于 `--ignore-user-config`。 |
+| `CHIPER_IGNORE_USER_CONFIG` | 跳过 `~/.chiper/config.yaml` 并使用内置默认值（`.env` 中的凭证仍会加载）。等同于 `--ignore-user-config`。 |
 | `CHIPER_IGNORE_RULES` | 跳过 `AGENTS.md`、`SOUL.md`、`.cursorrules`、记忆和预加载技能的自动注入。等同于 `--ignore-rules`。 |
 | `CHIPER_MD_NAMES` | 自动注入的规则文件名逗号分隔列表（默认：`AGENTS.md,CLAUDE.md,.cursorrules,SOUL.md`）。 |
 | `CHIPER_TOOL_PROGRESS` | 工具进度显示的已弃用兼容变量。优先使用 `config.yaml` 中的 `display.tool_progress`。 |
@@ -553,7 +553,7 @@ Graph 事件（Teams 会议、日历、聊天等）的入站变更通知监听�
 | `CHIPER_AGENT_NOTIFY_INTERVAL` | Gateway：长时间运行的 agent 轮次中进度通知的间隔（秒）。 |
 | `CHIPER_CHECKPOINT_TIMEOUT` | 文件系统检查点创建超时（秒，默认：`30`）。 |
 | `CHIPER_EXEC_ASK` | 在 gateway 模式下启用执行审批提示（`true`/`false`） |
-| `CHIPER_ENABLE_PROJECT_PLUGINS` | 为 agent 加载器和仪表板 Web 服务器启用从 `./.Chiper/plugins/` 自动发现仓库本地插件。接受标准真值集：`1`/`true`/`yes`/`on`（不区分大小写）。其他所有值——包括 `0`、`false`、`no`、`off` 和空字符串——均视为**禁用**（默认）。注意：自 GHSA-5qr3-c538-wm9j（#29156）起，即使启用此变量，仪表板 Web 服务器也拒绝自动导入项目插件的 Python `api` 文件——项目插件可通过静态 JS/CSS 扩展 UI，但其后端路由仅在移至 `~/.Chiper/plugins/` 后才会加载。 |
+| `CHIPER_ENABLE_PROJECT_PLUGINS` | 为 agent 加载器和仪表板 Web 服务器启用从 `./.chiper/plugins/` 自动发现仓库本地插件。接受标准真值集：`1`/`true`/`yes`/`on`（不区分大小写）。其他所有值——包括 `0`、`false`、`no`、`off` 和空字符串——均视为**禁用**（默认）。注意：自 GHSA-5qr3-c538-wm9j（#29156）起，即使启用此变量，仪表板 Web 服务器也拒绝自动导入项目插件的 Python `api` 文件——项目插件可通过静态 JS/CSS 扩展 UI，但其后端路由仅在移至 `~/.chiper/plugins/` 后才会加载。 |
 | `CHIPER_PLUGINS_DEBUG` | `1`/`true` 可在 stderr 上输出详细的插件发现日志——扫描的目录、解析的 manifest、跳过原因以及解析或 `register()` 失败时的完整回溯。面向插件作者。 |
 | `CHIPER_BACKGROUND_NOTIFICATIONS` | gateway 中后台进程通知模式：`all`（默认）、`result`、`error`、`off` |
 | `CHIPER_EPHEMERAL_SYSTEM_PROMPT` | 在 API 调用时注入的临时系统 prompt（永不持久化到会话） |
@@ -569,7 +569,7 @@ Graph 事件（Teams 会议、日历、聊天等）的入站变更通知监听�
 | `CHIPER_DUMP_REQUESTS` | 将 API 请求载荷转储到日志文件（`true`/`false`） |
 | `CHIPER_DUMP_REQUEST_STDOUT` | 将 API 请求载荷转储到 stdout 而非日志文件。 |
 | `CHIPER_OAUTH_TRACE` | 设为 `1` 可记录 OAuth token 交换和刷新尝试。包含脱敏的时序信息。 |
-| `CHIPER_OAUTH_FILE` | 覆盖 OAuth 凭证存储路径（默认：`~/.Chiper/auth.json`）。 |
+| `CHIPER_OAUTH_FILE` | 覆盖 OAuth 凭证存储路径（默认：`~/.chiper/auth.json`）。 |
 | `CHIPER_AGENT_HELP_GUIDANCE` | 为自定义部署在系统 prompt 中追加额外指导文本。 |
 | `CHIPER_AGENT_LOGO` | 覆盖 CLI 启动时的 ASCII 横幅 logo。 |
 | `DELEGATION_MAX_CONCURRENT_CHILDREN` | 每个 `delegate_task` 批次的最大并行子 agent 数（默认：`3`，下限为 1，无上限）。也可通过 `config.yaml` 中的 `delegation.max_concurrent_children` 配置——config 值优先。 |
@@ -639,7 +639,7 @@ fallback_providers:
 
 ## 提供商路由（仅 config.yaml）
 
-这些配置写入 `~/.Chiper/config.yaml` 的 `provider_routing` 部分：
+这些配置写入 `~/.chiper/config.yaml` 的 `provider_routing` 部分：
 
 | 键 | 描述 |
 |-----|-------------|

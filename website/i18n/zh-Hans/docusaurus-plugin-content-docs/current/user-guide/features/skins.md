@@ -18,10 +18,10 @@ description: "使用内置和用户自定义皮肤定制 Chiper CLI 的外观"
 ```bash
 /skin                # show the current skin and list available skins
 /skin ares           # switch to a built-in skin
-/skin mytheme        # switch to a custom skin from ~/.Chiper/skins/mytheme.yaml
+/skin mytheme        # switch to a custom skin from ~/.chiper/skins/mytheme.yaml
 ```
 
-或在 `~/.Chiper/config.yaml` 中设置默认皮肤：
+或在 `~/.chiper/config.yaml` 中设置默认皮肤：
 
 ```yaml
 display:
@@ -110,12 +110,12 @@ CLI 界面中使用的文字字符串。
 
 ## 自定义皮肤
 
-在 `~/.Chiper/skins/` 下创建 YAML 文件。用户皮肤会从内置 `default` 皮肤继承缺失的值，因此只需指定要更改的键。
+在 `~/.chiper/skins/` 下创建 YAML 文件。用户皮肤会从内置 `default` 皮肤继承缺失的值，因此只需指定要更改的键。
 
 ### 完整自定义皮肤 YAML 模板
 
 ```yaml
-# ~/.Chiper/skins/mytheme.yaml
+# ~/.chiper/skins/mytheme.yaml
 # Complete skin template — all keys shown. Delete any you don't need;
 # missing values automatically inherit from the 'default' skin.
 
@@ -224,8 +224,8 @@ tool_prefix: "▏"
 - 将任意皮肤在可视化编辑器中打开，涵盖所有 Chiper 皮肤字段（颜色、spinner、品牌、工具前缀、工具 emoji）
 - 根据文字 prompt 生成 `banner_logo` 文字艺术
 - 将上传的图片（PNG、JPG、GIF、WEBP）转换为 `banner_hero` ASCII 艺术，支持多种渲染风格（盲文点阵、ASCII 字符渐变、方块、点阵）
-- 直接保存到 `~/.Chiper/skins/`
-- 通过更新 `~/.Chiper/config.yaml` 激活皮肤
+- 直接保存到 `~/.chiper/skins/`
+- 通过更新 `~/.chiper/config.yaml` 激活皮肤
 - 显示生成的 YAML 及实时预览
 
 ### 安装
@@ -256,7 +256,7 @@ npm start
 3. 选择要编辑的内置或自定义皮肤。
 4. 从文字生成 logo，和/或上传图片作为英雄艺术图。选择渲染风格和宽度。
 5. 编辑颜色、spinner、品牌及其他字段。
-6. 点击 **Save** 将皮肤 YAML 写入 `~/.Chiper/skins/`。
+6. 点击 **Save** 将皮肤 YAML 写入 `~/.chiper/skins/`。
 7. 点击 **Activate** 将其设为当前皮肤（更新 `config.yaml` 中的 `display.skin`）。
 
 Chiper Mod 遵循 `CHIPER_HOME` 环境变量，因此也适用于[配置文件](/user-guide/profiles)。
@@ -266,6 +266,6 @@ Chiper Mod 遵循 `CHIPER_HOME` 环境变量，因此也适用于[配置文件](
 - 内置皮肤从 `chiper_cli/skin_engine.py` 加载。
 - 未知皮肤自动回退到 `default`。
 - `/skin` 立即更新当前会话的活动 CLI 主题。
-- `~/.Chiper/skins/` 中的用户皮肤优先于同名内置皮肤。
+- `~/.chiper/skins/` 中的用户皮肤优先于同名内置皮肤。
 - 通过 `/skin` 切换皮肤仅对当前会话有效。如需永久设为默认皮肤，请在 `config.yaml` 中配置。
 - `banner_logo` 和 `banner_hero` 字段支持 Rich 控制台标记（例如 `[bold #FF0000]text[/]`），可用于彩色 ASCII 艺术。

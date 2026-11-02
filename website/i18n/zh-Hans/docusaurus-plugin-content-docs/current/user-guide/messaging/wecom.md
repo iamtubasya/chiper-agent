@@ -62,7 +62,7 @@ chiper gateway setup
 
 #### 方式 B：手动配置
 
-将以下内容添加到 `~/.Chiper/.env`：
+将以下内容添加到 `~/.chiper/.env`：
 
 ```bash
 WECOM_BOT_ID=your-bot-id

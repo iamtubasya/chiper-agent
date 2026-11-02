@@ -176,7 +176,7 @@ Chiper 在启动时自动从多个来源发现凭证并初始化池：
 | 环境变量 | `OPENROUTER_API_KEY`、`ANTHROPIC_API_KEY` | 是 |
 | OAuth 令牌（auth.json） | Codex device code、Nous device code | 是 |
 | Claude Code 凭证 | `~/.claude/.credentials.json` | 是（Anthropic） |
-| Chiper PKCE OAuth | `~/.Chiper/auth.json` | 是（Anthropic） |
+| Chiper PKCE OAuth | `~/.chiper/auth.json` | 是（Anthropic） |
 | 自定义端点配置 | `config.yaml` 中的 `model.api_key` | 是（自定义端点） |
 | 手动条目 | 通过 `chiper auth add` 添加 | 持久化至 auth.json |
 
@@ -209,7 +209,7 @@ Chiper 在启动时自动从多个来源发现凭证并初始化池：
 
 ## 存储
 
-池状态存储在 `~/.Chiper/auth.json` 的 `credential_pool` 键下：
+池状态存储在 `~/.chiper/auth.json` 的 `credential_pool` 键下：
 
 ```json
 {

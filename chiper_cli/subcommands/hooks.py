@@ -16,9 +16,9 @@ def build_hooks_parser(subparsers, *, cmd_hooks: Callable) -> None:
         "hooks",
         help="Inspect and manage shell-script hooks",
         description=(
-            "Inspect shell-script hooks declared in ~/.Chiper/config.yaml, "
+            "Inspect shell-script hooks declared in ~/.chiper/config.yaml, "
             "test them against synthetic payloads, and manage the first-use "
-            "consent allowlist at ~/.Chiper/shell-hooks-allowlist.json."
+            "consent allowlist at ~/.chiper/shell-hooks-allowlist.json."
         ),
     )
     hooks_subparsers = hooks_parser.add_subparsers(dest="hooks_action")

@@ -102,7 +102,7 @@ def generate_bash(parser: argparse.ArgumentParser) -> str:
 #   eval "$(chiper completion bash)"
 
 _chiper_profiles() {{
-    local profiles_dir="$HOME/.Chiper/profiles"
+    local profiles_dir="$HOME/.chiper/profiles"
     local profiles="default"
     if [ -d "$profiles_dir" ]; then
         for f in "$profiles_dir"/*/; do
@@ -207,8 +207,8 @@ def generate_zsh(parser: argparse.ArgumentParser) -> str:
 _chiper_profiles() {{
     local -a profiles
     profiles=(default)
-    if [[ -d "$HOME/.Chiper/profiles" ]]; then
-        profiles+=($HOME/.Chiper/profiles/*(N/:t))
+    if [[ -d "$HOME/.chiper/profiles" ]]; then
+        profiles+=($HOME/.chiper/profiles/*(N/:t))
     fi
     _describe 'profile' profiles
 }}
@@ -261,8 +261,8 @@ def generate_fish(parser: argparse.ArgumentParser) -> str:
         "# Helper: list available profiles",
         "function __chiper_profiles",
         "    echo default",
-        "    if test -d $HOME/.Chiper/profiles",
-        "        for d in $HOME/.Chiper/profiles/*/",
+        "    if test -d $HOME/.chiper/profiles",
+        "        for d in $HOME/.chiper/profiles/*/",
         "            basename $d",
         "        end",
         "    end",

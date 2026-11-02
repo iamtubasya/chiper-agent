@@ -226,7 +226,7 @@ without needing to load this skill.
 
 ### Option A: Stdio Mode (Simple)
 
-Add to `~/.Chiper/config.yaml`:
+Add to `~/.chiper/config.yaml`:
 
 ```yaml
 mcp_servers:

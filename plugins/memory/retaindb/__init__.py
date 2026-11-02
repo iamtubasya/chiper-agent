@@ -498,7 +498,7 @@ class RetainDBMemoryProvider(MemoryProvider):
         else:
             chiper_home = str(kwargs.get("chiper_home", ""))
             profile_name = os.path.basename(chiper_home) if chiper_home else ""
-            project = f"chiper-{profile_name}" if (profile_name and profile_name not in {"", ".Chiper"}) else "default"
+            project = f"chiper-{profile_name}" if (profile_name and profile_name not in {"", ".chiper"}) else "default"
 
         self._client = _Client(api_key, base_url, project)
         self._session_id = session_id

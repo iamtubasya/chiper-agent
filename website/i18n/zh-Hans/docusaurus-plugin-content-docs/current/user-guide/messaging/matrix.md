@@ -180,7 +180,7 @@ chiper gateway setup
 
 ### 方式 B：手动配置
 
-将以下内容添加到你的 `~/.Chiper/.env` 文件：
+将以下内容添加到你的 `~/.chiper/.env` 文件：
 
 **使用访问令牌：**
 
@@ -211,7 +211,7 @@ MATRIX_PASSWORD=***
 MATRIX_ALLOWED_USERS=@alice:matrix.example.org
 ```
 
-`~/.Chiper/config.yaml` 中的可选行为设置：
+`~/.chiper/config.yaml` 中的可选行为设置：
 
 ```yaml
 group_sessions_per_user: true
@@ -264,7 +264,7 @@ sudo dnf install libolm-devel
 
 ### 启用 E2EE
 
-在 `~/.Chiper/.env` 中添加：
+在 `~/.chiper/.env` 中添加：
 
 ```bash
 MATRIX_ENCRYPTION=true
@@ -272,7 +272,7 @@ MATRIX_ENCRYPTION=true
 
 启用 E2EE 后，Chiper 会：
 
-- 将加密密钥存储在 `~/.Chiper/platforms/matrix/store/`（旧版安装：`~/.Chiper/matrix/store/`）
+- 将加密密钥存储在 `~/.chiper/platforms/matrix/store/`（旧版安装：`~/.chiper/matrix/store/`）
 - 在首次连接时上传设备密钥
 - 自动解密传入消息并加密传出消息
 - 被邀请时自动加入加密房间
@@ -290,7 +290,7 @@ MATRIX_RECOVERY_KEY=EsT... 你的恢复密钥
 每次启动时，如果设置了 `MATRIX_RECOVERY_KEY`，Chiper 会从 homeserver 的安全密钥存储中导入交叉签名密钥并对当前设备进行签名。此操作是幂等的，可以永久启用。
 
 :::warning[删除加密存储]
-如果你删除了 `~/.Chiper/platforms/matrix/store/crypto.db`，机器人将失去其加密身份。仅使用相同的设备 ID 重启**不能**完全恢复——homeserver 仍持有使用旧身份密钥签名的一次性密钥，对等方无法建立新的 Olm 会话。
+如果你删除了 `~/.chiper/platforms/matrix/store/crypto.db`，机器人将失去其加密身份。仅使用相同的设备 ID 重启**不能**完全恢复——homeserver 仍持有使用旧身份密钥签名的一次性密钥，对等方无法建立新的 Olm 会话。
 
 Chiper 在启动时会检测到此情况并拒绝启用 E2EE，日志显示：`device XXXX has stale one-time keys on the server signed with a previous identity key`。
 
@@ -318,7 +318,7 @@ Chiper 在启动时会检测到此情况并拒绝启用 E2EE，日志显示：`d
 
 2. 删除本地加密存储并重启 Chiper：
    ```bash
-   rm -f ~/.Chiper/platforms/matrix/store/crypto.db*
+   rm -f ~/.chiper/platforms/matrix/store/crypto.db*
    # 重启 chiper
    ```
 
@@ -339,7 +339,7 @@ Chiper 在启动时会检测到此情况并拒绝启用 E2EE，日志显示：`d
 
 ### 手动配置
 
-在 `~/.Chiper/.env` 中添加：
+在 `~/.chiper/.env` 中添加：
 
 ```bash
 MATRIX_HOME_ROOM=!abc123def456:matrix.example.org
@@ -467,16 +467,16 @@ pip install 'chiper-agent[matrix]'
      }'
    ```
 
-   复制新的 `access_token` 并更新 `~/.Chiper/.env` 中的 `MATRIX_ACCESS_TOKEN`。
+   复制新的 `access_token` 并更新 `~/.chiper/.env` 中的 `MATRIX_ACCESS_TOKEN`。
 
 2. **删除旧的加密状态**：
 
    ```bash
-   rm -f ~/.Chiper/platforms/matrix/store/crypto.db
-   rm -f ~/.Chiper/platforms/matrix/store/crypto_store.*
+   rm -f ~/.chiper/platforms/matrix/store/crypto.db
+   rm -f ~/.chiper/platforms/matrix/store/crypto_store.*
    ```
 
-3. **设置恢复密钥**（如果你使用交叉签名——大多数 Element 用户都使用）。在 `~/.Chiper/.env` 中添加：
+3. **设置恢复密钥**（如果你使用交叉签名——大多数 Element 用户都使用）。在 `~/.chiper/.env` 中添加：
 
    ```bash
    MATRIX_RECOVERY_KEY=EsT... 你的恢复密钥
@@ -533,7 +533,7 @@ Docker 容器仅处理 Matrix 协议和 E2EE。消息到达时，容器解密消
 
 启用 API 服务器，使主机接受来自 Docker 容器的请求。
 
-在 `~/.Chiper/.env` 中添加：
+在 `~/.chiper/.env` 中添加：
 
 ```bash
 API_SERVER_ENABLED=true
@@ -580,7 +580,7 @@ services:
       GATEWAY_PROXY_URL: "http://192.168.1.100:8642"
       GATEWAY_PROXY_KEY: "your-secret-key-here"
     volumes:
-      - ./matrix-store:/root/.Chiper/platforms/matrix/store
+      - ./matrix-store:/root/.chiper/platforms/matrix/store
 ```
 
 **`Dockerfile`：**
@@ -657,7 +657,7 @@ CMD ["chiper", "gateway"]
 
 **原因**：你的用户 ID 不在 `MATRIX_ALLOWED_USERS` 中。
 
-**解决方法**：将你的用户 ID 添加到 `~/.Chiper/.env` 中的 `MATRIX_ALLOWED_USERS` 并重启 gateway。使用完整的 `@user:server` 格式。
+**解决方法**：将你的用户 ID 添加到 `~/.chiper/.env` 中的 `MATRIX_ALLOWED_USERS` 并重启 gateway。使用完整的 `@user:server` 格式。
 
 ## 安全
 

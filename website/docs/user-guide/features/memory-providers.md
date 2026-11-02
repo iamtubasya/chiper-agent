@@ -18,7 +18,7 @@ chiper memory off        # disable external provider
 
 You can also select the active memory provider via `chiper plugins` → Provider Plugins → Memory Provider.
 
-Or set manually in `~/.Chiper/config.yaml`:
+Or set manually in `~/.chiper/config.yaml`:
 
 ```yaml
 memory:
@@ -68,7 +68,7 @@ chiper memory setup        # select "honcho" — runs the Honcho-specific post-s
 
 The legacy `chiper honcho setup` command still works (it now redirects to `chiper memory setup`), but is only registered after Honcho is selected as the active memory provider.
 
-**Config:** `$CHIPER_HOME/honcho.json` (profile-local) or `~/.honcho/config.json` (global). Resolution order: `$CHIPER_HOME/honcho.json` > `~/.Chiper/honcho.json` > `~/.honcho/config.json`. See the [config reference](https://github.com/Chiper/chiper-agent/blob/main/plugins/memory/honcho/README.md) and the [Honcho integration guide](https://docs.honcho.dev/v3/guides/integrations/chiper).
+**Config:** `$CHIPER_HOME/honcho.json` (profile-local) or `~/.honcho/config.json` (global). Resolution order: `$CHIPER_HOME/honcho.json` > `~/.chiper/honcho.json` > `~/.honcho/config.json`. See the [config reference](https://github.com/Chiper/chiper-agent/blob/main/plugins/memory/honcho/README.md) and the [Honcho integration guide](https://docs.honcho.dev/v3/guides/integrations/chiper).
 
 <details>
 <summary>Full config reference</summary>
@@ -298,9 +298,9 @@ openviking-server
 chiper memory setup    # select "openviking"
 # Or manually:
 chiper config set memory.provider openviking
-echo "OPENVIKING_ENDPOINT=http://localhost:1933" >> ~/.Chiper/.env
+echo "OPENVIKING_ENDPOINT=http://localhost:1933" >> ~/.chiper/.env
 # Authenticated servers should use a user/admin API key:
-echo "OPENVIKING_API_KEY=..." >> ~/.Chiper/.env
+echo "OPENVIKING_API_KEY=..." >> ~/.chiper/.env
 ```
 
 **Key features:**
@@ -331,7 +331,7 @@ Server-side LLM fact extraction with semantic search, reranking, and automatic d
 chiper memory setup    # select "mem0"
 # Or manually:
 chiper config set memory.provider mem0
-echo "MEM0_API_KEY=your-key" >> ~/.Chiper/.env
+echo "MEM0_API_KEY=your-key" >> ~/.chiper/.env
 ```
 
 **Config:** `$CHIPER_HOME/mem0.json`
@@ -361,7 +361,7 @@ Long-term memory with knowledge graph, entity resolution, and multi-strategy ret
 chiper memory setup    # select "hindsight"
 # Or manually:
 chiper config set memory.provider hindsight
-echo "HINDSIGHT_API_KEY=your-key" >> ~/.Chiper/.env
+echo "HINDSIGHT_API_KEY=your-key" >> ~/.chiper/.env
 ```
 
 The setup wizard installs dependencies automatically and only installs what's needed for the selected mode (`hindsight-client` for cloud, `hindsight-all` for local). Requires `hindsight-client >= 0.4.22` (auto-upgraded on session start if outdated).
@@ -444,7 +444,7 @@ Cloud memory API with hybrid search (Vector + BM25 + Reranking), 7 memory types,
 chiper memory setup    # select "retaindb"
 # Or manually:
 chiper config set memory.provider retaindb
-echo "RETAINDB_API_KEY=your-key" >> ~/.Chiper/.env
+echo "RETAINDB_API_KEY=your-key" >> ~/.chiper/.env
 ```
 
 ---
@@ -498,7 +498,7 @@ Semantic long-term memory with profile recall, semantic search, explicit memory 
 chiper memory setup    # select "supermemory"
 # Or manually:
 chiper config set memory.provider supermemory
-echo 'SUPERMEMORY_API_KEY=***' >> ~/.Chiper/.env
+echo 'SUPERMEMORY_API_KEY=***' >> ~/.chiper/.env
 ```
 
 **Config:** `$CHIPER_HOME/supermemory.json`

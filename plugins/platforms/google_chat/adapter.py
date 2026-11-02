@@ -525,7 +525,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
             from chiper_constants import get_chiper_home as _get_chiper_home
             _chiper_home = _get_chiper_home()
         except (ModuleNotFoundError, ImportError):
-            _chiper_home = _Path.home() / ".Chiper"
+            _chiper_home = _Path.home() / ".chiper"
         self._thread_count_store = _ThreadCountStore(
             _chiper_home / "google_chat_thread_counts.json"
         )
@@ -695,7 +695,7 @@ class GoogleChatAdapter(BasePlatformAdapter):
     # ------------------------------------------------------------------
     def _bot_id_cache_path(self) -> _Path:
         """Location where the resolved bot user_id is cached across restarts."""
-        base = os.getenv("CHIPER_HOME", str(_Path.home() / ".Chiper"))
+        base = os.getenv("CHIPER_HOME", str(_Path.home() / ".chiper"))
         return _Path(base) / "google_chat_bot_id.json"
 
     def _load_cached_bot_id(self) -> Optional[str]:
@@ -3034,7 +3034,7 @@ def interactive_setup() -> None:
     The setup wizard at ``chiper_cli/gateway.py`` calls this for plugin
     platforms instead of using the in-tree ``_PLATFORMS`` data block. The
     flow mirrors the in-tree built-ins: print the GCP setup instructions,
-    prompt for env vars, persist them to ``~/.Chiper/.env`` so the next
+    prompt for env vars, persist them to ``~/.chiper/.env`` so the next
     gateway restart picks them up.
     """
     from chiper_cli.cli_output import (
@@ -3116,7 +3116,7 @@ def interactive_setup() -> None:
         save_env_value("GOOGLE_CHAT_HOME_CHANNEL", home.strip())
 
     print()
-    print_success("Google Chat configuration saved to ~/.Chiper/.env")
+    print_success("Google Chat configuration saved to ~/.chiper/.env")
     print_info("Restart the gateway: chiper gateway restart")
 
 

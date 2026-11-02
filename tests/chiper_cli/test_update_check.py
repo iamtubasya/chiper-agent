@@ -244,7 +244,7 @@ def test_invalidate_update_cache_clears_all_profiles(tmp_path):
     """_invalidate_update_cache() should delete .update_check from ALL profiles."""
     from chiper_cli.main import _invalidate_update_cache
 
-    # Build a fake ~/.Chiper with default + two named profiles
+    # Build a fake ~/.chiper with default + two named profiles
     default_home = tmp_path / ".chiper"
     default_home.mkdir()
     (default_home / ".update_check").write_text('{"ts":1,"behind":50}')

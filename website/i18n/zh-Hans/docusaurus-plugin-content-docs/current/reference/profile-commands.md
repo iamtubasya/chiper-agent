@@ -184,7 +184,7 @@ chiper profile show <name>
 ```bash
 $ chiper profile show work
 Profile: work
-Path:    ~/.Chiper/profiles/work
+Path:    ~/.chiper/profiles/work
 Model:   anthropic/claude-sonnet-4 (anthropic)
 Gateway: stopped
 Skills:  12
@@ -237,7 +237,7 @@ chiper profile rename <old-name> <new-name>
 
 ```bash
 chiper profile rename mybot assistant
-# ~/.Chiper/profiles/mybot → ~/.Chiper/profiles/assistant
+# ~/.chiper/profiles/mybot → ~/.chiper/profiles/assistant
 # ~/.local/bin/mybot → ~/.local/bin/assistant
 ```
 

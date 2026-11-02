@@ -54,8 +54,8 @@ def build_claw_parser(subparsers, *, cmd_claw: Callable) -> None:
     claw_migrate.add_argument(
         "--no-backup",
         action="store_true",
-        help="Skip the pre-migration zip snapshot of ~/.Chiper/ (by default a "
-        "single restore-point archive is written to ~/.Chiper/backups/ "
+        help="Skip the pre-migration zip snapshot of ~/.chiper/ (by default a "
+        "single restore-point archive is written to ~/.chiper/backups/ "
         "before apply; restorable with 'chiper import').",
     )
     claw_migrate.add_argument(

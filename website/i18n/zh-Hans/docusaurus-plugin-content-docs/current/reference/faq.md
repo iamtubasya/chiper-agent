@@ -26,7 +26,7 @@ Chiper Agent 可与任何兼容 OpenAI 的 API 配合使用。支持的提供商
 - **MiniMax** — 全球及中国区端点
 - **本地模型** — 通过 [Ollama](https://ollama.com/)、[vLLM](https://docs.vllm.ai/)、[llama.cpp](https://github.com/ggerganov/llama.cpp)、[SGLang](https://github.com/sgl-project/sglang) 或任何兼容 OpenAI 的服务器
 
-使用 `chiper model` 设置提供商，或直接编辑 `~/.Chiper/.env`。所有提供商 key 请参阅[环境变量](./environment-variables.md)参考文档。
+使用 `chiper model` 设置提供商，或直接编辑 `~/.chiper/.env`。所有提供商 key 请参阅[环境变量](./environment-variables.md)参考文档。
 
 ### 支持 Windows 吗？
 
@@ -70,7 +70,7 @@ curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
 
 ### 我的数据会被发送到哪里？
 
-API 调用**仅发送至您配置的 LLM 提供商**（例如 OpenRouter、您本地的 Ollama 实例）。Chiper Agent 不收集遥测数据、使用数据或分析数据。您的对话、记忆和技能均存储在本地 `~/.Chiper/` 目录中。
+API 调用**仅发送至您配置的 LLM 提供商**（例如 OpenRouter、您本地的 Ollama 实例）。Chiper Agent 不收集遥测数据、使用数据或分析数据。您的对话、记忆和技能均存储在本地 `~/.chiper/` 目录中。
 
 ### 可以离线使用 / 使用本地模型吗？
 
@@ -182,7 +182,7 @@ brew install python@3.12      # macOS
 
 **原因：** Chiper 在启动时通过运行一次 `bash -l` 构建每个会话的环境快照。bash 登录 shell 会读取 `/etc/profile`、`~/.bash_profile` 和 `~/.profile`，但**不会 source `~/.bashrc`** — 因此在 `~/.bashrc` 中安装自身的工具（`nvm`、`asdf`、`pyenv`、`cargo`、自定义 `PATH` 导出）对快照不可见。当 Chiper 在 systemd 下运行或在未预加载交互式 shell 配置的最小 shell 中运行时，此问题最为常见。
 
-**解决方案：** Chiper 默认自动 source `~/.bashrc`。如果这还不够 — 例如您是 zsh 用户，PATH 在 `~/.zshrc` 中，或者您从独立文件初始化 `nvm` — 请在 `~/.Chiper/config.yaml` 中列出需要额外 source 的文件：
+**解决方案：** Chiper 默认自动 source `~/.bashrc`。如果这还不够 — 例如您是 zsh 用户，PATH 在 `~/.zshrc` 中，或者您从独立文件初始化 `nvm` — 请在 `~/.chiper/config.yaml` 中列出需要额外 source 的文件：
 
 ```yaml
 terminal:
@@ -275,7 +275,7 @@ chiper config set OPENROUTER_API_KEY sk-or-v1-xxxxxxxxxxxx
 ```
 
 :::warning
-请确保 key 与提供商匹配。OpenAI 的 key 无法用于 OpenRouter，反之亦然。检查 `~/.Chiper/.env` 中是否有冲突条目。
+请确保 key 与提供商匹配。OpenAI 的 key 无法用于 OpenRouter，反之亦然。检查 `~/.chiper/.env` 中是否有冲突条目。
 :::
 
 #### 模型不可用 / 找不到模型
@@ -326,7 +326,7 @@ chiper chat --model openrouter/google/gemini-3-flash-preview
 如需修正上下文检测，请显式设置：
 
 ```yaml
-# 在 ~/.Chiper/config.yaml 中
+# 在 ~/.chiper/config.yaml 中
 model:
   default: your-model-name
   context_length: 131072  # 您模型的实际上下文窗口
@@ -404,7 +404,7 @@ chiper gateway status
 chiper gateway start
 
 # 查看错误日志
-cat ~/.Chiper/logs/gateway.log | tail -50
+cat ~/.chiper/logs/gateway.log | tail -50
 ```
 
 #### 消息未送达
@@ -413,7 +413,7 @@ cat ~/.Chiper/logs/gateway.log | tail -50
 
 **解决方案：**
 - 使用 `chiper gateway setup` 验证您的 bot token 是否有效
-- 检查网关日志：`cat ~/.Chiper/logs/gateway.log | tail -50`
+- 检查网关日志：`cat ~/.chiper/logs/gateway.log | tail -50`
 - 对于基于 webhook 的平台（Slack、WhatsApp），确保您的服务器可公开访问
 
 #### 白名单混淆 — 谁可以与 bot 交互？
@@ -428,7 +428,7 @@ cat ~/.Chiper/logs/gateway.log | tail -50
 | **私信配对** | 第一个在私信中发消息的用户获得独占访问权 |
 | **开放** | 任何人都可以交互（不建议用于生产环境） |
 
-在 `~/.Chiper/config.yaml` 中您的网关设置下进行配置。请参阅[消息文档](../user-guide/messaging/index.md)。
+在 `~/.chiper/config.yaml` 中您的网关设置下进行配置。请参阅[消息文档](../user-guide/messaging/index.md)。
 
 #### 网关无法启动
 
@@ -461,7 +461,7 @@ tmux new -s chiper 'chiper gateway run'
 # 稍后重新连接：tmux attach -t chiper
 
 # 方案三：通过 nohup 后台运行
-nohup chiper gateway run > ~/.Chiper/logs/gateway.log 2>&1 &
+nohup chiper gateway run > ~/.chiper/logs/gateway.log 2>&1 &
 ```
 
 如果仍想尝试 systemd，请确保已启用：
@@ -557,7 +557,7 @@ chiper chat --continue
 **解决方案：**
 ```bash
 # 确保 MCP 依赖项已安装（标准安装中已包含）
-cd ~/.Chiper/chiper-agent && uv pip install -e ".[mcp]"
+cd ~/.chiper/chiper-agent && uv pip install -e ".[mcp]"
 
 # 对于基于 npm 的服务器，确保 Node.js 可用
 node --version
@@ -567,7 +567,7 @@ npx --version
 npx -y @modelcontextprotocol/server-filesystem /tmp
 ```
 
-验证您的 `~/.Chiper/config.yaml` 中的 MCP 配置：
+验证您的 `~/.chiper/config.yaml` 中的 MCP 配置：
 ```yaml
 mcp_servers:
   filesystem:
@@ -618,7 +618,7 @@ chiper chat
 
 ### Profiles 与直接设置 CHIPER_HOME 有何不同？
 
-Profiles 是构建在 `CHIPER_HOME` 之上的托管层。您*可以*在每次命令前手动设置 `CHIPER_HOME=/some/path`，但 profiles 会为您处理所有底层工作：创建目录结构、生成 shell 别名（`chiper-work`）、在 `~/.Chiper/active_profile` 中跟踪活动 profile，以及自动跨所有 profiles 同步技能更新。它们还与 tab 补全集成，让您无需记忆路径。
+Profiles 是构建在 `CHIPER_HOME` 之上的托管层。您*可以*在每次命令前手动设置 `CHIPER_HOME=/some/path`，但 profiles 会为您处理所有底层工作：创建目录结构、生成 shell 别名（`chiper-work`）、在 `~/.chiper/active_profile` 中跟踪活动 profile，以及自动跨所有 profiles 同步技能更新。它们还与 tab 补全集成，让您无需记忆路径。
 
 ### 两个 profiles 可以共享同一个 bot token 吗？
 
@@ -634,7 +634,7 @@ Profiles 是构建在 `CHIPER_HOME` 之上的托管层。您*可以*在每次命
 
 ### 可以运行多少个 profiles？
 
-没有硬性限制。每个 profile 只是 `~/.Chiper/profiles/` 下的一个目录。实际限制取决于您的磁盘空间以及系统能处理多少个并发网关（每个网关是一个轻量级 Python 进程）。运行数十个 profiles 完全没问题；每个空闲的 profile 不占用任何资源。
+没有硬性限制。每个 profile 只是 `~/.chiper/profiles/` 下的一个目录。实际限制取决于您的磁盘空间以及系统能处理多少个并发网关（每个网关是一个轻量级 Python 进程）。运行数十个 profiles 完全没问题；每个空闲的 profile 不占用任何资源。
 
 ---
 
@@ -644,7 +644,7 @@ Profiles 是构建在 `CHIPER_HOME` 之上的托管层。您*可以*在每次命
 
 **场景：** 您日常使用 GPT-5.4，但 Gemini 或 Grok 写社交媒体内容更好。每次手动切换模型很繁琐。
 
-**解决方案：委托配置。** Chiper 可以自动将子智能体路由到不同的模型。在 `~/.Chiper/config.yaml` 中设置：
+**解决方案：委托配置。** Chiper 可以自动将子智能体路由到不同的模型。在 `~/.chiper/config.yaml` 中设置：
 
 ```yaml
 delegation:
@@ -757,7 +757,7 @@ skills:
    ```bash
    chiper backup
    ```
-   这会将您整个 `~/.Chiper/` 目录（配置、API key、记忆、技能、会话和 profiles）打包为 zip 文件，保存到主目录 `~/chiper-backup-<timestamp>.zip`。
+   这会将您整个 `~/.chiper/` 目录（配置、API key、记忆、技能、会话和 profiles）打包为 zip 文件，保存到主目录 `~/chiper-backup-<timestamp>.zip`。
 
 3. 将 zip 文件复制到新机器并导入：
    ```bash
@@ -789,14 +789,14 @@ chiper profile import ./work-backup.tar.gz work
 | 功能 | `chiper backup` | `chiper profile export` |
 | :--- | :--- | :--- |
 | **使用场景** | **整机迁移** | **移植/共享特定 profile** |
-| **范围** | 全局（整个 `~/.Chiper` 目录） | 局部（单个 profile 目录） |
+| **范围** | 全局（整个 `~/.chiper` 目录） | 局部（单个 profile 目录） |
 | **包含内容** | 所有 profiles、全局配置、API key、会话 | 单个 profile：SOUL.md、记忆、会话、技能 |
 | **凭据** | **包含**（`.env` 和 `auth.json`） | **排除**（为安全共享而剥离） |
 | **格式** | `.zip` | `.tar.gz` |
 
 **手动备选方案（rsync）：** 如果您倾向于直接复制文件，请排除代码仓库：
 ```bash
-rsync -av --exclude='chiper-agent' ~/.Chiper/ newmachine:~/.Chiper/
+rsync -av --exclude='chiper-agent' ~/.chiper/ newmachine:~/.chiper/
 ```
 
 :::tip

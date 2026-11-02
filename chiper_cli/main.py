@@ -125,7 +125,7 @@ def _config_default_interface_early() -> str:
         if home:
             cfg_path = os.path.join(home, "config.yaml")
         else:
-            cfg_path = os.path.join(os.path.expanduser("~"), ".Chiper", "config.yaml")
+            cfg_path = os.path.join(os.path.expanduser("~"), ".chiper", "config.yaml")
         if os.path.exists(cfg_path):
             import yaml as _yaml_iface
 
@@ -333,7 +333,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 # We intercept --profile/-p from sys.argv here and set the env var so that
 # every subsequent ``os.getenv("CHIPER_HOME", ...)`` resolves correctly.
 # The flag is stripped from sys.argv so argparse never sees it.
-# Falls back to ~/.Chiper/active_profile for sticky default.
+# Falls back to ~/.chiper/active_profile for sticky default.
 # ---------------------------------------------------------------------------
 def _apply_profile_override() -> None:
     """Pre-parse --profile/-p and set CHIPER_HOME before imports."""
@@ -379,7 +379,7 @@ def _apply_profile_override() -> None:
         except Exception:
             return None
 
-        candidate = home / ".Chiper" / "profiles" / name
+        candidate = home / ".chiper" / "profiles" / name
         try:
             if candidate.is_dir():
                 return str(candidate)
@@ -443,9 +443,9 @@ def _apply_profile_override() -> None:
     # 1.5 If CHIPER_HOME is already set and no explicit flag was given, trust it
     # only when it already points to a specific profile directory.  The
     # distinguishing heuristic: a profile path has "profiles" as its immediate
-    # parent directory name (e.g. ~/.Chiper/profiles/coder or
+    # parent directory name (e.g. ~/.chiper/profiles/coder or
     # /opt/data/profiles/coder).  If CHIPER_HOME points to the chiper root
-    # instead (e.g. systemd hardcodes CHIPER_HOME=/root/.Chiper), we must
+    # instead (e.g. systemd hardcodes CHIPER_HOME=/root/.chiper), we must
     # still read active_profile — the user may have switched profiles via
     # `chiper profile use` and the gateway should honour that choice.
     # See issue #22502.
@@ -509,7 +509,7 @@ def _apply_profile_override() -> None:
 
 _apply_profile_override()
 
-# Load .env from ~/.Chiper/.env first, then project root as dev fallback.
+# Load .env from ~/.chiper/.env first, then project root as dev fallback.
 # User-managed env files should override stale shell exports on restart.
 from chiper_cli.config import get_chiper_home
 from chiper_cli.env_loader import load_chiper_dotenv
@@ -1469,7 +1469,7 @@ def _tui_need_npm_install(root: Path) -> bool:
     if entry.is_file() and not lock.is_file():
         return False
 
-    ink = ws_root / "node_modules" / ".Chiper" / "ink" / "package.json"
+    ink = ws_root / "node_modules" / ".chiper" / "ink" / "package.json"
     if not ink.is_file():
         return True
     if not lock.is_file():
@@ -1597,7 +1597,7 @@ def _ensure_tui_node() -> None:
     if not helper.is_file():
         return
 
-    chiper_home = os.environ.get("CHIPER_HOME") or str(Path.home() / ".Chiper")
+    chiper_home = os.environ.get("CHIPER_HOME") or str(Path.home() / ".chiper")
     try:
         # Helper writes logs to stderr; we ask bash to print `command -v node`
         # on stdout once ensure_node succeeds. Subshell PATH edits don't leak
@@ -2090,7 +2090,7 @@ def _pin_kanban_board_env() -> None:
 
 
 def _sync_bundled_skills_quietly() -> None:
-    """Seed ``~/.Chiper/skills/`` with the bundled skill library on first launch.
+    """Seed ``~/.chiper/skills/`` with the bundled skill library on first launch.
 
     Called from any CLI entrypoint that the user might use as their first
     interaction with Chiper — chat, dashboard (the desktop GUI's backend),
@@ -2261,7 +2261,7 @@ def cmd_chat(args):
         os.environ["CHIPER_IGNORE_RULES"] = "1"
 
     # --ignore-user-config: make load_cli_config() / load_config() skip the
-    # user's ~/.Chiper/config.yaml and return built-in defaults. Set BEFORE
+    # user's ~/.chiper/config.yaml and return built-in defaults. Set BEFORE
     # importing cli (which runs `CLI_CONFIG = load_cli_config()` at module
     # import time). Credentials in .env are still loaded — this flag only
     # ignores behavioral/config settings.
@@ -3052,7 +3052,7 @@ def select_provider_and_model(args=None):
 
     # ── Post-switch cleanup: clear stale OPENAI_BASE_URL ──────────────
     # When the user switches to a named provider (anything except "custom"),
-    # a leftover OPENAI_BASE_URL in ~/.Chiper/.env can poison auxiliary
+    # a leftover OPENAI_BASE_URL in ~/.chiper/.env can poison auxiliary
     # clients that use provider:auto. Clear it proactively.  (#5161)
     if selected_provider not in {
         "custom",
@@ -3063,7 +3063,7 @@ def select_provider_and_model(args=None):
 
 
 def _clear_stale_openai_base_url():
-    """Remove OPENAI_BASE_URL from ~/.Chiper/.env if the active provider is not 'custom'.
+    """Remove OPENAI_BASE_URL from ~/.chiper/.env if the active provider is not 'custom'.
 
     After a provider switch, a leftover OPENAI_BASE_URL causes auxiliary
     clients (compression, vision, delegation) with provider:auto to route
@@ -3898,7 +3898,7 @@ def _prompt_api_key(pconfig, existing_key: str, provider_id: str = "") -> tuple:
 
     Handles both first-time entry and the already-configured case.  When a key
     is already present, offers [K]eep / [R]eplace / [C]lear so the user can
-    recover from a malformed paste without editing ``~/.Chiper/.env`` by hand.
+    recover from a malformed paste without editing ``~/.chiper/.env`` by hand.
 
     Returns ``(resolved_key, abort)``.  ``abort=True`` means the caller should
     ``return`` immediately — the user cancelled entry, declined to replace, or
@@ -7710,7 +7710,7 @@ class _UpdateOutputStream:
     Wraps the process's original stdout/stderr so that:
 
     * Every write is also mirrored to an append-only log file
-      (``~/.Chiper/logs/update.log``) that users can inspect after the
+      (``~/.chiper/logs/update.log``) that users can inspect after the
       terminal disconnects.
     * Writes to the original stream that fail with ``BrokenPipeError`` /
       ``OSError`` / ``ValueError`` (closed file) no longer cascade into
@@ -7792,7 +7792,7 @@ def _install_hangup_protection(gateway_mode: bool = False):
        across ``exec()``, so pip and git subprocesses also stop dying on
        hangup.
     2. ``sys.stdout`` / ``sys.stderr`` are wrapped to mirror output to
-       ``~/.Chiper/logs/update.log`` and to silently absorb
+       ``~/.chiper/logs/update.log`` and to silently absorb
        ``BrokenPipeError`` when the terminal vanishes.
 
     ``SIGINT`` (Ctrl-C) and ``SIGTERM`` (systemd shutdown) are
@@ -8195,7 +8195,7 @@ def _run_pre_update_backup(args) -> None:
         size_bytes /= 1024
         size_str = f"{size_bytes:.1f} {unit}"
 
-    # Render path using display_chiper_home so the user sees ~/.Chiper/...
+    # Render path using display_chiper_home so the user sees ~/.chiper/...
     try:
         from chiper_constants import get_chiper_home, display_chiper_home
 
@@ -9054,7 +9054,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
         # Seed the model-catalog disk cache from the freshly-pulled checkout.
         # The repo ships the canonical catalog at
         # website/static/api/model-catalog.json, and `git pull` just made it
-        # current — so copy it straight over ~/.Chiper/cache/model_catalog.json
+        # current — so copy it straight over ~/.chiper/cache/model_catalog.json
         # instead of waiting on a network fetch (which can be bot-gated or hit a
         # Portal hiccup). Keeps the model picker's curated/free lists in sync
         # with the version the user just installed. Non-fatal on failure: the
@@ -10229,7 +10229,7 @@ def cmd_profile(args):
         try:
             set_active_profile(name)
             if name == "default":
-                print(f"Switched to: default (~/.Chiper)")
+                print(f"Switched to: default (~/.chiper)")
             else:
                 print(f"Switched to: {name}")
         except (ValueError, FileNotFoundError) as e:
@@ -10915,11 +10915,11 @@ def cmd_dashboard(args):
         # CHIPER_HOME.  We must resolve the root explicitly instead of just
         # dropping CHIPER_HOME: in the Docker layout the machine root is
         # /opt/data (set via `ENV CHIPER_HOME=/opt/data`), so an unset
-        # CHIPER_HOME falls back to $HOME/.Chiper = /opt/data/.Chiper — an
+        # CHIPER_HOME falls back to $HOME/.chiper = /opt/data/.chiper — an
         # empty, auto-seeded home where the dashboard sees only the default
         # profile and the install-method stamp is missing (so the Docker
         # update-button guard also misfires).  get_default_chiper_root()
-        # returns the root for both layouts: ~/.Chiper for a standard install
+        # returns the root for both layouts: ~/.chiper for a standard install
         # and /opt/data for Docker (it strips a trailing profiles/<name>).
         # See the support report for the double-mount workaround this avoids.
         try:
@@ -11674,7 +11674,7 @@ def main():
         help="Manage external secret sources (Bitwarden Secrets Manager)",
         description=(
             "Pull API keys from an external secret manager at process startup "
-            "instead of storing them in ~/.Chiper/.env.  Currently supports "
+            "instead of storing them in ~/.chiper/.env.  Currently supports "
             "Bitwarden Secrets Manager.  See: "
             "https://chiper-agent.Chiper.com/docs/user-guide/secrets/bitwarden"
         ),
@@ -11882,7 +11882,7 @@ def main():
     # =========================================================================
     checkpoints_parser = subparsers.add_parser(
         "checkpoints",
-        help="Inspect / prune / clear ~/.Chiper/checkpoints/",
+        help="Inspect / prune / clear ~/.chiper/checkpoints/",
         description="Manage the filesystem checkpoint store — the shadow git "
         "repo chiper uses to snapshot working directories before "
         "write_file/patch/terminal calls. Lets you see how much "

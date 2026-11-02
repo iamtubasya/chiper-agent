@@ -42,11 +42,11 @@ Where the installer puts things depends on whether you're installing as a normal
 
 | Installer | Code lives at | `chiper` binary | Data directory |
 |---|---|---|---|
-| pip install | Python site-packages | `~/.local/bin/chiper` (console_scripts) | `~/.Chiper/` |
-| Per-user (git installer) | `~/.Chiper/chiper-agent/` | `~/.local/bin/chiper` (symlink) | `~/.Chiper/` |
-| Root-mode (`sudo curl … \| sudo bash`) | `/usr/local/lib/chiper-agent/` | `/usr/local/bin/chiper` | `/root/.Chiper/` (or `$CHIPER_HOME`) |
+| pip install | Python site-packages | `~/.local/bin/chiper` (console_scripts) | `~/.chiper/` |
+| Per-user (git installer) | `~/.chiper/chiper-agent/` | `~/.local/bin/chiper` (symlink) | `~/.chiper/` |
+| Root-mode (`sudo curl … \| sudo bash`) | `/usr/local/lib/chiper-agent/` | `/usr/local/bin/chiper` | `/root/.chiper/` (or `$CHIPER_HOME`) |
 
-The root-mode **FHS layout** (`/usr/local/lib/…`, `/usr/local/bin/chiper`) matches where other system-wide developer tools land on Linux. It's useful for shared-machine deployments where one system install should serve every user. Per-user config (auth, skills, sessions) still lives under each user's `~/.Chiper/` or explicit `CHIPER_HOME`.
+The root-mode **FHS layout** (`/usr/local/lib/…`, `/usr/local/bin/chiper`) matches where other system-wide developer tools land on Linux. It's useful for shared-machine deployments where one system install should serve every user. Per-user config (auth, skills, sessions) still lives under each user's `~/.chiper/` or explicit `CHIPER_HOME`.
 
 ### After Installation
 
@@ -133,10 +133,10 @@ Running Chiper as a dedicated unprivileged user (e.g. a `chiper` systemd service
    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 
    # Option B — symlink system-wide (run as an admin)
-   sudo ln -s /home/chiper/.Chiper/chiper-agent/venv/bin/chiper /usr/local/bin/chiper
+   sudo ln -s /home/chiper/.chiper/chiper-agent/venv/bin/chiper /usr/local/bin/chiper
    ```
 
-4. **Verify:** `chiper doctor` should now run cleanly. If you get `ModuleNotFoundError: No module named 'dotenv'`, you're invoking the repo source `chiper` file (`~/.Chiper/chiper-agent/chiper`) with system Python instead of the venv launcher (`~/.Chiper/chiper-agent/venv/bin/chiper`) — fix step 3.
+4. **Verify:** `chiper doctor` should now run cleanly. If you get `ModuleNotFoundError: No module named 'dotenv'`, you're invoking the repo source `chiper` file (`~/.chiper/chiper-agent/chiper`) with system Python instead of the venv launcher (`~/.chiper/chiper-agent/venv/bin/chiper`) — fix step 3.
 
 The same pattern works on Arch (the installer uses pacman with the same sudo-detection logic), Fedora/RHEL, and openSUSE — those distros don't support `--with-deps` at all, so an administrator always installs the system libraries separately. The relevant `dnf`/`zypper` commands are printed by the installer.
 
@@ -154,4 +154,4 @@ For more diagnostics, run `chiper doctor` — it will tell you exactly what's mi
 
 ## Install method auto-detection
 
-Chiper auto-detects whether it was installed via `pip`, the git installer, Homebrew, or NixOS, and `chiper update` prints the matching update command for that path. There's no env var to set — the detection is based on the install layout (Python site-packages, `~/.Chiper/chiper-agent/`, Homebrew prefix, or Nix store path). `chiper doctor` also surfaces the detected method under its environment summary.
+Chiper auto-detects whether it was installed via `pip`, the git installer, Homebrew, or NixOS, and `chiper update` prints the matching update command for that path. There's no env var to set — the detection is based on the install layout (Python site-packages, `~/.chiper/chiper-agent/`, Homebrew prefix, or Nix store path). `chiper doctor` also surfaces the detected method under its environment summary.

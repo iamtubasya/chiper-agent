@@ -24,7 +24,7 @@ Set `GOOGLE_API_KEY` or `GEMINI_API_KEY`. Chiper checks both names for the `gemi
 
 ```bash
 # Add your Gemini API key
-echo "GOOGLE_API_KEY=..." >> ~/.Chiper/.env
+echo "GOOGLE_API_KEY=..." >> ~/.chiper/.env
 
 # Select Gemini as your provider
 chiper model
@@ -47,7 +47,7 @@ model:
 
 ## Configuration
 
-After running `chiper model`, your `~/.Chiper/config.yaml` will contain:
+After running `chiper model`, your `~/.chiper/config.yaml` will contain:
 
 ```yaml
 model:
@@ -56,7 +56,7 @@ model:
   base_url: https://generativelanguage.googleapis.com/v1beta
 ```
 
-And in `~/.Chiper/.env`:
+And in `~/.chiper/.env`:
 
 ```bash
 GOOGLE_API_KEY=...
@@ -218,7 +218,7 @@ The gateway reads `config.yaml` and uses the same Gemini provider configuration.
 
 ### "Gemini native client requires an API key"
 
-Chiper could not find a usable API key. Add one of these to `~/.Chiper/.env`:
+Chiper could not find a usable API key. Add one of these to `~/.chiper/.env`:
 
 ```bash
 GOOGLE_API_KEY=...
@@ -244,7 +244,7 @@ The selected model is not available for your account, region, or key. Run `chipe
 
 ### Gemma model is not shown in `chiper model`
 
-Chiper may hide low-throughput Gemma models from the picker by default. If you intentionally want to evaluate one, set the model ID directly in `~/.Chiper/config.yaml`.
+Chiper may hide low-throughput Gemma models from the picker by default. If you intentionally want to evaluate one, set the model ID directly in `~/.chiper/config.yaml`.
 
 ### "429 quota exceeded" on Gemma
 
@@ -252,7 +252,7 @@ Gemma models exposed through the Gemini API are useful for evaluation, but their
 
 ### OpenAI-compatible endpoint is configured
 
-Check `~/.Chiper/.env` for:
+Check `~/.chiper/.env` for:
 
 ```bash
 GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/

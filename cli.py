@@ -165,7 +165,7 @@ from chiper_cli.banner import _format_context_length, format_banner_version_labe
 _COMMAND_SPINNER_FRAMES = ("⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏")
 
 
-# Load .env from ~/.Chiper/.env first, then project root as dev fallback.
+# Load .env from ~/.chiper/.env first, then project root as dev fallback.
 # User-managed env files should override stale shell exports on restart.
 from chiper_constants import get_chiper_home, display_chiper_home
 from chiper_cli.browser_connect import (
@@ -292,7 +292,7 @@ def _load_prefill_messages(file_path: str) -> List[Dict[str, Any]]:
     The file should contain a JSON array of {role, content} dicts, e.g.:
         [{"role": "user", "content": "Hi"}, {"role": "assistant", "content": "Hello!"}]
     
-    Relative paths are resolved from ~/.Chiper/.
+    Relative paths are resolved from ~/.chiper/.
     Returns an empty list if the path is empty or the file doesn't exist.
     """
     if not file_path:
@@ -358,14 +358,14 @@ def load_cli_config() -> Dict[str, Any]:
     Load CLI configuration from config files.
     
     Config lookup order:
-    1. ~/.Chiper/config.yaml (user config - preferred)
+    1. ~/.chiper/config.yaml (user config - preferred)
     2. ./cli-config.yaml (project config - fallback)
     
     Environment variables take precedence over config file values.
     Returns default values if no config file exists.
 
     If CHIPER_IGNORE_USER_CONFIG=1 is set (via ``chiper chat --ignore-user-config``),
-    the user config at ``~/.Chiper/config.yaml`` is skipped entirely and only the
+    the user config at ``~/.chiper/config.yaml`` is skipped entirely and only the
     built-in defaults plus the project-level ``cli-config.yaml`` (if any) are used.
     Credentials in ``.env`` are still loaded — this flag only suppresses
     behavioral/config settings.
@@ -707,7 +707,7 @@ def load_cli_config() -> Dict[str, Any]:
 CLI_CONFIG = load_cli_config()
 
 
-# Initialize centralized logging early — agent.log + errors.log in ~/.Chiper/logs/.
+# Initialize centralized logging early — agent.log + errors.log in ~/.chiper/logs/.
 # This ensures CLI sessions produce a log trail even before AIAgent is instantiated.
 try:
     from chiper_logging import setup_logging
@@ -3147,7 +3147,7 @@ def save_config_value(key_path: str, value: any) -> bool:
     Save a value to the active config file at the specified key path.
     
     Respects the same lookup order as load_cli_config():
-    1. ~/.Chiper/config.yaml (user config - preferred, used if it exists)
+    1. ~/.chiper/config.yaml (user config - preferred, used if it exists)
     2. ./cli-config.yaml (project config - fallback)
     
     Args:
@@ -3163,7 +3163,7 @@ def save_config_value(key_path: str, value: any) -> bool:
     config_path = user_config_path if user_config_path.exists() else project_config_path
     
     try:
-        # Ensure parent directory exists (for ~/.Chiper/config.yaml on first use)
+        # Ensure parent directory exists (for ~/.chiper/config.yaml on first use)
         config_path.parent.mkdir(parents=True, exist_ok=True)
         
         # Save back atomically while preserving comments, ordering, quotes, and
@@ -3498,7 +3498,7 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
         _run_state_db_auto_maintenance(self._session_db)
 
         # Opportunistic shadow-repo cleanup — deletes orphan/stale
-        # checkpoint repos under ~/.Chiper/checkpoints/.  Opt-in via
+        # checkpoint repos under ~/.chiper/checkpoints/.  Opt-in via
         # checkpoints.auto_prune, idempotent via .last_prune marker.
         _run_checkpoint_auto_maintenance()
 
@@ -5307,7 +5307,7 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
     def _try_attach_clipboard_image(self) -> bool:
         """Check clipboard for an image and attach it if found.
 
-        Saves the image to ~/.Chiper/images/ and appends the path to
+        Saves the image to ~/.chiper/images/ and appends the path to
         ``_attached_images``.  Returns True if an image was attached.
         """
         from chiper_cli.clipboard import save_clipboard_image
@@ -6093,7 +6093,7 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
 
 
     def save_conversation(self):
-        """Save the current conversation to a JSON snapshot under ~/.Chiper/sessions/saved/.
+        """Save the current conversation to a JSON snapshot under ~/.chiper/sessions/saved/.
 
         The snapshot is a convenience export for sharing or off-line inspection;
         every message is already persisted incrementally to the SQLite session
@@ -8857,7 +8857,7 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
             print(f"  ❌ MCP reload failed: {e}")
 
     def _reload_skills(self) -> None:
-        """Reload skills: rescan ~/.Chiper/skills/ and queue a note for the
+        """Reload skills: rescan ~/.chiper/skills/ and queue a note for the
         next user turn.
 
         Skills don't need to live in the system prompt for the model to use

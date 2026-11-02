@@ -31,8 +31,8 @@ chiper setup --portal
 This single command does five things:
 
 1. Opens your browser to portal.Chiper.com for OAuth login
-2. Stores the refresh token at `~/.Chiper/auth.json`
-3. Sets `model.provider: nous` in `~/.Chiper/config.yaml`
+2. Stores the refresh token at `~/.chiper/auth.json`
+3. Sets `model.provider: nous` in `~/.chiper/config.yaml`
 4. Picks a default agentic model (`anthropic/claude-sonnet-4.6` or similar)
 5. Turns on the Tool Gateway for web search, image generation, TTS, and browser automation
 
@@ -174,7 +174,7 @@ The cron job runs unattended, calls the model + web search + summarization all t
 
 If you use [Chiper profiles](/user-guide/profiles) (e.g. a separate config per project), the Portal refresh token is automatically shared across all profiles via a shared token store. Sign in once on any profile, and the rest pick it up automatically.
 
-For team setups where multiple humans share a machine, each human has their own Portal account → each home directory holds its own `~/.Chiper/auth.json` → no token sharing across users. This is the right boundary.
+For team setups where multiple humans share a machine, each human has their own Portal account → each home directory holds its own `~/.chiper/auth.json` → no token sharing across users. This is the right boundary.
 
 ## Troubleshooting
 

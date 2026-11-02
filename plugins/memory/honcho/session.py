@@ -827,7 +827,7 @@ class HonchoSessionManager:
 
         Args:
             session_key: The session key to associate files with.
-            memory_dir: Path to the memories directory (~/.Chiper/memories/).
+            memory_dir: Path to the memories directory (~/.chiper/memories/).
 
         Returns:
             True if at least one file was uploaded, False otherwise.

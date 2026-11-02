@@ -28,11 +28,11 @@ def _make_auth_store(pool: dict | None = None, providers: dict | None = None) ->
 
 @pytest.fixture()
 def profile_env(tmp_path, monkeypatch):
-    """Set up a global root + an active profile under Path.home()/.Chiper/profiles/coder.
+    """Set up a global root + an active profile under Path.home()/.chiper/profiles/coder.
 
     * Path.home() -> tmp_path
     * Global root -> tmp_path/.chiper            (has its own auth.json fixture)
-    * Profile     -> tmp_path/.Chiper/profiles/coder   (active, CHIPER_HOME points here)
+    * Profile     -> tmp_path/.chiper/profiles/coder   (active, CHIPER_HOME points here)
 
     This mirrors the real "named profile mounted under the default root"
     layout that profile users actually have on disk.
@@ -402,7 +402,7 @@ def test_classic_mode_does_not_double_read_same_file(tmp_path, monkeypatch):
     from chiper_cli.auth import read_credential_pool, _global_auth_file_path
 
     # Classic mode: CHIPER_HOME is set to a custom path that is NOT under
-    # ~/.Chiper/profiles/ — get_default_chiper_root() returns CHIPER_HOME
+    # ~/.chiper/profiles/ — get_default_chiper_root() returns CHIPER_HOME
     # itself, so the profile root and global root are the same directory,
     # and the helper correctly returns None (no fallback).
     assert _global_auth_file_path() is None

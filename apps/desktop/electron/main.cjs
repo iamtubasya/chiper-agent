@@ -233,16 +233,16 @@ if (INSTALL_STAMP) {
 //
 // Defaults:
 //   Windows: %LOCALAPPDATA%\Chiper (matches install.ps1)
-//   macOS / Linux: ~/.Chiper (matches install.sh)
+//   macOS / Linux: ~/.chiper (matches install.sh)
 //
-// Special case for Windows: if the user has a legacy ~/.Chiper directory
+// Special case for Windows: if the user has a legacy ~/.chiper directory
 // (e.g., from a prior pip install or a manual setup) AND no
 // %LOCALAPPDATA%\Chiper yet, prefer the legacy path so we don't orphan their
 // existing config / sessions / .env. New installs go to %LOCALAPPDATA%.
 //
 // CHIPER_DESKTOP_USER_DATA_DIR (used by test:desktop:fresh) puts the sandbox
 // CHIPER_HOME beneath the throwaway userData dir so a fresh-install run never
-// touches the user's real ~/.Chiper / %LOCALAPPDATA%\Chiper.
+// touches the user's real ~/.chiper / %LOCALAPPDATA%\Chiper.
 function resolveChiperHome() {
   if (process.env.CHIPER_HOME) return normalizeChiperHomeRoot(process.env.CHIPER_HOME)
   if (USER_DATA_OVERRIDE) return path.join(path.resolve(USER_DATA_OVERRIDE), 'chiper-home')
@@ -258,13 +258,13 @@ function resolveChiperHome() {
   }
   if (IS_WINDOWS && process.env.LOCALAPPDATA) {
     const localappdata = path.join(process.env.LOCALAPPDATA, 'chiper')
-    const legacy = path.join(app.getPath('home'), '.Chiper')
+    const legacy = path.join(app.getPath('home'), '.chiper')
     // Migrate transparently to LOCALAPPDATA, but honour an existing legacy
     // ~/.chiper setup (no LOCALAPPDATA install yet) so users don't lose state.
     if (!directoryExists(localappdata) && directoryExists(legacy)) return legacy
     return localappdata
   }
-  return path.join(app.getPath('home'), '.Chiper')
+  return path.join(app.getPath('home'), '.chiper')
 }
 
 const CHIPER_HOME = resolveChiperHome()
@@ -294,7 +294,7 @@ const DESKTOP_UPDATE_CONFIG_PATH = path.join(app.getPath('userData'), 'updates.j
 // local backend as. When set, startChiper() passes `chiper --profile <name>
 // dashboard …`, which deterministically pins CHIPER_HOME (see
 // _apply_profile_override in chiper_cli/main.py) and bypasses the sticky
-// ~/.Chiper/active_profile file. Unset (null) preserves the legacy behavior:
+// ~/.chiper/active_profile file. Unset (null) preserves the legacy behavior:
 // no --profile flag, so the backend honors active_profile / default.
 const DESKTOP_PROFILE_CONFIG_PATH = path.join(app.getPath('userData'), 'active-profile.json')
 // Mirrors chiper_cli.profiles._PROFILE_ID_RE so we never hand the backend a
@@ -2353,7 +2353,7 @@ function resolveChiperBackend(dashboardArgs) {
   }
 
   // 3. Bootstrap-complete ACTIVE_CHIPER_ROOT -- the canonical install at
-  //    %LOCALAPPDATA%\Chiper\chiper-agent (Windows) or ~/.Chiper/chiper-agent.
+  //    %LOCALAPPDATA%\Chiper\chiper-agent (Windows) or ~/.chiper/chiper-agent.
   //    The bootstrap marker means install.ps1 stages finished and the user
   //    completed initial configuration; we trust the install and go straight
   //    to spawning chiper. Updates flow through the in-app update path
@@ -4909,7 +4909,7 @@ async function startChiper() {
     // --port 0: the OS assigns an ephemeral port; the child announces it on stdout.
     const dashboardArgs = ['dashboard', '--no-open', '--host', '127.0.0.1', '--port', '0']
     // Pin the desktop's chosen profile via the global --profile flag. This is
-    // deterministic (it wins over the sticky ~/.Chiper/active_profile file) and
+    // deterministic (it wins over the sticky ~/.chiper/active_profile file) and
     // resolves CHIPER_HOME the same way `chiper -p <name>` does on the CLI. An
     // unset preference keeps the legacy launch so existing installs are
     // unaffected.
@@ -4934,7 +4934,7 @@ async function startChiper() {
           ...process.env,
           // Explicitly pin CHIPER_HOME for the child so Python's get_chiper_home()
           // resolves to the SAME location our resolveChiperHome() picked. Without
-          // this pin, Python falls back to ~/.Chiper on every platform — fine on
+          // this pin, Python falls back to ~/.chiper on every platform — fine on
           // mac/linux (where our default matches), but on Windows our default is
           // %LOCALAPPDATA%\Chiper, which differs from C:\Users\<u>\.Chiper.
           // Mismatch would split config / sessions / .env / logs across two

@@ -101,7 +101,7 @@ See the [Messaging Gateway overview](/user-guide/messaging) for the platform com
 
 ## Plugins
 
-- **[Plugin System](/user-guide/features/plugins)** — Extend Chiper with custom tools, lifecycle hooks, and CLI commands without modifying core code. Plugins are discovered from `~/.Chiper/plugins/`, project-local `.chiper/plugins/`, and pip-installed entry points.
+- **[Plugin System](/user-guide/features/plugins)** — Extend Chiper with custom tools, lifecycle hooks, and CLI commands without modifying core code. Plugins are discovered from `~/.chiper/plugins/`, project-local `.chiper/plugins/`, and pip-installed entry points.
 - **[Build a Plugin](/guides/build-a-chiper-plugin)** — Step-by-step guide for creating Chiper plugins with tools, hooks, and CLI commands.
 
 ## Training & Evaluation

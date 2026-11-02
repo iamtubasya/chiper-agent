@@ -50,7 +50,7 @@ You can also set or auto-generate the description later with `chiper profile des
 chiper profile create work --clone
 ```
 
-Copies your current profile's `config.yaml`, `.env`, `SOUL.md`, and skills into the new profile. Same API keys, model, and capabilities, but fresh sessions and memory. Edit `~/.Chiper/profiles/work/.env` for different API keys, or `~/.Chiper/profiles/work/SOUL.md` for a different personality.
+Copies your current profile's `config.yaml`, `.env`, `SOUL.md`, and skills into the new profile. Same API keys, model, and capabilities, but fresh sessions and memory. Edit `~/.chiper/profiles/work/.env` for different API keys, or `~/.chiper/profiles/work/SOUL.md` for a different personality.
 
 ### Clone everything (`--clone-all`)
 
@@ -163,10 +163,10 @@ Each profile has its own `.env` file. Configure a different Telegram/Discord/Sla
 
 ```bash
 # Edit coder's tokens
-nano ~/.Chiper/profiles/coder/.env
+nano ~/.chiper/profiles/coder/.env
 
 # Edit assistant's tokens
-nano ~/.Chiper/profiles/assistant/.env
+nano ~/.chiper/profiles/assistant/.env
 ```
 
 ### Safety: token locks
@@ -196,7 +196,7 @@ Each profile has its own:
 
 ```bash
 coder config set model.default anthropic/claude-sonnet-4
-echo "You are a focused coding assistant." > ~/.Chiper/profiles/coder/SOUL.md
+echo "You are a focused coding assistant." > ~/.chiper/profiles/coder/SOUL.md
 ```
 
 If you want this profile to work in a specific project by default, also set its own `terminal.cwd`:
@@ -252,7 +252,7 @@ This stops the gateway, removes the systemd/launchd service, removes the command
 Use `--yes` to skip confirmation: `chiper profile delete coder --yes`
 
 :::note
-You cannot delete the default profile (`~/.Chiper`). To remove everything, use `chiper uninstall`.
+You cannot delete the default profile (`~/.chiper`). To remove everything, use `chiper uninstall`.
 :::
 
 ## Tab completion
@@ -269,7 +269,7 @@ Add the line to your `~/.bashrc` or `~/.zshrc` for persistent completion. Comple
 
 ## How it works
 
-Profiles use the `CHIPER_HOME` environment variable. When you run `coder chat`, the wrapper script sets `CHIPER_HOME=~/.Chiper/profiles/coder` before launching chiper. Since 119+ files in the codebase resolve paths via `get_chiper_home()`, Chiper state automatically scopes to the profile's directory — config, sessions, memory, skills, state database, gateway PID, logs, and cron jobs.
+Profiles use the `CHIPER_HOME` environment variable. When you run `coder chat`, the wrapper script sets `CHIPER_HOME=~/.chiper/profiles/coder` before launching chiper. Since 119+ files in the codebase resolve paths via `get_chiper_home()`, Chiper state automatically scopes to the profile's directory — config, sessions, memory, skills, state database, gateway PID, logs, and cron jobs.
 
 This is separate from terminal working directory. Tool execution starts from `terminal.cwd` (or the launch directory when `cwd: "."` on the local backend), not automatically from `CHIPER_HOME`.
 
@@ -299,7 +299,7 @@ Claude/Codex auth, npm state, and similar files inside that profile home.
 Chiper also exposes `CHIPER_REAL_HOME` to subprocesses so scripts can still find
 the actual account home when `home_mode: profile` is active.
 
-The default profile is simply `~/.Chiper` itself. No migration needed — existing installs work identically.
+The default profile is simply `~/.chiper` itself. No migration needed — existing installs work identically.
 
 ## Sharing profiles as distributions
 

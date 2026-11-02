@@ -497,7 +497,7 @@ from chiper_constants import get_default_chiper_root, get_chiper_dir, get_chiper
 
 GATEWAY_SECRET_CAPTURE_UNSUPPORTED_MESSAGE = (
     "Secure secret entry is not supported over messaging. "
-    "Load this skill in the local CLI to be prompted, or add the key to ~/.Chiper/.env manually."
+    "Load this skill in the local CLI to be prompted, or add the key to ~/.chiper/.env manually."
 )
 
 
@@ -983,7 +983,7 @@ def _path_under_denied_prefix(resolved: Path) -> bool:
     on a root-run gateway ``$HOME=/root`` and the operator's own deliverables
     (``/root/work/proposal.docx``) live directly under it. The credential
     sub-directories inside home (``~/.ssh``, ``~/.aws``, ...) and Chiper
-    secrets (``~/.Chiper/.env``, ``auth.json``) are *separate, more-specific*
+    secrets (``~/.chiper/.env``, ``auth.json``) are *separate, more-specific*
     denied paths, so they stay blocked regardless of this exception — it can
     only un-block a plain file sitting in the running user's home tree, never a
     credential location or another user's home.
@@ -1089,8 +1089,8 @@ def validate_media_delivery_path(path: str) -> Optional[str]:
             return str(resolved)
 
     # Non-strict mode (default): accept anything not on the denylist.
-    # The denylist still blocks /etc, /proc, ~/.ssh, ~/.aws, ~/.Chiper/.env,
-    # ~/.Chiper/auth.json, etc. — so the obvious prompt-injection sites
+    # The denylist still blocks /etc, /proc, ~/.ssh, ~/.aws, ~/.chiper/.env,
+    # ~/.chiper/auth.json, etc. — so the obvious prompt-injection sites
     # (``MEDIA:/etc/passwd``, ``MEDIA:~/.ssh/id_rsa``) remain rejected.
     if not _media_delivery_strict_mode():
         if _path_under_denied_prefix(resolved):
@@ -2934,7 +2934,7 @@ class BasePlatformAdapter(ABC):
 
         Serialized tool results frequently embed a previous reply's text, e.g.::
 
-            {"result": "MEDIA:/Users/x/.Chiper/media/generated/stale.png"}
+            {"result": "MEDIA:/Users/x/.chiper/media/generated/stale.png"}
 
         Here the ``MEDIA:`` is part of stored text, not an outbound directive,
         but the bare-path branch of ``MEDIA_TAG_CLEANUP_RE`` would still match it

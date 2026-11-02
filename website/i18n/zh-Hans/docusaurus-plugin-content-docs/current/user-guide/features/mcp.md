@@ -23,11 +23,11 @@ MCP 让 Chiper Agent 连接到外部工具服务器，使 agent 能够使用 Chi
 1. 安装 MCP 支持（如果你使用了标准安装脚本，已包含在内）：
 
 ```bash
-cd ~/.Chiper/chiper-agent
+cd ~/.chiper/chiper-agent
 uv pip install -e ".[mcp]"
 ```
 
-2. 在 `~/.Chiper/config.yaml` 中添加一个 MCP 服务器：
+2. 在 `~/.chiper/config.yaml` 中添加一个 MCP 服务器：
 
 ```yaml
 mcp_servers:
@@ -91,7 +91,7 @@ mcp_servers:
 
 ## 基本配置参考
 
-Chiper 从 `~/.Chiper/config.yaml` 的 `mcp_servers` 下读取 MCP 配置。
+Chiper 从 `~/.chiper/config.yaml` 的 `mcp_servers` 下读取 MCP 配置。
 
 ### 常用字段
 
@@ -407,7 +407,7 @@ Inspect the project root and explain the directory layout.
 
 ```bash
 # 验证 MCP 依赖已安装（标准安装已包含）
-cd ~/.Chiper/chiper-agent && uv pip install -e ".[mcp]"
+cd ~/.chiper/chiper-agent && uv pip install -e ".[mcp]"
 
 node --version
 npx --version
@@ -523,7 +523,7 @@ chiper mcp serve
 {
   "mcpServers": {
     "chiper": {
-      "command": "/home/user/.Chiper/chiper-agent/venv/bin/chiper",
+      "command": "/home/user/.chiper/chiper-agent/venv/bin/chiper",
       "args": ["mcp", "serve"]
     }
   }
@@ -572,7 +572,7 @@ chiper mcp serve --verbose    # 在 stderr 输出调试日志
 
 ### 工作原理
 
-MCP 服务器直接从 Chiper 的会话存储（`~/.Chiper/sessions/sessions.json` 和 SQLite 数据库）读取会话数据。后台线程轮询数据库以获取新消息，并维护一个内存事件队列。发送消息时，使用与 Chiper agent 本身相同的 `send_message` 基础设施。
+MCP 服务器直接从 Chiper 的会话存储（`~/.chiper/sessions/sessions.json` 和 SQLite 数据库）读取会话数据。后台线程轮询数据库以获取新消息，并维护一个内存事件队列。发送消息时，使用与 Chiper agent 本身相同的 `send_message` 基础设施。
 
 读取操作（列出会话、读取历史、轮询事件）**不需要** gateway 运行。发送操作**需要** gateway 运行，因为平台适配器需要活跃连接。
 

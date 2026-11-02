@@ -139,7 +139,7 @@ Kanban 工具通过分发器设置的 `CHIPER_KANBAN_TASK` 环境变量进行访
    ```bash
    codex login                  # 将 token 写入 ~/.codex/auth.json
    ```
-   Chiper 自己的 `chiper auth login codex` 写入 `~/.Chiper/auth.json`——那是独立的会话。**如果你还没有运行过 `codex login`，请单独运行它。**
+   Chiper 自己的 `chiper auth login codex` 写入 `~/.chiper/auth.json`——那是独立的会话。**如果你还没有运行过 `codex login`，请单独运行它。**
 
 3. **（可选）安装你想要的 Codex 插件。** 启用运行时时，Chiper 会自动迁移你已通过 Codex CLI 安装的所有精选插件：
    ```bash
@@ -159,7 +159,7 @@ Kanban 工具通过分发器设置的 `CHIPER_KANBAN_TASK` 环境变量进行访
 该命令会：
 - 验证 `codex` CLI 是否已安装（若未安装则阻止并提示安装方法）。
 - 将 `model.openai_runtime: codex_app_server` 持久化到你的 config.yaml。
-- 将用户 MCP server 从 `~/.Chiper/config.yaml` 迁移到 `~/.codex/config.toml`。
+- 将用户 MCP server 从 `~/.chiper/config.yaml` 迁移到 `~/.codex/config.toml`。
 - **发现并迁移已安装的原生 Codex 插件**（Linear、GitHub、Gmail、Calendar、Canva 等），通过查询 Codex 的 `plugin/list` RPC 实现。
 - **将 Chiper 自身的工具注册为 MCP server**，以便 Codex 子进程能够回调获取 Codex 未内置的工具。
 - **写入 `default_permissions = ":workspace"`**，使沙箱允许在工作区内写入，无需对每次操作进行提示。
@@ -172,7 +172,7 @@ Kanban 工具通过分发器设置的 `CHIPER_KANBAN_TASK` 环境变量进行访
 /codex-runtime
 ```
 
-你也可以在 `~/.Chiper/config.yaml` 中手动设置：
+你也可以在 `~/.chiper/config.yaml` 中手动设置：
 ```yaml
 model:
   openai_runtime: codex_app_server   # 默认值为 "auto"（= Chiper 运行时）
@@ -246,7 +246,7 @@ default_permissions = ":read-only"
 
 这并非 `codex_app_server` 特有——现有的 `codex_responses` 路径也是如此——但在这里更为明显，因为你是在明确选择订阅计费。
 
-要将特定辅助任务路由到更便宜/不同的模型，请在 `~/.Chiper/config.yaml` 中设置显式覆盖：
+要将特定辅助任务路由到更便宜/不同的模型，请在 `~/.chiper/config.yaml` 中设置显式覆盖：
 
 ```yaml
 auxiliary:
@@ -297,7 +297,7 @@ default_permissions = ":workspace"
 
 ```bash
 # 在 work 配置文件中，你可以这样包装 chiper：
-CODEX_HOME=~/.Chiper/profiles/work/codex chiper chat
+CODEX_HOME=~/.chiper/profiles/work/codex chiper chat
 ```
 
 你需要在设置了该 `CODEX_HOME` 的情况下重新运行一次 `codex login`，以便 OAuth token 落入配置文件范围的位置。之后，`chiper -p work` 将在隔离的 Codex 状态下运行。

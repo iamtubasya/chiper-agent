@@ -35,7 +35,7 @@ chiper gateway setup
 
 ### 手动配置
 
-在 `~/.Chiper/.env` 中设置所需环境变量：
+在 `~/.chiper/.env` 中设置所需环境变量：
 
 ```bash
 QQ_APP_ID=your-app-id
@@ -60,7 +60,7 @@ QQ_CLIENT_SECRET=your-app-secret
 
 ## 高级配置
 
-如需精细控制，可在 `~/.Chiper/config.yaml` 中添加平台设置：
+如需精细控制，可在 `~/.chiper/config.yaml` 中添加平台设置：
 
 ```yaml
 platforms:

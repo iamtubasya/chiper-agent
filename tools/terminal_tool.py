@@ -1068,7 +1068,7 @@ def _parse_env_var(name: str, default: str, converter: Any = int, type_label: st
     except (ValueError, json.JSONDecodeError):
         raise ValueError(
             f"Invalid value for {name}: {raw!r} (expected {type_label}). "
-            f"Check ~/.Chiper/.env or environment variables."
+            f"Check ~/.chiper/.env or environment variables."
         )
 
 

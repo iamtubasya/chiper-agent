@@ -179,7 +179,7 @@ workspace data.
 
 ## Profile Isolation
 
-All storage paths **must** use the `chiper_home` kwarg from `initialize()`, not hardcoded `~/.Chiper`:
+All storage paths **must** use the `chiper_home` kwarg from `initialize()`, not hardcoded `~/.chiper`:
 
 ```python
 # CORRECT — profile-scoped
@@ -187,7 +187,7 @@ from chiper_constants import get_chiper_home
 data_dir = get_chiper_home() / "my-provider"
 
 # WRONG — shared across all profiles
-data_dir = Path("~/.Chiper/my-provider").expanduser()
+data_dir = Path("~/.chiper/my-provider").expanduser()
 ```
 
 ## Testing

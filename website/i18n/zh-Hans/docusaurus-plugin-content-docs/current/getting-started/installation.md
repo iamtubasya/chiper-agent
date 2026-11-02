@@ -39,7 +39,7 @@ iex (irm https://chiper-agent.Chiper.com/install.ps1)
 
 安装程序还会将 `CHIPER_GIT_BASH_PATH` 设置为找到的 `bash.exe` 路径，以便 Chiper 在新 shell 中确定性地解析它。
 
-如果你偏好 WSL2，上方的 Linux 安装程序可在其中运行；原生安装和 WSL 安装可以共存而不冲突（原生数据位于 `%LOCALAPPDATA%\chiper`，WSL 数据位于 `~/.Chiper`）。
+如果你偏好 WSL2，上方的 Linux 安装程序可在其中运行；原生安装和 WSL 安装可以共存而不冲突（原生数据位于 `%LOCALAPPDATA%\chiper`，WSL 数据位于 `~/.chiper`）。
 
 **桌面安装程序（替代方案）：** 也提供一个轻量 GUI 安装程序——下载 Chiper Desktop，运行 `.exe`，首次启动时它会在后台调用 `install.ps1` 来配置 Python（通过 `uv`）、Node、PortableGit 及其余依赖。桌面应用和 PowerShell 安装的 CLI 共享相同的安装目录和数据目录，可以单独或同时使用。详见 [Windows（原生）指南](../user-guide/windows-native#desktop-installer-alternative)。
 
@@ -85,11 +85,11 @@ curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
 
 | 安装方式                                | 代码位置                       | `chiper` 二进制                          | 数据目录                              |
 | --------------------------------------- | ------------------------------ | ---------------------------------------- | ------------------------------------- |
-| pip install                             | Python site-packages           | `~/.local/bin/chiper`（console_scripts） | `~/.Chiper/`                          |
-| 用户级（git 安装程序）                  | `~/.Chiper/chiper-agent/`      | `~/.local/bin/chiper`（符号链接）        | `~/.Chiper/`                          |
-| Root 模式（`sudo curl … \| sudo bash`） | `/usr/local/lib/chiper-agent/` | `/usr/local/bin/chiper`                  | `/root/.Chiper/`（或 `$CHIPER_HOME`） |
+| pip install                             | Python site-packages           | `~/.local/bin/chiper`（console_scripts） | `~/.chiper/`                          |
+| 用户级（git 安装程序）                  | `~/.chiper/chiper-agent/`      | `~/.local/bin/chiper`（符号链接）        | `~/.chiper/`                          |
+| Root 模式（`sudo curl … \| sudo bash`） | `/usr/local/lib/chiper-agent/` | `/usr/local/bin/chiper`                  | `/root/.chiper/`（或 `$CHIPER_HOME`） |
 
-Root 模式的 **FHS 布局**（`/usr/local/lib/…`、`/usr/local/bin/chiper`）与其他系统级开发工具在 Linux 上的安装位置一致。适用于共享机器部署场景，一次系统安装可服务所有用户。每个用户的个人配置（认证、技能、会话）仍位于各自的 `~/.Chiper/` 或显式指定的 `CHIPER_HOME` 下。
+Root 模式的 **FHS 布局**（`/usr/local/lib/…`、`/usr/local/bin/chiper`）与其他系统级开发工具在 Linux 上的安装位置一致。适用于共享机器部署场景，一次系统安装可服务所有用户。每个用户的个人配置（认证、技能、会话）仍位于各自的 `~/.chiper/` 或显式指定的 `CHIPER_HOME` 下。
 
 ### 安装后
 
@@ -183,10 +183,10 @@ chiper setup --portal
    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 
    # 方案 B — 系统级符号链接（以管理员身份运行）
-   sudo ln -s /home/chiper/.Chiper/chiper-agent/venv/bin/chiper /usr/local/bin/chiper
+   sudo ln -s /home/chiper/.chiper/chiper-agent/venv/bin/chiper /usr/local/bin/chiper
    ```
 
-4. **验证：** `chiper doctor` 现在应能正常运行。如果出现 `ModuleNotFoundError: No module named 'dotenv'`，说明你在用系统 Python 调用仓库源码中的 `chiper` 文件（`~/.Chiper/chiper-agent/chiper`），而非 venv 启动器（`~/.Chiper/chiper-agent/venv/bin/chiper`）——请修正步骤 3。
+4. **验证：** `chiper doctor` 现在应能正常运行。如果出现 `ModuleNotFoundError: No module named 'dotenv'`，说明你在用系统 Python 调用仓库源码中的 `chiper` 文件（`~/.chiper/chiper-agent/chiper`），而非 venv 启动器（`~/.chiper/chiper-agent/venv/bin/chiper`）——请修正步骤 3。
 
 同样的方式适用于 Arch（安装程序使用 pacman，具有相同的 sudo 检测逻辑）、Fedora/RHEL 和 openSUSE——这些发行版完全不支持 `--with-deps`，因此管理员始终需要单独安装系统库。安装程序会打印相应的 `dnf`/`zypper` 命令。
 
@@ -204,4 +204,4 @@ chiper setup --portal
 
 ## 安装方式自动检测
 
-Chiper 会自动检测安装方式（`pip`、git 安装程序、Homebrew 或 NixOS），`chiper update` 会打印对应路径的更新命令。无需设置任何环境变量——检测基于安装目录结构（Python site-packages、`~/.Chiper/chiper-agent/`、Homebrew 前缀或 Nix store 路径）。`chiper doctor` 也会在其环境摘要中显示检测到的安装方式。
+Chiper 会自动检测安装方式（`pip`、git 安装程序、Homebrew 或 NixOS），`chiper update` 会打印对应路径的更新命令。无需设置任何环境变量——检测基于安装目录结构（Python site-packages、`~/.chiper/chiper-agent/`、Homebrew 前缀或 Nix store 路径）。`chiper doctor` 也会在其环境摘要中显示检测到的安装方式。

@@ -121,7 +121,7 @@ export const opsCommands: SlashCommand[] = [
   },
 
   {
-    help: 're-read ~/.Chiper/.env into the running gateway (CLI parity)',
+    help: 're-read ~/.chiper/.env into the running gateway (CLI parity)',
     name: 'reload',
     run: (_arg, ctx) => {
       ctx.gateway

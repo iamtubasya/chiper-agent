@@ -24,7 +24,7 @@ Chiper 有多种不同的可插拔接口——有些使用 Python `register_*` A
 | **TTS 后端**（任意 CLI——Piper、VoxCPM、Kokoro、声音克隆等） | [TTS 自定义命令提供商](/user-guide/features/tts#custom-command-providers)——配置驱动，无需 Python |
 | **STT 后端**（自定义 whisper / ASR CLI） | [语音消息转录](/user-guide/features/tts#voice-message-transcription-stt)——将 `CHIPER_LOCAL_STT_COMMAND` 设置为 shell 模板 |
 | **通过 MCP 接入外部工具**（文件系统、GitHub、Linear、任意 MCP 服务器） | [MCP](/user-guide/features/mcp)——在 `config.yaml` 中声明 `mcp_servers.<name>` |
-| **网关事件钩子**（在启动、会话事件、命令时触发） | [事件钩子](/user-guide/features/hooks#gateway-event-hooks)——将 `HOOK.yaml` + `handler.py` 放入 `~/.Chiper/hooks/<name>/` |
+| **网关事件钩子**（在启动、会话事件、命令时触发） | [事件钩子](/user-guide/features/hooks#gateway-event-hooks)——将 `HOOK.yaml` + `handler.py` 放入 `~/.chiper/hooks/<name>/` |
 | **Shell 钩子**（在事件发生时运行 shell 命令） | [Shell 钩子](/user-guide/features/hooks#shell-hooks)——在 `config.yaml` 的 `hooks:` 下声明 |
 | **额外技能来源**（自定义 GitHub 仓库、私有技能索引） | [技能](/user-guide/features/skills)——`chiper skills tap add <repo>` · [发布 tap](/user-guide/features/skills#publishing-a-custom-skill-tap) |
 | 一流的**核心**推理提供商（非插件） | [添加提供商](/developer-guide/adding-providers) |
@@ -43,8 +43,8 @@ Chiper 有多种不同的可插拔接口——有些使用 Python `register_*` A
 ## 第一步：创建插件目录
 
 ```bash
-mkdir -p ~/.Chiper/plugins/calculator
-cd ~/.Chiper/plugins/calculator
+mkdir -p ~/.chiper/plugins/calculator
+cd ~/.chiper/plugins/calculator
 ```
 
 ## 第二步：编写清单文件
@@ -329,7 +329,7 @@ CHIPER_PLUGINS_DEBUG=1 chiper plugins list
 - 解析失败时：异常的完整堆栈跟踪（YAML 扫描器错误等）
 - `register()` 失败时：指向 `__init__.py` 中抛出异常的行的完整堆栈跟踪
 
-同样的日志始终写入 `~/.Chiper/logs/agent.log`，失败时为 WARNING 级别，设置环境变量时为 DEBUG 级别（全部内容）。如果无法使用环境变量运行（例如从网关内部），可以改为追踪日志文件：
+同样的日志始终写入 `~/.chiper/logs/agent.log`，失败时为 WARNING 级别，设置环境变量时为 DEBUG 级别（全部内容）。如果无法使用环境变量运行（例如从网关内部），可以改为追踪日志文件：
 
 ```bash
 chiper logs --level WARNING | grep -i plugin
@@ -338,14 +338,14 @@ chiper logs --level WARNING | grep -i plugin
 插件未出现的常见原因：
 
 - **未在配置中启用**——插件需要手动启用。运行 `chiper plugins enable <name>`（名称来自 `plugins list` 输出，嵌套布局下可能是 `<category>/<plugin>`）。
-- **目录结构错误**——必须是 `~/.Chiper/plugins/<plugin-name>/plugin.yaml`（扁平）或 `~/.Chiper/plugins/<category>/<plugin-name>/plugin.yaml`（一级分类嵌套，最多）。更深层的目录会被忽略。
+- **目录结构错误**——必须是 `~/.chiper/plugins/<plugin-name>/plugin.yaml`（扁平）或 `~/.chiper/plugins/<category>/<plugin-name>/plugin.yaml`（一级分类嵌套，最多）。更深层的目录会被忽略。
 - **缺少 `__init__.py`**——插件目录需要同时包含 `plugin.yaml` 和带有 `register(ctx)` 函数的 `__init__.py`。
 - **`kind` 错误**——网关适配器需要在清单中设置 `kind: platform`。记忆提供商会被自动检测为 `kind: exclusive`，并通过 `memory.provider` 配置路由，而非 `plugins.enabled`。
 
 ## 插件的最终结构
 
 ```
-~/.Chiper/plugins/calculator/
+~/.chiper/plugins/calculator/
 ├── plugin.yaml      # "我是 calculator，我提供工具和钩子"
 ├── __init__.py      # 连接：schema → 处理器，注册钩子
 ├── schemas.py       # LLM 读取的内容（描述 + 参数规格）
@@ -380,7 +380,7 @@ with open(_DATA_FILE) as f:
 插件可以随附技能文件，代理通过 `skill_view("plugin:skill")` 加载。在 `__init__.py` 中注册：
 
 ```
-~/.Chiper/plugins/my-plugin/
+~/.chiper/plugins/my-plugin/
 ├── __init__.py
 ├── plugin.yaml
 └── skills/
@@ -409,13 +409,13 @@ skill_view("my-workflow")              # → 内置版本（不受影响）
 ```
 
 **关键特性：**
-- 插件技能是**只读**的——它们不会进入 `~/.Chiper/skills/`，也无法通过 `skill_manage` 编辑。
+- 插件技能是**只读**的——它们不会进入 `~/.chiper/skills/`，也无法通过 `skill_manage` 编辑。
 - 插件技能**不会**列在系统提示词的 `<available_skills>` 索引中——需要显式加载。
 - 裸技能名称不受影响——命名空间防止与内置技能冲突。
 - 代理加载插件技能时，会在前面添加一个捆绑上下文横幅，列出同一插件的兄弟技能。
 
 :::tip 旧版模式
-旧的 `shutil.copy2` 模式（将技能复制到 `~/.Chiper/skills/`）仍然有效，但存在与内置技能名称冲突的风险。新插件请优先使用 `ctx.register_skill()`。
+旧的 `shutil.copy2` 模式（将技能复制到 `~/.chiper/skills/`）仍然有效，但存在与内置技能名称冲突的风险。新插件请优先使用 `ctx.register_skill()`。
 :::
 
 ### 根据环境变量决定是否启用
@@ -509,7 +509,7 @@ def register(ctx):
     )
 ```
 
-不加 `override=True` 时，注册表会拒绝任何会遮蔽来自不同 toolset 的已有工具的注册——这防止了意外覆盖。覆盖操作会以 INFO 级别记录日志，可在 `~/.Chiper/logs/agent.log` 中审计。插件在内置工具之后加载，因此注册顺序是正确的：你的处理器会替换内置处理器。
+不加 `override=True` 时，注册表会拒绝任何会遮蔽来自不同 toolset 的已有工具的注册——这防止了意外覆盖。覆盖操作会以 INFO 级别记录日志，可在 `~/.chiper/logs/agent.log` 中审计。插件在内置工具之后加载，因此注册顺序是正确的：你的处理器会替换内置处理器。
 
 ### 注册多个钩子
 
@@ -772,7 +772,7 @@ def register(ctx):
 
 ## 专用插件类型
 
-Chiper 在通用接口之外还有五种专用插件类型。每种都以目录形式存放在 `plugins/<category>/<name>/`（内置）或 `~/.Chiper/plugins/<category>/<name>/`（用户）下。各类别的约定不同——选择你需要的类型，然后阅读其完整指南。
+Chiper 在通用接口之外还有五种专用插件类型。每种都以目录形式存放在 `plugins/<category>/<name>/`（内置）或 `~/.chiper/plugins/<category>/<name>/`（用户）下。各类别的约定不同——选择你需要的类型，然后阅读其完整指南。
 
 ### 模型提供商插件——添加 LLM 后端
 
@@ -961,7 +961,7 @@ Chiper 也接受完全不是 Python 插件的扩展。这些在[可插拔接口�
 
 ### MCP 服务器——注册外部工具
 
-Model Context Protocol（MCP）服务器无需任何 Python 插件即可将自己的工具注册到 Chiper。在 `~/.Chiper/config.yaml` 中声明：
+Model Context Protocol（MCP）服务器无需任何 Python 插件即可将自己的工具注册到 Chiper。在 `~/.chiper/config.yaml` 中声明：
 
 ```yaml
 mcp_servers:
@@ -980,10 +980,10 @@ Chiper 在启动时连接到每个服务器，列出其工具，并与内置工�
 
 ### 网关事件钩子——在生命周期事件时触发
 
-将清单和处理器放入 `~/.Chiper/hooks/<name>/`：
+将清单和处理器放入 `~/.chiper/hooks/<name>/`：
 
 ```yaml
-# ~/.Chiper/hooks/long-task-alert/HOOK.yaml
+# ~/.chiper/hooks/long-task-alert/HOOK.yaml
 name: long-task-alert
 description: Send a push notification when a long task finishes
 events:
@@ -991,7 +991,7 @@ events:
 ```
 
 ```python
-# ~/.Chiper/hooks/long-task-alert/handler.py
+# ~/.chiper/hooks/long-task-alert/handler.py
 async def handle(event_type: str, context: dict) -> None:
     if context.get("duration_seconds", 0) > 120:
         # send notification …

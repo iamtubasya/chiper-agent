@@ -138,7 +138,7 @@ chiper
 chiper model
 ```
 
-或直接在 `~/.Chiper/.env` 中设置密钥。
+或直接在 `~/.chiper/.env` 中设置密钥。
 
 ### 稍后重新运行完整的交互式设置向导
 

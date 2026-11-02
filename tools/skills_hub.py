@@ -2927,7 +2927,7 @@ class OptionalSkillSource(SkillSource):
 
     These skills are official (maintained by Chiper) but not activated
     by default — they don't appear in the system prompt and aren't copied to
-    ~/.Chiper/skills/ during setup.  They are discoverable via the Skills Hub
+    ~/.chiper/skills/ during setup.  They are discoverable via the Skills Hub
     (search / install / inspect) and labelled "official" with "builtin" trust.
     """
 

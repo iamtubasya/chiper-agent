@@ -29,7 +29,7 @@ def _check_config():
         missing.append("CANVAS_BASE_URL")
     if missing:
         chiper_env = os.path.join(
-            os.environ.get("CHIPER_HOME", os.path.expanduser("~/.Chiper")), ".env"
+            os.environ.get("CHIPER_HOME", os.path.expanduser("~/.chiper")), ".env"
         )
         print(
             f"Missing required environment variables: {', '.join(missing)}\n"

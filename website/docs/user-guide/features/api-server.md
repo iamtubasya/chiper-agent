@@ -18,7 +18,7 @@ Chiper itself needs a configured provider and tool backends for the API server t
 
 ### 1. Enable the API server
 
-Add to `~/.Chiper/.env`:
+Add to `~/.chiper/.env`:
 
 ```bash
 API_SERVER_ENABLED=true
@@ -466,13 +466,13 @@ chiper profile create bob
 
 # Configure each profile's API server on a different port. API_SERVER_* are env
 # vars (not config.yaml keys), so write them to each profile's .env:
-cat >> ~/.Chiper/profiles/alice/.env <<EOF
+cat >> ~/.chiper/profiles/alice/.env <<EOF
 API_SERVER_ENABLED=true
 API_SERVER_PORT=8643
 API_SERVER_KEY=alice-secret
 EOF
 
-cat >> ~/.Chiper/profiles/bob/.env <<EOF
+cat >> ~/.chiper/profiles/bob/.env <<EOF
 API_SERVER_ENABLED=true
 API_SERVER_PORT=8644
 API_SERVER_KEY=bob-secret

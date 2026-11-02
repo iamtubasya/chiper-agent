@@ -65,7 +65,7 @@ def _get_sessions_dir() -> Path:
         from chiper_constants import get_chiper_home
         return get_chiper_home() / "sessions"
     except ImportError:
-        return Path(os.environ.get("CHIPER_HOME", Path.home() / ".Chiper")) / "sessions"
+        return Path(os.environ.get("CHIPER_HOME", Path.home() / ".chiper")) / "sessions"
 
 
 def _get_session_db():
@@ -102,7 +102,7 @@ def _load_channel_directory() -> dict:
         directory_file = get_chiper_home() / "channel_directory.json"
     except ImportError:
         directory_file = Path(
-            os.environ.get("CHIPER_HOME", Path.home() / ".Chiper")
+            os.environ.get("CHIPER_HOME", Path.home() / ".chiper")
         ) / "channel_directory.json"
 
     if not directory_file.exists():
@@ -365,7 +365,7 @@ class EventBridge:
             from chiper_constants import get_chiper_home
             db_file = get_chiper_home() / "state.db"
         except ImportError:
-            db_file = Path(os.environ.get("CHIPER_HOME", Path.home() / ".Chiper")) / "state.db"
+            db_file = Path(os.environ.get("CHIPER_HOME", Path.home() / ".chiper")) / "state.db"
 
         try:
             db_mtime = db_file.stat().st_mtime if db_file.exists() else 0.0

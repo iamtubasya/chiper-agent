@@ -21,7 +21,7 @@ This page shows how to combine worktrees with Chiper so each session has a clean
 Chiper treats the **current working directory** as the project root:
 
 - CLI: the directory where you run `chiper` or `chiper chat`
-- Messaging gateways: the directory set by `terminal.cwd` in `~/.Chiper/config.yaml`
+- Messaging gateways: the directory set by `terminal.cwd` in `~/.chiper/config.yaml`
 
 If you run multiple agents in the **same checkout**, their changes can interfere with each other:
 
@@ -122,7 +122,7 @@ Notes:
 
 - `git worktree remove` will refuse to remove a worktree with uncommitted changes unless you force it.
 - Removing a worktree does **not** automatically delete the branch; you can delete or keep the branch using normal `git branch` commands.
-- Chiper checkpoint data under `~/.Chiper/checkpoints/` is not automatically pruned when you remove a worktree, but it is usually very small.
+- Chiper checkpoint data under `~/.chiper/checkpoints/` is not automatically pruned when you remove a worktree, but it is usually very small.
 
 ## Best Practices
 

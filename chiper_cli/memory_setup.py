@@ -259,7 +259,7 @@ def cmd_setup(args) -> None:
 
     if not providers:
         print("\n  No memory provider plugins detected.")
-        print("  Install a plugin to ~/.Chiper/plugins/ and try again.\n")
+        print("  Install a plugin to ~/.chiper/plugins/ and try again.\n")
         return
 
     # Build picker items
@@ -488,7 +488,7 @@ def cmd_status(args) -> None:
                         print(line)
         else:
             print(f"\n  Plugin:    NOT installed ✗")
-            print(f"  Install the '{provider_name}' memory plugin to ~/.Chiper/plugins/")
+            print(f"  Install the '{provider_name}' memory plugin to ~/.chiper/plugins/")
 
     if providers:
         print(f"\n  Installed plugins:")

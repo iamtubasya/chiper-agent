@@ -86,7 +86,7 @@ ssh -N -L <port>:127.0.0.1:<port> user@remote-host
 
 Then open the authorize URL in your browser as normal; the redirect tunnels through and the listener picks it up. Use this when you need the flow to complete unattended (e.g. scripted re-auth where you can't paste interactively).
 
-**Pitfall — the 30s config-reload race.** If you edit `~/.Chiper/config.yaml` to add an OAuth MCP server from inside a running Chiper session, the CLI auto-reloads MCP connections with a 30s timeout. That's not enough time to complete an interactive OAuth flow, and the reload will give up. Use `chiper mcp login <server>` from a fresh terminal instead — it has no such cap and waits the full 5 min for you to paste back.
+**Pitfall — the 30s config-reload race.** If you edit `~/.chiper/config.yaml` to add an OAuth MCP server from inside a running Chiper session, the CLI auto-reloads MCP connections with a 30s timeout. That's not enough time to complete an interactive OAuth flow, and the reload will give up. Use `chiper mcp login <server>` from a fresh terminal instead — it has no such cap and waits the full 5 min for you to paste back.
 
 ## Why the listener can't just bind 0.0.0.0
 
@@ -175,9 +175,9 @@ xAI's authorize page shows this when its redirect to `127.0.0.1:<port>/callback`
 
 Same root cause as above — the redirect never made it back. Check the tunnel is still alive (`ssh -N` doesn't show output, so look at the terminal you started it from), restart it if needed, and re-run `chiper auth add xai-oauth --no-browser`.
 
-### Tokens land in the wrong `~/.Chiper`
+### Tokens land in the wrong `~/.chiper`
 
-The tokens are written under the Linux user that ran `chiper auth add ...`. If your gateway / systemd service runs as a different user (e.g. `root` or a dedicated `chiper` user), authenticate as **that** user so the tokens land in their `~/.Chiper/auth.json`. `sudo -u chiper -i` or equivalent.
+The tokens are written under the Linux user that ran `chiper auth add ...`. If your gateway / systemd service runs as a different user (e.g. `root` or a dedicated `chiper` user), authenticate as **that** user so the tokens land in their `~/.chiper/auth.json`. `sudo -u chiper -i` or equivalent.
 
 ## See Also
 

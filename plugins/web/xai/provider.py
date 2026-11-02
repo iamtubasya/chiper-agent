@@ -26,7 +26,7 @@ Optional knobs (under ``web.xai`` in ``config.yaml``)::
 
 Auth: reuses :func:`tools.xai_http.resolve_xai_http_credentials`, which
 prefers Chiper-managed xAI Grok OAuth (via ``chiper auth``) and falls back
-to ``XAI_API_KEY`` (resolved through ``~/.Chiper/.env``, then
+to ``XAI_API_KEY`` (resolved through ``~/.chiper/.env``, then
 ``os.environ``).
 """
 

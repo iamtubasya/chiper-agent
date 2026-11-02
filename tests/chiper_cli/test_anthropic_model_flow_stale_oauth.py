@@ -1,7 +1,7 @@
 """Tests for Bug #12905 fix — stale OAuth token detection in chiper model flow.
 
 Bug 3: `chiper model` with `provider=anthropic` skips OAuth re-authentication
-when a stale ANTHROPIC_TOKEN exists in ~/.Chiper/.env but no valid
+when a stale ANTHROPIC_TOKEN exists in ~/.chiper/.env but no valid
 Claude Code credentials are available. The fast-path silently proceeds to
 model selection with a broken token instead of offering re-auth.
 """

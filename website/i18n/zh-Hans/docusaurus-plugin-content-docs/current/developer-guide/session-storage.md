@@ -1,6 +1,6 @@
 # 会话存储
 
-Chiper Agent 使用 SQLite 数据库（`~/.Chiper/state.db`）跨 CLI 和 gateway 会话持久化会话元数据、完整消息历史及模型配置。这替代了早期的逐会话 JSONL 文件方案。
+Chiper Agent 使用 SQLite 数据库（`~/.chiper/state.db`）跨 CLI 和 gateway 会话持久化会话元数据、完整消息历史及模型配置。这替代了早期的逐会话 JSONL 文件方案。
 
 源文件：`chiper_state.py`
 
@@ -8,7 +8,7 @@ Chiper Agent 使用 SQLite 数据库（`~/.Chiper/state.db`）跨 CLI 和 gatewa
 ## 架构概览
 
 ```
-~/.Chiper/state.db (SQLite, WAL mode)
+~/.chiper/state.db (SQLite, WAL mode)
 ├── sessions              — 会话元数据、token 计数、计费信息
 ├── messages              — 每个会话的完整消息历史
 ├── messages_fts          — FTS5 虚拟表（content + tool_name + tool_calls）
@@ -177,7 +177,7 @@ _CHECKPOINT_EVERY_N_WRITES = 50
 ```python
 from chiper_state import SessionDB
 
-db = SessionDB()                           # 默认：~/.Chiper/state.db
+db = SessionDB()                           # 默认：~/.chiper/state.db
 db = SessionDB(db_path=Path("/tmp/test.db"))  # 自定义路径
 ```
 
@@ -379,8 +379,8 @@ db.delete_session("sess_abc123")
 
 ## 数据库位置
 
-默认路径：`~/.Chiper/state.db`
+默认路径：`~/.chiper/state.db`
 
-该路径由 `chiper_constants.get_chiper_home()` 推导，默认解析为 `~/.Chiper/`，或 `CHIPER_HOME` 环境变量的值。
+该路径由 `chiper_constants.get_chiper_home()` 推导，默认解析为 `~/.chiper/`，或 `CHIPER_HOME` 环境变量的值。
 
 数据库文件、WAL 文件（`state.db-wal`）和共享内存文件（`state.db-shm`）均创建于同一目录。

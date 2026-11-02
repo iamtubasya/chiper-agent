@@ -21,7 +21,7 @@ def memory_env(tmp_path, monkeypatch):
 
     # Create sample memory files
     (memories / "MEMORY.md").write_text(
-        "§\nChiper repo is at ~/.Chiper/chiper-agent\n§\nUser prefers dark themes",
+        "§\nChiper repo is at ~/.chiper/chiper-agent\n§\nUser prefers dark themes",
         encoding="utf-8",
     )
     (memories / "USER.md").write_text(

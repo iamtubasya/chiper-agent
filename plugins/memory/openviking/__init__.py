@@ -1018,7 +1018,7 @@ def _openviking_server_log_path() -> Path:
         from chiper_constants import get_chiper_home
         home = get_chiper_home()
     except Exception:
-        home = Path(os.environ.get("CHIPER_HOME", "")).expanduser() if os.environ.get("CHIPER_HOME") else Path.home() / ".Chiper"
+        home = Path(os.environ.get("CHIPER_HOME", "")).expanduser() if os.environ.get("CHIPER_HOME") else Path.home() / ".chiper"
     return home / _OPENVIKING_SERVER_LOG_RELATIVE_PATH
 
 

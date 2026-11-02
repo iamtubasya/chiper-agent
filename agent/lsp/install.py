@@ -119,7 +119,7 @@ def chiper_lsp_bin_dir() -> Path:
     """Return the Chiper-owned bin staging dir for LSP servers."""
     home = os.environ.get("CHIPER_HOME")
     if home is None:
-        home = os.path.join(os.path.expanduser("~"), ".Chiper")
+        home = os.path.join(os.path.expanduser("~"), ".chiper")
     p = Path(home) / "lsp" / "bin"
     p.mkdir(parents=True, exist_ok=True)
     return p

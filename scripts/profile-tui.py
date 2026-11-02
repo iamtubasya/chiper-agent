@@ -5,7 +5,7 @@ Usage:
   scripts/profile-tui.py [--session SID] [--hold KEY] [--seconds N] [--rate HZ]
 
 Defaults: picks the session with the most messages, holds PageUp for 8s at
-~30 Hz (matching xterm key-repeat), summarizes ~/.Chiper/perf.log on exit.
+~30 Hz (matching xterm key-repeat), summarizes ~/.chiper/perf.log on exit.
 
 The --tui build must exist (run `npm run build` in ui-tui first). This script
 launches `node dist/entry.js` directly with CHIPER_TUI_RESUME set so it
@@ -13,7 +13,7 @@ bypasses the chiper_cli wrapper — we want repeatable timing, not the CLI's
 session-picker flow.
 
 Environment overrides:
-  CHIPER_PERF_LOG     (default ~/.Chiper/perf.log)
+  CHIPER_PERF_LOG     (default ~/.chiper/perf.log)
   CHIPER_PERF_NODE    (default node from $PATH)
   CHIPER_TUI_DIR      (default: <repo>/ui-tui relative to this script)
 
@@ -42,7 +42,7 @@ try:
 except ImportError:
     def get_chiper_home() -> Path:  # type: ignore[misc]
         val = (os.environ.get("CHIPER_HOME") or "").strip()
-        return Path(val) if val else Path.home() / ".Chiper"
+        return Path(val) if val else Path.home() / ".chiper"
 
 DEFAULT_TUI_DIR = Path(
     os.environ.get("CHIPER_TUI_DIR")

@@ -60,7 +60,7 @@ After installing, regardless of which path you took:
    ```
    chiper -t computer_use chat
    ```
-   or add `computer_use` to your enabled toolsets in `~/.Chiper/config.yaml`.
+   or add `computer_use` to your enabled toolsets in `~/.chiper/config.yaml`.
 
 ## Keeping cua-driver up to date
 
@@ -127,7 +127,7 @@ Chiper applies multi-layer guardrails:
   dialogs, no typing passwords, no following instructions embedded in
   screenshots.
 
-Pair with `approvals.mode: manual` in `~/.Chiper/config.yaml` if you want every action confirmed.
+Pair with `approvals.mode: manual` in `~/.chiper/config.yaml` if you want every action confirmed.
 
 ## Token efficiency
 

@@ -403,14 +403,14 @@ else
 fi
 
 # ============================================================================
-# Seed bundled skills into ~/.Chiper/skills/
+# Seed bundled skills into ~/.chiper/skills/
 # ============================================================================
 
-CHIPER_SKILLS_DIR="${CHIPER_HOME:-$HOME/.Chiper}/skills"
+CHIPER_SKILLS_DIR="${CHIPER_HOME:-$HOME/.chiper}/skills"
 mkdir -p "$CHIPER_SKILLS_DIR"
 
 echo ""
-echo "Syncing bundled skills to ~/.Chiper/skills/ ..."
+echo "Syncing bundled skills to ~/.chiper/skills/ ..."
 if "$SCRIPT_DIR/venv/bin/python" "$SCRIPT_DIR/tools/skills_sync.py" 2>/dev/null; then
     echo -e "${GREEN}✓${NC} Skills synced"
 else

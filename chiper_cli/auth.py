@@ -3,7 +3,7 @@ Multi-provider authentication system for Chiper Agent.
 
 Supports OAuth device code flows (Nous Portal, future: OpenAI Codex) and
 traditional API key providers (OpenRouter, custom endpoints). Auth state
-is persisted in ~/.Chiper/auth.json with cross-process file locking.
+is persisted in ~/.chiper/auth.json with cross-process file locking.
 
 Architecture:
 - ProviderConfig registry defines known OAuth providers
@@ -584,7 +584,7 @@ def _resolve_api_key_provider_secret(
 
     from chiper_cli.config import get_env_value
     for env_var in pconfig.api_key_env_vars:
-        # Check both os.environ and ~/.Chiper/.env file
+        # Check both os.environ and ~/.chiper/.env file
         val = (get_env_value(env_var) or "").strip()
         if has_usable_secret(val):
             return val, env_var
@@ -854,7 +854,7 @@ def _oauth_trace(event: str, *, sequence_id: Optional[str] = None, **fields: Any
 
 
 # =============================================================================
-# Auth Store — persistence layer for ~/.Chiper/auth.json
+# Auth Store — persistence layer for ~/.chiper/auth.json
 # =============================================================================
 
 def _auth_file_path() -> Path:
@@ -865,7 +865,7 @@ def _auth_file_path() -> Path:
     # hermetic conftest, or sandbox escapes via threads/subprocesses. In
     # production (no PYTEST_CURRENT_TEST) this is a single dict lookup.
     if os.environ.get("PYTEST_CURRENT_TEST"):
-        real_home_auth = (Path.home() / ".Chiper" / "auth.json").resolve(strict=False)
+        real_home_auth = (Path.home() / ".chiper" / "auth.json").resolve(strict=False)
         try:
             resolved = path.resolve(strict=False)
         except Exception:
@@ -917,7 +917,7 @@ def _load_global_auth_store() -> Dict[str, Any]:
     or the global auth.json is absent). Never raises on missing file.
 
     Seat belt: under pytest, refuses to read the real user's
-    ``~/.Chiper/auth.json`` even when CHIPER_HOME is set to a profile
+    ``~/.chiper/auth.json`` even when CHIPER_HOME is set to a profile
     path. The hermetic conftest does not redirect ``HOME``, so
     ``get_default_chiper_root()`` for a profile-shaped CHIPER_HOME can
     still resolve to the real user's home on a dev machine. That would
@@ -932,7 +932,7 @@ def _load_global_auth_store() -> Dict[str, Any]:
     if os.environ.get("PYTEST_CURRENT_TEST"):
         real_home_env = os.environ.get("HOME", "")
         if real_home_env:
-            real_root = Path(real_home_env) / ".Chiper" / "auth.json"
+            real_root = Path(real_home_env) / ".chiper" / "auth.json"
             try:
                 if global_path.resolve(strict=False) == real_root.resolve(strict=False):
                     return {}
@@ -1632,7 +1632,7 @@ def resolve_provider(
     raise AuthError(
         "No inference provider configured. Run 'chiper model' to choose a "
         "provider and model, or set an API key (OPENROUTER_API_KEY, "
-        "OPENAI_API_KEY, etc.) in ~/.Chiper/.env.",
+        "OPENAI_API_KEY, etc.) in ~/.chiper/.env.",
         code="no_provider_configured",
     )
 
@@ -2156,7 +2156,7 @@ def get_qwen_auth_status() -> Dict[str, Any]:
 # =============================================================================
 # Google Gemini OAuth (google-gemini-cli) — PKCE flow + Cloud Code Assist.
 #
-# Tokens live in ~/.Chiper/auth/google_oauth.json (managed by agent.google_oauth).
+# Tokens live in ~/.chiper/auth/google_oauth.json (managed by agent.google_oauth).
 # The `base_url` here is the marker "cloudcode-pa://google" that run_agent.py
 # uses to construct a GeminiCloudCodeClient instead of the default OpenAI SDK.
 # Actual HTTP traffic goes to https://cloudcode-pa.googleapis.com/v1internal:*.
@@ -2245,7 +2245,7 @@ def get_gemini_oauth_auth_status() -> Dict[str, Any]:
         "email": creds.email,
         "project_id": creds.project_id,
     }
-# Spotify auth — PKCE tokens stored in ~/.Chiper/auth.json
+# Spotify auth — PKCE tokens stored in ~/.chiper/auth.json
 # =============================================================================
 
 
@@ -2561,7 +2561,7 @@ def _make_xai_callback_handler(expected_path: str) -> tuple[type[BaseHTTPRequest
             # actionable evidence without a code change.  Logged values are
             # fingerprints / booleans only; no actual code/state strings leak
             # into the log file.  Run with ``CHIPER_LOG_LEVEL=INFO`` (or check
-            # ``~/.Chiper/logs/agent.log`` which captures INFO+ unconditionally).
+            # ``~/.chiper/logs/agent.log`` which captures INFO+ unconditionally).
             try:
                 logger.info(
                     "xAI loopback callback received: path=%s has_code=%s has_state=%s has_error=%s "
@@ -2946,7 +2946,7 @@ def get_spotify_auth_status() -> Dict[str, Any]:
 
 def _spotify_interactive_setup(redirect_uri_hint: str) -> str:
     """Walk the user through creating a Spotify developer app, persist the
-    resulting client_id to ~/.Chiper/.env, and return it.
+    resulting client_id to ~/.chiper/.env, and return it.
 
     Raises SystemExit if the user aborts or submits an empty value.
     """
@@ -3000,7 +3000,7 @@ def _spotify_interactive_setup(redirect_uri_hint: str) -> str:
         save_env_value("CHIPER_SPOTIFY_REDIRECT_URI", redirect_uri_hint)
 
     print()
-    print("Saved CHIPER_SPOTIFY_CLIENT_ID to ~/.Chiper/.env")
+    print("Saved CHIPER_SPOTIFY_CLIENT_ID to ~/.chiper/.env")
     print()
     return raw
 
@@ -3349,7 +3349,7 @@ def _print_loopback_ssh_hint(redirect_uri: str, *, docs_url: str | None = None) 
 
 
 # =============================================================================
-# OpenAI Codex auth — tokens stored in ~/.Chiper/auth.json (not ~/.codex/)
+# OpenAI Codex auth — tokens stored in ~/.chiper/auth.json (not ~/.codex/)
 #
 # Chiper maintains its own Codex OAuth session separate from the Codex CLI
 # and VS Code extension. This prevents refresh token rotation conflicts
@@ -3357,7 +3357,7 @@ def _print_loopback_ssh_hint(redirect_uri: str, *, docs_url: str | None = None) 
 # =============================================================================
 
 def _read_codex_tokens(*, _lock: bool = True) -> Dict[str, Any]:
-    """Read Codex OAuth tokens from Chiper auth store (~/.Chiper/auth.json).
+    """Read Codex OAuth tokens from Chiper auth store (~/.chiper/auth.json).
     
     Returns dict with 'tokens' (access_token, refresh_token) and 'last_refresh'.
     Raises AuthError if no Codex tokens are stored.
@@ -3507,7 +3507,7 @@ def _sync_codex_pool_entries(
 
 
 def _save_codex_tokens(tokens: Dict[str, str], last_refresh: str = None, label: str = None) -> None:
-    """Save Codex OAuth tokens to Chiper auth store (~/.Chiper/auth.json)."""
+    """Save Codex OAuth tokens to Chiper auth store (~/.chiper/auth.json)."""
     if last_refresh is None:
         last_refresh = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     with _auth_store_lock():
@@ -3986,7 +3986,7 @@ def _pool_codex_access_token() -> str:
 
 
 # =============================================================================
-# xAI Grok OAuth — tokens stored in ~/.Chiper/auth.json
+# xAI Grok OAuth — tokens stored in ~/.chiper/auth.json
 # =============================================================================
 
 def _xai_oauth_state_from_store(auth_store: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -4117,13 +4117,13 @@ def _write_through_xai_oauth_to_global_root(state: Dict[str, Any]) -> None:
         # Classic mode (profile == root); the profile save already hit root.
         return
     # Seat belt: under pytest, refuse to write the real user's
-    # ~/.Chiper/auth.json even when CHIPER_HOME points at a profile path
+    # ~/.chiper/auth.json even when CHIPER_HOME points at a profile path
     # (mirrors the read-side guard in _load_global_auth_store). Uses the
     # unmodified HOME env, not Path.home() which fixtures may monkeypatch.
     if os.environ.get("PYTEST_CURRENT_TEST"):
         real_home_env = os.environ.get("HOME", "")
         if real_home_env:
-            real_root = Path(real_home_env) / ".Chiper" / "auth.json"
+            real_root = Path(real_home_env) / ".chiper" / "auth.json"
             try:
                 if global_path.resolve(strict=False) == real_root.resolve(strict=False):
                     return
@@ -4194,7 +4194,7 @@ def _xai_validate_oauth_endpoint(url: str, *, field: str) -> str:
     """Refuse any OIDC discovery endpoint that isn't HTTPS on the xAI origin.
 
     The OIDC discovery response is a long-lived, low-frequency request whose
-    output is cached in ``~/.Chiper/auth.json``. A single MITM during initial
+    output is cached in ``~/.chiper/auth.json``. A single MITM during initial
     login could substitute a malicious ``token_endpoint``; that URL would
     then receive the refresh_token on every subsequent refresh — a permanent
     credential leak from a one-time MITM. Validating scheme + host pins the
@@ -4695,7 +4695,7 @@ def _poll_for_token(
 #
 # File lives at ${CHIPER_SHARED_AUTH_DIR}/nous_auth.json, defaulting to
 # ``<chiper-root>/shared/nous_auth.json`` where ``<chiper-root>`` is what
-# ``get_default_chiper_root()`` returns — ``~/.Chiper`` on Linux/macOS,
+# ``get_default_chiper_root()`` returns — ``~/.chiper`` on Linux/macOS,
 # ``%LOCALAPPDATA%\chiper`` on native Windows, or the Docker/custom root.
 # It is OUTSIDE any named profile's CHIPER_HOME so named profiles (which
 # typically live under ``<chiper-root>/profiles/<name>/``) all see the
@@ -4718,7 +4718,7 @@ def _nous_shared_auth_dir() -> Path:
     path without touching the real user's home. Defaults to
     ``<chiper-root>/shared/``, where ``<chiper-root>`` is what
     :func:`chiper_constants.get_default_chiper_root` returns — so
-    Linux/macOS classic installs land at ``~/.Chiper/shared/``, native
+    Linux/macOS classic installs land at ``~/.chiper/shared/``, native
     Windows installs at ``%LOCALAPPDATA%\\chiper\\shared\\``, and
     Docker / custom ``CHIPER_HOME`` deployments at
     ``<CHIPER_HOME>/shared/``. Sits outside any named profile so all
@@ -5163,7 +5163,7 @@ def _refresh_access_token(
             "Nous Portal detected refresh-token reuse and revoked this session.\n"
             "This usually means an external process (monitoring script, "
             "custom self-heal hook, or another Chiper install sharing "
-            "~/.Chiper/auth.json) called POST /api/oauth/token with Chiper's "
+            "~/.chiper/auth.json) called POST /api/oauth/token with Chiper's "
             "refresh token without persisting the rotated token back.\n"
             "Nous refresh tokens are single-use — only Chiper may call the "
             "refresh endpoint. For health checks, use `chiper auth status` "
@@ -6743,7 +6743,7 @@ def _login_openai_codex(
     *,
     force_new_login: bool = False,
 ) -> None:
-    """OpenAI Codex login via device code flow. Tokens stored in ~/.Chiper/auth.json."""
+    """OpenAI Codex login via device code flow. Tokens stored in ~/.chiper/auth.json."""
 
     del args, pconfig  # kept for parity with other provider login helpers
 
@@ -7554,7 +7554,7 @@ def _minimax_poll_token(
 
 
 def _minimax_save_auth_state(auth_state: Dict[str, Any]) -> None:
-    """Persist MiniMax OAuth state to Chiper auth store (~/.Chiper/auth.json)."""
+    """Persist MiniMax OAuth state to Chiper auth store (~/.chiper/auth.json)."""
     with _auth_store_lock():
         auth_store = _load_auth_store()
         _save_provider_state(auth_store, "minimax-oauth", auth_state)

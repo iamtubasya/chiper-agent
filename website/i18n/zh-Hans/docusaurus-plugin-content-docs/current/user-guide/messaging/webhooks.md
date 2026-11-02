@@ -46,7 +46,7 @@ chiper gateway setup
 
 ### 通过环境变量
 
-添加到 `~/.Chiper/.env`：
+添加到 `~/.chiper/.env`：
 
 ```bash
 WEBHOOK_ENABLED=true
@@ -174,7 +174,7 @@ webhooks:
 
 ### 2. 添加路由配置
 
-按照上方示例，将 `github-pr` 路由添加到 `~/.Chiper/config.yaml`。
+按照上方示例，将 `github-pr` 路由添加到 `~/.chiper/config.yaml`。
 
 ### 3. 确保 `gh` CLI 已认证
 
@@ -365,7 +365,7 @@ chiper webhook test github-issues --payload '{"issue": {"number": 42, "title": "
 
 ### 动态订阅的工作原理
 
-- 订阅存储在 `~/.Chiper/webhook_subscriptions.json`
+- 订阅存储在 `~/.chiper/webhook_subscriptions.json`
 - webhook 适配器在每次收到请求时热重载该文件（基于 mtime 检测，开销可忽略不计）
 - `config.yaml` 中的静态路由始终优先于同名的动态订阅
 - 动态订阅与静态路由使用相同的格式和功能（events、prompt 模板、skills、delivery）

@@ -62,7 +62,7 @@ python $CHIPER_HOME/skills/devops/watchers/scripts/watch_rss.py \
   --name hn --url https://news.ycombinator.com/rss --max 5
 ```
 
-Watch a GitHub repo (set `GITHUB_TOKEN` in `${CHIPER_HOME:-~/.Chiper}/.env` to avoid the 60 req/hr anonymous rate limit):
+Watch a GitHub repo (set `GITHUB_TOKEN` in `${CHIPER_HOME:-~/.chiper}/.env` to avoid the 60 req/hr anonymous rate limit):
 
 ```bash
 python $CHIPER_HOME/skills/devops/watchers/scripts/watch_github.py \

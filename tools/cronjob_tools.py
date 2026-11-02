@@ -41,7 +41,7 @@ from cron.jobs import (
 #
 #   1. User-supplied cron prompt (small, written as a directive).
 #      Strict scanning is appropriate — a legit cron prompt has no business
-#      saying "cat ~/.Chiper/.env" or "rm -rf /". `_scan_cron_prompt()` runs
+#      saying "cat ~/.chiper/.env" or "rm -rf /". `_scan_cron_prompt()` runs
 #      against this at create/update time and as a runtime defense-in-depth.
 #
 #   2. Assembled prompt that includes loaded skill content (large markdown
@@ -49,7 +49,7 @@ from cron.jobs import (
 #      patterns in PROSE). Reusing the strict patterns here false-positives
 #      every time a skill *describes* a command — see #3968 follow-up: the
 #      `chiper-agent-dev` skill contains a security postmortem mentioning
-#      `cat ~/.Chiper/.env`, which tripped `read_secrets` and silently
+#      `cat ~/.chiper/.env`, which tripped `read_secrets` and silently
 #      killed all PR-scout jobs.
 #
 #      Skill bodies are user-curated and scanned at install time by
@@ -403,12 +403,12 @@ def _validate_cron_script_path(script: Optional[str]) -> Optional[str]:
     raw = script.strip()
 
     # Reject absolute paths and ~ expansion at the API boundary.
-    # Only relative paths within ~/.Chiper/scripts/ are allowed.
+    # Only relative paths within ~/.chiper/scripts/ are allowed.
     if raw.startswith(("/", "~")) or (len(raw) >= 2 and raw[1] == ":"):
         return (
-            f"Script path must be relative to ~/.Chiper/scripts/. "
+            f"Script path must be relative to ~/.chiper/scripts/. "
             f"Got absolute or home-relative path: {raw!r}. "
-            f"Place scripts in ~/.Chiper/scripts/ and use just the filename."
+            f"Place scripts in ~/.chiper/scripts/ and use just the filename."
         )
 
     # Validate containment after resolution

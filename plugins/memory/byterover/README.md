@@ -21,7 +21,7 @@ Or manually:
 ```bash
 chiper config set memory.provider byterover
 # Optional cloud sync:
-echo "BRV_API_KEY=your-key" >> ~/.Chiper/.env
+echo "BRV_API_KEY=your-key" >> ~/.chiper/.env
 ```
 
 ## Config

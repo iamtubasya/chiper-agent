@@ -286,6 +286,6 @@ mcp_servers:
 Behavior:
 - Chiper uses the MCP SDK's OAuth 2.1 PKCE flow (metadata discovery, dynamic client registration, token exchange, and refresh)
 - On first connect, a browser window opens for authorization
-- Tokens are persisted to `~/.Chiper/mcp-tokens/<server>.json` and reused across sessions
+- Tokens are persisted to `~/.chiper/mcp-tokens/<server>.json` and reused across sessions
 - Token refresh is automatic; re-authorization only happens when refresh fails
 - Only applies to HTTP/StreamableHTTP transport (`url`-based servers)

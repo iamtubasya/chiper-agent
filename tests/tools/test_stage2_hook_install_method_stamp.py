@@ -5,7 +5,7 @@ by older images.
 Background (shared-$CHIPER_HOME bug)
 ------------------------------------
 $CHIPER_HOME (/opt/data) is a DATA volume that users commonly bind-mount from
-the host (``~/.Chiper:/opt/data``) and sometimes share with a host-side
+the host (``~/.chiper:/opt/data``) and sometimes share with a host-side
 Desktop/CLI install. Older images wrote ``printf 'docker' > $CHIPER_HOME/.install_method``
 at boot, which clobbered the host install's own marker — so the host's in-app
 updater read 'docker' and refused to run ``chiper update`` ("doesn't apply

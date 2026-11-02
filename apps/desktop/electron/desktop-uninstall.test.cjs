@@ -128,12 +128,12 @@ test('shouldRemoveAppBundle requires packaged AND a resolved path', () => {
 test('buildPosixCleanupScript waits for the PID, runs the uninstall module, removes bundle', () => {
   const script = buildPosixCleanupScript({
     desktopPid: 4321,
-    pythonExe: '/home/x/.Chiper/chiper-agent/venv/bin/python',
+    pythonExe: '/home/x/.chiper/chiper-agent/venv/bin/python',
     pythonPath: null,
-    agentRoot: '/home/x/.Chiper/chiper-agent',
+    agentRoot: '/home/x/.chiper/chiper-agent',
     uninstallArgs: ['-m', 'chiper_cli.uninstall', '--mode', 'gui'],
     appPath: '/opt/chiper/linux-unpacked',
-    chiperHome: '/home/x/.Chiper'
+    chiperHome: '/home/x/.chiper'
   })
   assert.match(script, /^#!\/bin\/bash/)
   assert.match(script, /pid=4321/)
@@ -149,11 +149,11 @@ test('buildPosixCleanupScript exports PYTHONPATH when pythonPath is set (lite/fu
   const script = buildPosixCleanupScript({
     desktopPid: 1,
     pythonExe: '/usr/bin/python3',
-    pythonPath: '/home/x/.Chiper/chiper-agent',
-    agentRoot: '/home/x/.Chiper/chiper-agent',
+    pythonPath: '/home/x/.chiper/chiper-agent',
+    agentRoot: '/home/x/.chiper/chiper-agent',
     uninstallArgs: ['-m', 'chiper_cli.uninstall', '--mode', 'full'],
     appPath: null,
-    chiperHome: '/home/x/.Chiper'
+    chiperHome: '/home/x/.chiper'
   })
   // System python + source on PYTHONPATH so import chiper_cli works while the
   // venv is torn down.

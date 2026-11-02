@@ -379,8 +379,8 @@ export const en: Translations = {
     providersHint:
       "Writes memory.provider (empty = built-in) and context.engine to config.yaml. Takes effect next session.",
     refreshDashboard: "Rescan dashboard extensions",
-    removeConfirm: "Remove this plugin from ~/.Chiper/plugins/?",
-    removeHint: "Only user-installed plugins under ~/.Chiper/plugins can be removed.",
+    removeConfirm: "Remove this plugin from ~/.chiper/plugins/?",
+    removeHint: "Only user-installed plugins under ~/.chiper/plugins can be removed.",
     rescanHeading: "SPA plugin registry",
     rescanHint: "Rescan after adding files on disk so the dashboard sidebar picks up new manifests.",
     runtimeHeading: "Gateway runtime (YAML plugins)",
@@ -402,7 +402,7 @@ export const en: Translations = {
     all: "All",
     categories: "Categories",
     filters: "Filters",
-    noSkills: "No skills found. Skills are loaded from ~/.Chiper/skills/",
+    noSkills: "No skills found. Skills are loaded from ~/.chiper/skills/",
     noSkillsMatch: "No skills match your search or filter.",
     skillCount: "{count} skill{s}",
     resultCount: "{count} result{s}",
@@ -420,7 +420,7 @@ export const en: Translations = {
   },
 
   config: {
-    configPath: "~/.Chiper/config.yaml",
+    configPath: "~/.chiper/config.yaml",
     filters: "Filters",
     sections: "Sections",
     exportConfig: "Export config as JSON",

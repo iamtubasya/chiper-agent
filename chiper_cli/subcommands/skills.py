@@ -144,7 +144,7 @@ def build_skills_parser(subparsers, *, cmd_skills: Callable) -> None:
         "reset",
         help="Reset a bundled skill — clears 'user-modified' tracking so updates work again",
         description=(
-            "Clear a bundled skill's entry from the sync manifest (~/.Chiper/skills/.bundled_manifest) "
+            "Clear a bundled skill's entry from the sync manifest (~/.chiper/skills/.bundled_manifest) "
             "so future 'chiper update' runs stop marking it as user-modified. Pass --restore to also "
             "replace the current copy with the bundled version."
         ),

@@ -1157,7 +1157,7 @@ class TestDiskFailureMarker:
 
 class TestChiperHomeIsolation:
     def test_chiper_bin_dir_respects_chiper_home(self):
-        """_chiper_bin_dir must use CHIPER_HOME, not hardcoded ~/.Chiper."""
+        """_chiper_bin_dir must use CHIPER_HOME, not hardcoded ~/.chiper."""
         from tools.tirith_security import _chiper_bin_dir
         import tempfile
         tmpdir = tempfile.mkdtemp()
@@ -1167,7 +1167,7 @@ class TestChiperHomeIsolation:
         assert os.path.isdir(result)
 
     def test_failure_marker_respects_chiper_home(self):
-        """_failure_marker_path must use CHIPER_HOME, not hardcoded ~/.Chiper."""
+        """_failure_marker_path must use CHIPER_HOME, not hardcoded ~/.chiper."""
         from tools.tirith_security import _failure_marker_path
         with patch.dict(os.environ, {"CHIPER_HOME": "/custom/chiper"}):
             result = _failure_marker_path()

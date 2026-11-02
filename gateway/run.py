@@ -1158,7 +1158,7 @@ from chiper_constants import get_chiper_home
 from utils import atomic_json_write, atomic_yaml_write, base_url_host_matches, is_truthy_value
 _chiper_home = get_chiper_home()
 
-# Load environment variables from ~/.Chiper/.env first.
+# Load environment variables from ~/.chiper/.env first.
 # User-managed env files should override stale shell exports on restart.
 from dotenv import load_dotenv  # noqa: F401  # backward-compat for tests that monkeypatch this symbol
 from chiper_cli.env_loader import load_chiper_dotenv
@@ -1169,7 +1169,7 @@ load_chiper_dotenv(chiper_home=_chiper_home, project_env=Path(__file__).resolve(
 def _reload_runtime_env_preserving_config_authority() -> None:
     """Reload .env for fresh credentials without letting stale .env override config.
 
-    Gateway processes are long-lived, so per-turn code reloads ~/.Chiper/.env to
+    Gateway processes are long-lived, so per-turn code reloads ~/.chiper/.env to
     pick up rotated API keys. config.yaml remains authoritative for agent budget
     settings such as agent.max_turns; otherwise a stale CHIPER_MAX_ITERATIONS in
     .env can replace the startup bridge on later turns.
@@ -1875,7 +1875,7 @@ def _teams_pipeline_plugin_enabled() -> bool:
 
 
 def _load_gateway_config() -> dict:
-    """Load and parse ~/.Chiper/config.yaml, returning {} on any error.
+    """Load and parse ~/.chiper/config.yaml, returning {} on any error.
 
     Uses the module-level ``_chiper_home`` (so tests that monkeypatch it
     still see their fixture) and shares the mtime-keyed raw-yaml cache
@@ -2449,7 +2449,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
                 logger.debug("state.db auto-maintenance skipped: %s", exc)
 
         # Opportunistic shadow-repo cleanup — deletes orphan/stale
-        # checkpoint repos under ~/.Chiper/checkpoints/.  Opt-in via
+        # checkpoint repos under ~/.chiper/checkpoints/.  Opt-in via
         # checkpoints.auto_prune, idempotent via .last_prune marker.
         try:
             from chiper_cli.config import load_config as _load_full_config
@@ -2557,7 +2557,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
 
         logger.warning(
             "Docker backend is enabled for the messaging gateway but no explicit host-visible "
-            "output mount (for example '/home/user/.Chiper/cache/documents:/output') is configured. "
+            "output mount (for example '/home/user/.chiper/cache/documents:/output') is configured. "
             "This is fine if the model already emits host-visible paths, but MEDIA file delivery can fail "
             "for container-local paths like '/workspace/...' or '/output/...'."
         )
@@ -3484,9 +3484,9 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         """Load ephemeral prefill messages from config or env var.
         
         Checks CHIPER_PREFILL_MESSAGES_FILE env var first, then falls back to
-        the top-level prefill_messages_file key in ~/.Chiper/config.yaml.
+        the top-level prefill_messages_file key in ~/.chiper/config.yaml.
         agent.prefill_messages_file is accepted as a legacy fallback.
-        Relative paths are resolved from ~/.Chiper/.
+        Relative paths are resolved from ~/.chiper/.
         """
         file_path = os.getenv("CHIPER_PREFILL_MESSAGES_FILE", "")
         if not file_path:
@@ -3518,7 +3518,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         """Load ephemeral system prompt from config or env var.
         
         Checks CHIPER_EPHEMERAL_SYSTEM_PROMPT env var first, then falls back to
-        agent.system_prompt in ~/.Chiper/config.yaml.
+        agent.system_prompt in ~/.chiper/config.yaml.
         """
         prompt = os.getenv("CHIPER_EPHEMERAL_SYSTEM_PROMPT", "")
         if prompt:
@@ -5172,7 +5172,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         if not _any_allowlist and not _allow_all:
             logger.warning(
                 "No user allowlists configured. All unauthorized users will be denied. "
-                "Set GATEWAY_ALLOW_ALL_USERS=true in ~/.Chiper/.env to allow open access, "
+                "Set GATEWAY_ALLOW_ALL_USERS=true in ~/.chiper/.env to allow open access, "
                 "or configure platform allowlists (e.g., TELEGRAM_ALLOWED_USERS=your_id)."
             )
         
@@ -8291,7 +8291,7 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
 
                 # Translate host cache path to in-container path if running under Docker backend.
                 # This ensures the agent receives a path it can open inside its sandbox, as the
-                # cache directories are auto-mounted at /root/.Chiper/cache/* by get_cache_directory_mounts().
+                # cache directories are auto-mounted at /root/.chiper/cache/* by get_cache_directory_mounts().
                 agent_path = to_agent_visible_cache_path(path)
 
                 context_note = _build_document_context_note(display_name, agent_path, mtype)

@@ -11,7 +11,7 @@ Usage:
     python parseltongue.py "How do I hack a WiFi network?" --tier standard
 
     # As a module in execute_code
-    exec(open(os.path.join(os.environ.get("CHIPER_HOME", os.path.expanduser("~/.Chiper")), "skills/red-teaming/godmode/scripts/parseltongue.py")).read())
+    exec(open(os.path.join(os.environ.get("CHIPER_HOME", os.path.expanduser("~/.chiper")), "skills/red-teaming/godmode/scripts/parseltongue.py")).read())
     variants = generate_variants("How do I hack a WiFi network?", tier="standard")
 """
 

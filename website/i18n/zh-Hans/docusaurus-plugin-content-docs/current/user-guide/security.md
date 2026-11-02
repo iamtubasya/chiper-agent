@@ -26,7 +26,7 @@ Chiper Agent 采用纵深防御安全模型。本页涵盖所有安全边界—�
 
 ### 审批模式
 
-审批系统支持三种模式，通过 `~/.Chiper/config.yaml` 中的 `approvals.mode` 配置：
+审批系统支持三种模式，通过 `~/.chiper/config.yaml` 中的 `approvals.mode` 配置：
 
 ```yaml
 approvals:
@@ -101,7 +101,7 @@ YOLO 模式会禁用会话中**所有**危险命令安全检查——**但硬性
 
 当危险命令提示出现时，用户有一段可配置的时间来响应。若在超时内未响应，命令将**默认被拒绝**（故障关闭）。
 
-在 `~/.Chiper/config.yaml` 中配置超时：
+在 `~/.chiper/config.yaml` 中配置超时：
 
 ```yaml
 approvals:
@@ -134,8 +134,8 @@ approvals:
 | `python -e` / `perl -e` / `ruby -e` / `node -c` | 通过 `-e`/`-c` 标志执行脚本 |
 | `curl ... \| sh` / `wget ... \| sh` | 将远程内容通过管道传给 shell |
 | `bash <(curl ...)` / `sh <(wget ...)` | 通过进程替换执行远程脚本 |
-| `tee` 写入 `/etc/`、`~/.ssh/`、`~/.Chiper/.env` | 通过 tee 覆盖敏感文件 |
-| `>` / `>>` 写入 `/etc/`、`~/.ssh/`、`~/.Chiper/.env` | 通过重定向覆盖敏感文件 |
+| `tee` 写入 `/etc/`、`~/.ssh/`、`~/.chiper/.env` | 通过 tee 覆盖敏感文件 |
+| `>` / `>>` 写入 `/etc/`、`~/.ssh/`、`~/.chiper/.env` | 通过重定向覆盖敏感文件 |
 | `xargs rm` | xargs 配合 rm |
 | `find -exec rm` / `find -delete` | find 配合破坏性操作 |
 | `cp`/`mv`/`install` 写入 `/etc/` | 复制/移动文件到系统配置目录 |
@@ -178,7 +178,7 @@ approvals:
 
 ### 永久允许列表
 
-通过"always"批准的命令会保存到 `~/.Chiper/config.yaml`：
+通过"always"批准的命令会保存到 `~/.chiper/config.yaml`：
 
 ```yaml
 # 永久允许的危险命令模式
@@ -210,7 +210,7 @@ command_allowlist:
 
 ### 平台允许列表
 
-在 `~/.Chiper/.env` 中以逗号分隔的值设置允许的用户 ID：
+在 `~/.chiper/.env` 中以逗号分隔的值设置允许的用户 ID：
 
 ```bash
 # 平台专属允许列表
@@ -234,7 +234,7 @@ GATEWAY_ALLOW_ALL_USERS=true
 
 ```
 No user allowlists configured. All unauthorized users will be denied.
-Set GATEWAY_ALLOW_ALL_USERS=true in ~/.Chiper/.env to allow open access,
+Set GATEWAY_ALLOW_ALL_USERS=true in ~/.chiper/.env to allow open access,
 or configure platform allowlists (e.g., TELEGRAM_ALLOWED_USERS=your_id).
 ```
 :::
@@ -250,7 +250,7 @@ or configure platform allowlists (e.g., TELEGRAM_ALLOWED_USERS=your_id).
 3. 机器人所有者在 CLI 上运行 `chiper pairing approve <platform> <code>`
 4. 该用户在该平台上获得永久批准
 
-在 `~/.Chiper/config.yaml` 中控制未授权私信的处理方式：
+在 `~/.chiper/config.yaml` 中控制未授权私信的处理方式：
 
 ```yaml
 unauthorized_dm_behavior: pair
@@ -292,7 +292,7 @@ chiper pairing revoke telegram 123456789
 chiper pairing clear-pending
 ```
 
-**存储：** 配对数据存储于 `~/.Chiper/pairing/`，按平台分为独立的 JSON 文件：
+**存储：** 配对数据存储于 `~/.chiper/pairing/`，按平台分为独立的 JSON 文件：
 - `{platform}-pending.json` — 待处理的配对请求
 - `{platform}-approved.json` — 已批准的用户
 - `_rate_limits.json` — 速率限制和锁定追踪
@@ -321,7 +321,7 @@ _SECURITY_ARGS = [
 
 ### 资源限制
 
-容器资源可在 `~/.Chiper/config.yaml` 中配置：
+容器资源可在 `~/.chiper/config.yaml` 中配置：
 
 ```yaml
 terminal:
@@ -336,7 +336,7 @@ terminal:
 
 ### 文件系统持久化
 
-- **持久模式**（`container_persistent: true`）：从 `~/.Chiper/sandboxes/docker/<task_id>/` 绑定挂载 `/workspace` 和 `/root`
+- **持久模式**（`container_persistent: true`）：从 `~/.chiper/sandboxes/docker/<task_id>/` 绑定挂载 `/workspace` 和 `/root`
 - **临时模式**（`container_persistent: false`）：工作区使用 tmpfs——清理后所有内容丢失
 
 :::tip
@@ -422,7 +422,7 @@ terminal:
     - my_custom_oauth_token.json
 ```
 
-路径相对于 `~/.Chiper/`。文件在容器内挂载到 `/root/.Chiper/`。
+路径相对于 `~/.chiper/`。文件在容器内挂载到 `/root/.chiper/`。
 
 ### 各沙箱的过滤规则
 
@@ -481,7 +481,7 @@ MCP 工具的错误消息在返回给 LLM 之前会经过清理。以下模式�
 你可以限制 Agent 通过其 Web 和浏览器工具可访问的网站。这对于防止 Agent 访问内部服务、管理面板或其他敏感 URL 非常有用。
 
 ```yaml
-# 在 ~/.Chiper/config.yaml 中
+# 在 ~/.chiper/config.yaml 中
 security:
   website_blocklist:
     enabled: true
@@ -533,7 +533,7 @@ Chiper 集成了 [tirith](https://github.com/sheeki03/tirith) 用于在执行前
 Tirith 在首次使用时从 GitHub Releases 自动安装，并进行 SHA-256 校验和验证（若 cosign 可用，还会进行 cosign 来源验证）。
 
 ```yaml
-# 在 ~/.Chiper/config.yaml 中
+# 在 ~/.chiper/config.yaml 中
 security:
   tirith_enabled: true       # 启用/禁用 tirith 扫描（默认：true）
   tirith_path: "tirith"      # tirith 二进制路径（默认：PATH 查找）
@@ -570,19 +570,19 @@ Tirith 的判定与审批流程集成：安全命令直接通过，可疑和被�
 1. **设置明确的允许列表** — 生产环境中切勿使用 `GATEWAY_ALLOW_ALL_USERS=true`
 2. **使用容器后端** — 在 config.yaml 中设置 `terminal.backend: docker`
 3. **限制资源上限** — 设置合适的 CPU、内存和磁盘限制
-4. **安全存储密钥** — 将 API 密钥保存在具有适当文件权限的 `~/.Chiper/.env` 中
+4. **安全存储密钥** — 将 API 密钥保存在具有适当文件权限的 `~/.chiper/.env` 中
 5. **启用 DM 配对** — 尽可能使用配对码，而非硬编码用户 ID
 6. **审查命令允许列表** — 定期审计 config.yaml 中的 `command_allowlist`
 7. **设置 `MESSAGING_CWD`** — 不要让 Agent 在敏感目录中操作
 8. **以非 root 用户运行** — 切勿以 root 身份运行 gateway
-9. **监控日志** — 检查 `~/.Chiper/logs/` 中的未授权访问尝试
+9. **监控日志** — 检查 `~/.chiper/logs/` 中的未授权访问尝试
 10. **保持更新** — 定期运行 `chiper update` 以获取安全补丁
 
 ### 保护 API 密钥
 
 ```bash
 # 为 .env 文件设置适当权限
-chmod 600 ~/.Chiper/.env
+chmod 600 ~/.chiper/.env
 
 # 为不同服务使用独立密钥
 # 切勿将 .env 文件提交到版本控制
@@ -590,16 +590,16 @@ chmod 600 ~/.Chiper/.env
 
 ### 网络隔离
 
-为获得最高安全性，请在独立的机器或虚拟机上运行 gateway。在 `config.yaml` 中设置 `terminal.backend: ssh`，然后通过 `~/.Chiper/.env` 中的环境变量提供主机详情：
+为获得最高安全性，请在独立的机器或虚拟机上运行 gateway。在 `config.yaml` 中设置 `terminal.backend: ssh`，然后通过 `~/.chiper/.env` 中的环境变量提供主机详情：
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 terminal:
   backend: ssh
 ```
 
 ```bash
-# ~/.Chiper/.env
+# ~/.chiper/.env
 TERMINAL_SSH_HOST=agent-worker.local
 TERMINAL_SSH_USER=chiper
 TERMINAL_SSH_KEY=~/.ssh/chiper_agent_key
@@ -655,7 +655,7 @@ chiper doctor --ack <advisory-id>
 禁用运行时安装：
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 security:
   allow_lazy_installs: false
 ```

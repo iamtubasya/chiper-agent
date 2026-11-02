@@ -82,7 +82,7 @@ except (ModuleNotFoundError, ImportError):
     # _chiper_home.py shim).
     def get_chiper_home() -> Path:
         val = os.environ.get("CHIPER_HOME", "").strip()
-        return Path(val) if val else Path.home() / ".Chiper"
+        return Path(val) if val else Path.home() / ".chiper"
 
     def display_chiper_home() -> str:
         home = get_chiper_home()
@@ -107,7 +107,7 @@ def _chiper_home() -> Path:
 # Filesystem-safe key: lowercase, allow ``[a-z0-9._-@]``, replace anything
 # else with ``_``. ``ramon.fernandez@nttdata.com`` stays human-readable
 # (``ramon.fernandez@nttdata.com.json``) which makes admin debugging by
-# ``ls ~/.Chiper/google_chat_user_tokens/`` trivial.
+# ``ls ~/.chiper/google_chat_user_tokens/`` trivial.
 _EMAIL_FS_RE = re.compile(r"[^a-z0-9._@-]+")
 
 

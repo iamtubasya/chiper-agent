@@ -389,7 +389,7 @@ This fix addresses edge cases where raw user conclusions containing markup or sp
 ## Troubleshooting
 
 ### "Honcho not configured"
-Run `chiper honcho setup`. Ensure `memory.provider: honcho` is in `~/.Chiper/config.yaml`.
+Run `chiper honcho setup`. Ensure `memory.provider: honcho` is in `~/.chiper/config.yaml`.
 
 ### Memory not persisting across sessions
 Check `chiper honcho status` -- verify `saveMessages: true` and `writeFrequency` isn't `session` (which only writes on exit).

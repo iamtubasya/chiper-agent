@@ -18,13 +18,13 @@ Docker 与 Chiper Agent 的交集有两种截然不同的方式：
 如果这是你第一次运行 Chiper Agent，请在宿主机上创建一个数据目录，并以交互方式启动容器以运行设置向导：
 
 ```sh
-mkdir -p ~/.Chiper
+mkdir -p ~/.chiper
 docker run -it --rm \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   Chiper/chiper-agent setup
 ```
 
-这将进入设置向导，向导会提示你输入 API 密钥并将其写入 `~/.Chiper/.env`。你只需执行一次。强烈建议此时为 gateway 配置一个聊天系统。
+这将进入设置向导，向导会提示你输入 API 密钥并将其写入 `~/.chiper/.env`。你只需执行一次。强烈建议此时为 gateway 配置一个聊天系统。
 
 ## 以 gateway 模式运行
 
@@ -34,7 +34,7 @@ docker run -it --rm \
 docker run -d \
   --name chiper \
   --restart unless-stopped \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   -p 8642:8642 \
   Chiper/chiper-agent gateway run
 ```
@@ -47,7 +47,7 @@ docker run -d \
 docker run -d \
   --name chiper \
   --restart unless-stopped \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   -p 8642:8642 \
   -e API_SERVER_ENABLED=true \
   -e API_SERVER_HOST=0.0.0.0 \
@@ -66,7 +66,7 @@ docker run -d \
 docker run -d \
   --name chiper \
   --restart unless-stopped \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   -p 8642:8642 \
   -e CHIPER_DASHBOARD=1 \
   Chiper/chiper-agent gateway run
@@ -117,7 +117,7 @@ dashboard 进程崩溃，s6-overlay 会在短暂退避后自动
 
 ```sh
 docker run -it --rm \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   Chiper/chiper-agent
 ```
 
@@ -129,7 +129,7 @@ docker run -it --rm \
 
 ## 持久化卷
 
-`/opt/data` 卷是所有 Chiper 状态的唯一数据来源。它映射到宿主机的 `~/.Chiper/` 目录，包含：
+`/opt/data` 卷是所有 Chiper 状态的唯一数据来源。它映射到宿主机的 `~/.chiper/` 目录，包含：
 
 | 路径 | 内容 |
 |------|----------|
@@ -150,7 +150,7 @@ docker run -it --rm \
 
 ## 多 profile 支持
 
-Chiper 支持[多个 profile](../reference/profile-commands.md)——独立的 `~/.Chiper/` 目录，让你可以从单个安装运行独立的 agent（不同的 SOUL、技能、记忆、会话、凭据）。**在 Docker 下运行时，不建议使用 Chiper 内置的多 profile 功能。**
+Chiper 支持[多个 profile](../reference/profile-commands.md)——独立的 `~/.chiper/` 目录，让你可以从单个安装运行独立的 agent（不同的 SOUL、技能、记忆、会话、凭据）。**在 Docker 下运行时，不建议使用 Chiper 内置的多 profile 功能。**
 
 推荐的模式是**每个 profile 一个容器**，每个容器将各自的宿主机目录绑定挂载为 `/opt/data`：
 
@@ -159,7 +159,7 @@ Chiper 支持[多个 profile](../reference/profile-commands.md)——独立的 `
 docker run -d \
   --name chiper-work \
   --restart unless-stopped \
-  -v ~/.Chiper-work:/opt/data \
+  -v ~/.chiper-work:/opt/data \
   -p 8642:8642 \
   Chiper/chiper-agent gateway run
 
@@ -167,7 +167,7 @@ docker run -d \
 docker run -d \
   --name chiper-personal \
   --restart unless-stopped \
-  -v ~/.Chiper-personal:/opt/data \
+  -v ~/.chiper-personal:/opt/data \
   -p 8643:8642 \
   Chiper/chiper-agent gateway run
 ```
@@ -192,7 +192,7 @@ services:
     ports:
       - "8642:8642"
     volumes:
-      - ~/.Chiper-work:/opt/data
+      - ~/.chiper-work:/opt/data
 
   chiper-personal:
     image: Chiper/chiper-agent:latest
@@ -202,7 +202,7 @@ services:
     ports:
       - "8643:8642"
     volumes:
-      - ~/.Chiper-personal:/opt/data
+      - ~/.chiper-personal:/opt/data
 ```
 
 ## 环境变量转发
@@ -211,7 +211,7 @@ API 密钥从容器内的 `/opt/data/.env` 读取。你也可以直接传递环�
 
 ```sh
 docker run -it --rm \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   -e ANTHROPIC_API_KEY="sk-ant-..." \
   -e OPENAI_API_KEY="sk-..." \
   Chiper/chiper-agent
@@ -238,7 +238,7 @@ services:
       - "8642:8642"   # gateway API
       - "9119:9119"   # dashboard（仅在 CHIPER_DASHBOARD=1 时生效）
     volumes:
-      - ~/.Chiper:/opt/data
+      - ~/.chiper:/opt/data
     environment:
       - CHIPER_DASHBOARD=1
       # 取消注释以直接转发特定环境变量而非使用 .env 文件：
@@ -273,7 +273,7 @@ docker run -d \
   --name chiper \
   --restart unless-stopped \
   --memory=4g --cpus=2 \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   Chiper/chiper-agent gateway run
 ```
 
@@ -339,7 +339,7 @@ docker rm -f chiper
 docker run -d \
   --name chiper \
   --restart unless-stopped \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   Chiper/chiper-agent gateway run
 ```
 
@@ -352,7 +352,7 @@ docker compose up -d
 
 ## 技能与凭据文件
 
-当使用 Docker 作为执行环境时（不是上述方法，而是 agent 在 Docker 沙箱内运行命令——参见 [配置 → Docker 后端](./configuration.md#docker-backend)），Chiper 为所有工具调用复用单个长期运行的容器，并自动将技能目录（`~/.Chiper/skills/`）和技能声明的所有凭据文件以只读卷的形式绑定挂载到该容器中。技能脚本、模板和引用在沙箱内无需手动配置即可使用，由于容器在 Chiper 进程的整个生命周期内持续存在，你安装的任何依赖或写入的文件都会在下次工具调用时保留。
+当使用 Docker 作为执行环境时（不是上述方法，而是 agent 在 Docker 沙箱内运行命令——参见 [配置 → Docker 后端](./configuration.md#docker-backend)），Chiper 为所有工具调用复用单个长期运行的容器，并自动将技能目录（`~/.chiper/skills/`）和技能声明的所有凭据文件以只读卷的形式绑定挂载到该容器中。技能脚本、模板和引用在沙箱内无需手动配置即可使用，由于容器在 Chiper 进程的整个生命周期内持续存在，你安装的任何依赖或写入的文件都会在下次工具调用时保留。
 
 SSH 和 Modal 后端也会进行相同的同步——技能和凭据文件在每次命令执行前通过 rsync 或 Modal mount API 上传。
 
@@ -393,7 +393,7 @@ docker build -t my-chiper:latest .
 docker run -d \
   --name chiper \
   --restart unless-stopped \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   -p 8642:8642 \
   my-chiper:latest gateway run
 ```
@@ -414,7 +414,7 @@ services:
     ports:
       - "8642:8642"
     volumes:
-      - ~/.Chiper:/opt/data
+      - ~/.chiper:/opt/data
     networks:
       - chiper-net
 
@@ -472,7 +472,7 @@ services:
     ports:
       - "8642:8642"
     volumes:
-      - ~/.Chiper:/opt/data
+      - ~/.chiper:/opt/data
     networks:
       - chiper-net
 
@@ -481,7 +481,7 @@ networks:
     driver: bridge
 ```
 
-然后在 `~/.Chiper/config.yaml` 中，使用**容器名称**作为主机名：
+然后在 `~/.chiper/config.yaml` 中，使用**容器名称**作为主机名：
 
 ```yaml
 model:
@@ -507,7 +507,7 @@ model:
 ```sh
 docker run -d \
   --name chiper \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   -p 8642:8642 \
   Chiper/chiper-agent gateway run
 ```
@@ -527,7 +527,7 @@ model:
 docker run -d \
   --name chiper \
   --network host \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   Chiper/chiper-agent gateway run
 ```
 
@@ -579,10 +579,10 @@ model:
 
 ### "Permission denied" 错误
 
-容器的 stage2 hook 通过 `s6-setuidgid` 在每个受监管的服务内将权限降至非 root 用户 `chiper`（UID 10000）。如果宿主机的 `~/.Chiper/` 由不同 UID 拥有，请设置 `CHIPER_UID`/`CHIPER_GID` 以匹配宿主机用户，或确保数据目录可写：
+容器的 stage2 hook 通过 `s6-setuidgid` 在每个受监管的服务内将权限降至非 root 用户 `chiper`（UID 10000）。如果宿主机的 `~/.chiper/` 由不同 UID 拥有，请设置 `CHIPER_UID`/`CHIPER_GID` 以匹配宿主机用户，或确保数据目录可写：
 
 ```sh
-chmod -R 755 ~/.Chiper
+chmod -R 755 ~/.chiper
 ```
 
 ### 浏览器工具无法使用
@@ -593,7 +593,7 @@ Playwright 需要共享内存。在 Docker run 命令中添加 `--shm-size=1g`�
 docker run -d \
   --name chiper \
   --shm-size=1g \
-  -v ~/.Chiper:/opt/data \
+  -v ~/.chiper:/opt/data \
   Chiper/chiper-agent gateway run
 ```
 

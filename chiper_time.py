@@ -6,7 +6,7 @@ based on the user's configured IANA timezone (e.g. ``Asia/Kolkata``).
 
 Resolution order:
   1. ``CHIPER_TIMEZONE`` environment variable
-  2. ``timezone`` key in ``~/.Chiper/config.yaml``
+  2. ``timezone`` key in ``~/.chiper/config.yaml``
   3. Falls back to the server's local time (``datetime.now().astimezone()``)
 
 Invalid timezone values log a warning and fall back safely — Chiper never

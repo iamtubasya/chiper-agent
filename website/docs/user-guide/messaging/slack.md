@@ -40,7 +40,7 @@ Mode — all at once.
    ```bash
    chiper slack manifest --write
    ```
-   This writes `~/.Chiper/slack-manifest.json` and prints paste-in
+   This writes `~/.chiper/slack-manifest.json` and prints paste-in
    instructions.
 2. Go to [https://api.slack.com/apps](https://api.slack.com/apps) →
    **Create New App** → **From an app manifest**
@@ -186,7 +186,7 @@ Member IDs look like `U01ABC2DEF3`. You need your own Member ID at minimum.
 
 ## Step 8: Configure Chiper
 
-Add the following to your `~/.Chiper/.env` file:
+Add the following to your `~/.chiper/.env` file:
 
 ```bash
 # Required
@@ -253,7 +253,7 @@ Then in Slack:
 1. Open [https://api.slack.com/apps](https://api.slack.com/apps) →
    your Chiper app
 2. **Features → App Manifest → Edit**
-3. Paste the new contents of `~/.Chiper/slack-manifest.json`
+3. Paste the new contents of `~/.chiper/slack-manifest.json`
 4. **Save**. Slack will prompt to reinstall the app if scopes or slash
    commands changed.
 
@@ -317,7 +317,7 @@ In channels, always @mention the bot to start a conversation. Once the bot is ac
 
 ## Configuration Options
 
-Beyond the required environment variables from Step 8, you can customize Slack bot behavior through `~/.Chiper/config.yaml`.
+Beyond the required environment variables from Step 8, you can customize Slack bot behavior through `~/.chiper/config.yaml`.
 
 ### Thread & Reply Behavior
 
@@ -506,7 +506,7 @@ SLACK_BOT_TOKEN=xoxb-workspace1-token,xoxb-workspace2-token,xoxb-workspace3-toke
 SLACK_APP_TOKEN=xapp-your-app-token
 ```
 
-Or in `~/.Chiper/config.yaml`:
+Or in `~/.chiper/config.yaml`:
 
 ```yaml
 platforms:
@@ -519,7 +519,7 @@ platforms:
 In addition to tokens in the environment or config, Chiper also loads tokens from an **OAuth token file** at:
 
 ```
-~/.Chiper/slack_tokens.json
+~/.chiper/slack_tokens.json
 ```
 
 This file is a JSON object mapping team IDs to token entries:
@@ -637,7 +637,7 @@ the gateway will **deny all messages** by default as a safety measure. Never sha
 treat them like passwords.
 :::
 
-- Tokens should be stored in `~/.Chiper/.env` (file permissions `600`)
+- Tokens should be stored in `~/.chiper/.env` (file permissions `600`)
 - Rotate tokens periodically via the Slack app settings
 - Audit who has access to your Chiper config directory
 - Socket Mode means no public endpoint is exposed — one less attack surface

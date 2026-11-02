@@ -25,11 +25,11 @@ try:
 except (ModuleNotFoundError, ImportError):
 
     def get_chiper_home() -> Path:
-        """Return the Chiper home directory (default: ~/.Chiper).
+        """Return the Chiper home directory (default: ~/.chiper).
 
         Mirrors ``chiper_constants.get_chiper_home()``."""
         val = os.environ.get("CHIPER_HOME", "").strip()
-        return Path(val) if val else Path.home() / ".Chiper"
+        return Path(val) if val else Path.home() / ".chiper"
 
     def display_chiper_home() -> str:
         """Return a user-friendly ``~/``-shortened display string.

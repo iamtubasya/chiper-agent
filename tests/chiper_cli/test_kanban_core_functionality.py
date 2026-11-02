@@ -1273,7 +1273,7 @@ def test_migration_renames_legacy_event_kinds(tmp_path, monkeypatch):
 
 def test_list_profiles_on_disk(tmp_path, monkeypatch):
     """list_profiles_on_disk returns the implicit default profile plus
-    named profiles under ~/.Chiper/profiles/ that contain a config.yaml."""
+    named profiles under ~/.chiper/profiles/ that contain a config.yaml."""
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     monkeypatch.delenv("CHIPER_HOME", raising=False)
     profiles = tmp_path / ".chiper" / "profiles"

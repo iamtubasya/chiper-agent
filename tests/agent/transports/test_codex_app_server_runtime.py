@@ -277,11 +277,11 @@ class TestSpawnEnvIsolation:
 
         monkeypatch.setattr(subprocess, "Popen", FakePopen)
         monkeypatch.setenv("HOME", "/users/alice")
-        monkeypatch.setenv("CHIPER_HOME", "/users/alice/.Chiper/profiles/backend-worker")
+        monkeypatch.setenv("CHIPER_HOME", "/users/alice/.chiper/profiles/backend-worker")
         monkeypatch.setenv("CHIPER_KANBAN_TASK", "t_smoke")
         monkeypatch.setenv(
             "CHIPER_KANBAN_DB",
-            "/users/alice/.Chiper/kanban/boards/smoke/kanban.db",
+            "/users/alice/.chiper/kanban/boards/smoke/kanban.db",
         )
 
         client = cas.CodexAppServerClient(codex_bin="codex")
@@ -291,7 +291,7 @@ class TestSpawnEnvIsolation:
         assert cmd[:2] == ["codex", "app-server"]
         assert 'sandbox_mode="workspace-write"' in cmd
         assert (
-            'sandbox_workspace_write.writable_roots=["/users/alice/.Chiper/kanban/boards/smoke"]'
+            'sandbox_workspace_write.writable_roots=["/users/alice/.chiper/kanban/boards/smoke"]'
             in cmd
         )
         assert "sandbox_workspace_write.network_access=false" in cmd

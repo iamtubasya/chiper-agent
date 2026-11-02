@@ -4,7 +4,7 @@ Renders a compact footer showing runtime state (model, context %, cwd) and
 appends it to the FINAL message of an agent turn when enabled.  Off by default
 to keep replies minimal.
 
-Config (``~/.Chiper/config.yaml``)::
+Config (``~/.chiper/config.yaml``)::
 
     display:
       runtime_footer:

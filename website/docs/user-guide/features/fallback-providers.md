@@ -29,7 +29,7 @@ chiper fallback
 
 `chiper fallback` reuses the provider picker from `chiper model` — same provider list, same credential prompts, same validation. Use the subcommands `add`, `list` (alias `ls`), `remove` (alias `rm`), and `clear` to manage the chain. Changes persist under the top-level `fallback_providers:` list in `config.yaml`.
 
-If you'd rather edit the YAML directly, add a top-level `fallback_providers` list to `~/.Chiper/config.yaml`:
+If you'd rather edit the YAML directly, add a top-level `fallback_providers` list to `~/.chiper/config.yaml`:
 
 ```yaml
 fallback_providers:

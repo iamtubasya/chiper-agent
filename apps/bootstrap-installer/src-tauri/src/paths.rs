@@ -2,11 +2,11 @@
 //!
 //! Mirrors `chiper_constants.get_chiper_home()` from the Python CLI:
 //!   Windows: %LOCALAPPDATA%\Chiper
-//!   macOS:   ~/.Chiper
-//!   Linux:   ~/.Chiper  (override via $CHIPER_HOME)
+//!   macOS:   ~/.chiper
+//!   Linux:   ~/.chiper  (override via $CHIPER_HOME)
 //!
 //! NOTE (macOS): Python's get_chiper_home(), scripts/install.sh, and the
-//! Electron desktop's resolveChiperHome() ALL use ~/.Chiper on macOS — there
+//! Electron desktop's resolveChiperHome() ALL use ~/.chiper on macOS — there
 //! is no ~/Library/Application Support branch anywhere else. An earlier
 //! version of this file used Application Support, which drifted from every
 //! other component: the installer wrote the install to one dir and the
@@ -37,15 +37,15 @@ pub fn chiper_home() -> PathBuf {
         }
     }
 
-    // macOS + Linux + fallback: ~/.Chiper (matches Python get_chiper_home(),
+    // macOS + Linux + fallback: ~/.chiper (matches Python get_chiper_home(),
     // install.sh, and the Electron desktop's resolveChiperHome()).
     if let Some(home) = dirs::home_dir() {
-        return home.join(".Chiper");
+        return home.join(".chiper");
     }
 
     // Last resort — current dir, almost certainly wrong but at least
     // doesn't panic.
-    PathBuf::from(".Chiper")
+    PathBuf::from(".chiper")
 }
 
 pub fn log_dir() -> PathBuf {

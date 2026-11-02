@@ -8,7 +8,7 @@ observability/langfuse`` or ``chiper tools → Langfuse Observability``). At
 runtime the plugin also requires the ``langfuse`` SDK and credentials; if
 either is missing the hooks are inert.
 
-Required env vars (set via ``chiper tools`` or ~/.Chiper/.env):
+Required env vars (set via ``chiper tools`` or ~/.chiper/.env):
   CHIPER_LANGFUSE_PUBLIC_KEY  - Langfuse project public key (pk-lf-...)
   CHIPER_LANGFUSE_SECRET_KEY  - Langfuse project secret key (sk-lf-...)
   CHIPER_LANGFUSE_BASE_URL    - Langfuse server URL (default: https://cloud.langfuse.com)

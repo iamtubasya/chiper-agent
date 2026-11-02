@@ -190,7 +190,7 @@ class TestRmtreeWritableScopeGuard:
     ``tools/skills_sync.py`` ever computes a path outside the skills
     root — through a bad join, a missing default, a malicious
     bundled-manifest entry, or a stale path in scope after an
-    exception — the result is a silent ``shutil.rmtree(~/.Chiper/)``
+    exception — the result is a silent ``shutil.rmtree(~/.chiper/)``
     that destroys the user's ``.env``, ``MEMORY.md``, ``kanban.db``,
     custom skills, scripts, and the rest of the install in one go
     (#48200).
@@ -211,7 +211,7 @@ class TestRmtreeWritableScopeGuard:
                 _rmtree_writable(Path("/"))
 
     def test_refuses_chiper_home_itself(self, tmp_path):
-        """``~/.Chiper/`` itself is what the #48200 wipe destroyed."""
+        """``~/.chiper/`` itself is what the #48200 wipe destroyed."""
         from tools.skills_sync import _rmtree_writable
 
         chiper = tmp_path / "home"
@@ -1046,7 +1046,7 @@ class TestNoBundledSkillsOptOut:
     """The .no-bundled-skills marker makes sync_skills() a no-op.
 
     This is what `chiper profile create --no-skills` (named profiles) and the
-    installer's `--no-skills` flag (default ~/.Chiper) rely on so bundled
+    installer's `--no-skills` flag (default ~/.chiper) rely on so bundled
     skills are never seeded at install time NOR re-injected by `chiper update`.
     """
 

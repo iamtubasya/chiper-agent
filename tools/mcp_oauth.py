@@ -119,7 +119,7 @@ def _get_token_dir() -> Path:
         from chiper_constants import get_chiper_home
         base = Path(get_chiper_home())
     except ImportError:
-        base = Path(os.environ.get("CHIPER_HOME", str(Path.home() / ".Chiper")))
+        base = Path(os.environ.get("CHIPER_HOME", str(Path.home() / ".chiper")))
     return base / "mcp-tokens"
 
 

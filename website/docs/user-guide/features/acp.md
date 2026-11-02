@@ -93,7 +93,7 @@ This is the standalone command. The Zed registry's terminal-auth flow (`chiper a
 
 What it does:
 
-- Installs Node.js 22 LTS into `~/.Chiper/node/` if missing
+- Installs Node.js 22 LTS into `~/.chiper/node/` if missing
 - `npm install -g agent-browser @askjo/camofox-browser` into that prefix (no sudo needed — `npm`'s `--prefix` points at the user-writable Chiper-managed Node)
 - Installs Playwright Chromium, or uses a detected system Chrome/Chromium when available
 
@@ -135,7 +135,7 @@ Zed v0.221.x and newer installs external agents through the official ACP Registr
 
 Prerequisites:
 
-- Configure Chiper provider credentials first with `chiper model`, or set them in `~/.Chiper/.env` / `~/.Chiper/config.yaml`.
+- Configure Chiper provider credentials first with `chiper model`, or set them in `~/.chiper/.env` / `~/.chiper/config.yaml`.
 - Install `uv` so the registry launcher can run `uvx --from 'chiper-agent[acp]==<version>' chiper-acp`.
 
 For local development before the registry entry is available, use a custom agent server in Zed settings:
@@ -183,10 +183,10 @@ The registry CI verifies that the pinned version exists on PyPI, so the manifest
 
 ACP mode uses the same Chiper configuration as the CLI:
 
-- `~/.Chiper/.env`
-- `~/.Chiper/config.yaml`
-- `~/.Chiper/skills/`
-- `~/.Chiper/state.db`
+- `~/.chiper/.env`
+- `~/.chiper/config.yaml`
+- `~/.chiper/skills/`
+- `~/.chiper/state.db`
 
 Provider resolution uses Chiper' normal runtime resolver, so ACP inherits the currently configured provider and credentials. Chiper also advertises a terminal auth method (`--setup`) for first-run registry clients; this opens Chiper' interactive model/provider setup.
 
@@ -264,7 +264,7 @@ ACP mode uses Chiper' existing provider setup. Configure credentials with:
 chiper model
 ```
 
-or by editing `~/.Chiper/.env`. Registry clients can also trigger Chiper' terminal auth flow, which runs the same interactive provider/model setup.
+or by editing `~/.chiper/.env`. Registry clients can also trigger Chiper' terminal auth flow, which runs the same interactive provider/model setup.
 
 ### Zed registry launcher cannot find uv
 

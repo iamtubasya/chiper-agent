@@ -61,7 +61,7 @@ Field notes:
 | Network failure, no cache | Silent fallback to in-repo snapshot |
 | Manifest fails schema validation | Treated as unreachable |
 
-Cache location: `~/.Chiper/cache/model_catalog.json`.
+Cache location: `~/.chiper/cache/model_catalog.json`.
 
 ## Config
 

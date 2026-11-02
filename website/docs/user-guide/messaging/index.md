@@ -197,7 +197,7 @@ Sessions reset based on configurable policies:
 | Idle | 1440 min | Reset after N minutes of inactivity |
 | Both | (combined) | Whichever triggers first |
 
-Configure per-platform overrides in `~/.Chiper/gateway.json`:
+Configure per-platform overrides in `~/.chiper/gateway.json`:
 
 ```json
 {
@@ -314,7 +314,7 @@ If you find the busy-ack noisy — especially with voice input or rapid-fire mes
 
 ## Tool Progress Notifications
 
-Control how much tool activity is displayed in `~/.Chiper/config.yaml`:
+Control how much tool activity is displayed in `~/.chiper/config.yaml`:
 
 ```yaml
 display:
@@ -380,7 +380,7 @@ Each `/background` prompt spawns a **separate agent instance** that runs asynchr
 
 ### Background Process Notifications
 
-When the agent running a background session uses `terminal(background=true)` to start long-running processes (servers, builds, etc.), the gateway can push status updates to your chat. Control this with `display.background_process_notifications` in `~/.Chiper/config.yaml`:
+When the agent running a background session uses `terminal(background=true)` to start long-running processes (servers, builds, etc.), the gateway can push status updates to your chat. Control this with `display.background_process_notifications` in `~/.chiper/config.yaml`:
 
 ```yaml
 display:
@@ -454,7 +454,7 @@ chiper ALL=(root) NOPASSWD: /usr/bin/systemctl --no-ask-password reset-failed ch
 Avoid keeping both the user and system gateway units installed at once unless you really mean to. Chiper will warn if it detects both because start/stop/status behavior gets ambiguous.
 
 :::info Multiple installations
-If you run multiple Chiper installations on the same machine (with different `CHIPER_HOME` directories), each gets its own systemd service name. The default `~/.Chiper` uses `chiper-gateway`; other installations use `chiper-gateway-<hash>`. The `chiper gateway` commands automatically target the correct service for your current `CHIPER_HOME`.
+If you run multiple Chiper installations on the same machine (with different `CHIPER_HOME` directories), each gets its own systemd service name. The default `~/.chiper` uses `chiper-gateway`; other installations use `chiper-gateway-<hash>`. The `chiper gateway` commands automatically target the correct service for your current `CHIPER_HOME`.
 :::
 
 ### macOS (launchd)
@@ -464,7 +464,7 @@ chiper gateway install               # Install as launchd agent
 chiper gateway start                 # Start the service
 chiper gateway stop                  # Stop the service
 chiper gateway status                # Check status
-tail -f ~/.Chiper/logs/gateway.log   # View logs
+tail -f ~/.chiper/logs/gateway.log   # View logs
 ```
 
 The generated plist lives at `~/Library/LaunchAgents/ai.chiper.gateway.plist`. It includes three environment variables:
@@ -478,7 +478,7 @@ launchd plists are static — if you install new tools (e.g. a new Node.js versi
 :::
 
 :::info Multiple installations
-Like the Linux systemd service, each `CHIPER_HOME` directory gets its own launchd label. The default `~/.Chiper` uses `ai.chiper.gateway`; other installations use `ai.chiper.gateway-<suffix>`.
+Like the Linux systemd service, each `CHIPER_HOME` directory gets its own launchd label. The default `~/.chiper` uses `ai.chiper.gateway`; other installations use `ai.chiper.gateway-<suffix>`.
 :::
 
 ## Platform-Specific Toolsets
@@ -540,7 +540,7 @@ The breaker does **not** auto-resume — it stays open until you run `/platform 
 
 When an adapter is paused, check:
 
-1. **Gateway log** (`~/.Chiper/logs/gateway.log` or the systemd / launchd unit log). Search for the platform name and `circuit breaker`, `paused`, or `disabled`. The trip event includes the failure count and the last error.
+1. **Gateway log** (`~/.chiper/logs/gateway.log` or the systemd / launchd unit log). Search for the platform name and `circuit breaker`, `paused`, or `disabled`. The trip event includes the failure count and the last error.
 2. **`/platform list`** output — shows the current state and last reason.
 3. **The provider's status page** (Telegram bot API status, Discord status, etc.). The breaker tripped because the platform was unhealthy; don't try to resume until it's back.
 

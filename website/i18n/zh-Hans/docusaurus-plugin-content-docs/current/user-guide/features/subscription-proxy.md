@@ -27,7 +27,7 @@ description: "将你的 Nous Portal 订阅（或其他 OAuth 提供商）用作�
 chiper portal
 ```
 
-这会打开浏览器进行 Nous Portal OAuth 流程。Chiper 将刷新令牌存储在 `~/.Chiper/auth.json` 中——与所有 Chiper 提供商登录信息存放在同一位置。
+这会打开浏览器进行 Nous Portal OAuth 流程。Chiper 将刷新令牌存储在 `~/.chiper/auth.json` 中——与所有 Chiper 提供商登录信息存放在同一位置。
 
 ### 2. 启动代理
 

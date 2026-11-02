@@ -8,7 +8,7 @@ instances via ``PluginContext.register_image_gen_provider()``; the active one
 ``image_generate`` tool call.
 
 Providers live in ``<repo>/plugins/image_gen/<name>/`` (built-in, auto-loaded
-as ``kind: backend``) or ``~/.Chiper/plugins/image_gen/<name>/`` (user, opt-in
+as ``kind: backend``) or ``~/.chiper/plugins/image_gen/<name>/`` (user, opt-in
 via ``plugins.enabled``).
 
 Response shape

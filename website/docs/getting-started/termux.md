@@ -138,7 +138,7 @@ chiper
 chiper model
 ```
 
-Or set keys directly in `~/.Chiper/.env`.
+Or set keys directly in `~/.chiper/.env`.
 
 ### Re-run the full interactive setup wizard later
 

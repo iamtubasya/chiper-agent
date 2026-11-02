@@ -76,7 +76,7 @@ if __name__ == "__main__":
 Run it:
 
 ```bash
-cd ~/.Chiper/chiper-agent
+cd ~/.chiper/chiper-agent
 source .venv/bin/activate
 python my_cli.py
 ```

@@ -75,7 +75,7 @@ Run a Python script *before* the agent. The script's stdout becomes context. The
 ```bash
 chiper cron create "every 1h" \
   "If CHANGE DETECTED, summarize what changed. If NO_CHANGE, respond with [SILENT]." \
-  --script ~/.Chiper/scripts/watch-site.py \
+  --script ~/.chiper/scripts/watch-site.py \
   --name "Pricing monitor" \
   --deliver telegram
 ```

@@ -153,8 +153,8 @@ def _is_gateway_approval_context() -> bool:
 
 # Sensitive write targets that should trigger approval even when referenced
 # via shell expansions like $HOME or $CHIPER_HOME, or by the resolved absolute
-# active profile home path such as /home/chiper/.Chiper/config.yaml. The
-# resolved-absolute form is folded into the ~/.Chiper/ patterns at detection
+# active profile home path such as /home/chiper/.chiper/config.yaml. The
+# resolved-absolute form is folded into the ~/.chiper/ patterns at detection
 # time by _normalize_command_for_detection() — see the rewrite step there — so
 # these static patterns stay free of any import-time path snapshot (which would
 # go stale when CHIPER_HOME is set after this module is imported, e.g. under the
@@ -167,14 +167,14 @@ _CHIPER_ENV_PATH = (
     r'(?:\\$chiper_home|\\$\{chiper_home\})/)'
     r'\\.env\\b'
 )
-# ~/.Chiper/config.yaml IS the security policy: approvals.mode, yolo, and the
+# ~/.chiper/config.yaml IS the security policy: approvals.mode, yolo, and the
 # permanent-approval allowlist live here, and the config cache is mtime-keyed
 # so a write takes effect mid-session (the agent could flip approvals.mode=off
 # and immediately bypass the gate). Pair the write_file/patch deny (file_tools
 # _check_sensitive_path) with terminal-side coverage so `sed -i`, `tee`, `>`,
 # `cp`, etc. targeting it are gated too — otherwise the deny is unpaired
 # theater. Mirrors _CHIPER_ENV_PATH; matches the CHIPER_HOME override form as
-# well as ~/.Chiper/.
+# well as ~/.chiper/.
 _CHIPER_CONFIG_PATH = (
     r'(?:~/\\.chiper/|~/\\.Chiper/|'
     r'(?:\\$home|\\$\{home\})/\\.chiper/|'
@@ -452,7 +452,7 @@ DANGEROUS_PATTERNS = [
     # cp/mv/install OVERWRITING a sensitive credential/SSH/shell-rc/Chiper file.
     # The tee/redirection patterns above already gate _SENSITIVE_WRITE_TARGET
     # (~/.ssh/*, ~/.netrc/.pgpass/.npmrc/.pypirc, shell rc files,
-    # ~/.Chiper/config.yaml/.env), but cp/mv/install was only paired for /etc and
+    # ~/.chiper/config.yaml/.env), but cp/mv/install was only paired for /etc and
     # project-relative env/config — so `cp evil ~/.ssh/authorized_keys` (key
     # implant), `cp creds ~/.netrc`, and `cp evil ~/.bashrc` (login-time command
     # injection) slipped through with auto-approve. Same unpaired-door rationale
@@ -472,7 +472,7 @@ DANGEROUS_PATTERNS = [
     (rf'\b(?:perl|ruby)\b.*(?:^|\s)-[^\s]*i\b.*(?:{_USER_SENSITIVE_WRITE_TARGET})[^\s"\']*', "in-place edit of sensitive credential/SSH/shell-rc path (perl/ruby)"),
     (rf'\bsed\s+-[^\s]*i.*\s{_SYSTEM_CONFIG_PATH}', "in-place edit of system config"),
     (rf'\bsed\s+--in-place\b.*\s{_SYSTEM_CONFIG_PATH}', "in-place edit of system config (long flag)"),
-    # In-place edit of a Chiper-managed security file (~/.Chiper/config.yaml or
+    # In-place edit of a Chiper-managed security file (~/.chiper/config.yaml or
     # .env). sed -i bypasses the redirection/tee patterns above because it
     # mutates the file directly. Pairs the file_tools write_file/patch deny so
     # the terminal side is not an open door. See #14639.
@@ -582,9 +582,9 @@ def _normalize_command_for_detection(command: str) -> str:
     # profile/session launchers can set HOME after this module is imported.
     command = _rewrite_resolved_user_home(command)
     # Fold the resolved absolute active-profile home path into the canonical
-    # ~/.Chiper/ form so the Chiper config/env patterns catch it. In Docker and
+    # ~/.chiper/ form so the Chiper config/env patterns catch it. In Docker and
     # gateway deployments the agent often references the resolved absolute path
-    # directly (e.g. `sed -i ... /home/chiper/.Chiper/config.yaml`) rather than
+    # directly (e.g. `sed -i ... /home/chiper/.chiper/config.yaml`) rather than
     # ~, $HOME, or $CHIPER_HOME. Done at detection time (not via an import-time
     # pattern snapshot) so it tracks the live CHIPER_HOME even when that is set
     # after this module is imported — as the hermetic test conftest does.
@@ -623,11 +623,11 @@ def _rewrite_resolved_user_home(command: str) -> str:
 
 
 def _rewrite_resolved_chiper_home(command: str) -> str:
-    """Rewrite the resolved absolute Chiper home prefix to ``~/.Chiper/``.
+    """Rewrite the resolved absolute Chiper home prefix to ``~/.chiper/``.
 
     Resolves the active ``CHIPER_HOME`` at call time (and its symlink-resolved
     form) and replaces an occurrence of ``<home>/`` in *command* with
-    ``~/.Chiper/`` so the static ``_CHIPER_CONFIG_PATH`` / ``_CHIPER_ENV_PATH``
+    ``~/.chiper/`` so the static ``_CHIPER_CONFIG_PATH`` / ``_CHIPER_ENV_PATH``
     patterns match. No-op when the path can't be resolved or doesn't appear.
     """
     try:
@@ -651,7 +651,7 @@ def _rewrite_resolved_chiper_home(command: str) -> str:
         normalized = path.rstrip("/")
         if not normalized.startswith("/") or normalized.count("/") < 2:
             continue
-        command = command.replace(normalized + "/", "~/.Chiper/")
+        command = command.replace(normalized + "/", "~/.chiper/")
     return command
 
 

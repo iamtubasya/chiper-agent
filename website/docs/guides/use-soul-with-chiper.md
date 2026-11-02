@@ -44,7 +44,7 @@ A good rule:
 Chiper now uses only the global SOUL file for the current instance:
 
 ```text
-~/.Chiper/SOUL.md
+~/.chiper/SOUL.md
 ```
 
 If you run Chiper with a custom home directory, it becomes:
@@ -212,13 +212,13 @@ This is the most common mistake.
 ## How to edit it
 
 ```bash
-nano ~/.Chiper/SOUL.md
+nano ~/.chiper/SOUL.md
 ```
 
 or
 
 ```bash
-vim ~/.Chiper/SOUL.md
+vim ~/.chiper/SOUL.md
 ```
 
 Then restart Chiper or start a new session.
@@ -238,7 +238,7 @@ That iterative approach works better than trying to design the perfect personali
 ### I edited SOUL.md but Chiper still sounds the same
 
 Check:
-- you edited `~/.Chiper/SOUL.md` or `$CHIPER_HOME/SOUL.md`
+- you edited `~/.chiper/SOUL.md` or `$CHIPER_HOME/SOUL.md`
 - not some repo-local `SOUL.md`
 - the file is not empty
 - your session was restarted after the edit

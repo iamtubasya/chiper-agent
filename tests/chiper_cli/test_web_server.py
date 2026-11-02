@@ -4159,7 +4159,7 @@ class TestNormaliseThemeDefinition:
 
 
 class TestDiscoverUserThemes:
-    """Tests for _discover_user_themes() — scans ~/.Chiper/dashboard-themes/."""
+    """Tests for _discover_user_themes() — scans ~/.chiper/dashboard-themes/."""
 
     def test_returns_empty_when_dir_missing(self, tmp_path, monkeypatch):
         monkeypatch.setenv("CHIPER_HOME", str(tmp_path))

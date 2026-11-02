@@ -61,14 +61,14 @@ Version `0.2.x` expands the catalog to 60+ achievements, including model/provide
 Clone into your Chiper plugins directory:
 
 ```bash
-git clone https://github.com/PCinkusz/chiper-achievements ~/.Chiper/plugins/chiper-achievements
+git clone https://github.com/PCinkusz/chiper-achievements ~/.chiper/plugins/chiper-achievements
 ```
 
 For local development, keep the repo elsewhere and symlink it:
 
 ```bash
 git clone https://github.com/PCinkusz/chiper-achievements ~/chiper-achievements
-ln -s ~/chiper-achievements ~/.Chiper/plugins/chiper-achievements
+ln -s ~/chiper-achievements ~/.chiper/plugins/chiper-achievements
 ```
 
 Then rescan dashboard plugins:
@@ -84,7 +84,7 @@ If backend API routes 404, restart `chiper dashboard`; plugin APIs are mounted a
 If you installed with git:
 
 ```bash
-cd ~/.Chiper/plugins/chiper-achievements
+cd ~/.chiper/plugins/chiper-achievements
 git pull --ff-only
 curl http://127.0.0.1:9119/api/dashboard/plugins/rescan
 ```

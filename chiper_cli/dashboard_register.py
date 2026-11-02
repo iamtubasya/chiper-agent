@@ -2,18 +2,18 @@
 
 Automates what a user otherwise does by hand: open the Nous Portal
 ``/local-dashboards`` page in a browser, click "register", copy the
-resulting ``agent:{id}`` OAuth client ID, and paste it into ``~/.Chiper/.env``
+resulting ``agent:{id}`` OAuth client ID, and paste it into ``~/.chiper/.env``
 as ``CHIPER_DASHBOARD_OAUTH_CLIENT_ID``.
 
 This command:
   1. Resolves a fresh Nous Portal access token from the existing login
-     (``~/.Chiper/auth.json``), refreshing it if needed. Fails fast with a
+     (``~/.chiper/auth.json``), refreshing it if needed. Fails fast with a
      "run `chiper setup`" hint when the user isn't logged in.
   2. POSTs to ``{portal}/api/oauth/self-hosted-client`` with that bearer
      token, which creates a SELF_HOSTED agent client owned by the caller's
      org and returns the fully-formed ``agent:{id}`` client_id.
   3. Writes ``CHIPER_DASHBOARD_OAUTH_CLIENT_ID`` and (if absent)
-     ``CHIPER_DASHBOARD_PORTAL_URL`` into ``~/.Chiper/.env`` idempotently.
+     ``CHIPER_DASHBOARD_PORTAL_URL`` into ``~/.chiper/.env`` idempotently.
   4. Prints a post-register hint explaining that the OAuth gate only engages
      on a non-loopback bind.
 

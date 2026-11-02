@@ -22,7 +22,7 @@ const logDir = join(process.env.CHIPER_HOME?.trim() || join(homedir(), '.chiper'
 const CRASH_LOG = join(logDir, 'tui_gateway_crash.log')
 
 // Skipped under vitest so unit tests exercising start()/kill() can't write into
-// a real ~/.Chiper (tests must stay hermetic — see AGENTS.md).
+// a real ~/.chiper (tests must stay hermetic — see AGENTS.md).
 const enabled = !process.env.VITEST
 // Slice a single breadcrumb's value to MAX_BREADCRUMB chars (a short
 // "[truncated …]" marker is appended, so the written line is slightly longer)

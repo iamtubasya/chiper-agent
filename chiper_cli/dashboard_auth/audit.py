@@ -53,10 +53,10 @@ def _resolve_log_path() -> Path:
     """``$CHIPER_HOME/logs/dashboard-auth.log`` with the standard fallback.
 
     Mirrors ``chiper_constants.get_chiper_home`` semantics: env var wins,
-    else ``~/.Chiper``. A local copy avoids an import cycle with the
+    else ``~/.chiper``. A local copy avoids an import cycle with the
     middleware which lives below ``chiper_cli``.
     """
-    home = os.environ.get("CHIPER_HOME") or str(Path.home() / ".Chiper")
+    home = os.environ.get("CHIPER_HOME") or str(Path.home() / ".chiper")
     return Path(home) / "logs" / "dashboard-auth.log"
 
 

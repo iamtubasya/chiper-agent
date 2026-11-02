@@ -41,7 +41,7 @@ pip install --upgrade chiper-agent    # or: uv pip install --upgrade chiper-agen
 
 When you run `chiper update`, the following steps occur:
 
-1. **Pairing-data snapshot** — a lightweight pre-update state snapshot is saved (covers `~/.Chiper/pairing/`, Feishu comment rules, and other state files that get modified at runtime). Recoverable via the snapshot restore flow described under [Snapshots and rollback](../user-guide/checkpoints-and-rollback.md), or by extracting the most recent quick-snapshot zip Chiper wrote next to your `~/.Chiper/` directory.
+1. **Pairing-data snapshot** — a lightweight pre-update state snapshot is saved (covers `~/.chiper/pairing/`, Feishu comment rules, and other state files that get modified at runtime). Recoverable via the snapshot restore flow described under [Snapshots and rollback](../user-guide/checkpoints-and-rollback.md), or by extracting the most recent quick-snapshot zip Chiper wrote next to your `~/.chiper/` directory.
 2. **Git pull** — pulls the latest code from the `main` branch and updates submodules
 3. **Post-pull syntax validation + auto-rollback** — after the pull, Chiper compiles the eight critical files every `chiper` invocation imports at startup. If any fails to parse (e.g. an orphan merge-conflict marker, an accidentally truncated file), Chiper runs `git reset --hard <pre-pull-sha>` to roll the install back so your shell stays bootable. Re-run `chiper update` once the upstream fix lands.
 4. **Dependency install** — runs `uv pip install -e ".[all]"` to pick up new or changed dependencies
@@ -66,7 +66,7 @@ When you run `chiper update` in a terminal, Chiper stashes any uncommitted sourc
 When the update runs **without a terminal** — from the desktop/chat app's "Update" button or a gateway-triggered update — there's no prompt to answer. The `updates.non_interactive_local_changes` setting decides what happens to your stashed changes:
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 updates:
   non_interactive_local_changes: stash   # default: keep + auto-restore
   # non_interactive_local_changes: discard  # throw local source edits away
@@ -92,7 +92,7 @@ chiper update --backup
 Or make it the default for every run:
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 updates:
   pre_update_backup: true
 ```
@@ -154,10 +154,10 @@ If `git status --short` shows unexpected changes after `chiper update`, stop and
 `chiper update` protects itself against accidental terminal loss:
 
 - The update ignores `SIGHUP`, so closing your SSH session or terminal window no longer kills it mid-install. `pip` and `git` child processes inherit this protection, so the Python environment cannot be left half-installed by a dropped connection.
-- All output is mirrored to `~/.Chiper/logs/update.log` while the update runs. If your terminal disappears, reconnect and inspect the log to see whether the update finished and whether the gateway restart succeeded:
+- All output is mirrored to `~/.chiper/logs/update.log` while the update runs. If your terminal disappears, reconnect and inspect the log to see whether the update finished and whether the gateway restart succeeded:
 
 ```bash
-tail -f ~/.Chiper/logs/update.log
+tail -f ~/.chiper/logs/update.log
 ```
 
 - `Ctrl-C` (SIGINT) and system shutdown (SIGTERM) are still honored — those are deliberate cancellations, not accidents.
@@ -260,13 +260,13 @@ See [Nix Setup](./nix-setup.md) for more details.
 chiper uninstall
 ```
 
-The uninstaller gives you the option to keep your configuration files (`~/.Chiper/`) for a future reinstall.
+The uninstaller gives you the option to keep your configuration files (`~/.chiper/`) for a future reinstall.
 
 ### pip installs
 
 ```bash
 pip uninstall chiper-agent
-rm -rf ~/.Chiper            # Optional — keep if you plan to reinstall
+rm -rf ~/.chiper            # Optional — keep if you plan to reinstall
 ```
 
 ### Manual Uninstall
@@ -274,7 +274,7 @@ rm -rf ~/.Chiper            # Optional — keep if you plan to reinstall
 ```bash
 rm -f ~/.local/bin/chiper
 rm -rf /path/to/chiper-agent
-rm -rf ~/.Chiper            # Optional — keep if you plan to reinstall
+rm -rf ~/.chiper            # Optional — keep if you plan to reinstall
 ```
 
 :::info

@@ -344,7 +344,7 @@ def _get_chiper_config_resolved() -> str | None:
         _chiper_config_resolved = str(get_config_path().resolve())
     except Exception:
         try:
-            _chiper_config_resolved = str(Path("~/.Chiper/config.yaml").expanduser().resolve())
+            _chiper_config_resolved = str(Path("~/.chiper/config.yaml").expanduser().resolve())
         except Exception:
             _chiper_config_resolved = None
     return _chiper_config_resolved
@@ -375,7 +375,7 @@ def _check_sensitive_path(filepath: str, task_id: str = "default") -> str | None
         return (
             f"Refusing to write to Chiper config file: {filepath}\n"
             "Agent cannot modify security-sensitive configuration. "
-            "Edit ~/.Chiper/config.yaml directly or use 'chiper config' instead."
+            "Edit ~/.chiper/config.yaml directly or use 'chiper config' instead."
         )
     return None
 
@@ -402,7 +402,7 @@ def _get_container_mirror_prefix_for_task(task_id: str = "default") -> str | Non
             if env.__class__.__name__ == "DockerEnvironment" and bool(
                 getattr(env, "_persistent", False)
             ):
-                return "/root/.Chiper"
+                return "/root/.chiper"
             return None
 
         config = _get_env_config()
@@ -410,7 +410,7 @@ def _get_container_mirror_prefix_for_task(task_id: str = "default") -> str | Non
         return None
 
     if config.get("env_type") == "docker" and config.get("container_persistent", True):
-        return "/root/.Chiper"
+        return "/root/.chiper"
     return None
 
 
@@ -424,13 +424,13 @@ def _check_cross_profile_path(filepath: str, task_id: str = "default") -> str | 
     * cross-profile (#TBD) — writes that hit another profile's
       ``skills/plugins/cron/memories`` directory.
     * sandbox-mirror (#32049) — writes that hit the
-      ``…/sandboxes/<backend>/<task>/home/.Chiper/…`` mirror created by a
+      ``…/sandboxes/<backend>/<task>/home/.chiper/…`` mirror created by a
       non-local terminal backend (Docker, Daytona, etc.), where the host
       Chiper process never reads the mirror and the authoritative file is
       left untouched.
     * container-mirror (#32049 follow-up) — writes from inside a Docker
       container whose bind-mounted home strips the ``sandboxes/`` prefix, so
-      the agent sees a plain ``/root/.Chiper/…`` path.
+      the agent sees a plain ``/root/.chiper/…`` path.
 
     Returns ``None`` when the write is in-scope or outside Chiper scope.
     All detectors are soft guards — the agent can override any by
@@ -453,7 +453,7 @@ def _check_cross_profile_path(filepath: str, task_id: str = "default") -> str | 
         return None
 
     # Resolve via the task's cwd so a relative ``skills/foo/SKILL.md``
-    # in a session that cd'd into ``~/.Chiper/profiles/other/`` is
+    # in a session that cd'd into ``~/.chiper/profiles/other/`` is
     # classified against the right base.
     try:
         resolved = str(_resolve_path_for_task(filepath, task_id))

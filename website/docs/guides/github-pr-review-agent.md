@@ -53,7 +53,7 @@ If you have a public endpoint available, check out [Automated GitHub PR Comments
 - **Messaging configured** (optional) — [Telegram](/user-guide/messaging/telegram) or [Discord](/user-guide/messaging/discord)
 
 :::tip No messaging? No problem
-Use `deliver: "local"` to save reviews to `~/.Chiper/cron/output/`. Great for testing before wiring up notifications.
+Use `deliver: "local"` to save reviews to `~/.chiper/cron/output/`. Great for testing before wiring up notifications.
 :::
 
 ---
@@ -101,10 +101,10 @@ If you're happy with the quality, time to automate it.
 A skill gives Chiper consistent review guidelines that persist across sessions and cron runs. Without one, review quality varies.
 
 ```bash
-mkdir -p ~/.Chiper/skills/code-review
+mkdir -p ~/.chiper/skills/code-review
 ```
 
-Create `~/.Chiper/skills/code-review/SKILL.md`:
+Create `~/.chiper/skills/code-review/SKILL.md`:
 
 ```markdown
 ---

@@ -1,6 +1,6 @@
 """CLI entry point for the chiper-agent ACP adapter.
 
-Loads environment variables from ``~/.Chiper/.env``, configures logging
+Loads environment variables from ``~/.chiper/.env``, configures logging
 to write to stderr (so stdout is reserved for ACP JSON-RPC transport),
 and starts the ACP agent server.
 
@@ -94,7 +94,7 @@ def _setup_logging() -> None:
 
 
 def _load_env() -> None:
-    """Load .env from CHIPER_HOME (default ``~/.Chiper``)."""
+    """Load .env from CHIPER_HOME (default ``~/.chiper``)."""
     from chiper_cli.env_loader import load_chiper_dotenv
 
     chiper_home = get_chiper_home()
@@ -127,7 +127,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--setup-browser",
         action="store_true",
-        help="Install agent-browser + Playwright Chromium into ~/.Chiper/node/ "
+        help="Install agent-browser + Playwright Chromium into ~/.chiper/node/ "
              "for browser tool support. Idempotent.",
     )
     parser.add_argument(

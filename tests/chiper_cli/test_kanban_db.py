@@ -2303,7 +2303,7 @@ class TestSharedBoardPaths:
     def test_default_install_anchors_at_home_dot_chiper(
         self, tmp_path, monkeypatch
     ):
-        # Standard install: CHIPER_HOME == ~/.Chiper, no profile active.
+        # Standard install: CHIPER_HOME == ~/.chiper, no profile active.
         default_home = tmp_path / ".chiper"
         default_home.mkdir()
         self._set_home(monkeypatch, tmp_path, default_home)
@@ -2319,10 +2319,10 @@ class TestSharedBoardPaths:
     def test_profile_worker_resolves_to_shared_root(
         self, tmp_path, monkeypatch
     ):
-        # Reproduces the bug: dispatcher uses ~/.Chiper/kanban.db,
+        # Reproduces the bug: dispatcher uses ~/.chiper/kanban.db,
         # worker spawned with -p <profile> previously resolved to
-        # ~/.Chiper/profiles/<profile>/kanban.db. After the fix both
-        # converge on ~/.Chiper/kanban.db.
+        # ~/.chiper/profiles/<profile>/kanban.db. After the fix both
+        # converge on ~/.chiper/kanban.db.
         default_home = tmp_path / ".chiper"
         default_home.mkdir()
         profile_home = default_home / "profiles" / "nehemiahkanban"
@@ -2373,7 +2373,7 @@ class TestSharedBoardPaths:
     def test_docker_custom_chiper_home_uses_env_path_directly(
         self, tmp_path, monkeypatch
     ):
-        # Docker / custom deployment: CHIPER_HOME points outside ~/.Chiper.
+        # Docker / custom deployment: CHIPER_HOME points outside ~/.chiper.
         # `get_default_chiper_root()` returns env_home directly when it
         # is not a `<root>/profiles/<name>` shape and not under
         # `Path.home() / ".chiper"`.

@@ -1,7 +1,7 @@
 """Per-provider model-selection wizard flows for ``chiper setup`` / ``chiper model``.
 
 Extracted from ``chiper_cli/main.py`` as part of the god-file decomposition
-campaign (``~/.Chiper/plans/god-file-decomposition.md``, Phase 2 — splitting
+campaign (``~/.chiper/plans/god-file-decomposition.md``, Phase 2 — splitting
 main.py handler/flow bodies out of the module). These 18 ``_model_flow_*``
 functions are the interactive provider-setup branches dispatched by
 ``select_provider_and_model`` (which stays in main.py).
@@ -76,7 +76,7 @@ def _model_flow_openrouter(config, current_model=""):
     from chiper_cli.config import get_env_value
 
     # Route through _prompt_api_key so users can replace a stale/broken key
-    # in-flow (K/R/C) instead of having to edit ~/.Chiper/.env by hand. The
+    # in-flow (K/R/C) instead of having to edit ~/.chiper/.env by hand. The
     # previous bypass-when-key-exists branch left no way to recover from a
     # bad paste short of re-running `chiper setup` from scratch. OpenRouter
     # isn't in PROVIDER_REGISTRY so we synthesize a minimal pconfig.
@@ -634,7 +634,7 @@ def _model_flow_google_gemini_cli(_config, current_model=""):
       2. If creds missing, run PKCE browser OAuth via agent.google_oauth.
       3. Resolve project context (env -> config -> auto-discover -> free tier).
       4. Prompt user to pick a model.
-      5. Save to ~/.Chiper/config.yaml.
+      5. Save to ~/.chiper/config.yaml.
     """
     from chiper_cli.auth import (
         DEFAULT_GEMINI_CLOUDCODE_BASE_URL,

@@ -36,7 +36,7 @@ Webhook payload 包含攻击者可控的数据——PR 标题、commit 消息和
 
 ## 第一步——启用 webhook 平台
 
-在你的 `~/.Chiper/config.yaml` 中添加以下内容：
+在你的 `~/.chiper/config.yaml` 中添加以下内容：
 
 ```yaml
 platforms:

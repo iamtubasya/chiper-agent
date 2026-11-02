@@ -12,7 +12,7 @@ Subcommands:
   chiper fallback remove   Pick an entry to delete from the chain
   chiper fallback clear    Remove all fallback entries
 
-Storage: ``fallback_providers`` in ``~/.Chiper/config.yaml`` (top-level, list of
+Storage: ``fallback_providers`` in ``~/.chiper/config.yaml`` (top-level, list of
 ``{provider, model, base_url?, api_mode?}`` dicts).  The legacy single-dict
 ``fallback_model`` format is migrated to the new list format on first add.
 """

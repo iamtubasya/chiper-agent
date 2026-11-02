@@ -47,7 +47,7 @@ def _get_platform_default_chiper_home() -> Path:
         local_appdata = os.environ.get("LOCALAPPDATA", "").strip()
         base = Path(local_appdata) if local_appdata else Path.home() / "AppData" / "Local"
         return base / "chiper"
-    return Path.home() / ".Chiper"
+    return Path.home() / ".chiper"
 
 
 def get_chiper_home() -> Path:
@@ -112,15 +112,15 @@ def get_default_chiper_root() -> Path:
     """Return the root Chiper directory for profile-level operations.
 
     In standard deployments this is the platform-native Chiper home
-    (``~/.Chiper`` on POSIX, ``%LOCALAPPDATA%\\chiper`` on native Windows).
+    (``~/.chiper`` on POSIX, ``%LOCALAPPDATA%\\chiper`` on native Windows).
 
     In Docker or custom deployments where ``CHIPER_HOME`` points outside
-    ``~/.Chiper`` (e.g. ``/opt/data``), returns ``CHIPER_HOME`` directly
+    ``~/.chiper`` (e.g. ``/opt/data``), returns ``CHIPER_HOME`` directly
     — that IS the root.
 
     In profile mode where ``CHIPER_HOME`` is ``<root>/profiles/<name>``,
     returns ``<root>`` so that ``profile list`` can see all profiles.
-    Works both for standard (``~/.Chiper/profiles/coder``) and Docker
+    Works both for standard (``~/.chiper/profiles/coder``) and Docker
     (``/opt/data/profiles/coder``) layouts.
 
     Import-safe — no dependencies beyond stdlib.
@@ -132,7 +132,7 @@ def get_default_chiper_root() -> Path:
     env_path = Path(env_home)
     try:
         env_path.resolve().relative_to(native_home.resolve())
-        # CHIPER_HOME is under ~/.Chiper (normal or profile mode)
+        # CHIPER_HOME is under ~/.chiper (normal or profile mode)
         return native_home
     except ValueError:
         pass
@@ -247,12 +247,12 @@ def display_chiper_home() -> str:
 
     Uses ``~/`` shorthand for readability::
 
-        default:  ``~/.Chiper``
-        profile:  ``~/.Chiper/profiles/coder``
+        default:  ``~/.chiper``
+        profile:  ``~/.chiper/profiles/coder``
         custom:   ``/opt/chiper-custom``
 
     Use this in **user-facing** print/log messages instead of hardcoding
-    ``~/.Chiper``.  For code that needs a real ``Path``, use
+    ``~/.chiper``.  For code that needs a real ``Path``, use
     :func:`get_chiper_home` instead.
     """
     home = get_chiper_home()

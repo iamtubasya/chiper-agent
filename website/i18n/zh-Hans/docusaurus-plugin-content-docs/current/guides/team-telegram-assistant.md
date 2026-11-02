@@ -26,7 +26,7 @@ description: "逐步指南：为整个团队搭建一个 Telegram 机器人，�
 
 - **已在服务器或 VPS 上安装 Chiper Agent**（不是你的笔记本——机器人需要持续运行）。如尚未安装，请参阅[安装指南](/getting-started/installation)。
 - **一个 Telegram 账号**（机器人所有者）
-- **已配置 LLM 提供商**——至少在 `~/.Chiper/.env` 中配置了 OpenAI、Anthropic 或其他受支持提供商的 API 密钥
+- **已配置 LLM 提供商**——至少在 `~/.chiper/.env` 中配置了 OpenAI、Anthropic 或其他受支持提供商的 API 密钥
 
 :::tip
 一台 $5/月的 VPS 足以运行 gateway（网关）。Chiper 本身很轻量——花钱的是 LLM API 调用，而那些调用发生在远端。
@@ -93,7 +93,7 @@ chiper gateway setup
 
 ### 方式 B：手动配置
 
-在 `~/.Chiper/.env` 中添加以下内容：
+在 `~/.chiper/.env` 中添加以下内容：
 
 ```bash
 # Telegram bot token from BotFather
@@ -170,7 +170,7 @@ journalctl -u chiper-gateway -f
 # macOS——管理服务
 chiper gateway start
 chiper gateway stop
-tail -f ~/.Chiper/logs/gateway.log
+tail -f ~/.chiper/logs/gateway.log
 ```
 
 :::tip macOS PATH
@@ -196,7 +196,7 @@ chiper gateway status
 收集每位团队成员的 Telegram 用户 ID（让他们给 [@userinfobot](https://t.me/userinfobot) 发消息），然后以逗号分隔的列表形式添加：
 
 ```bash
-# 在 ~/.Chiper/.env 中
+# 在 ~/.chiper/.env 中
 TELEGRAM_ALLOWED_USERS=123456789,987654321,555555555
 ```
 
@@ -260,7 +260,7 @@ chiper pairing clear-pending
 
 **方式 1：** 在机器人所在的任意 Telegram 群组或聊天中使用 `/sethome` 命令。
 
-**方式 2：** 在 `~/.Chiper/.env` 中手动设置：
+**方式 2：** 在 `~/.chiper/.env` 中手动设置：
 
 ```bash
 TELEGRAM_HOME_CHANNEL=-1001234567890
@@ -271,7 +271,7 @@ TELEGRAM_HOME_CHANNEL_NAME="Team Updates"
 
 ### 配置工具进度显示
 
-控制机器人在使用工具时显示的详细程度。在 `~/.Chiper/config.yaml` 中：
+控制机器人在使用工具时显示的详细程度。在 `~/.chiper/config.yaml` 中：
 
 ```yaml
 display:
@@ -289,7 +289,7 @@ display:
 
 ### 使用 SOUL.md 设置个性
 
-通过编辑 `~/.Chiper/SOUL.md` 自定义机器人的沟通方式：
+通过编辑 `~/.chiper/SOUL.md` 自定义机器人的沟通方式：
 
 完整指南请参阅[在 Chiper 中使用 SOUL.md](/guides/use-soul-with-chiper)。
 
@@ -306,7 +306,7 @@ before guessing at solutions.
 如果你的团队在特定项目上工作，可以创建上下文文件，让机器人了解你们的技术栈：
 
 ```markdown
-<!-- ~/.Chiper/AGENTS.md -->
+<!-- ~/.chiper/AGENTS.md -->
 # Team Context
 - We use Python 3.12 with FastAPI and SQLAlchemy
 - Frontend is React with TypeScript
@@ -373,12 +373,12 @@ Cron 任务的 prompt 在完全全新的会话中运行，不保留任何先前�
 在共享团队机器人上，使用 Docker 作为终端后端，让 agent 命令在容器中运行，而非直接在宿主机上运行：
 
 ```bash
-# 在 ~/.Chiper/.env 中
+# 在 ~/.chiper/.env 中
 TERMINAL_BACKEND=docker
 TERMINAL_DOCKER_IMAGE=nikolaik/python-nodejs:python3.11-nodejs20
 ```
 
-或在 `~/.Chiper/config.yaml` 中：
+或在 `~/.chiper/config.yaml` 中：
 
 ```yaml
 terminal:
@@ -400,7 +400,7 @@ chiper gateway status
 journalctl --user -u chiper-gateway -f
 
 # 查看实时日志（macOS）
-tail -f ~/.Chiper/logs/gateway.log
+tail -f ~/.chiper/logs/gateway.log
 ```
 
 ### 保持 Chiper 更新
@@ -416,11 +416,11 @@ chiper gateway stop && chiper gateway start
 
 | 内容 | 位置 |
 |------|----------|
-| Gateway 日志 | `journalctl --user -u chiper-gateway`（Linux）或 `~/.Chiper/logs/gateway.log`（macOS） |
-| Cron 任务输出 | `~/.Chiper/cron/output/{job_id}/{timestamp}.md` |
-| Cron 任务定义 | `~/.Chiper/cron/jobs.json` |
-| 配对数据 | `~/.Chiper/pairing/` |
-| 会话历史 | `~/.Chiper/sessions/` |
+| Gateway 日志 | `journalctl --user -u chiper-gateway`（Linux）或 `~/.chiper/logs/gateway.log`（macOS） |
+| Cron 任务输出 | `~/.chiper/cron/output/{job_id}/{timestamp}.md` |
+| Cron 任务定义 | `~/.chiper/cron/jobs.json` |
+| 配对数据 | `~/.chiper/pairing/` |
+| 会话历史 | `~/.chiper/sessions/` |
 
 ---
 

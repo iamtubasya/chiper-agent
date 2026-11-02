@@ -1222,7 +1222,7 @@ def interactive_setup() -> None:
     """Minimal stdin wizard for ``chiper setup gateway`` → SimpleX.
 
     Prompts for the WebSocket URL and the optional allowlist / groups /
-    auto-accept / home channel. Writes to ``~/.Chiper/.env`` via
+    auto-accept / home channel. Writes to ``~/.chiper/.env`` via
     ``chiper_cli.config``.
     """
     print()
@@ -1238,7 +1238,7 @@ def interactive_setup() -> None:
     except ImportError:
         print(
             "chiper_cli.config not available; set SIMPLEX_* vars manually in "
-            "~/.Chiper/.env"
+            "~/.chiper/.env"
         )
         return
 

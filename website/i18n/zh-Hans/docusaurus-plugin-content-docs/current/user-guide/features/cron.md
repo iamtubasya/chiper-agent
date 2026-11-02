@@ -236,7 +236,7 @@ chiper cron status
 
 每次 tick 时，Chiper：
 
-1. 从 `~/.Chiper/cron/jobs.json` 加载任务
+1. 从 `~/.chiper/cron/jobs.json` 加载任务
 2. 对照当前时间检查 `next_run_at`
 3. 为每个到期任务启动全新的 `AIAgent` 会话
 4. 可选地将一个或多个已附加的 skill 注入该新会话
@@ -244,7 +244,7 @@ chiper cron status
 6. 投递最终响应
 7. 更新运行元数据和下次调度时间
 
-`~/.Chiper/cron/.tick.lock` 处的文件锁防止重叠的调度器 tick 重复运行同一批任务。
+`~/.chiper/cron/.tick.lock` 处的文件锁防止重叠的调度器 tick 重复运行同一批任务。
 
 ## 投递选项
 
@@ -253,7 +253,7 @@ chiper cron status
 | 选项 | 说明 | 示例 |
 |--------|-------------|---------|
 | `"origin"` | 回传到任务创建的来源 | 消息平台上的默认值 |
-| `"local"` | 仅保存到本地文件（`~/.Chiper/cron/output/`） | CLI 上的默认值 |
+| `"local"` | 仅保存到本地文件（`~/.chiper/cron/output/`） | CLI 上的默认值 |
 | `"telegram"` | Telegram 主频道 | 使用 `TELEGRAM_HOME_CHANNEL` |
 | `"telegram:123456"` | 按 ID 指定的 Telegram 会话 | 直接投递 |
 | `"telegram:-100123:17585"` | 指定 Telegram 话题 | `chat_id:thread_id` 格式 |
@@ -314,14 +314,14 @@ Note: The agent cannot see this message, and therefore cannot respond to it.
 若要投递不带包装的原始 agent 输出，将 `cron.wrap_response` 设为 `false`：
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 cron:
   wrap_response: false
 ```
 
 ### 静默抑制
 
-如果 agent 的最终响应以 `[SILENT]` 开头，投递将被完全抑制。输出仍会保存到本地以供审计（位于 `~/.Chiper/cron/output/`），但不会向投递目标发送任何消息。
+如果 agent 的最终响应以 `[SILENT]` 开头，投递将被完全抑制。输出仍会保存到本地以供审计（位于 `~/.chiper/cron/output/`），但不会向投递目标发送任何消息。
 
 这对于只在出现问题时才需要上报的监控任务很有用：
 
@@ -337,7 +337,7 @@ Otherwise, report the issue.
 预运行脚本（通过 `script` 参数附加）的默认超时为 120 秒。如果你的脚本需要更长时间——例如，包含随机延迟以避免类机器人的时序模式——可以增加此值：
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 cron:
   script_timeout_seconds: 300   # 5 分钟
 ```
@@ -364,7 +364,7 @@ chiper cron create "every 5m" \
 - 最后一行输出 `{"wakeAgent": false}` → 静默 tick（与 LLM 任务使用相同的门控）。
 - 无 token、无模型、无 provider 回退——任务永远不会触及推理层。
 
-`.sh`/`.bash` 文件在 `/bin/bash` 下运行；其他文件在当前 Python 解释器（`sys.executable`）下运行。脚本必须位于 `~/.Chiper/scripts/`（与预运行脚本门控相同的沙箱规则）。
+`.sh`/`.bash` 文件在 `/bin/bash` 下运行；其他文件在当前 Python 解释器（`sys.executable`）下运行。脚本必须位于 `~/.chiper/scripts/`（与预运行脚本门控相同的沙箱规则）。
 
 ### Agent 为你设置这些
 
@@ -374,7 +374,7 @@ chiper cron create "every 5m" \
 Ping me on Telegram if RAM is over 85%, every 5 minutes.
 ```
 
-Chiper 会通过 `write_file` 将检查脚本写入 `~/.Chiper/scripts/`，然后调用：
+Chiper 会通过 `write_file` 将检查脚本写入 `~/.chiper/scripts/`，然后调用：
 
 ```python
 cronjob(action="create", schedule="every 5m",
@@ -394,7 +394,7 @@ Cron 任务在隔离的会话中运行，不保留之前运行的记忆。但有
 # 任务 1：收集原始数据
 cronjob(
     action="create",
-    prompt="Fetch the top 10 AI/ML stories from Hacker News. Save them to ~/.Chiper/data/briefs/raw.md in markdown format with title, URL, and score.",
+    prompt="Fetch the top 10 AI/ML stories from Hacker News. Save them to ~/.chiper/data/briefs/raw.md in markdown format with title, URL, and score.",
     schedule="0 7 * * *",
     name="AI News Collector",
 )
@@ -403,7 +403,7 @@ cronjob(
 # 从 cronjob(action="list") 获取任务 1 的 ID
 cronjob(
     action="create",
-    prompt="Read ~/.Chiper/data/briefs/raw.md. Score each story 1–10 for engagement potential and novelty. Output the top 5 to ~/.Chiper/data/briefs/ranked.md.",
+    prompt="Read ~/.chiper/data/briefs/raw.md. Score each story 1–10 for engagement potential and novelty. Output the top 5 to ~/.chiper/data/briefs/ranked.md.",
     schedule="30 7 * * *",
     context_from="<job1_id>",
     name="AI News Triage",
@@ -412,7 +412,7 @@ cronjob(
 # 任务 3：发布——接收任务 2 的输出作为上下文
 cronjob(
     action="create",
-    prompt="Read ~/.Chiper/data/briefs/ranked.md. Write 3 tweet drafts (hook + body + hashtags). Deliver to telegram:7976161601.",
+    prompt="Read ~/.chiper/data/briefs/ranked.md. Write 3 tweet drafts (hook + body + hashtags). Deliver to telegram:7976161601.",
     schedule="0 8 * * *",
     context_from="<job2_id>",
     name="AI News Brief",
@@ -421,7 +421,7 @@ cronjob(
 
 **工作原理：**
 
-- 任务 2 触发时，Chiper 从 `~/.Chiper/cron/output/{job1_id}/*.md` 读取任务 1 的最新输出
+- 任务 2 触发时，Chiper 从 `~/.chiper/cron/output/{job1_id}/*.md` 读取任务 1 的最新输出
 - 该输出自动前置到任务 2 的 prompt
 - 任务 2 无需硬编码"读取此文件"——它以上下文形式接收内容
 - 链可以是任意长度：任务 1 → 任务 2 → 任务 3 → …
@@ -574,9 +574,9 @@ print(json.dumps({"wakeAgent": True, "context": {"new_issues": latest - prev}}))
 
 ```bash
 #!/bin/bash
-# ~/.Chiper/scripts/feed-changed.sh
+# ~/.chiper/scripts/feed-changed.sh
 FEED="$HOME/data/feed.json"
-STATE="$HOME/.Chiper/scripts/.feed-changed.last"
+STATE="$HOME/.chiper/scripts/.feed-changed.last"
 test -f "$FEED" || { echo '{"wakeAgent": false}'; exit 0; }
 mtime=$(stat -c %Y "$FEED")
 last=$(cat "$STATE" 2>/dev/null || echo 0)
@@ -599,7 +599,7 @@ cronjob(action="create", name="process-feed",
 
 ```bash
 #!/bin/bash
-# ~/.Chiper/scripts/flag-ready.sh
+# ~/.chiper/scripts/flag-ready.sh
 if test -f /tmp/new-data-ready; then
   rm -f /tmp/new-data-ready
   echo '{"wakeAgent": true}'
@@ -619,7 +619,7 @@ cronjob(action="create", name="nightly-analysis",
 
 ```python
 #!/usr/bin/env python
-# ~/.Chiper/scripts/new-rows.py
+# ~/.chiper/scripts/new-rows.py
 import json, sqlite3
 conn = sqlite3.connect("/home/me/data/app.db")
 n = conn.execute(
@@ -641,7 +641,7 @@ cronjob(action="create", name="summarize-new-msgs",
 同样的模式适用于任何可以从脚本查询的数据源——Postgres、HTTP API、你自己的状态存储——无需将 SQL 求值器内置到 cron 子系统中。
 
 :::tip
-Chiper 自身的 `~/.Chiper/state.db` 是内部 schema，会在版本间变更。不要从预运行门控中查询它——指向你自己的数据库或 feed。
+Chiper 自身的 `~/.chiper/state.db` 是内部 schema，会在版本间变更。不要从预运行门控中查询它——指向你自己的数据库或 feed。
 :::
 
 致谢：此方案集由 @iankar8 在 [#2654](https://github.com/Chiper/chiper-agent/pull/2654) 中的探索所启发，该 PR 提议将 sql/file/command 触发器作为并行机制添加。`script` + `wakeAgent` 门控已以零成本覆盖了所有三种情况，因此该工作以文档形式落地。
@@ -661,7 +661,7 @@ cronjob(action="create", name="daily-digest",
 
 ## 任务存储
 
-任务存储在 `~/.Chiper/cron/jobs.json`。任务运行的输出保存到 `~/.Chiper/cron/output/{job_id}/{timestamp}.md`。
+任务存储在 `~/.chiper/cron/jobs.json`。任务运行的输出保存到 `~/.chiper/cron/output/{job_id}/{timestamp}.md`。
 
 任务可能将 `model` 和 `provider` 存储为 `null`。省略这些字段时，Chiper 在执行时从全局配置中解析它们。只有设置了单任务覆盖时，这些字段才会出现在任务记录中。
 

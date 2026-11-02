@@ -7,10 +7,10 @@
 #
 # Strategy (first hit wins — respects the user's existing tooling):
 #   1. modern `node` already on PATH
-#   2. ~/.Chiper/node/ from a prior Chiper-managed install
+#   2. ~/.chiper/node/ from a prior Chiper-managed install
 #   3. fnm, proto, nvm (in that order) if the user already uses a version manager
 #   4. Termux `pkg`, macOS Homebrew
-#   5. pinned nodejs.org tarball into ~/.Chiper/node/ (always works, zero shell rc edits)
+#   5. pinned nodejs.org tarball into ~/.chiper/node/ (always works, zero shell rc edits)
 #
 # Usage:
 #   source scripts/lib/node-bootstrap.sh
@@ -20,12 +20,12 @@
 # Env inputs (set before sourcing to override defaults):
 #   CHIPER_NODE_MIN_VERSION   (default: 20)   — accepted on PATH
 #   CHIPER_NODE_TARGET_MAJOR  (default: 22)   — installed when we install
-#   CHIPER_HOME               (default: $HOME/.Chiper)
+#   CHIPER_HOME               (default: $HOME/.chiper)
 # ============================================================================
 
 CHIPER_NODE_MIN_VERSION="${CHIPER_NODE_MIN_VERSION:-20}"
 CHIPER_NODE_TARGET_MAJOR="${CHIPER_NODE_TARGET_MAJOR:-22}"
-CHIPER_HOME="${CHIPER_HOME:-$HOME/.Chiper}"
+CHIPER_HOME="${CHIPER_HOME:-$HOME/.chiper}"
 CHIPER_NODE_AVAILABLE=false
 
 # ---------------------------------------------------------------------------

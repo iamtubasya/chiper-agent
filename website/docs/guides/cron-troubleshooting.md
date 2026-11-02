@@ -59,15 +59,15 @@ Delivery targets are case-sensitive and require the correct platform to be confi
 
 | Target | Requires |
 |--------|----------|
-| `telegram` | `TELEGRAM_BOT_TOKEN` in `~/.Chiper/.env` |
-| `discord` | `DISCORD_BOT_TOKEN` in `~/.Chiper/.env` |
-| `slack` | `SLACK_BOT_TOKEN` in `~/.Chiper/.env` |
+| `telegram` | `TELEGRAM_BOT_TOKEN` in `~/.chiper/.env` |
+| `discord` | `DISCORD_BOT_TOKEN` in `~/.chiper/.env` |
+| `slack` | `SLACK_BOT_TOKEN` in `~/.chiper/.env` |
 | `whatsapp` | WhatsApp gateway configured |
 | `signal` | Signal gateway configured |
 | `matrix` | Matrix homeserver configured |
 | `email` | SMTP configured in `config.yaml` |
 | `sms` | SMS provider configured |
-| `local` | Write access to `~/.Chiper/cron/output/` |
+| `local` | Write access to `~/.chiper/cron/output/` |
 | `origin` | Delivers to the chat where the job was created |
 
 Other supported platforms include `mattermost`, `homeassistant`, `dingtalk`, `feishu`, `wecom`, `weixin`, `bluebubbles`, `qqbot`, and `webhook`. You can also target a specific chat with `platform:chat_id` syntax (e.g., `telegram:-1001234567890`).
@@ -138,7 +138,7 @@ In this example, `context-skill` loads before `target-skill`.
 If a job ran and failed, you may see error context in:
 
 1. The chat where the job delivers (if delivery succeeded)
-2. `~/.Chiper/logs/agent.log` for scheduler messages (or `errors.log` for warnings)
+2. `~/.chiper/logs/agent.log` for scheduler messages (or `errors.log` for warnings)
 3. The job's `last_run` metadata via `chiper cron list`
 
 ### Check 2: Common error patterns
@@ -146,8 +146,8 @@ If a job ran and failed, you may see error context in:
 **"No such file or directory" for scripts**
 The `script` path must be an absolute path (or relative to the Chiper config directory). Verify:
 ```bash
-ls ~/.Chiper/scripts/your-script.py   # Must exist
-chiper cron edit <job_id> --script ~/.Chiper/scripts/your-script.py
+ls ~/.chiper/scripts/your-script.py   # Must exist
+chiper cron edit <job_id> --script ~/.chiper/scripts/your-script.py
 ```
 
 **"Skill not found" at job execution**
@@ -171,11 +171,11 @@ ps aux | grep chiper
 
 ### Check 4: Permissions on jobs.json
 
-Jobs are stored in `~/.Chiper/cron/jobs.json`. If this file is not readable/writable by your user, the scheduler will fail silently:
+Jobs are stored in `~/.chiper/cron/jobs.json`. If this file is not readable/writable by your user, the scheduler will fail silently:
 
 ```bash
-ls -la ~/.Chiper/cron/jobs.json
-chmod 600 ~/.Chiper/cron/jobs.json   # Your user should own it
+ls -la ~/.chiper/cron/jobs.json
+chmod 600 ~/.chiper/cron/jobs.json   # Your user should own it
 ```
 
 ---
@@ -213,7 +213,7 @@ chiper skills list                  # Verify installed skills
 If you've worked through this guide and the issue persists:
 
 1. Run the job with `chiper cron run <job_id>` (fires on next gateway tick) and watch for errors in the chat output
-2. Check `~/.Chiper/logs/agent.log` for scheduler messages and `~/.Chiper/logs/errors.log` for warnings
+2. Check `~/.chiper/logs/agent.log` for scheduler messages and `~/.chiper/logs/errors.log` for warnings
 3. Open an issue at [github.com/Chiper/chiper-agent](https://github.com/Chiper/chiper-agent) with:
    - The job ID and schedule
    - The delivery target

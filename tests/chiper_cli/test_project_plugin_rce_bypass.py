@@ -5,7 +5,7 @@ server's dashboard plugin loader.
 Two primitives combined into the original advisory chain:
 
 1. ``chiper_cli.web_server._discover_dashboard_plugins`` opted into
-   the untrusted ``./.Chiper/plugins/`` source via
+   the untrusted ``./.chiper/plugins/`` source via
    ``os.environ.get("CHIPER_ENABLE_PROJECT_PLUGINS")`` — truthy for
    any non-empty string, so ``=0`` / ``=false`` / ``=no`` (all of
    which the agent loader treats as off, and which operators set to

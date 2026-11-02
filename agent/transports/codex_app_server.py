@@ -94,7 +94,7 @@ class CodexAppServerClient:
                 else spawn_env.get(
                     "CHIPER_KANBAN_ROOT",
                     os.path.join(
-                        spawn_env.get("CHIPER_HOME", os.path.expanduser("~/.Chiper")),
+                        spawn_env.get("CHIPER_HOME", os.path.expanduser("~/.chiper")),
                         "kanban",
                     ),
                 )

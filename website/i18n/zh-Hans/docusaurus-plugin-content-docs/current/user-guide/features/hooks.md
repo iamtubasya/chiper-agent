@@ -10,9 +10,9 @@ Chiper 有三套 hook 系统，可在关键生命周期节点运行自定义代�
 
 | 系统 | 注册方式 | 运行环境 | 使用场景 |
 |------|---------|---------|---------|
-| **[Gateway hooks](#gateway-event-hooks)** | `~/.Chiper/hooks/` 下的 `HOOK.yaml` + `handler.py` | 仅 Gateway | 日志、告警、webhook |
+| **[Gateway hooks](#gateway-event-hooks)** | `~/.chiper/hooks/` 下的 `HOOK.yaml` + `handler.py` | 仅 Gateway | 日志、告警、webhook |
 | **[Plugin hooks](#plugin-hooks)** | [插件](/user-guide/features/plugins)中的 `ctx.register_hook()` | CLI + Gateway | 工具拦截、指标采集、护栏 |
-| **[Shell hooks](#shell-hooks)** | `~/.Chiper/config.yaml` 中 `hooks:` 块指向的 shell 脚本 | CLI + Gateway | 用于阻断、自动格式化、上下文注入的即插即用脚本 |
+| **[Shell hooks](#shell-hooks)** | `~/.chiper/config.yaml` 中 `hooks:` 块指向的 shell 脚本 | CLI + Gateway | 用于阻断、自动格式化、上下文注入的即插即用脚本 |
 
 三套系统均为非阻塞式——任何 hook 中的错误都会被捕获并记录，不会导致 agent 崩溃。
 
@@ -22,10 +22,10 @@ Gateway hooks 在 gateway 运行期间（Telegram、Discord、Slack、WhatsApp�
 
 ### 创建 Hook
 
-每个 hook 是 `~/.Chiper/hooks/` 下的一个目录，包含两个文件：
+每个 hook 是 `~/.chiper/hooks/` 下的一个目录，包含两个文件：
 
 ```text
-~/.Chiper/hooks/
+~/.chiper/hooks/
 └── my-hook/
     ├── HOOK.yaml      # 声明要监听的事件
     └── handler.py     # Python 处理函数
@@ -94,7 +94,7 @@ async def handle(event_type: str, context: dict):
 当 agent 执行超过 10 步时向自己发送消息：
 
 ```yaml
-# ~/.Chiper/hooks/long-task-alert/HOOK.yaml
+# ~/.chiper/hooks/long-task-alert/HOOK.yaml
 name: long-task-alert
 description: Alert when agent is taking many steps
 events:
@@ -102,7 +102,7 @@ events:
 ```
 
 ```python
-# ~/.Chiper/hooks/long-task-alert/handler.py
+# ~/.chiper/hooks/long-task-alert/handler.py
 import os
 import httpx
 
@@ -127,7 +127,7 @@ async def handle(event_type: str, context: dict):
 追踪哪些斜杠命令被使用：
 
 ```yaml
-# ~/.Chiper/hooks/command-logger/HOOK.yaml
+# ~/.chiper/hooks/command-logger/HOOK.yaml
 name: command-logger
 description: Log slash command usage
 events:
@@ -135,7 +135,7 @@ events:
 ```
 
 ```python
-# ~/.Chiper/hooks/command-logger/handler.py
+# ~/.chiper/hooks/command-logger/handler.py
 import json
 from datetime import datetime
 from pathlib import Path
@@ -160,7 +160,7 @@ def handle(event_type: str, context: dict):
 新会话时 POST 到外部服务：
 
 ```yaml
-# ~/.Chiper/hooks/session-webhook/HOOK.yaml
+# ~/.chiper/hooks/session-webhook/HOOK.yaml
 name: session-webhook
 description: Notify external service on new sessions
 events:
@@ -169,7 +169,7 @@ events:
 ```
 
 ```python
-# ~/.Chiper/hooks/session-webhook/handler.py
+# ~/.chiper/hooks/session-webhook/handler.py
 import httpx
 
 WEBHOOK_URL = "https://your-service.example.com/chiper-events"
@@ -184,19 +184,19 @@ async def handle(event_type: str, context: dict):
 
 ### 教程：BOOT.md——每次 Gateway 启动时运行启动检查清单
 
-这是社区中流行的一种模式：在 `~/.Chiper/BOOT.md` 放置一个 Markdown 检查清单，让 agent 在每次 gateway 启动时执行一次。适用于"每次启动时检查隔夜 cron 失败情况，若有失败则在 Discord 上通知我"，或"汇总过去 24 小时的 deploy.log 并发布到 Slack #ops"等场景。
+这是社区中流行的一种模式：在 `~/.chiper/BOOT.md` 放置一个 Markdown 检查清单，让 agent 在每次 gateway 启动时执行一次。适用于"每次启动时检查隔夜 cron 失败情况，若有失败则在 Discord 上通知我"，或"汇总过去 24 小时的 deploy.log 并发布到 Slack #ops"等场景。
 
 本教程展示如何以用户自定义 hook 的方式自行构建。Chiper 不内置 BOOT.md hook——你可以精确配置自己想要的行为。
 
 #### 我们要构建什么
 
-1. 在 `~/.Chiper/BOOT.md` 放置一个包含自然语言启动指令的文件。
+1. 在 `~/.chiper/BOOT.md` 放置一个包含自然语言启动指令的文件。
 2. 一个监听 `gateway:startup` 的 gateway hook，它会生成一个一次性 agent，使用 gateway 已解析的模型和凭据，执行 BOOT.md 中的指令。
 3. 一个 `[SILENT]` 约定，让 agent 在没有内容需要汇报时选择不发送消息。
 
 #### 第一步：编写检查清单
 
-创建 `~/.Chiper/BOOT.md`。像给人类助手下达指令一样编写：
+创建 `~/.chiper/BOOT.md`。像给人类助手下达指令一样编写：
 
 ```markdown
 # Startup Checklist
@@ -212,24 +212,24 @@ Agent 将此内容作为 prompt（提示词）的一部分，因此任何可以�
 #### 第二步：创建 hook
 
 ```text
-~/.Chiper/hooks/boot-md/
+~/.chiper/hooks/boot-md/
 ├── HOOK.yaml
 └── handler.py
 ```
 
-**`~/.Chiper/hooks/boot-md/HOOK.yaml`**
+**`~/.chiper/hooks/boot-md/HOOK.yaml`**
 
 ```yaml
 name: boot-md
-description: Run ~/.Chiper/BOOT.md on gateway startup
+description: Run ~/.chiper/BOOT.md on gateway startup
 events:
   - gateway:startup
 ```
 
-**`~/.Chiper/hooks/boot-md/handler.py`**
+**`~/.chiper/hooks/boot-md/handler.py`**
 
 ```python
-"""Run ~/.Chiper/BOOT.md on every gateway startup."""
+"""Run ~/.chiper/BOOT.md on every gateway startup."""
 
 import logging
 import threading
@@ -325,7 +325,7 @@ chiper logs --follow --level INFO | grep boot-md
 
 你应该看到 `Running BOOT.md (N chars)`，随后是 `boot-md completed: ...`（agent 执行内容的摘要）或 `boot-md completed (nothing to report)`（agent 回复了 `[SILENT]`）。
 
-删除 `~/.Chiper/BOOT.md` 即可禁用检查清单——hook 保持加载状态，但在文件不存在时会静默跳过。
+删除 `~/.chiper/BOOT.md` 即可禁用检查清单——hook 保持加载状态，但在文件不存在时会静默跳过。
 
 #### 扩展此模式
 
@@ -339,7 +339,7 @@ Chiper 早期版本将此作为内置 hook 发布，每次 gateway 启动时都�
 
 ### 工作原理
 
-1. Gateway 启动时，`HookRegistry.discover_and_load()` 扫描 `~/.Chiper/hooks/`
+1. Gateway 启动时，`HookRegistry.discover_and_load()` 扫描 `~/.chiper/hooks/`
 2. 每个包含 `HOOK.yaml` + `handler.py` 的子目录都会被动态加载
 3. 处理器按其声明的事件注册
 4. 在每个生命周期节点，`hooks.emit()` 触发所有匹配的处理器
@@ -1154,8 +1154,8 @@ Shell hooks 通过在 CLI 启动（`chiper_cli/main.py`）和 gateway 启动（`
 
 | 维度 | Shell hooks | [Plugin hooks](#plugin-hooks) | [Gateway hooks](#gateway-event-hooks) |
 |------|-------------|-------------------------------|---------------------------------------|
-| 声明位置 | `~/.Chiper/config.yaml` 中的 `hooks:` 块 | 插件 `plugin.yaml` 中的 `register()` | `HOOK.yaml` + `handler.py` 目录 |
-| 存放位置 | `~/.Chiper/agent-hooks/`（约定） | `~/.Chiper/plugins/<name>/` | `~/.Chiper/hooks/<name>/` |
+| 声明位置 | `~/.chiper/config.yaml` 中的 `hooks:` 块 | 插件 `plugin.yaml` 中的 `register()` | `HOOK.yaml` + `handler.py` 目录 |
+| 存放位置 | `~/.chiper/agent-hooks/`（约定） | `~/.chiper/plugins/<name>/` | `~/.chiper/hooks/<name>/` |
 | 语言 | 任意（Bash、Python、Go 二进制等） | 仅 Python | 仅 Python |
 | 运行环境 | CLI + Gateway | CLI + Gateway | 仅 Gateway |
 | 事件 | `VALID_HOOKS`（含 `subagent_stop`） | `VALID_HOOKS` | Gateway 生命周期（`gateway:startup`、`agent:*`、`command:*`） |
@@ -1217,16 +1217,16 @@ hooks_auto_accept: false         # See "Consent model" below
 #### 1. 每次写入后自动格式化 Python 文件
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 hooks:
   post_tool_call:
     - matcher: "write_file|patch"
-      command: "~/.Chiper/agent-hooks/auto-format.sh"
+      command: "~/.chiper/agent-hooks/auto-format.sh"
 ```
 
 ```bash
 #!/usr/bin/env bash
-# ~/.Chiper/agent-hooks/auto-format.sh
+# ~/.chiper/agent-hooks/auto-format.sh
 payload="$(cat -)"
 path=$(echo "$payload" | jq -r '.tool_input.path // empty')
 [[ "$path" == *.py ]] && command -v black >/dev/null && black "$path" 2>/dev/null
@@ -1241,13 +1241,13 @@ Agent 的上下文内文件视图**不会**自动重新读取——重新格式�
 hooks:
   pre_tool_call:
     - matcher: "terminal"
-      command: "~/.Chiper/agent-hooks/block-rm-rf.sh"
+      command: "~/.chiper/agent-hooks/block-rm-rf.sh"
       timeout: 5
 ```
 
 ```bash
 #!/usr/bin/env bash
-# ~/.Chiper/agent-hooks/block-rm-rf.sh
+# ~/.chiper/agent-hooks/block-rm-rf.sh
 payload="$(cat -)"
 cmd=$(echo "$payload" | jq -r '.tool_input.command // empty')
 if echo "$cmd" | grep -qE 'rm[[:space:]]+-rf?[[:space:]]+/'; then
@@ -1262,12 +1262,12 @@ fi
 ```yaml
 hooks:
   pre_llm_call:
-    - command: "~/.Chiper/agent-hooks/inject-cwd-context.sh"
+    - command: "~/.chiper/agent-hooks/inject-cwd-context.sh"
 ```
 
 ```bash
 #!/usr/bin/env bash
-# ~/.Chiper/agent-hooks/inject-cwd-context.sh
+# ~/.chiper/agent-hooks/inject-cwd-context.sh
 cat - >/dev/null   # discard stdin payload
 if status=$(git status --porcelain 2>/dev/null) && [[ -n "$status" ]]; then
   jq --null-input --arg s "$status" \
@@ -1284,20 +1284,20 @@ Claude Code 的 `UserPromptSubmit` 事件在 Chiper 中没有对应的独立事�
 ```yaml
 hooks:
   subagent_stop:
-    - command: "~/.Chiper/agent-hooks/log-orchestration.sh"
+    - command: "~/.chiper/agent-hooks/log-orchestration.sh"
 ```
 
 ```bash
 #!/usr/bin/env bash
-# ~/.Chiper/agent-hooks/log-orchestration.sh
-log=~/.Chiper/logs/orchestration.log
+# ~/.chiper/agent-hooks/log-orchestration.sh
+log=~/.chiper/logs/orchestration.log
 jq -c '{ts: now, parent: .session_id, extra: .extra}' < /dev/stdin >> "$log"
 printf '{}\n'
 ```
 
 ### 授权模型
 
-每个唯一的 `(event, command)` 对在 Chiper 首次遇到时会提示用户审批，然后将决定持久化到 `~/.Chiper/shell-hooks-allowlist.json`。后续运行（CLI 或 gateway）跳过提示。
+每个唯一的 `(event, command)` 对在 Chiper 首次遇到时会提示用户审批，然后将决定持久化到 `~/.chiper/shell-hooks-allowlist.json`。后续运行（CLI 或 gateway）跳过提示。
 
 三种方式可绕过交互式提示——满足其一即可：
 
@@ -1323,7 +1323,7 @@ printf '{}\n'
 Shell hooks 以**你的完整用户凭据**运行——与 cron 条目或 shell 别名的信任边界相同。将 `config.yaml` 中的 `hooks:` 块视为特权配置：
 
 - 只引用你自己编写或完整审查过的脚本。
-- 将脚本保存在 `~/.Chiper/agent-hooks/` 内，便于审计路径。
+- 将脚本保存在 `~/.chiper/agent-hooks/` 内，便于审计路径。
 - 拉取共享配置后重新运行 `chiper hooks doctor`，在新添加的 hook 注册前发现它们。
 - 如果你的 config.yaml 在团队中进行版本控制，审查修改 `hooks:` 部分的 PR 时应与审查 CI 配置一样严格。
 

@@ -46,7 +46,7 @@ def work_dir(tmp_path):
 
 @pytest.fixture()
 def checkpoint_base(tmp_path):
-    """Isolated checkpoint base — never writes to ~/.Chiper/."""
+    """Isolated checkpoint base — never writes to ~/.chiper/."""
     return tmp_path / "checkpoints"
 
 

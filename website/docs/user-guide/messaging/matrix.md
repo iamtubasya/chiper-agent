@@ -254,7 +254,7 @@ Select **Matrix** when prompted, then provide your homeserver URL, access token 
 
 ### Option B: Manual Configuration
 
-Add the following to your `~/.Chiper/.env` file:
+Add the following to your `~/.chiper/.env` file:
 
 **Using an access token:**
 
@@ -327,7 +327,7 @@ Treat federated rooms and untrusted homeservers as untrusted input: keep room
 allowlists tight, prefer DMs or private rooms for tool-heavy work, and avoid
 authorizing bridge ghosts or appservice puppets as allowed users.
 
-Optional behavior settings in `~/.Chiper/config.yaml`:
+Optional behavior settings in `~/.chiper/config.yaml`:
 
 ```yaml
 group_sessions_per_user: true
@@ -380,7 +380,7 @@ sudo dnf install libolm-devel
 
 ### Enable E2EE
 
-Add to your `~/.Chiper/.env`:
+Add to your `~/.chiper/.env`:
 
 ```bash
 MATRIX_E2EE_MODE=required
@@ -400,7 +400,7 @@ For backwards compatibility, `MATRIX_ENCRYPTION=true` still enables required E2E
 
 When E2EE is enabled, Chiper:
 
-- Stores encryption keys in `~/.Chiper/platforms/matrix/store/` (legacy installs: `~/.Chiper/matrix/store/`)
+- Stores encryption keys in `~/.chiper/platforms/matrix/store/` (legacy installs: `~/.chiper/matrix/store/`)
 - Uploads device keys on first connection
 - Decrypts incoming messages and encrypts outgoing messages automatically
 - Auto-joins encrypted rooms when invited
@@ -482,7 +482,7 @@ startup to write a generated key once with file mode `0600`; the file is not
 overwritten if it already exists.
 
 :::warning[Deleting the crypto store]
-If you delete `~/.Chiper/platforms/matrix/store/crypto.db`, the bot loses its encryption identity. Simply restarting with the same device ID will **not** fully recover — the homeserver still holds one-time keys signed with the old identity key, and peers cannot establish new Olm sessions.
+If you delete `~/.chiper/platforms/matrix/store/crypto.db`, the bot loses its encryption identity. Simply restarting with the same device ID will **not** fully recover — the homeserver still holds one-time keys signed with the old identity key, and peers cannot establish new Olm sessions.
 
 Chiper detects this condition on startup and refuses to enable E2EE, logging: `device XXXX has stale one-time keys on the server signed with a previous identity key`.
 
@@ -510,7 +510,7 @@ Chiper detects this condition on startup and refuses to enable E2EE, logging: `d
 
 2. Delete the local crypto store and restart Chiper:
    ```bash
-   rm -f ~/.Chiper/platforms/matrix/store/crypto.db*
+   rm -f ~/.chiper/platforms/matrix/store/crypto.db*
    # restart chiper
    ```
 
@@ -532,7 +532,7 @@ If your Matrix client intercepts slash commands, type `!sethome` instead.
 
 ### Manual Configuration
 
-Add this to your `~/.Chiper/.env`:
+Add this to your `~/.chiper/.env`:
 
 ```bash
 MATRIX_HOME_ROOM=!abc123def456:matrix.example.org
@@ -693,16 +693,16 @@ changed identity keys for the same device as suspicious.
      }'
    ```
 
-   Copy the new `access_token` and update `MATRIX_ACCESS_TOKEN` in `~/.Chiper/.env`.
+   Copy the new `access_token` and update `MATRIX_ACCESS_TOKEN` in `~/.chiper/.env`.
 
 2. **Delete old encryption state**:
 
    ```bash
-   rm -f ~/.Chiper/platforms/matrix/store/crypto.db
-   rm -f ~/.Chiper/platforms/matrix/store/crypto_store.*
+   rm -f ~/.chiper/platforms/matrix/store/crypto.db
+   rm -f ~/.chiper/platforms/matrix/store/crypto_store.*
    ```
 
-3. **Set your recovery key** (if you use cross-signing — most Element users do). Add to `~/.Chiper/.env`:
+3. **Set your recovery key** (if you use cross-signing — most Element users do). Add to `~/.chiper/.env`:
 
    ```bash
    MATRIX_RECOVERY_KEY=EsT... your recovery key here
@@ -768,7 +768,7 @@ The Docker container only handles Matrix protocol + E2EE. When a message arrives
 
 Enable the API server so the host accepts incoming requests from the Docker container.
 
-Add to `~/.Chiper/.env`:
+Add to `~/.chiper/.env`:
 
 ```bash
 API_SERVER_ENABLED=true
@@ -815,7 +815,7 @@ services:
       GATEWAY_PROXY_URL: "http://192.168.1.100:8642"
       GATEWAY_PROXY_KEY: "your-secret-key-here"
     volumes:
-      - ./matrix-store:/root/.Chiper/platforms/matrix/store
+      - ./matrix-store:/root/.chiper/platforms/matrix/store
 ```
 
 **`Dockerfile`:**
@@ -907,7 +907,7 @@ the first sync and check logs for `sync event dispatch error`.
 
 **Cause**: Your User ID isn't in `MATRIX_ALLOWED_USERS`.
 
-**Fix**: Add your User ID to `MATRIX_ALLOWED_USERS` in `~/.Chiper/.env` and restart the gateway. Use the full `@user:server` format.
+**Fix**: Add your User ID to `MATRIX_ALLOWED_USERS` in `~/.chiper/.env` and restart the gateway. Use the full `@user:server` format.
 
 ### Bot ignores an entire room
 

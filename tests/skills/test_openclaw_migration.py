@@ -842,7 +842,7 @@ def test_skill_installs_cleanly_under_skills_guard():
     # python_os_environ  — reads MIGRATION_JSON_OUTPUT to enable JSON output mode
     #                      (feature flag, not an env dump)
     # chiper_config_mod  — print statements in the post-migration summary that
-    #                      tell the user to *review* ~/.Chiper/config.yaml;
+    #                      tell the user to *review* ~/.chiper/config.yaml;
     #                      the script never writes to that file
     #
     # Accept "caution" or "safe" — just not "dangerous" from a *real* threat.
@@ -863,7 +863,7 @@ def test_rebrand_text_replaces_openclaw_variants():
     assert mod.rebrand_text("Open-Claw config is great") == "Chiper config is great"
     assert mod.rebrand_text("OPENCLAW uses tools well") == "Chiper uses tools well"
     # All-lowercase matches → lowercase ``chiper``; this preserves the
-    # real filesystem path ``~/.Chiper`` (Chiper home) when rebranding
+    # real filesystem path ``~/.chiper`` (Chiper home) when rebranding
     # memory entries that reference ``~/.openclaw`` or ``openclaw`` prose.
     assert mod.rebrand_text("openclaw should always respond concisely") == "chiper should always respond concisely"
 
@@ -896,17 +896,17 @@ def test_rebrand_text_preserves_filesystem_path_casing():
 
     Regression test for @versun's OpenClaw-residue feedback: after migration,
     memory entries that referenced ``~/.openclaw/config.yaml`` were being
-    rewritten to ``~/.Chiper/config.yaml`` — a path that doesn't exist —
+    rewritten to ``~/.chiper/config.yaml`` — a path that doesn't exist —
     and the agent kept trying to read it.
     """
     mod = load_module()
     assert mod.rebrand_text("config is at ~/.openclaw/config.yaml") == \
-        "config is at ~/.Chiper/config.yaml"
+        "config is at ~/.chiper/config.yaml"
     assert mod.rebrand_text("use .openclaw directory") == "use .chiper directory"
     assert mod.rebrand_text("Path.home() / '.openclaw'") == "Path.home() / '.chiper'"
     # Sentence with both lowercase path and capitalized prose.
     assert mod.rebrand_text("openclaw config path: ~/.openclaw/") == \
-        "chiper config path: ~/.Chiper/"
+        "chiper config path: ~/.chiper/"
 
 
 def test_migrate_memory_rebrands_entries(tmp_path):

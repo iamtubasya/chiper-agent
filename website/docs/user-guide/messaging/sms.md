@@ -44,7 +44,7 @@ Select **SMS (Twilio)** from the platform list. The wizard will prompt for your 
 
 ### Manual setup
 
-Add to `~/.Chiper/.env`:
+Add to `~/.chiper/.env`:
 
 ```bash
 TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

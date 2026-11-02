@@ -268,7 +268,7 @@ def init_agent(
         skip_context_files (bool): If True, skip auto-injection of SOUL.md, AGENTS.md, and .cursorrules
             into the system prompt. Use this for batch processing and data generation to avoid
             polluting trajectories with user-specific persona or project instructions.
-        load_soul_identity (bool): If True, still use ~/.Chiper/SOUL.md as the primary
+        load_soul_identity (bool): If True, still use ~/.chiper/SOUL.md as the primary
             identity even when skip_context_files=True. Project context files from the cwd
             remain skipped.
     """
@@ -550,7 +550,7 @@ def init_agent(
     agent._or_cache_hits: int = 0
 
     # Centralized logging — agent.log (INFO+) and errors.log (WARNING+)
-    # both live under ~/.Chiper/logs/.  Idempotent, so gateway mode
+    # both live under ~/.chiper/logs/.  Idempotent, so gateway mode
     # (which creates a new AIAgent per message) won't duplicate handlers.
     from chiper_logging import setup_logging, setup_verbose_logging
     setup_logging(chiper_home=_ra()._chiper_home)
@@ -1034,11 +1034,11 @@ def init_agent(
     except Exception:
         os.environ["CHIPER_SESSION_ID"] = agent.session_id
 
-    # Session logs go into ~/.Chiper/sessions/ alongside gateway sessions
+    # Session logs go into ~/.chiper/sessions/ alongside gateway sessions
     chiper_home = get_chiper_home()
     agent.logs_dir = chiper_home / "sessions"
     agent.logs_dir.mkdir(parents=True, exist_ok=True)
-    # Per-session JSON snapshot writer (~/.Chiper/sessions/session_{sid}.json)
+    # Per-session JSON snapshot writer (~/.chiper/sessions/session_{sid}.json)
     # is opt-in via sessions.write_json_snapshots (default False).  state.db
     # is canonical — the snapshot is only useful for external tooling that
     # reads the JSON files directly.  See run_agent._save_session_log.

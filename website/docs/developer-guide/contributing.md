@@ -44,7 +44,7 @@ For most contributors, the best development bootstrap is the same path users
 take: run the standard installer, then work inside the repository it cloned.
 The installer creates the Chiper venv, wires the `chiper` command, stamps the
 install method for `chiper update`, and clones the full git project into
-`$CHIPER_HOME/chiper-agent` (usually `~/.Chiper/chiper-agent`). That keeps your
+`$CHIPER_HOME/chiper-agent` (usually `~/.chiper/chiper-agent`). That keeps your
 development environment on the same layout the CLI, updater, lazy dependency
 installer, gateway, and docs assume.
 
@@ -92,12 +92,12 @@ npm install
 ### Configure for Development
 
 ```bash
-mkdir -p ~/.Chiper/{cron,sessions,logs,memories,skills}
-cp cli-config.yaml.example ~/.Chiper/config.yaml
-touch ~/.Chiper/.env
+mkdir -p ~/.chiper/{cron,sessions,logs,memories,skills}
+cp cli-config.yaml.example ~/.chiper/config.yaml
+touch ~/.chiper/.env
 
 # Add at minimum an LLM provider key:
-echo 'OPENROUTER_API_KEY=sk-or-v1-your-key' >> ~/.Chiper/.env
+echo 'OPENROUTER_API_KEY=sk-or-v1-your-key' >> ~/.chiper/.env
 ```
 
 ### Run
@@ -128,7 +128,7 @@ scripts/run_tests.sh
 - **Comments**: Only when explaining non-obvious intent, trade-offs, or API quirks
 - **Error handling**: Catch specific exceptions. Use `logger.warning()`/`logger.error()` with `exc_info=True` for unexpected errors
 - **Cross-platform**: Never assume Unix (see below)
-- **Profile-safe paths**: Never hardcode `~/.Chiper` — use `get_chiper_home()` from `chiper_constants` for code paths and `display_chiper_home()` for user-facing messages. See [AGENTS.md](https://github.com/Chiper/chiper-agent/blob/main/AGENTS.md#profiles-multi-instance-support) for full rules.
+- **Profile-safe paths**: Never hardcode `~/.chiper` — use `get_chiper_home()` from `chiper_constants` for code paths and `display_chiper_home()` for user-facing messages. See [AGENTS.md](https://github.com/Chiper/chiper-agent/blob/main/AGENTS.md#profiles-multi-instance-support) for full rules.
 
 ## Cross-Platform Compatibility
 

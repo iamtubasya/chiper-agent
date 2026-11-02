@@ -19,36 +19,36 @@ You need at least one way to connect to an LLM. Use `chiper model` to switch pro
 | **GitHub Copilot** | `chiper model` (OAuth device code flow, `COPILOT_GITHUB_TOKEN`, `GH_TOKEN`, or `gh auth token`) |
 | **GitHub Copilot ACP** | `chiper model` (spawns local `copilot --acp --stdio`) |
 | **Anthropic** | `chiper model` (Claude Max + extra usage credits via OAuth; also supports Anthropic API key or manual setup-token — see note below) |
-| **OpenRouter** | `OPENROUTER_API_KEY` in `~/.Chiper/.env` |
-| **NovitaAI** | `NOVITA_API_KEY` in `~/.Chiper/.env` (provider: `novita`, 200+ models, Model API, Agent Sandbox, GPU Cloud) |
-| **z.ai / GLM** | `GLM_API_KEY` in `~/.Chiper/.env` (provider: `zai`) |
-| **Kimi / Moonshot** | `KIMI_API_KEY` in `~/.Chiper/.env` (provider: `kimi-coding`) |
-| **Kimi / Moonshot (China)** | `KIMI_CN_API_KEY` in `~/.Chiper/.env` (provider: `kimi-coding-cn`; aliases: `kimi-cn`, `moonshot-cn`) |
-| **Arcee AI** | `ARCEEAI_API_KEY` in `~/.Chiper/.env` (provider: `arcee`; aliases: `arcee-ai`, `arceeai`) |
-| **GMI Cloud** | `GMI_API_KEY` in `~/.Chiper/.env` (provider: `gmi`; aliases: `gmi-cloud`, `gmicloud`) |
-| **MiniMax** | `MINIMAX_API_KEY` in `~/.Chiper/.env` (provider: `minimax`) |
-| **MiniMax China** | `MINIMAX_CN_API_KEY` in `~/.Chiper/.env` (provider: `minimax-cn`) |
-| **xAI (Grok) — Responses API** | `XAI_API_KEY` in `~/.Chiper/.env` (provider: `xai`) |
+| **OpenRouter** | `OPENROUTER_API_KEY` in `~/.chiper/.env` |
+| **NovitaAI** | `NOVITA_API_KEY` in `~/.chiper/.env` (provider: `novita`, 200+ models, Model API, Agent Sandbox, GPU Cloud) |
+| **z.ai / GLM** | `GLM_API_KEY` in `~/.chiper/.env` (provider: `zai`) |
+| **Kimi / Moonshot** | `KIMI_API_KEY` in `~/.chiper/.env` (provider: `kimi-coding`) |
+| **Kimi / Moonshot (China)** | `KIMI_CN_API_KEY` in `~/.chiper/.env` (provider: `kimi-coding-cn`; aliases: `kimi-cn`, `moonshot-cn`) |
+| **Arcee AI** | `ARCEEAI_API_KEY` in `~/.chiper/.env` (provider: `arcee`; aliases: `arcee-ai`, `arceeai`) |
+| **GMI Cloud** | `GMI_API_KEY` in `~/.chiper/.env` (provider: `gmi`; aliases: `gmi-cloud`, `gmicloud`) |
+| **MiniMax** | `MINIMAX_API_KEY` in `~/.chiper/.env` (provider: `minimax`) |
+| **MiniMax China** | `MINIMAX_CN_API_KEY` in `~/.chiper/.env` (provider: `minimax-cn`) |
+| **xAI (Grok) — Responses API** | `XAI_API_KEY` in `~/.chiper/.env` (provider: `xai`) |
 | **xAI Grok OAuth (SuperGrok)** | `chiper model` → "xAI Grok OAuth (SuperGrok / Premium+)" — browser login, no API key. See [guide](../guides/xai-grok-oauth.md) |
-| **Qwen Cloud (Alibaba DashScope)** | `DASHSCOPE_API_KEY` in `~/.Chiper/.env` (provider: `alibaba`) |
+| **Qwen Cloud (Alibaba DashScope)** | `DASHSCOPE_API_KEY` in `~/.chiper/.env` (provider: `alibaba`) |
 | **Alibaba Cloud (Coding Plan)** | `DASHSCOPE_API_KEY` (provider: `alibaba-coding-plan`, alias: `alibaba_coding`) — separate billing SKU, different endpoint |
-| **Kilo Code** | `KILOCODE_API_KEY` in `~/.Chiper/.env` (provider: `kilocode`) |
-| **Xiaomi MiMo** | `XIAOMI_API_KEY` in `~/.Chiper/.env` (provider: `xiaomi`, aliases: `mimo`, `xiaomi-mimo`) |
-| **Tencent TokenHub** | `TOKENHUB_API_KEY` in `~/.Chiper/.env` (provider: `tencent-tokenhub`, aliases: `tencent`, `tokenhub`, `tencentmaas`) |
-| **OpenCode Zen** | `OPENCODE_ZEN_API_KEY` in `~/.Chiper/.env` (provider: `opencode-zen`) |
-| **OpenCode Go** | `OPENCODE_GO_API_KEY` in `~/.Chiper/.env` (provider: `opencode-go`) |
-| **DeepSeek** | `DEEPSEEK_API_KEY` in `~/.Chiper/.env` (provider: `deepseek`) |
-| **Hugging Face** | `HF_TOKEN` in `~/.Chiper/.env` (provider: `huggingface`, aliases: `hf`) |
-| **Google / Gemini** | `GOOGLE_API_KEY` (or `GEMINI_API_KEY`) in `~/.Chiper/.env` (provider: `gemini`) |
+| **Kilo Code** | `KILOCODE_API_KEY` in `~/.chiper/.env` (provider: `kilocode`) |
+| **Xiaomi MiMo** | `XIAOMI_API_KEY` in `~/.chiper/.env` (provider: `xiaomi`, aliases: `mimo`, `xiaomi-mimo`) |
+| **Tencent TokenHub** | `TOKENHUB_API_KEY` in `~/.chiper/.env` (provider: `tencent-tokenhub`, aliases: `tencent`, `tokenhub`, `tencentmaas`) |
+| **OpenCode Zen** | `OPENCODE_ZEN_API_KEY` in `~/.chiper/.env` (provider: `opencode-zen`) |
+| **OpenCode Go** | `OPENCODE_GO_API_KEY` in `~/.chiper/.env` (provider: `opencode-go`) |
+| **DeepSeek** | `DEEPSEEK_API_KEY` in `~/.chiper/.env` (provider: `deepseek`) |
+| **Hugging Face** | `HF_TOKEN` in `~/.chiper/.env` (provider: `huggingface`, aliases: `hf`) |
+| **Google / Gemini** | `GOOGLE_API_KEY` (or `GEMINI_API_KEY`) in `~/.chiper/.env` (provider: `gemini`) |
 | **Google Gemini (OAuth)** | `chiper model` → "Google Gemini (OAuth)" (provider: `google-gemini-cli`, free tier supported, browser PKCE login) |
-| **OpenAI API (direct)** | `OPENAI_API_KEY` in `~/.Chiper/.env` (provider: `openai-api`, optional `OPENAI_BASE_URL`) |
+| **OpenAI API (direct)** | `OPENAI_API_KEY` in `~/.chiper/.env` (provider: `openai-api`, optional `OPENAI_BASE_URL`) |
 | **Azure AI Foundry** | `chiper model` → "Azure AI Foundry" (provider: `azure-foundry`; uses Azure OpenAI / Foundry endpoint and key) |
 | **AWS Bedrock** | `chiper model` → "AWS Bedrock" (provider: `bedrock`; standard AWS credentials chain via boto3) |
-| **NVIDIA Build** | `NVIDIA_API_KEY` in `~/.Chiper/.env` (provider: `nvidia`; NIM-hosted models on build.nvidia.com) |
+| **NVIDIA Build** | `NVIDIA_API_KEY` in `~/.chiper/.env` (provider: `nvidia`; NIM-hosted models on build.nvidia.com) |
 | **Ollama Cloud** | `chiper model` → "Ollama Cloud" (provider: `ollama-cloud`; cloud-hosted Ollama API) |
 | **Qwen OAuth** | `chiper model` → "Qwen OAuth" (provider: `qwen-oauth`; browser PKCE login) |
 | **MiniMax OAuth** | `chiper model` → "MiniMax (OAuth)" (provider: `minimax-oauth`; browser PKCE login) |
-| **StepFun** | `STEPFUN_API_KEY` in `~/.Chiper/.env` (provider: `stepfun`) |
+| **StepFun** | `STEPFUN_API_KEY` in `~/.chiper/.env` (provider: `stepfun`) |
 | **LM Studio** | `chiper model` → "LM Studio" (provider: `lmstudio`, optional `LM_API_KEY`) |
 | **Custom Endpoint** | `chiper model` → choose "Custom endpoint" (saved in `config.yaml`) |
 
@@ -79,7 +79,7 @@ Don't have a subscription yet? Get one at [portal.Chiper.com/manage-subscription
 
 
 :::info Codex Note
-The OpenAI Codex provider authenticates via device code (open a URL, enter a code). Chiper stores the resulting credentials in its own auth store under `~/.Chiper/auth.json` and can import existing Codex CLI credentials from `~/.codex/auth.json` when present. No Codex CLI installation is required.
+The OpenAI Codex provider authenticates via device code (open a URL, enter a code). Chiper stores the resulting credentials in its own auth store under `~/.chiper/auth.json` and can import existing Codex CLI credentials from `~/.codex/auth.json` when present. No Codex CLI installation is required.
 
 If a token refresh fails with a terminal error (HTTP 4xx, `invalid_grant`, revoked grant, etc.), Chiper marks the refresh token as dead and stops replaying it so you don't see a flood of identical auth failures. The next request surfaces a typed re-auth message instead. Run `chiper auth add codex-oauth` (or `chiper model` → OpenAI Codex) to start a fresh device-code login; the quarantine clears on the next successful exchange.
 :::
@@ -131,7 +131,7 @@ chiper chat --provider anthropic
 chiper chat --provider anthropic  # reads Claude Code credential files automatically
 ```
 
-When you choose Anthropic OAuth through `chiper model`, Chiper prefers Claude Code's own credential store over copying the token into `~/.Chiper/.env`. That keeps refreshable Claude credentials refreshable.
+When you choose Anthropic OAuth through `chiper model`, Chiper prefers Claude Code's own credential store over copying the token into `~/.chiper/.env`. That keeps refreshable Claude credentials refreshable.
 
 Or set it permanently:
 ```yaml
@@ -216,48 +216,48 @@ These providers have built-in support with dedicated provider IDs. Set the API k
 ```bash
 # NovitaAI Model API
 chiper chat --provider novita --model moonshotai/kimi-k2.5
-# Requires: NOVITA_API_KEY in ~/.Chiper/.env
+# Requires: NOVITA_API_KEY in ~/.chiper/.env
 
 # z.ai / ZhipuAI GLM
 chiper chat --provider zai --model glm-5
-# Requires: GLM_API_KEY in ~/.Chiper/.env
+# Requires: GLM_API_KEY in ~/.chiper/.env
 
 # Kimi / Moonshot AI (international: api.moonshot.ai)
 chiper chat --provider kimi-coding --model kimi-for-coding
-# Requires: KIMI_API_KEY in ~/.Chiper/.env
+# Requires: KIMI_API_KEY in ~/.chiper/.env
 
 # Kimi / Moonshot AI (China: api.moonshot.cn)
 chiper chat --provider kimi-coding-cn --model kimi-k2.5
-# Requires: KIMI_CN_API_KEY in ~/.Chiper/.env
+# Requires: KIMI_CN_API_KEY in ~/.chiper/.env
 
 # MiniMax (global endpoint)
 chiper chat --provider minimax --model MiniMax-M2.7
-# Requires: MINIMAX_API_KEY in ~/.Chiper/.env
+# Requires: MINIMAX_API_KEY in ~/.chiper/.env
 
 # MiniMax (China endpoint)
 chiper chat --provider minimax-cn --model MiniMax-M2.7
-# Requires: MINIMAX_CN_API_KEY in ~/.Chiper/.env
+# Requires: MINIMAX_CN_API_KEY in ~/.chiper/.env
 
 # Qwen Cloud / DashScope (Qwen models)
 chiper chat --provider alibaba --model qwen3.5-plus
-# Requires: DASHSCOPE_API_KEY in ~/.Chiper/.env
+# Requires: DASHSCOPE_API_KEY in ~/.chiper/.env
 
 # Xiaomi MiMo
 chiper chat --provider xiaomi --model mimo-v2-pro
-# Requires: XIAOMI_API_KEY in ~/.Chiper/.env
+# Requires: XIAOMI_API_KEY in ~/.chiper/.env
 
 # Tencent TokenHub (Hy3 Preview)
 chiper chat --provider tencent-tokenhub --model hy3-preview
-# Requires: TOKENHUB_API_KEY in ~/.Chiper/.env
+# Requires: TOKENHUB_API_KEY in ~/.chiper/.env
 
 # Arcee AI (Trinity models)
 chiper chat --provider arcee --model trinity-large-thinking
-# Requires: ARCEEAI_API_KEY in ~/.Chiper/.env
+# Requires: ARCEEAI_API_KEY in ~/.chiper/.env
 
 # GMI Cloud
 # Use the exact model ID returned by GMI's /v1/models endpoint.
 chiper chat --provider gmi --model zai-org/GLM-5.1-FP8
-# Requires: GMI_API_KEY in ~/.Chiper/.env
+# Requires: GMI_API_KEY in ~/.chiper/.env
 ```
 
 Or set the provider permanently in `config.yaml`:
@@ -275,7 +275,7 @@ When using the Z.AI / GLM provider, Chiper automatically probes multiple endpoin
 
 ### xAI (Grok) — Responses API + Prompt Caching
 
-xAI is wired through the Responses API (`codex_responses` transport) for automatic reasoning support on Grok 4 models — no `reasoning_effort` parameter needed, the server reasons by default. Set `XAI_API_KEY` in `~/.Chiper/.env` and pick xAI in `chiper model`, or drop `grok` as a shortcut into `/model grok-4-fast-reasoning`.
+xAI is wired through the Responses API (`codex_responses` transport) for automatic reasoning support on Grok 4 models — no `reasoning_effort` parameter needed, the server reasons by default. Set `XAI_API_KEY` in `~/.chiper/.env` and pick xAI in `chiper model`, or drop `grok` as a shortcut into `/model grok-4-fast-reasoning`.
 
 SuperGrok and X Premium+ subscribers can sign in with browser OAuth instead of using an API key — pick **xAI Grok OAuth (SuperGrok / Premium+)** in `chiper model`, or run `chiper auth add xai-oauth`. The same OAuth bearer token is automatically reused by direct-to-xAI tools (TTS, image gen, video gen, transcription). See the [xAI Grok OAuth guide](../guides/xai-grok-oauth.md) for the full flow — and if Chiper runs on a remote host, also see [OAuth over SSH / Remote Hosts](../guides/oauth-over-ssh.md) for the required `ssh -L` tunnel.
 
@@ -289,7 +289,7 @@ xAI also ships a dedicated TTS endpoint (`/v1/tts`). Select **xAI TTS** in `chip
 
 ```bash
 chiper migrate xai          # preview replacements
-chiper migrate xai --apply  # rewrite ~/.Chiper/config.yaml in place
+chiper migrate xai --apply  # rewrite ~/.chiper/config.yaml in place
 ```
 
 **xAI Web Search backend.** When the [Web Search](../user-guide/features/web-search.md) toolset is enabled, `web.backend: xai` routes search through xAI's hosted search endpoint using the same `XAI_API_KEY` / OAuth credentials. No additional setup required if xAI is already configured as a provider.
@@ -301,7 +301,7 @@ chiper migrate xai --apply  # rewrite ~/.Chiper/config.yaml in place
 ```bash
 # Use any available model
 chiper chat --provider novita --model moonshotai/kimi-k2.5
-# Requires: NOVITA_API_KEY in ~/.Chiper/.env
+# Requires: NOVITA_API_KEY in ~/.chiper/.env
 
 # Short alias
 chiper chat --provider novita-ai --model deepseek/deepseek-v3-0324
@@ -381,7 +381,7 @@ Alibaba's Qwen Portal with browser-based OAuth login. Pick **Qwen OAuth (Portal)
 chiper model
 # → pick "Qwen OAuth (Portal)"
 # → browser opens; sign in with your Alibaba account
-# → confirm — credentials are saved to ~/.Chiper/auth.json
+# → confirm — credentials are saved to ~/.chiper/auth.json
 
 chiper chat   # uses portal.qwen.ai/v1 endpoint
 ```
@@ -425,7 +425,7 @@ MiniMax-M2.7 via browser OAuth login — no API key needed. Pick **MiniMax (OAut
 chiper model
 # → pick "MiniMax (OAuth)"
 # → browser opens; sign in with your MiniMax account (global or CN region)
-# → confirm — credentials are saved to ~/.Chiper/auth.json
+# → confirm — credentials are saved to ~/.chiper/auth.json
 
 chiper chat   # uses api.minimax.io/anthropic endpoint
 ```
@@ -450,7 +450,7 @@ Nemotron and other open source models via [build.nvidia.com](https://build.nvidi
 ```bash
 # Cloud (build.nvidia.com)
 chiper chat --provider nvidia --model nvidia/nemotron-3-super-120b-a12b
-# Requires: NVIDIA_API_KEY in ~/.Chiper/.env
+# Requires: NVIDIA_API_KEY in ~/.chiper/.env
 
 # Local NIM endpoint — override base URL
 NVIDIA_BASE_URL=http://localhost:8000/v1 chiper chat --provider nvidia --model nvidia/nemotron-3-super-120b-a12b
@@ -476,7 +476,7 @@ Open and reasoning models via [GMI Cloud](https://www.gmicloud.ai/) — OpenAI-c
 ```bash
 # GMI Cloud
 chiper chat --provider gmi --model deepseek-ai/DeepSeek-V3.2
-# Requires: GMI_API_KEY in ~/.Chiper/.env
+# Requires: GMI_API_KEY in ~/.chiper/.env
 ```
 
 Or set it permanently in `config.yaml`:
@@ -495,7 +495,7 @@ Step-series models via [StepFun](https://platform.stepfun.com) — OpenAI-compat
 ```bash
 # StepFun
 chiper chat --provider stepfun --model step-3.5-flash
-# Requires: STEPFUN_API_KEY in ~/.Chiper/.env
+# Requires: STEPFUN_API_KEY in ~/.chiper/.env
 ```
 
 Or set it permanently in `config.yaml`:
@@ -514,7 +514,7 @@ The base URL can be overridden with `STEPFUN_BASE_URL` (default: `https://api.st
 ```bash
 # Use any available model
 chiper chat --provider huggingface --model Qwen/Qwen3.5-397B-A17B
-# Requires: HF_TOKEN in ~/.Chiper/.env
+# Requires: HF_TOKEN in ~/.chiper/.env
 
 # Short alias
 chiper chat --provider hf --model deepseek-ai/DeepSeek-V3.2
@@ -558,7 +558,7 @@ need to install `gemini-cli` or register your own GCP OAuth client.
 **How auth works:**
 - PKCE Authorization Code flow against `accounts.google.com`
 - Browser callback at `http://127.0.0.1:8085/oauth2callback` (with ephemeral-port fallback if busy)
-- Tokens stored at `~/.Chiper/auth/google_oauth.json` (chmod 0600, atomic write, cross-process `fcntl` lock)
+- Tokens stored at `~/.chiper/auth/google_oauth.json` (chmod 0600, atomic write, cross-process `fcntl` lock)
 - Automatic refresh 60 s before expiry
 - Headless environments (SSH, `CHIPER_HEADLESS=1`) → paste-mode fallback
 - Inflight refresh deduplication — two concurrent requests won't double-refresh
@@ -635,7 +635,7 @@ chiper model
 
 **Manual config (`config.yaml`):**
 ```yaml
-# In ~/.Chiper/config.yaml
+# In ~/.chiper/config.yaml
 model:
   default: your-model-name
   provider: custom
@@ -1300,14 +1300,14 @@ You can also select named custom providers from the interactive `chiper model` m
 
 ### Cookbook: Together AI, Groq, Perplexity
 
-The cloud providers listed in [Other Compatible Providers](#other-compatible-providers) all speak OpenAI's REST dialect, so they wire up the same way under `custom_providers:`. Three worked recipes follow. Each drops into `~/.Chiper/config.yaml` and the matching API key goes in `~/.Chiper/.env`.
+The cloud providers listed in [Other Compatible Providers](#other-compatible-providers) all speak OpenAI's REST dialect, so they wire up the same way under `custom_providers:`. Three worked recipes follow. Each drops into `~/.chiper/config.yaml` and the matching API key goes in `~/.chiper/.env`.
 
 #### Together AI
 
 Hosts open-weight models (Llama, MiniMax, Gemma, DeepSeek, Qwen) at prices significantly below first-party APIs. Good default for multi-model fleets.
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 custom_providers:
   - name: together
     base_url: https://api.together.xyz/v1
@@ -1320,7 +1320,7 @@ model:
 ```
 
 ```bash
-# ~/.Chiper/.env
+# ~/.chiper/.env
 TOGETHER_API_KEY=your-together-key
 ```
 
@@ -1339,7 +1339,7 @@ Together's `/v1/models` endpoint works, so `chiper model` can auto-discover avai
 Ultra-fast inference (~500 tok/s on Llama-3.3-70B). Small catalog but strong for latency-sensitive interactive use.
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 custom_providers:
   - name: groq
     base_url: https://api.groq.com/openai/v1
@@ -1351,7 +1351,7 @@ model:
 ```
 
 ```bash
-# ~/.Chiper/.env
+# ~/.chiper/.env
 GROQ_API_KEY=your-groq-key
 ```
 
@@ -1360,7 +1360,7 @@ GROQ_API_KEY=your-groq-key
 Useful when you want a model that does live web search and citation automatically. Strict about which models are available — check [perplexity.ai/settings/api](https://www.perplexity.ai/settings/api) for the current list.
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 custom_providers:
   - name: perplexity
     base_url: https://api.perplexity.ai
@@ -1372,7 +1372,7 @@ model:
 ```
 
 ```bash
-# ~/.Chiper/.env
+# ~/.chiper/.env
 PERPLEXITY_API_KEY=your-perplexity-key
 ```
 
@@ -1463,7 +1463,7 @@ You can also set both `FIRECRAWL_API_KEY` and `FIRECRAWL_API_URL` if your self-h
 
 ## OpenRouter Provider Routing
 
-When using OpenRouter, you can control how requests are routed across providers. Add a `provider_routing` section to `~/.Chiper/config.yaml`:
+When using OpenRouter, you can control how requests are routed across providers. Add a `provider_routing` section to `~/.chiper/config.yaml`:
 
 ```yaml
 provider_routing:
@@ -1479,7 +1479,7 @@ provider_routing:
 
 ## OpenRouter Pareto Code Router
 
-OpenRouter ships an experimental coding-model router at `openrouter/pareto-code` that auto-routes requests to the cheapest model meeting a coding-quality bar (ranked by [Artificial Analysis](https://artificialanalysis.ai/)). Pick this model and tune the `min_coding_score` knob in `~/.Chiper/config.yaml`:
+OpenRouter ships an experimental coding-model router at `openrouter/pareto-code` that auto-routes requests to the cheapest model meeting a coding-quality bar (ranked by [Artificial Analysis](https://artificialanalysis.ai/)). Pick this model and tune the `min_coding_score` knob in `~/.chiper/config.yaml`:
 
 ```yaml
 model:

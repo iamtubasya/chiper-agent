@@ -9,7 +9,7 @@ def test_load_transcript_returns_db_messages_when_no_jsonl(tmp_path, monkeypatch
     """Reading a transcript must work from SQLite alone — no JSONL fallback needed.
 
     Pin DEFAULT_DB_PATH to tmp_path so this test cannot write to the real
-    ~/.Chiper/state.db. (DEFAULT_DB_PATH is a module-level constant computed
+    ~/.chiper/state.db. (DEFAULT_DB_PATH is a module-level constant computed
     at chiper_state import time, before pytest's CHIPER_HOME monkeypatch
     fires — the autouse fixture's CHIPER_HOME override doesn't help here.)
     """

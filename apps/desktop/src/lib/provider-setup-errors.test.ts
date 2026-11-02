@@ -9,7 +9,7 @@ describe('isProviderSetupErrorMessage', () => {
     )
     expect(isProviderSetupErrorMessage('No inference provider is configured.')).toBe(true)
     expect(isProviderSetupErrorMessage('No Chiper provider is configured.')).toBe(true)
-    expect(isProviderSetupErrorMessage('set an API key (OPENROUTER_API_KEY) in ~/.Chiper/.env')).toBe(true)
+    expect(isProviderSetupErrorMessage('set an API key (OPENROUTER_API_KEY) in ~/.chiper/.env')).toBe(true)
   })
 
   it('does not match non-provider runtime failures', () => {

@@ -6666,7 +6666,7 @@ def test_config_set_indicator_none_keeps_blank_repr(monkeypatch):
 
 
 def test_reload_env_rpc_calls_chiper_cli_reload_env(monkeypatch):
-    """reload.env mirrors classic CLI's `/reload` — re-reads ~/.Chiper/.env
+    """reload.env mirrors classic CLI's `/reload` — re-reads ~/.chiper/.env
     into the gateway process and reports the count of vars updated."""
     calls = {"n": 0}
 

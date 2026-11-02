@@ -217,14 +217,14 @@ def load_chiper_dotenv(
     """Load Chiper environment files with user config taking precedence.
 
     Behavior:
-    - `~/.Chiper/.env` overrides stale shell-exported values when present.
+    - `~/.chiper/.env` overrides stale shell-exported values when present.
     - project `.env` acts as a dev fallback and only fills missing values when
       the user env exists.
     - if no user env exists, the project `.env` also overrides stale shell vars.
     """
     loaded: list[Path] = []
 
-    home_path = Path(chiper_home or os.getenv("CHIPER_HOME", Path.home() / ".Chiper"))
+    home_path = Path(chiper_home or os.getenv("CHIPER_HOME", Path.home() / ".chiper"))
     user_env = home_path / ".env"
     project_env_path = Path(project_env) if project_env else None
 

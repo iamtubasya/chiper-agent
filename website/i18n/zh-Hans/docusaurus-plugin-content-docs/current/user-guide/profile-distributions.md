@@ -84,14 +84,14 @@ chiper profile install github.com/you/my-research-agent --alias
 ```bash
 chiper profile create research-bot
 research-bot setup                    # configure model, API keys
-# Edit ~/.Chiper/profiles/research-bot/SOUL.md
+# Edit ~/.chiper/profiles/research-bot/SOUL.md
 # Install skills, wire up MCP servers, schedule cron jobs, etc.
 research-bot chat                     # dogfood until it feels right
 ```
 
 ### 第二步——添加 `distribution.yaml`
 
-创建 `~/.Chiper/profiles/research-bot/distribution.yaml`：
+创建 `~/.chiper/profiles/research-bot/distribution.yaml`：
 
 ```yaml
 name: research-bot
@@ -119,7 +119,7 @@ env_requires:
 ### 第三步——推送到 git 仓库
 
 ```bash
-cd ~/.Chiper/profiles/research-bot
+cd ~/.chiper/profiles/research-bot
 git init
 git add .
 git commit -m "v1.0.0"
@@ -204,7 +204,7 @@ chiper profile install github.com/you/research-bot --alias
 2. 读取 `distribution.yaml`，显示 manifest（名称、版本、描述、作者、所需环境变量）。
 3. 对照你的 shell 环境和目标 profile 现有的 `.env` 检查每个必需的环境变量，标记为 `✓ set` 或 `needs setting`，让你清楚需要配置哪些内容。
 4. 请求确认。传入 `-y` / `--yes` 可跳过。
-5. 将分发所有的文件复制到 `~/.Chiper/profiles/research-bot/`（或 manifest 中 `name` 解析到的位置）。
+5. 将分发所有的文件复制到 `~/.chiper/profiles/research-bot/`（或 manifest 中 `name` 解析到的位置）。
 6. 写入 `.env.EXAMPLE`，其中所需密钥以注释形式列出——复制为 `.env` 并填入。
 7. 使用 `--alias` 时，创建一个 wrapper，使你可以直接运行 `research-bot chat`。
 
@@ -263,7 +263,7 @@ OPENAI_API_KEY=
 复制它：
 
 ```bash
-cp ~/.Chiper/profiles/research-bot/.env.EXAMPLE ~/.Chiper/profiles/research-bot/.env
+cp ~/.chiper/profiles/research-bot/.env.EXAMPLE ~/.chiper/profiles/research-bot/.env
 # Edit .env, paste your real keys
 ```
 
@@ -327,7 +327,7 @@ chiper profile delete research-bot
 
 ```
 Profile: research-bot
-Path:    ~/.Chiper/profiles/research-bot
+Path:    ~/.chiper/profiles/research-bot
 Model:   claude-opus-4 (anthropic)
 Skills:  12
 Distribution: research-bot@1.0.0
@@ -352,7 +352,7 @@ Type 'research-bot' to confirm:
 
 ```bash
 # 笔记本
-cd ~/.Chiper/profiles/research-bot
+cd ~/.chiper/profiles/research-bot
 git init && git add . && git commit -m "initial"
 git remote add origin git@github.com:you/research-bot.git
 git push -u origin main
@@ -370,7 +370,7 @@ chiper profile install github.com/you/research-bot --alias
 
 ```bash
 # 工程负责人
-cd ~/.Chiper/profiles/pr-reviewer
+cd ~/.chiper/profiles/pr-reviewer
 # ... build and tune ...
 git init && git add . && git commit -m "v1.0 PR reviewer"
 git tag v1.0.0
@@ -390,7 +390,7 @@ pr-reviewer chat
 
 ```bash
 # 你
-cd ~/.Chiper/profiles/polymarket-trader
+cd ~/.chiper/profiles/polymarket-trader
 # 在仓库根目录写一个完整的 README.md——GitHub 会在仓库页面展示它
 git init && git add . && git commit -m "v1.0"
 git tag v1.0.0
@@ -475,7 +475,7 @@ git ls-remote --tags https://github.com/you/research-bot | tail -5
 默认的更新行为已经做到这一点：`config.yaml` 会被保留。为了安全起见，将本地调整写入分发不拥有的文件：
 
 ```yaml
-# ~/.Chiper/profiles/research-bot/local/my-overrides.yaml
+# ~/.chiper/profiles/research-bot/local/my-overrides.yaml
 # (distribution never touches local/)
 ```
 
@@ -500,7 +500,7 @@ chiper profile update research-bot --force-config --yes
 # 在 GitHub 上 fork 仓库，然后安装你的 fork
 chiper profile install github.com/yourname/forked-research-bot --alias
 
-# 在 ~/.Chiper/profiles/forked-research-bot/ 中本地迭代
+# 在 ~/.chiper/profiles/forked-research-bot/ 中本地迭代
 # 编辑 SOUL.md，提交，推送到你的 fork
 # 上游变更：用常规方式合并到你的 fork
 ```
@@ -511,11 +511,11 @@ chiper profile install github.com/yourname/forked-research-bot --alias
 
 ```bash
 # 从本地目录安装（无需 git push）
-chiper profile install ~/.Chiper/profiles/research-bot --name research-bot-test --alias
+chiper profile install ~/.chiper/profiles/research-bot --name research-bot-test --alias
 
 # 调整、删除、重新安装，直到满意
 chiper profile delete research-bot-test --yes
-chiper profile install ~/.Chiper/profiles/research-bot --name research-bot-test
+chiper profile install ~/.chiper/profiles/research-bot --name research-bot-test
 ```
 
 ---

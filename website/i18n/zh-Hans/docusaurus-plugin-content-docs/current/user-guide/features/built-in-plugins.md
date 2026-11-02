@@ -7,7 +7,7 @@ description: "随 Chiper Agent 附带并通过生命周期 hook 自动运行的�
 
 # 内置插件
 
-Chiper 随仓库附带了一小组插件。它们位于 `<repo>/plugins/<name>/`，与用户安装在 `~/.Chiper/plugins/` 中的插件一同自动加载。它们使用与第三方插件相同的插件接口——hook、工具、斜杠命令——只是在仓库内维护。
+Chiper 随仓库附带了一小组插件。它们位于 `<repo>/plugins/<name>/`，与用户安装在 `~/.chiper/plugins/` 中的插件一同自动加载。它们使用与第三方插件相同的插件接口——hook、工具、斜杠命令——只是在仓库内维护。
 
 请参阅 [插件](/user-guide/features/plugins) 页面了解通用插件系统，以及 [构建 Chiper 插件](/guides/build-a-chiper-plugin) 了解如何编写自己的插件。
 
@@ -16,8 +16,8 @@ Chiper 随仓库附带了一小组插件。它们位于 `<repo>/plugins/<name>/`
 `PluginManager` 按顺序扫描四个来源：
 
 1. **内置（Bundled）** — `<repo>/plugins/<name>/`（本页所记录的内容）
-2. **用户（User）** — `~/.Chiper/plugins/<name>/`
-3. **项目（Project）** — `./.Chiper/plugins/<name>/`（需要 `CHIPER_ENABLE_PROJECT_PLUGINS=1`）
+2. **用户（User）** — `~/.chiper/plugins/<name>/`
+3. **项目（Project）** — `./.chiper/plugins/<name>/`（需要 `CHIPER_ENABLE_PROJECT_PLUGINS=1`）
 4. **Pip 入口点（Entry points）** — `chiper_agent.plugins`
 
 名称冲突时，后面的来源优先——名为 `disk-cleanup` 的用户插件会替换内置版本。
@@ -32,7 +32,7 @@ Chiper 随仓库附带了一小组插件。它们位于 `<repo>/plugins/<name>/`
 chiper plugins enable disk-cleanup
 ```
 
-或通过 `~/.Chiper/config.yaml`：
+或通过 `~/.chiper/config.yaml`：
 
 ```yaml
 plugins:
@@ -128,7 +128,7 @@ pip install langfuse
 chiper plugins enable observability/langfuse
 ```
 
-或在交互式 `chiper plugins` UI 中勾选复选框。然后将凭据写入 `~/.Chiper/.env`：
+或在交互式 `chiper plugins` UI 中勾选复选框。然后将凭据写入 `~/.chiper/.env`：
 
 ```bash
 CHIPER_LANGFUSE_PUBLIC_KEY=pk-lf-...
@@ -179,7 +179,7 @@ Chiper 前缀的环境变量和标准 SDK 环境变量（`LANGFUSE_PUBLIC_KEY`�
 - 使用浏览器自动化加入 Meet URL 的无头虚拟参与者
 - 通过配置的 STT 提供者对会议音频进行实时转录
 - agent 调用的 `meet_summarize` / `meet_speak` / `meet_followup` 工具集，用于对所听内容采取行动
-- 会后产物（转录、带发言人归属的笔记、行动项）保存在 `~/.Chiper/cache/google_meet/<meeting_id>/`
+- 会后产物（转录、带发言人归属的笔记、行动项）保存在 `~/.chiper/cache/google_meet/<meeting_id>/`
 
 **设置：**
 
@@ -198,7 +198,7 @@ agent 会启动会议加入流程，在通话进行时将转录内容流式传�
 
 **适用场景：** 需要机器人转录并为异步参与者总结的定期站会；需要结构化笔记的访谈式会议；任何原本需要 Fireflies / Otter / Grain 的场景。如果你不希望有 AI 在旁监听——请勿启用。
 
-**禁用：** `chiper plugins disable google_meet`。已缓存的转录和录音保留在 `~/.Chiper/cache/google_meet/`，直到你手动删除。
+**禁用：** `chiper plugins disable google_meet`。已缓存的转录和录音保留在 `~/.chiper/cache/google_meet/`，直到你手动删除。
 
 ### chiper-achievements
 
@@ -206,7 +206,7 @@ agent 会启动会议加入流程，在通话进行时将转录内容流式传�
 
 **工作原理：**
 
-- 在仪表盘后端扫描你的整个 `~/.Chiper/state.db` 会话历史
+- 在仪表盘后端扫描你的整个 `~/.chiper/state.db` 会话历史
 - 每个会话的统计数据按 `(started_at, last_active)` 指纹缓存，因此后续扫描只重新分析新增或变更的会话
 - 首次扫描在后台线程中运行——即使数据库有数千个会话，仪表盘也不会阻塞等待
 - 解锁状态持久化到 `$CHIPER_HOME/plugins/chiper-achievements/state.json`
@@ -249,13 +249,13 @@ agent 会启动会议加入流程，在通话进行时将转录内容流式传�
 
 **启用：** 无需启用——`chiper-achievements` 是一个仅限仪表盘的插件（无生命周期 hook，无模型可见工具）。它在 `chiper dashboard` 首次启动时自动注册为标签页。`plugins.enabled` 配置仅控制生命周期/工具插件；仪表盘插件完全通过其 `dashboard/manifest.json` 发现。
 
-**退出：** 删除或重命名 `plugins/chiper-achievements/dashboard/manifest.json`，或在 `~/.Chiper/plugins/chiper-achievements/` 中用同名用户插件覆盖它（该插件不包含仪表盘）。`$CHIPER_HOME/plugins/chiper-achievements/` 下的插件状态文件会保留——重新安装后你的解锁历史依然存在。
+**退出：** 删除或重命名 `plugins/chiper-achievements/dashboard/manifest.json`，或在 `~/.chiper/plugins/chiper-achievements/` 中用同名用户插件覆盖它（该插件不包含仪表盘）。`$CHIPER_HOME/plugins/chiper-achievements/` 下的插件状态文件会保留——重新安装后你的解锁历史依然存在。
 
 ## 添加内置插件
 
 内置插件的编写方式与其他 Chiper 插件完全相同——参见 [构建 Chiper 插件](/guides/build-a-chiper-plugin)。唯一的区别是：
 
-- 目录位于 `<repo>/plugins/<name>/`，而非 `~/.Chiper/plugins/<name>/`
+- 目录位于 `<repo>/plugins/<name>/`，而非 `~/.chiper/plugins/<name>/`
 - 在 `chiper plugins list` 中，manifest 来源显示为 `bundled`
 - 同名用户插件会覆盖内置版本
 

@@ -18,7 +18,7 @@ chiper plugins enable observability/langfuse
 
 ## Required credentials
 
-Set these in `~/.Chiper/.env` (or via `chiper tools`):
+Set these in `~/.chiper/.env` (or via `chiper tools`):
 
 ```bash
 CHIPER_LANGFUSE_PUBLIC_KEY=pk-lf-...

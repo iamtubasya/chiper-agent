@@ -14,11 +14,11 @@ Right now the primary consumer is the Teams meeting summary pipeline: Graph noti
 
 - Microsoft Graph application credentials — [Register a Microsoft Graph Application](/guides/microsoft-graph-app-registration)
 - A **public HTTPS URL** that Microsoft Graph can reach (Graph does not call private endpoints). A dev tunnel works for testing; production needs a real domain with a valid certificate.
-- A strong shared secret to use as the `clientState` value. Generate with `openssl rand -hex 32` and put it in `~/.Chiper/.env` as `MSGRAPH_WEBHOOK_CLIENT_STATE`.
+- A strong shared secret to use as the `clientState` value. Generate with `openssl rand -hex 32` and put it in `~/.chiper/.env` as `MSGRAPH_WEBHOOK_CLIENT_STATE`.
 
 ## Quick Start
 
-Minimum `~/.Chiper/config.yaml`:
+Minimum `~/.chiper/config.yaml`:
 
 ```yaml
 platforms:
@@ -32,7 +32,7 @@ platforms:
         - "communications/onlineMeetings"
 ```
 
-Or via env vars in `~/.Chiper/.env` (auto-merged on startup):
+Or via env vars in `~/.chiper/.env` (auto-merged on startup):
 
 ```bash
 MSGRAPH_WEBHOOK_ENABLED=true

@@ -20,14 +20,14 @@ class TestGetDefaultChiperRoot:
     """Tests for get_default_chiper_root() — Docker/custom deployment awareness."""
 
     def test_no_chiper_home_returns_native(self, tmp_path, monkeypatch):
-        """When CHIPER_HOME is not set, returns ~/.Chiper."""
+        """When CHIPER_HOME is not set, returns ~/.chiper."""
         monkeypatch.delenv("CHIPER_HOME", raising=False)
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
         assert get_default_chiper_root() == tmp_path / ".chiper"
 
     def test_chiper_home_is_native(self, tmp_path, monkeypatch):
-        """When CHIPER_HOME = ~/.Chiper, returns ~/.Chiper."""
+        """When CHIPER_HOME = ~/.chiper, returns ~/.chiper."""
         native = tmp_path / ".chiper"
         native.mkdir()
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -35,7 +35,7 @@ class TestGetDefaultChiperRoot:
         assert get_default_chiper_root() == native
 
     def test_chiper_home_is_profile(self, tmp_path, monkeypatch):
-        """When CHIPER_HOME is a profile under ~/.Chiper, returns ~/.Chiper."""
+        """When CHIPER_HOME is a profile under ~/.chiper, returns ~/.chiper."""
         native = tmp_path / ".chiper"
         profile = native / "profiles" / "coder"
         profile.mkdir(parents=True)
@@ -44,7 +44,7 @@ class TestGetDefaultChiperRoot:
         assert get_default_chiper_root() == native
 
     def test_chiper_home_is_docker(self, tmp_path, monkeypatch):
-        """When CHIPER_HOME points outside ~/.Chiper (Docker), returns CHIPER_HOME."""
+        """When CHIPER_HOME points outside ~/.chiper (Docker), returns CHIPER_HOME."""
         docker_home = tmp_path / "opt" / "data"
         docker_home.mkdir(parents=True)
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -52,7 +52,7 @@ class TestGetDefaultChiperRoot:
         assert get_default_chiper_root() == docker_home
 
     def test_chiper_home_is_custom_path(self, tmp_path, monkeypatch):
-        """Any CHIPER_HOME outside ~/.Chiper is treated as the root."""
+        """Any CHIPER_HOME outside ~/.chiper is treated as the root."""
         custom = tmp_path / "my-chiper-data"
         custom.mkdir()
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
@@ -70,7 +70,7 @@ class TestGetDefaultChiperRoot:
         assert get_default_chiper_root() == docker_root
 
     def test_no_chiper_home_returns_localappdata_root_on_windows(self, tmp_path, monkeypatch):
-        """Native Windows falls back to %LOCALAPPDATA%\\chiper, not ~/.Chiper."""
+        """Native Windows falls back to %LOCALAPPDATA%\\chiper, not ~/.chiper."""
         local_appdata = tmp_path / "LocalAppData"
         monkeypatch.delenv("CHIPER_HOME", raising=False)
         monkeypatch.setenv("LOCALAPPDATA", str(local_appdata))

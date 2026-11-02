@@ -45,7 +45,7 @@ The picker has two columns:
 
 Type in the filter box to narrow by provider name, slug, or model ID.
 
-Pick a model, hit **Switch**, and Chiper writes it to `~/.Chiper/config.yaml` under the `model` section. **This applies to new sessions only** — any chat tab you already have open keeps running whatever model it started with. To hot-swap the current chat, use the `/model` slash command inside it.
+Pick a model, hit **Switch**, and Chiper writes it to `~/.chiper/config.yaml` under the `model` section. **This applies to new sessions only** — any chat tab you already have open keeps running whatever model it started with. To hot-swap the current chat, use the `/model` slash command inside it.
 
 ## Setting auxiliary models
 
@@ -95,7 +95,7 @@ Cards are badged with `main` or `aux · <task>` when they're currently assigned 
 
 ## What gets written to `config.yaml`
 
-When you save via the dashboard, Chiper writes to `~/.Chiper/config.yaml`:
+When you save via the dashboard, Chiper writes to `~/.chiper/config.yaml`:
 
 **Main model:**
 ```yaml
@@ -195,7 +195,7 @@ Define your own short names for models you reach for often, then use `/model <al
 **Canonical (top-level `model_aliases:`)** — full control over provider + base_url:
 
 ```yaml
-# ~/.Chiper/config.yaml
+# ~/.chiper/config.yaml
 model_aliases:
   fav:
     model: claude-sonnet-4.6
@@ -222,13 +222,13 @@ Then `/model fav` or `/model grok` in chat. User aliases shadow built-in short n
 chiper model            # Interactive provider + model picker (the canonical way to switch defaults)
 ```
 
-`chiper model` walks you through picking a provider, authenticating (OAuth flows open a browser; API-key providers prompt for the key), and then choosing a specific model from that provider's curated catalog. The choice is written to `model.provider` and `model.model` in `~/.Chiper/config.yaml`.
+`chiper model` walks you through picking a provider, authenticating (OAuth flows open a browser; API-key providers prompt for the key), and then choosing a specific model from that provider's curated catalog. The choice is written to `model.provider` and `model.model` in `~/.chiper/config.yaml`.
 
 To list providers/models without launching the picker, use the dashboard or the REST endpoints below. To inspect what the CLI will actually use right now: `chiper config show | grep '^model\.'` and `chiper status`.
 
 ### Direct config edit
 
-Edit `~/.Chiper/config.yaml` and restart whatever reads it. See the [Configuration reference](./configuration.md) for the full schema.
+Edit `~/.chiper/config.yaml` and restart whatever reads it. See the [Configuration reference](./configuration.md) for the full schema.
 
 ### REST API
 

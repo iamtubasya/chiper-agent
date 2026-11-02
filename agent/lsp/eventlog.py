@@ -33,7 +33,7 @@ to suppress.
 
 Grep recipe::
 
-    tail -f ~/.Chiper/logs/agent.log | rg 'lsp\\['
+    tail -f ~/.chiper/logs/agent.log | rg 'lsp\\['
 """
 from __future__ import annotations
 

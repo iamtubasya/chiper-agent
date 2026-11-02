@@ -109,4 +109,4 @@ body:
       placeholder: |
         - Ran `chiper update`
         - Tried reinstalling with `pip install -e ".[all]"`
-        - Checked that OPENROUTER_API_KEY is set in ~/.Chiper/.env
+        - Checked that OPENROUTER_API_KEY is set in ~/.chiper/.env

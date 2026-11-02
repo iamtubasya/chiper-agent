@@ -1,6 +1,6 @@
 # Spotify
 
-Chiper can control Spotify directly — playback, queue, search, playlists, saved tracks/albums, and listening history — using Spotify's official Web API with PKCE OAuth. Tokens are stored in `~/.Chiper/auth.json` and refreshed automatically on 401; you only log in once per machine.
+Chiper can control Spotify directly — playback, queue, search, playlists, saved tracks/albums, and listening history — using Spotify's official Web API with PKCE OAuth. Tokens are stored in `~/.chiper/auth.json` and refreshed automatically on 401; you only log in once per machine.
 
 Unlike Chiper' built-in OAuth integrations (Google, GitHub Copilot, Codex), Spotify requires every user to register their own lightweight developer app. Spotify does not let third parties ship a public OAuth app that anyone can use. It takes about two minutes and `chiper auth spotify` walks you through it.
 
@@ -49,10 +49,10 @@ If no `CHIPER_SPOTIFY_CLIENT_ID` is set, Chiper walks you through the app regist
 1. Opens `https://developer.spotify.com/dashboard` in your browser
 2. Prints the exact values to paste into Spotify's "Create app" form
 3. Prompts you for the Client ID you get back
-4. Saves it to `~/.Chiper/.env` so future runs skip this step
+4. Saves it to `~/.chiper/.env` so future runs skip this step
 5. Continues straight into the OAuth consent flow
 
-After you approve, tokens are written under `providers.spotify` in `~/.Chiper/auth.json`. The active inference provider is NOT changed — Spotify auth is independent of your LLM provider.
+After you approve, tokens are written under `providers.spotify` in `~/.chiper/auth.json`. The active inference provider is NOT changed — Spotify auth is independent of your LLM provider.
 
 ### Creating the Spotify app (what the wizard asks for)
 
@@ -225,7 +225,7 @@ Full cron reference: [Cron Jobs](./cron).
 chiper auth logout spotify
 ```
 
-Removes tokens from `~/.Chiper/auth.json`. To also clear the app config, delete `CHIPER_SPOTIFY_CLIENT_ID` (and `CHIPER_SPOTIFY_REDIRECT_URI` if you set it) from `~/.Chiper/.env`, or run the wizard again.
+Removes tokens from `~/.chiper/auth.json`. To also clear the app config, delete `CHIPER_SPOTIFY_CLIENT_ID` (and `CHIPER_SPOTIFY_REDIRECT_URI` if you set it) from `~/.chiper/.env`, or run the wizard again.
 
 To revoke the app on Spotify's side, visit [Apps connected to your account](https://www.spotify.com/account/apps/) and click **REMOVE ACCESS**.
 
@@ -237,7 +237,7 @@ To revoke the app on Spotify's side, visit [Apps connected to your account](http
 
 **`204 No Content` on `get_currently_playing`** — nothing is currently playing on any device. This is Spotify's normal response, not an error; Chiper surfaces it as an explanatory empty result (`is_playing: false`).
 
-**`INVALID_CLIENT: Invalid redirect URI`** — the redirect URI in your Spotify app settings doesn't match what Chiper is using. The default is `http://127.0.0.1:43827/spotify/callback`. Either add that to your app's allowed redirect URIs, or set `CHIPER_SPOTIFY_REDIRECT_URI` in `~/.Chiper/.env` to whatever you registered.
+**`INVALID_CLIENT: Invalid redirect URI`** — the redirect URI in your Spotify app settings doesn't match what Chiper is using. The default is `http://127.0.0.1:43827/spotify/callback`. Either add that to your app's allowed redirect URIs, or set `CHIPER_SPOTIFY_REDIRECT_URI` in `~/.chiper/.env` to whatever you registered.
 
 **`429 Too Many Requests`** — Spotify's rate limit. Chiper returns a friendly error; wait a minute and retry. If this persists, you're probably running a tight loop in a script — Spotify's quota resets roughly every 30 seconds.
 
@@ -261,7 +261,7 @@ Scope reference: [Spotify Web API scopes](https://developer.spotify.com/document
 chiper auth spotify --client-id <id> --redirect-uri http://localhost:3000/callback
 ```
 
-Or set them permanently in `~/.Chiper/.env`:
+Or set them permanently in `~/.chiper/.env`:
 
 ```
 CHIPER_SPOTIFY_CLIENT_ID=<your_id>
@@ -274,6 +274,6 @@ The redirect URI must be allow-listed in your Spotify app's settings. The defaul
 
 | File | Contents |
 |------|----------|
-| `~/.Chiper/auth.json` → `providers.spotify` | access token, refresh token, expiry, scope, redirect URI |
-| `~/.Chiper/.env` | `CHIPER_SPOTIFY_CLIENT_ID`, optional `CHIPER_SPOTIFY_REDIRECT_URI` |
+| `~/.chiper/auth.json` → `providers.spotify` | access token, refresh token, expiry, scope, redirect URI |
+| `~/.chiper/.env` | `CHIPER_SPOTIFY_CLIENT_ID`, optional `CHIPER_SPOTIFY_REDIRECT_URI` |
 | Spotify app | owned by you at [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard); contains the Client ID and the redirect URI allow-list |

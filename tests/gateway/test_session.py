@@ -322,10 +322,10 @@ class TestBuildSessionContextPrompt:
         )
         ctx = build_session_context(source, config)
 
-        with patch("chiper_constants.display_chiper_home", return_value="~/.Chiper/profiles/coder"):
+        with patch("chiper_constants.display_chiper_home", return_value="~/.chiper/profiles/coder"):
             prompt = build_session_context_prompt(ctx)
 
-        assert "~/.Chiper/profiles/coder/cron/output/" in prompt
+        assert "~/.chiper/profiles/coder/cron/output/" in prompt
 
     def test_whatsapp_prompt(self):
         config = GatewayConfig(
