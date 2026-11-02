@@ -33,7 +33,7 @@ Chiper Agent 可与任何兼容 OpenAI 的 API 配合使用。支持的提供商
 **原生不支持。** Chiper Agent 需要类 Unix 环境。在 Windows 上，请安装 [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) 并在其中运行 Chiper。标准安装命令在 WSL2 中可完美运行：
 
 ```bash
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 ```
 
 ### 我在 WSL2 中运行 Chiper，如何控制 Windows 上的普通 Chrome？
@@ -61,7 +61,7 @@ curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
 快速安装：
 
 ```bash
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 ```
 
 完整的手动步骤、支持的扩展及当前限制，请参阅 [Termux 指南](../getting-started/termux.md)。
@@ -225,7 +225,7 @@ source ~/.bashrc
 # 如果之前使用 sudo 安装，请先清理：
 sudo rm /usr/local/bin/chiper
 # 然后重新运行标准安装程序
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 ```
 
 ---
@@ -750,7 +750,7 @@ skills:
 
 1. 在新机器上安装 Chiper Agent：
    ```bash
-   curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+   curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
    ```
 
 2. 在**源机器**上创建完整备份：
@@ -854,6 +854,6 @@ chiper chat -q "hello" --model anthropic/claude-opus-4.7
 
 如果您的问题未在此处涵盖：
 
-1. **搜索现有 issue：** [GitHub Issues](https://github.com/Chiper/chiper-agent/issues)
-2. **向社区提问：** [Chiper Discord](https://discord.gg/Chiper)
+1. **搜索现有 issue：** [GitHub Issues](https://github.com/iamtubasya/chiper-agent.git/issues)
+2. **向社区提问：** [Chiper Discord](https://github.com/iamtubasya/chiper-agent)
 3. **提交 bug 报告：** 请包含您的操作系统、Python 版本（`python3 --version`）、Chiper 版本（`chiper --version`）以及完整的错误信息

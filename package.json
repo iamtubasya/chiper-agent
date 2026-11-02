@@ -24,13 +24,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Chiper/Chiper-Agent.git"
+    "url": "git+https://github.com/iamtubasya/chiper-agent.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Chiper/Chiper-Agent/issues"
+    "url": "https://github.com/iamtubasya/chiper-agent.git/issues"
   },
-  "homepage": "https://github.com/Chiper/Chiper-Agent#readme",
+  "homepage": "https://github.com/iamtubasya/chiper-agent.git#readme",
   "dependencies": {
     "@streamdown/math": "^1.0.2",
     "agent-browser": "^0.26.0"

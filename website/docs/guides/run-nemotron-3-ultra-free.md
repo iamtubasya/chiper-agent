@@ -20,7 +20,7 @@ The simplest path: a one-click installer with a guided, point-and-click setup. N
 
 ### 1. Download and install
 
-[Download the Chiper Desktop installer](https://chiper-agent.Chiper.com/) for macOS or Windows, then open it. On first launch it finishes setting itself up (usually under a minute).
+[Download the Chiper Desktop installer](https://iamtubasya.github.io/chiper-agent/) for macOS or Windows, then open it. On first launch it finishes setting itself up (usually under a minute).
 
 ### 2. Connect Chiper Portal
 
@@ -49,16 +49,16 @@ Prefer the terminal?
 On macOS/Linux/WSL2/Android, run
 
 ```bash
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 ```
 
 On Windows, run
 
 ```powershell
-iex (irm https://chiper-agent.Chiper.com/install.ps1)
+iex (irm https://iamtubasya.github.io/chiper-agent/install.ps1)
 ```
 
-Prefer to review first? Download [`install.sh`](https://chiper-agent.Chiper.com/install.sh), inspect it, then run it.
+Prefer to review first? Download [`install.sh`](https://iamtubasya.github.io/chiper-agent/install.sh), inspect it, then run it.
 
 After it finishes, reload your shell:
 

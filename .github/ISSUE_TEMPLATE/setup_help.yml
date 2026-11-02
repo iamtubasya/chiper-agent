@@ -12,8 +12,8 @@ body:
         - Run `chiper debug share` and paste the links in the Debug Report section below
         - If you're in a chat session, you can use `/debug` instead — it does the same thing
         - Try `chiper update` to get the latest version
-        - Check the [README troubleshooting section](https://github.com/Chiper/chiper-agent#troubleshooting)
-        - For general questions, consider the [Chiper Discord](https://discord.gg/Chiper) for faster help
+        - Check the [README troubleshooting section](https://github.com/iamtubasya/chiper-agent.git#troubleshooting)
+        - For general questions, consider the [Chiper Discord](https://github.com/iamtubasya/chiper-agent) for faster help
 
   - type: textarea
     id: description

@@ -3521,7 +3521,7 @@ def check_for_skill_updates(
 # Chiper centralized index source
 # ---------------------------------------------------------------------------
 
-CHIPER_INDEX_URL = "https://chiper-agent.Chiper.com/docs/api/skills-index.json"
+CHIPER_INDEX_URL = "https://iamtubasya.github.io/chiper-agent/docs/api/skills-index.json"
 CHIPER_INDEX_CACHE_FILE = INDEX_CACHE_DIR / "chiper-index.json"
 CHIPER_INDEX_TTL = 6 * 3600  # 6 hours
 

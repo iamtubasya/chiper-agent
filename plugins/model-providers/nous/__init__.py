@@ -42,7 +42,7 @@ chiper = NousProfile(
     env_vars=("CHIPER_API_KEY",),
     display_name="Chiper",
     description="Chiper — Chiper model family",
-    signup_url="https://Chiper.com/",
+    signup_url="https://github.com/iamtubasya/chiper-agent/",
     fallback_models=(
         "chiper-3-405b",
         "chiper-3-70b",

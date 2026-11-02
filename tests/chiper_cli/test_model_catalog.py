@@ -180,7 +180,7 @@ class TestFallbackChain:
     releases (opus 4.8, etc.) never reach the picker.
     """
 
-    PRIMARY = "https://chiper-agent.Chiper.com/docs/api/model-catalog.json"
+    PRIMARY = "https://iamtubasya.github.io/chiper-agent/docs/api/model-catalog.json"
     FALLBACK = (
         "https://raw.githubusercontent.com/Chiper/chiper-agent"
         "/main/website/static/api/model-catalog.json"

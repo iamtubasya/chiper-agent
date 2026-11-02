@@ -6,7 +6,7 @@ scope for vulnerability reports.
 
 ## 1. Reporting a Vulnerability
 
-Report privately via [GitHub Security Advisories](https://github.com/Chiper/chiper-agent/security/advisories/new)
+Report privately via [GitHub Security Advisories](https://github.com/iamtubasya/chiper-agent.git/security/advisories/new)
 or **security@Chiper.com**. Do not open public issues for
 security vulnerabilities. **Chiper Agent does not operate a bug
 bounty program.**

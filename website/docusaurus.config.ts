@@ -7,7 +7,7 @@ const config: Config = {
   tagline: 'The self-improving AI agent',
   favicon: 'img/favicon.ico',
 
-  url: 'https://chiper-agent.Chiper.com',
+  url: 'https://iamtubasya.github.io/chiper-agent',
   baseUrl: '/docs/',
 
   organizationName: 'Chiper',
@@ -90,7 +90,7 @@ const config: Config = {
         docs: {
           routeBasePath: '/',  // Docs at the root of /docs/
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/Chiper/chiper-agent/edit/main/website/',
+          editUrl: 'https://github.com/iamtubasya/chiper-agent.git/edit/main/website/',
         },
         blog: false,
         theme: {
@@ -131,7 +131,7 @@ const config: Config = {
           position: 'left',
         },
         {
-          href: 'https://chiper-agent.Chiper.com/',
+          href: 'https://iamtubasya.github.io/chiper-agent/',
           label: 'Download',
           position: 'left',
         },
@@ -140,17 +140,17 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://chiper-agent.Chiper.com',
+          href: 'https://iamtubasya.github.io/chiper-agent',
           label: 'Home',
           position: 'right',
         },
         {
-          href: 'https://github.com/Chiper/chiper-agent',
+          href: 'https://github.com/iamtubasya/chiper-agent.git',
           label: 'GitHub',
           position: 'right',
         },
         {
-          href: 'https://discord.gg/Chiper',
+          href: 'https://github.com/iamtubasya/chiper-agent',
           label: 'Discord',
           position: 'right',
         },
@@ -171,21 +171,21 @@ const config: Config = {
         {
           title: 'Community',
           items: [
-            { label: 'Discord', href: 'https://discord.gg/Chiper' },
-            { label: 'GitHub Issues', href: 'https://github.com/Chiper/chiper-agent/issues' },
+            { label: 'Discord', href: 'https://github.com/iamtubasya/chiper-agent' },
+            { label: 'GitHub Issues', href: 'https://github.com/iamtubasya/chiper-agent.git/issues' },
             { label: 'Skills Hub', href: 'https://agentskills.io' },
           ],
         },
         {
           title: 'More',
           items: [
-            { label: 'Desktop Download', href: 'https://chiper-agent.Chiper.com/' },
-            { label: 'GitHub', href: 'https://github.com/Chiper/chiper-agent' },
-            { label: 'Chiper', href: 'https://Chiper.com' },
+            { label: 'Desktop Download', href: 'https://iamtubasya.github.io/chiper-agent/' },
+            { label: 'GitHub', href: 'https://github.com/iamtubasya/chiper-agent.git' },
+            { label: 'Chiper', href: 'https://github.com/iamtubasya/chiper-agent' },
           ],
         },
       ],
-      copyright: `Built by <a href="https://Chiper.com">Chiper</a> · MIT License · ${new Date().getFullYear()}`,
+      copyright: `Built by <a href="https://github.com/iamtubasya/chiper-agent">Chiper</a> · MIT License · ${new Date().getFullYear()}`,
     },
     prism: {
       theme: prismThemes.github,

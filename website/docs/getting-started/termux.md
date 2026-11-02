@@ -46,7 +46,7 @@ That does not stop Chiper from working well as a phone-native CLI agent — it j
 Chiper now ships a Termux-aware installer path:
 
 ```bash
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 ```
 
 On Termux, the installer automatically:
@@ -80,7 +80,7 @@ Why these packages?
 ### 2. Clone Chiper
 
 ```bash
-git clone https://github.com/Chiper/chiper-agent.git
+git clone https://github.com/iamtubasya/chiper-agent.git
 cd chiper-agent
 ```
 

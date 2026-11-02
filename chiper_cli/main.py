@@ -5717,7 +5717,7 @@ def _print_curator_first_run_notice() -> None:
     print("  Preview now:  chiper curator run --dry-run")
     print("  Pause it:     chiper curator pause")
     print(
-        "  Docs:         https://chiper-agent.Chiper.com/docs/user-guide/features/curator"
+        "  Docs:         https://iamtubasya.github.io/chiper-agent/docs/user-guide/features/curator"
     )
 
 
@@ -5961,7 +5961,7 @@ def _update_via_zip(args):
         )
         sys.exit(1)
     zip_url = (
-        f"https://github.com/Chiper/chiper-agent/archive/refs/heads/{branch}.zip"
+        f"https://github.com/iamtubasya/chiper-agent.git/archive/refs/heads/{branch}.zip"
     )
 
     print("→ Downloading latest version...")
@@ -6369,12 +6369,12 @@ def _discard_stashed_changes(
 # =========================================================================
 
 OFFICIAL_REPO_URLS = {
-    "https://github.com/Chiper/chiper-agent.git",
+    "https://github.com/iamtubasya/chiper-agent.git",
     "git@github.com:Chiper/chiper-agent.git",
-    "https://github.com/Chiper/chiper-agent",
+    "https://github.com/iamtubasya/chiper-agent.git",
     "git@github.com:Chiper/chiper-agent",
 }
-OFFICIAL_REPO_URL = "https://github.com/Chiper/chiper-agent.git"
+OFFICIAL_REPO_URL = "https://github.com/iamtubasya/chiper-agent.git"
 SKIP_UPSTREAM_PROMPT_FILE = ".skip_upstream_prompt"
 
 
@@ -6522,7 +6522,7 @@ def _sync_with_upstream_if_needed(git_cmd: list[str], cwd: Path) -> None:
             print("→ Adding upstream remote...")
             if _add_upstream_remote(git_cmd, cwd):
                 print(
-                    "  ✓ Added upstream: https://github.com/Chiper/chiper-agent.git"
+                    "  ✓ Added upstream: https://github.com/iamtubasya/chiper-agent.git"
                 )
                 has_upstream = True
             else:
@@ -6530,7 +6530,7 @@ def _sync_with_upstream_if_needed(git_cmd: list[str], cwd: Path) -> None:
                 return
         else:
             print(
-                "  Skipped. Run 'git remote add upstream https://github.com/Chiper/chiper-agent.git' to add later."
+                "  Skipped. Run 'git remote add upstream https://github.com/iamtubasya/chiper-agent.git' to add later."
             )
             _mark_skip_upstream_prompt()
             return
@@ -8623,7 +8623,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
                 return
             print("✗ Not a git repository. Please reinstall:")
             print(
-                "  curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash"
+                "  curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash"
             )
             sys.exit(1)
 
@@ -11642,7 +11642,7 @@ def main():
             "Manage the fallback provider chain.  Fallback providers are tried "
             "in order when the primary model fails with rate-limit, overload, or "
             "connection errors.  See: "
-            "https://chiper-agent.Chiper.com/docs/user-guide/features/fallback-providers"
+            "https://iamtubasya.github.io/chiper-agent/docs/user-guide/features/fallback-providers"
         ),
     )
     fallback_subparsers = fallback_parser.add_subparsers(dest="fallback_command")
@@ -11676,7 +11676,7 @@ def main():
             "Pull API keys from an external secret manager at process startup "
             "instead of storing them in ~/.chiper/.env.  Currently supports "
             "Bitwarden Secrets Manager.  See: "
-            "https://chiper-agent.Chiper.com/docs/user-guide/secrets/bitwarden"
+            "https://iamtubasya.github.io/chiper-agent/docs/user-guide/secrets/bitwarden"
         ),
     )
     secrets_subparsers = secrets_parser.add_subparsers(dest="secrets_command")

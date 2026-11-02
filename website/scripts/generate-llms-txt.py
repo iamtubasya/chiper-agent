@@ -9,8 +9,8 @@ Outputs:
                                     comments separating files.
 
 Both publish at:
-  https://chiper-agent.Chiper.com/docs/llms.txt
-  https://chiper-agent.Chiper.com/docs/llms-full.txt
+  https://iamtubasya.github.io/chiper-agent/docs/llms.txt
+  https://iamtubasya.github.io/chiper-agent/docs/llms-full.txt
 
 The `/docs/` prefix is not a mistake — Docusaurus serves `website/static/`
 at the `docs/` base path. Clients and IDE plugins that probe the classic
@@ -31,7 +31,7 @@ WEBSITE = SCRIPT_DIR.parent
 DOCS = WEBSITE / "docs"
 STATIC = WEBSITE / "static"
 
-SITE_BASE = "https://chiper-agent.Chiper.com/docs"
+SITE_BASE = "https://iamtubasya.github.io/chiper-agent/docs"
 
 # Curated sections for llms.txt — mirrors the product story, not the filesystem.
 # Each entry: (docs-relative path without .md, display title, optional short desc).
@@ -215,7 +215,7 @@ def emit_llms_index() -> str:
         "(Linux, macOS, WSL2, Termux)"
     )
     lines.append("")
-    lines.append("Repo: https://github.com/Chiper/chiper-agent")
+    lines.append("Repo: https://github.com/iamtubasya/chiper-agent.git")
     lines.append("")
 
     for section, items in SECTIONS:
@@ -248,8 +248,8 @@ def emit_llms_full() -> str:
             "Started, Using Chiper, Features, Messaging, Integrations, Guides, "
             "Developer Guide, Reference, then everything else.\n"
         ),
-        "Canonical site: https://chiper-agent.Chiper.com/docs\n",
-        "Short index: https://chiper-agent.Chiper.com/docs/llms.txt\n",
+        "Canonical site: https://iamtubasya.github.io/chiper-agent/docs\n",
+        "Short index: https://iamtubasya.github.io/chiper-agent/docs/llms.txt\n",
         "\n---\n\n",
     ]
 

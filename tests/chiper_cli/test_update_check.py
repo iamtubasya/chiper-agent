@@ -115,7 +115,7 @@ def test_check_for_updates_official_ssh_origin_uses_https_probe(tmp_path):
         if cmd == [
             "git",
             "ls-remote",
-            "https://github.com/Chiper/chiper-agent.git",
+            "https://github.com/iamtubasya/chiper-agent.git",
             "refs/heads/main",
         ]:
             return MagicMock(returncode=0, stdout="upstream-sha\trefs/heads/main\n")

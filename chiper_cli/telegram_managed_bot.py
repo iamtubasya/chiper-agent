@@ -20,7 +20,7 @@ import httpx
 
 # Default pairing API base URL (Chiper-hosted Cloudflare Worker).
 # Override for PoC/staging with TELEGRAM_ONBOARDING_URL.
-DEFAULT_API_URL = "https://setup.chiper-agent.Chiper.com"
+DEFAULT_API_URL = "https://setup.iamtubasya.github.io/chiper-agent"
 TELEGRAM_ONBOARDING_URL_ENV = "TELEGRAM_ONBOARDING_URL"
 
 # The Chiper-hosted manager bot username (without @). The backend returns the

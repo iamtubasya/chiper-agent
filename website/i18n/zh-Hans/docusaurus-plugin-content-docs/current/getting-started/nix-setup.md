@@ -50,7 +50,7 @@ chiper chat
 <summary><strong>从本地克隆构建</strong></summary>
 
 ```bash
-git clone https://github.com/Chiper/chiper-agent.git
+git clone https://github.com/iamtubasya/chiper-agent.git
 cd chiper-agent
 nix build
 ./result/bin/chiper setup

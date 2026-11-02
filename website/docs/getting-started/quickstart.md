@@ -48,21 +48,21 @@ Pick the row that matches your goal:
 
 ## 1. Install Chiper Agent
 ### With the Chiper Desktop installer on macOS or Windows (recommended)
-To easily install the command-line and desktop applications, [download the Chiper Desktop installer](https://chiper-agent.Chiper.com/) from our website and run it.
+To easily install the command-line and desktop applications, [download the Chiper Desktop installer](https://iamtubasya.github.io/chiper-agent/) from our website and run it.
 
 ### Without Chiper Desktop:
 For a command-line only install without Chiper Desktop, run:
 
 #### Linux / macOS / WSL2 / Android (Termux)
 ```bash
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 ```
 
 #### Windows (native)
 
 Run in powershell:
 ```powershell
-iex (irm https://chiper-agent.Chiper.com/install.ps1) 
+iex (irm https://iamtubasya.github.io/chiper-agent/install.ps1) 
 ```
 
 :::tip Android / Termux

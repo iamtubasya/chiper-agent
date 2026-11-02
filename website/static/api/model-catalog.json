@@ -3,7 +3,7 @@
   "updated_at": "2026-06-16T18:04:33Z",
   "metadata": {
     "source": "chiper-agent repo",
-    "docs": "https://chiper-agent.Chiper.com/docs/reference/model-catalog"
+    "docs": "https://iamtubasya.github.io/chiper-agent/docs/reference/model-catalog"
   },
   "providers": {
     "openrouter": {

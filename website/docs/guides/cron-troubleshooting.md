@@ -214,7 +214,7 @@ If you've worked through this guide and the issue persists:
 
 1. Run the job with `chiper cron run <job_id>` (fires on next gateway tick) and watch for errors in the chat output
 2. Check `~/.chiper/logs/agent.log` for scheduler messages and `~/.chiper/logs/errors.log` for warnings
-3. Open an issue at [github.com/Chiper/chiper-agent](https://github.com/Chiper/chiper-agent) with:
+3. Open an issue at [github.com/iamtubasya/chiper-agent](https://github.com/iamtubasya/chiper-agent.git) with:
    - The job ID and schedule
    - The delivery target
    - What you expected vs. what happened

@@ -68,7 +68,7 @@ chiper memory setup        # select "honcho" — runs the Honcho-specific post-s
 
 The legacy `chiper honcho setup` command still works (it now redirects to `chiper memory setup`), but is only registered after Honcho is selected as the active memory provider.
 
-**Config:** `$CHIPER_HOME/honcho.json` (profile-local) or `~/.honcho/config.json` (global). Resolution order: `$CHIPER_HOME/honcho.json` > `~/.chiper/honcho.json` > `~/.honcho/config.json`. See the [config reference](https://github.com/Chiper/chiper-agent/blob/main/plugins/memory/honcho/README.md) and the [Honcho integration guide](https://docs.honcho.dev/v3/guides/integrations/chiper).
+**Config:** `$CHIPER_HOME/honcho.json` (profile-local) or `~/.honcho/config.json` (global). Resolution order: `$CHIPER_HOME/honcho.json` > `~/.chiper/honcho.json` > `~/.honcho/config.json`. See the [config reference](https://github.com/iamtubasya/chiper-agent.git/blob/main/plugins/memory/honcho/README.md) and the [Honcho integration guide](https://docs.honcho.dev/v3/guides/integrations/chiper).
 
 <details>
 <summary>Full config reference</summary>
@@ -270,7 +270,7 @@ Off-gateway these keys do nothing. `chiper memory setup` only prompts for them w
 
 </details>
 
-See the [config reference](https://github.com/Chiper/chiper-agent/blob/main/plugins/memory/honcho/README.md) and [Honcho integration guide](https://docs.honcho.dev/v3/guides/integrations/chiper).
+See the [config reference](https://github.com/iamtubasya/chiper-agent.git/blob/main/plugins/memory/honcho/README.md) and [Honcho integration guide](https://docs.honcho.dev/v3/guides/integrations/chiper).
 
 
 ---
@@ -386,7 +386,7 @@ The setup wizard installs dependencies automatically and only installs what's ne
 | `retain_assistant_prefix` | `Assistant` | Label used before assistant turns in auto-retained transcripts |
 | `recall_tags` | — | Tags to filter on recall |
 
-See [plugin README](https://github.com/Chiper/chiper-agent/blob/main/plugins/memory/hindsight/README.md) for the full configuration reference.
+See [plugin README](https://github.com/iamtubasya/chiper-agent.git/blob/main/plugins/memory/hindsight/README.md) for the full configuration reference.
 
 ---
 

@@ -1,6 +1,6 @@
 """Tests for CHIPER_HOME credential-file read blocking in file_safety.
 
-Regression for https://github.com/Chiper/chiper-agent/issues/17656 —
+Regression for https://github.com/iamtubasya/chiper-agent.git/issues/17656 —
 ``read_file`` was previously only sandboxed against ``CHIPER_HOME`` itself,
 which left ``auth.json`` and ``.anthropic_oauth.json`` (plaintext provider
 keys + OAuth tokens) readable by the agent. A prompt-injection reaching

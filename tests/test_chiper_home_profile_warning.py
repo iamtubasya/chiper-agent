@@ -1,6 +1,6 @@
 """Tests for get_chiper_home() profile-mode fallback warning.
 
-Regression test for https://github.com/Chiper/chiper-agent/issues/18594.
+Regression test for https://github.com/iamtubasya/chiper-agent.git/issues/18594.
 
 When CHIPER_HOME is unset but an active_profile file indicates a non-default
 profile is active, get_chiper_home() should:

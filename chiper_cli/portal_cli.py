@@ -28,7 +28,7 @@ from chiper_cli.config import load_config
 
 DEFAULT_PORTAL_URL = "https://portal.chiper.local"
 SUBSCRIPTION_URL = "https://portal.chiper.local/manage-subscription"
-DOCS_URL = "https://chiper-agent.Chiper.com/docs/user-guide/features/tool-gateway"
+DOCS_URL = "https://iamtubasya.github.io/chiper-agent/docs/user-guide/features/tool-gateway"
 
 
 def _cmd_status(args) -> int:

@@ -13,7 +13,7 @@ import urllib.request
 
 DEFAULT_UA = (
     "chiper-osint-investigation/0.2 "
-    "(+https://github.com/Chiper/chiper-agent; "
+    "(+https://github.com/iamtubasya/chiper-agent.git; "
     "set CHIPER_OSINT_UA env var to identify yourself per "
     "Wikimedia / SEC fair-use guidance)"
 )

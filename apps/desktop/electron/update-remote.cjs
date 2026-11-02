@@ -12,8 +12,8 @@
  * testable without booting Electron (main.cjs requires('electron') at load).
  */
 
-const OFFICIAL_REPO_HTTPS_URL = 'https://github.com/Chiper/chiper-agent.git'
-const OFFICIAL_REPO_CANONICAL = 'github.com/Chiper/chiper-agent'
+const OFFICIAL_REPO_HTTPS_URL = 'https://github.com/iamtubasya/chiper-agent.git'
+const OFFICIAL_REPO_CANONICAL = 'github.com/iamtubasya/chiper-agent'
 
 // Normalize common GitHub remote URL forms to `host/owner/repo` (lowercased,
 // no trailing slash, no .git suffix) so SSH and HTTPS forms of the same repo

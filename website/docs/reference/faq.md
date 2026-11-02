@@ -33,7 +33,7 @@ Set your provider with `chiper model` or by editing `~/.chiper/.env`. See the [E
 **Yes, natively.** Chiper supports native Windows via the PowerShell installer — no WSL required. Run in PowerShell:
 
 ```powershell
-iex (irm https://chiper-agent.Chiper.com/install.ps1)
+iex (irm https://iamtubasya.github.io/chiper-agent/install.ps1)
 ```
 
 The installer provisions a PortableGit that backs the terminal tool's shell. See the [Windows (Native) Guide](../user-guide/windows-native.md) for details.
@@ -41,7 +41,7 @@ The installer provisions a PortableGit that backs the terminal tool's shell. See
 WSL2 remains a fully supported alternative. To run Chiper inside WSL2, install [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) and use the standard install command:
 
 ```bash
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 ```
 
 ### I run Chiper in WSL2. What's the best way to control my normal Windows Chrome?
@@ -69,7 +69,7 @@ Yes — Chiper now has a tested Termux install path for Android phones.
 Quick install:
 
 ```bash
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 ```
 
 For the fully explicit manual steps, supported extras, and current limitations, see the [Termux guide](../getting-started/termux.md).
@@ -233,7 +233,7 @@ source ~/.bashrc
 # If you previously installed with sudo, clean up:
 sudo rm /usr/local/bin/chiper
 # Then re-run the standard installer
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 ```
 
 ---
@@ -759,7 +759,7 @@ Skills with very long descriptions are truncated to 40 characters in the Telegra
 
 1. Install Chiper Agent on the new machine:
    ```bash
-   curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+   curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
    ```
 
 2. On the **source machine**, create a full backup:
@@ -863,6 +863,6 @@ If using OpenRouter, make sure your API key has credits. A 400 from OpenRouter o
 
 If your issue isn't covered here:
 
-1. **Search existing issues:** [GitHub Issues](https://github.com/Chiper/chiper-agent/issues)
-2. **Ask the community:** [Chiper Discord](https://discord.gg/Chiper)
+1. **Search existing issues:** [GitHub Issues](https://github.com/iamtubasya/chiper-agent.git/issues)
+2. **Ask the community:** [Chiper Discord](https://github.com/iamtubasya/chiper-agent)
 3. **File a bug report:** Include your OS, Python version (`python3 --version`), Chiper version (`chiper --version`), and the full error message

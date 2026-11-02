@@ -13,7 +13,7 @@ required_credential_files:
 metadata:
   chiper:
     tags: [Google, Gmail, Calendar, Drive, Sheets, Docs, Contacts, Email, OAuth]
-    homepage: https://github.com/Chiper/chiper-agent
+    homepage: https://github.com/iamtubasya/chiper-agent.git
     related_skills: [himalaya]
 ---
 

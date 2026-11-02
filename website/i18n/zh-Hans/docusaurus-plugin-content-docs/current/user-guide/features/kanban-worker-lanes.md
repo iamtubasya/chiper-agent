@@ -7,7 +7,7 @@
 - **运维人员**：选择将哪些通道接入看板（创建哪些 profile，使用哪些 assignee）。
 - **插件/集成作者**：希望添加新的通道形态（封装 Codex / Claude Code / OpenCode 的 CLI worker、容器化审查 worker、通过 API 拉取任务的非 Chiper 服务）。
 
-如果你编写的是 worker 代码本身——即运行在通道*内部*的 agent——请参阅 [`kanban-worker`](https://github.com/Chiper/chiper-agent/blob/main/skills/devops/kanban-worker/SKILL.md) skill，其中包含更深入的操作细节。
+如果你编写的是 worker 代码本身——即运行在通道*内部*的 agent——请参阅 [`kanban-worker`](https://github.com/iamtubasya/chiper-agent.git/blob/main/skills/devops/kanban-worker/SKILL.md) skill，其中包含更深入的操作细节。
 
 ## 层级结构
 
@@ -64,7 +64,7 @@ kanban 内核强制要求每次运行恰好由其中一项终止。既未调用�
 - **先将结构化元数据写入 `kanban_comment`**，因为 `kanban_block` 只携带人类可读的 `reason`。Comment 是持久的注解通道——所有与审计相关的字段（changed_files、tests_run、diff_path 或 PR url、决策记录）都应放在这里。
 - **Reviewer 批准并解除阻塞**，这将重新生成 worker 并附带 comment 线程用于后续跟进；或通过另一条 comment 要求修改，下一次 worker 运行时将通过 `kanban_show` 的上下文看到这些内容。
 
-[`kanban-worker`](https://github.com/Chiper/chiper-agent/blob/main/skills/devops/kanban-worker/SKILL.md) skill 中有 `kanban_complete`（真正终态的任务——拼写修复、文档变更、研究报告）和 `review-required` block 模式的完整示例。
+[`kanban-worker`](https://github.com/iamtubasya/chiper-agent.git/blob/main/skills/devops/kanban-worker/SKILL.md) skill 中有 `kanban_complete`（真正终态的任务——拼写修复、文档变更、研究报告）和 `review-required` block 模式的完整示例。
 
 ## 日志与审计追踪
 
@@ -80,9 +80,9 @@ kanban 内核强制要求每次运行恰好由其中一项终止。既未调用�
 
 ### Chiper profile 通道（默认）
 
-当前所有 kanban worker 采用的形态：assignee 是 profile 名称，调度器生成 `chiper -p <profile>`，worker 自动加载 [`kanban-worker`](https://github.com/Chiper/chiper-agent/blob/main/skills/devops/kanban-worker/SKILL.md) skill 以及 `KANBAN_GUIDANCE` 系统提示块，并使用 `kanban_*` 工具终止运行。除定义 profile 外无需任何额外配置。
+当前所有 kanban worker 采用的形态：assignee 是 profile 名称，调度器生成 `chiper -p <profile>`，worker 自动加载 [`kanban-worker`](https://github.com/iamtubasya/chiper-agent.git/blob/main/skills/devops/kanban-worker/SKILL.md) skill 以及 `KANBAN_GUIDANCE` 系统提示块，并使用 `kanban_*` 工具终止运行。除定义 profile 外无需任何额外配置。
 
-为你的 fleet 创建 profile 时，选择与你希望 orchestrator 路由到的*角色*相匹配的名称。orchestrator（如果存在）通过 `chiper profile list` 发现你的 profile 名称——系统不假设固定的名单（orchestrator 侧的契约请参阅 [`kanban-orchestrator`](https://github.com/Chiper/chiper-agent/blob/main/skills/devops/kanban-orchestrator/SKILL.md) skill）。
+为你的 fleet 创建 profile 时，选择与你希望 orchestrator 路由到的*角色*相匹配的名称。orchestrator（如果存在）通过 `chiper profile list` 发现你的 profile 名称——系统不假设固定的名单（orchestrator 侧的契约请参阅 [`kanban-orchestrator`](https://github.com/iamtubasya/chiper-agent.git/blob/main/skills/devops/kanban-orchestrator/SKILL.md) skill）。
 
 ### Orchestrator profile 通道
 
@@ -94,7 +94,7 @@ profile 通道的特化形态：orchestrator 是一个 Chiper profile，其工�
 
 如果你考虑添加 CLI 通道，请提交一个 issue，描述具体的 CLI 以及你希望实现的工作流。上述契约是任何此类通道必须满足的约束；实现形态（每个 CLI 一个插件，还是通过配置参数化的通用 CLI 运行器插件）尚未确定。
 
-相关历史 issue 为 [#19931](https://github.com/Chiper/chiper-agent/issues/19931)，以及已关闭未合并的 Codex 专项 PR [#19924](https://github.com/Chiper/chiper-agent/pull/19924)——这些描述了原始架构提案，但未落地运行器。
+相关历史 issue 为 [#19931](https://github.com/iamtubasya/chiper-agent.git/issues/19931)，以及已关闭未合并的 Codex 专项 PR [#19924](https://github.com/iamtubasya/chiper-agent.git/pull/19924)——这些描述了原始架构提案，但未落地运行器。
 
 ## 调度器处理的失败模式
 
@@ -110,5 +110,5 @@ profile 通道的特化形态：orchestrator 是一个 Chiper profile，其工�
 
 - [Kanban 概览](./kanban) — 面向用户的介绍。
 - [Kanban 教程](./kanban-tutorial) — 开启仪表板的完整演练。
-- [`kanban-worker`](https://github.com/Chiper/chiper-agent/blob/main/skills/devops/kanban-worker/SKILL.md) — worker 进程加载的 skill。
-- [`kanban-orchestrator`](https://github.com/Chiper/chiper-agent/blob/main/skills/devops/kanban-orchestrator/SKILL.md) — orchestrator 侧。
+- [`kanban-worker`](https://github.com/iamtubasya/chiper-agent.git/blob/main/skills/devops/kanban-worker/SKILL.md) — worker 进程加载的 skill。
+- [`kanban-orchestrator`](https://github.com/iamtubasya/chiper-agent.git/blob/main/skills/devops/kanban-orchestrator/SKILL.md) — orchestrator 侧。

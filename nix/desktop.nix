@@ -143,7 +143,7 @@ stdenv.mkDerivation {
 
   meta = with lib; {
     description = "Native Electron desktop shell for Chiper Agent";
-    homepage = "https://github.com/Chiper/chiper-agent";
+    homepage = "https://github.com/iamtubasya/chiper-agent.git";
     license = licenses.mit;
     platforms = platforms.unix;
     mainProgram = "chiper-desktop";

@@ -18,7 +18,7 @@ class TestBuildOrHeaders:
         from agent.auxiliary_client import build_or_headers
 
         headers = build_or_headers(or_config={"response_cache": False})
-        assert headers["HTTP-Referer"] == "https://chiper-agent.Chiper.com"
+        assert headers["HTTP-Referer"] == "https://iamtubasya.github.io/chiper-agent"
         assert headers["X-Title"] == "Chiper Agent"
         assert headers["X-OpenRouter-Categories"] == "productivity,cli-agent"
 

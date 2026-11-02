@@ -149,12 +149,12 @@ chiper webhook subscribe pr-review \
   --deliver github_comment
 ```
 
-Full automation blueprints gallery: [chiper-agent.Chiper.com/docs/reference/automation-blueprints-catalog](https://chiper-agent.Chiper.com/docs/reference/automation-blueprints-catalog)
+Full automation blueprints gallery: [iamtubasya.github.io/chiper-agent/docs/reference/automation-blueprints-catalog](https://iamtubasya.github.io/chiper-agent/docs/reference/automation-blueprints-catalog)
 
-Documentation: [chiper-agent.Chiper.com](https://chiper-agent.Chiper.com)
+Documentation: [iamtubasya.github.io/chiper-agent](https://iamtubasya.github.io/chiper-agent)
 
-GitHub: [github.com/Chiper/chiper-agent](https://github.com/Chiper/chiper-agent)
+GitHub: [github.com/iamtubasya/chiper-agent](https://github.com/iamtubasya/chiper-agent.git)
 
 ---
 
-*Chiper Agent is built by [Chiper](https://Chiper.com). Open source, model-agnostic, runs on your infrastructure.*
+*Chiper Agent is built by [Chiper](https://github.com/iamtubasya/chiper-agent). Open source, model-agnostic, runs on your infrastructure.*

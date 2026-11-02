@@ -15,19 +15,19 @@ Chiper isn't just a CLI tool. You can import `AIAgent` directly and use it progr
 Install Chiper directly from the repository:
 
 ```bash
-pip install git+https://github.com/Chiper/chiper-agent.git
+pip install git+https://github.com/iamtubasya/chiper-agent.git
 ```
 
 Or with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv pip install git+https://github.com/Chiper/chiper-agent.git
+uv pip install git+https://github.com/iamtubasya/chiper-agent.git
 ```
 
 You can also pin it in your `requirements.txt`:
 
 ```text
-chiper-agent @ git+https://github.com/Chiper/chiper-agent.git
+chiper-agent @ git+https://github.com/iamtubasya/chiper-agent.git
 ```
 
 :::tip

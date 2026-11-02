@@ -261,7 +261,7 @@ The Portal proxies through OpenRouter, so any model that OpenRouter supports is 
 /model anthropic/claude-opus-4.6
 ```
 
-If a model is genuinely missing, [open an issue](https://github.com/Chiper/chiper-agent/issues) — we surface the Portal's catalog to Chiper and gaps usually mean a routing config we can update.
+If a model is genuinely missing, [open an issue](https://github.com/iamtubasya/chiper-agent.git/issues) — we surface the Portal's catalog to Chiper and gaps usually mean a routing config we can update.
 
 ### Bills not appearing on my Portal account
 

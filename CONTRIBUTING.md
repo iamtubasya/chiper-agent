@@ -45,7 +45,7 @@ Bundled skills (in `skills/`) ship with every Chiper install. They should be **b
 
 If your skill is official and useful but not universally needed (e.g., a paid service integration, a heavyweight dependency), put it in **`optional-skills/`** — it ships with the repo but isn't activated by default. Users can discover it via `chiper skills browse` (labeled "official") and install it with `chiper skills install` (no third-party warning, built-in trust).
 
-If your skill is specialized, community-contributed, or niche, it's better suited for a **Skills Hub** — upload it to a skills registry and share it in the [Chiper Discord](https://discord.gg/Chiper). Users can install it with `chiper skills install`.
+If your skill is specialized, community-contributed, or niche, it's better suited for a **Skills Hub** — upload it to a skills registry and share it in the [Chiper Discord](https://github.com/iamtubasya/chiper-agent). Users can install it with `chiper skills install`.
 
 ---
 
@@ -89,7 +89,7 @@ development environment on the same layout the CLI, updater, lazy dependency
 installer, gateway, and docs assume.
 
 ```bash
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 cd "${CHIPER_HOME:-$HOME/.chiper}/chiper-agent"
 
 # Add dev/test extras on top of the standard install.
@@ -115,7 +115,7 @@ system `python3 -m chiper_cli.main` can pick up unrelated system Python
 packages.
 
 ```bash
-git clone https://github.com/Chiper/chiper-agent.git
+git clone https://github.com/iamtubasya/chiper-agent.git
 cd chiper-agent
 
 # Create venv with Python 3.11
@@ -232,7 +232,7 @@ chiper-agent/
 ├── skills/                   # Bundled skills (copied to ~/.chiper/skills/ on install)
 ├── optional-skills/          # Official optional skills (discoverable via hub, not activated by default)
 ├── tests/                    # Test suite
-├── website/                  # Documentation site (chiper-agent.Chiper.com)
+├── website/                  # Documentation site (iamtubasya.github.io/chiper-agent)
 │
 ├── cli-config.yaml.example   # Example configuration (copied to ~/.chiper/config.yaml)
 └── AGENTS.md                 # Development guide for AI coding assistants
@@ -939,7 +939,7 @@ test(tools): add unit tests for file_operations
 
 ## Reporting Issues
 
-- Use [GitHub Issues](https://github.com/Chiper/chiper-agent/issues)
+- Use [GitHub Issues](https://github.com/iamtubasya/chiper-agent.git/issues)
 - Include: OS, Python version, Chiper version (`chiper version`), full error traceback
 - Include steps to reproduce
 - Check existing issues before creating duplicates
@@ -949,7 +949,7 @@ test(tools): add unit tests for file_operations
 
 ## Community
 
-- **Discord**: [discord.gg/Chiper](https://discord.gg/Chiper) — for questions, showcasing projects, and sharing skills
+- **Discord**: [discord.gg/Chiper](https://github.com/iamtubasya/chiper-agent) — for questions, showcasing projects, and sharing skills
 - **GitHub Discussions**: For design proposals and architecture discussions
 - **Skills Hub**: Upload specialized skills to a registry and share them with the community
 

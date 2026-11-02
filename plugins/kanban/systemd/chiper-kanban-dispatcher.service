@@ -15,7 +15,7 @@
 
 [Unit]
 Description=Chiper Kanban dispatcher (DEPRECATED standalone daemon — prefer gateway-embedded dispatch)
-Documentation=https://chiper-agent.Chiper.com/docs/user-guide/features/kanban
+Documentation=https://iamtubasya.github.io/chiper-agent/docs/user-guide/features/kanban
 After=network.target
 
 [Service]

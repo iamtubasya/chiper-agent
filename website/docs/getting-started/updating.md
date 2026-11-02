@@ -170,7 +170,7 @@ You no longer need to wrap `chiper update` in `screen` or `tmux` to survive a te
 chiper version
 ```
 
-Compare against the latest release at the [GitHub releases page](https://github.com/Chiper/chiper-agent/releases).
+Compare against the latest release at the [GitHub releases page](https://github.com/iamtubasya/chiper-agent.git/releases).
 
 ### Updating from Messaging Platforms
 

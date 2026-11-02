@@ -5,9 +5,9 @@ keep the user's real HOME by default so external CLIs find existing credentials.
 Containers still use the profile home for persistence, and users can explicitly
 opt into profile HOME isolation on the host.
 
-See: https://github.com/Chiper/chiper-agent/issues/25114
-See: https://github.com/Chiper/chiper-agent/issues/36144
-See: https://github.com/Chiper/chiper-agent/issues/29015
+See: https://github.com/iamtubasya/chiper-agent.git/issues/25114
+See: https://github.com/iamtubasya/chiper-agent.git/issues/36144
+See: https://github.com/iamtubasya/chiper-agent.git/issues/29015
 """
 
 import os

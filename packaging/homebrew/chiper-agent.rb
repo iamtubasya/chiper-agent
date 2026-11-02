@@ -2,10 +2,10 @@ class ChiperAgent < Formula
   include Language::Python::Virtualenv
 
   desc "Self-improving AI agent that creates skills from experience"
-  homepage "https://chiper-agent.Chiper.com"
+  homepage "https://iamtubasya.github.io/chiper-agent"
   # Stable source should point at the semver-named sdist asset attached by
   # scripts/release.py, not the CalVer tag tarball.
-  url "https://github.com/Chiper/chiper-agent/releases/download/v2026.3.30/chiper_agent-0.6.0.tar.gz"
+  url "https://github.com/iamtubasya/chiper-agent.git/releases/download/v2026.3.30/chiper_agent-0.6.0.tar.gz"
   sha256 "<replace-with-release-asset-sha256>"
   license "MIT"
 

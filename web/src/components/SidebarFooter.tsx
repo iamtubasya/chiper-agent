@@ -21,7 +21,7 @@ export function SidebarFooter({ status }: SidebarFooterProps) {
       </Typography>
 
       <a
-        href="https://Chiper.com"
+        href="https://github.com/iamtubasya/chiper-agent"
         target="_blank"
         rel="noopener noreferrer"
         className={cn(

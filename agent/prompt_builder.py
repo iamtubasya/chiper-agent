@@ -134,7 +134,7 @@ CHIPER_AGENT_HELP_GUIDANCE = (
     "You run on Chiper Agent (by Chiper). When the user needs help with "
     "Chiper itself — configuring, setting up, using, extending, or troubleshooting "
     "it — or when you need to understand your own features, tools, or capabilities, "
-    "the documentation at https://chiper-agent.Chiper.com/docs is your "
+    "the documentation at https://iamtubasya.github.io/chiper-agent/docs is your "
     "authoritative reference and always holds the latest, most up-to-date "
     "information. Load the `chiper-agent` skill with skill_view(name='chiper-agent') "
     "for additional guidance and proven workflows, but treat the docs as the source "

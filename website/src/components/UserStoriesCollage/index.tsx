@@ -295,14 +295,14 @@ export default function UserStoriesCollage(): JSX.Element {
       <div className={styles.footer}>
         Built something with Chiper?{' '}
         <a
-          href="https://github.com/Chiper/chiper-agent/edit/main/website/src/data/userStories.json"
+          href="https://github.com/iamtubasya/chiper-agent.git/edit/main/website/src/data/userStories.json"
           target="_blank"
           rel="noopener noreferrer"
         >
           Add your story to this page
         </a>{' '}
         by editing <code>userStories.json</code>, or post it in the{' '}
-        <a href="https://discord.gg/Chiper" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/iamtubasya/chiper-agent" target="_blank" rel="noopener noreferrer">
           Chiper Discord
         </a>{' '}
         and we&apos;ll pick it up.

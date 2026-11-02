@@ -12,7 +12,7 @@
   <a href="https://github.com/iamtubasya/chiper-agent"><img src="https://img.shields.io/badge/Built%20by-Chiper-blueviolet?style=for-the-badge" alt="Built by Chiper"></a>
 </p>
 
-**Chiper Agent** — AI agent yang bisa belajar dari pengalaman, bikin skill otomatis, dan makin pintar seiring waktu. Fork dari [Chiper Agent](https://github.com/Chiper/chiper-agent) oleh Chiper.
+**Chiper Agent** — AI agent yang bisa belajar dari pengalaman, bikin skill otomatis, dan makin pintar seiring waktu. Fork dari [Chiper Agent](https://github.com/iamtubasya/chiper-agent.git) oleh Chiper.
 
 ---
 

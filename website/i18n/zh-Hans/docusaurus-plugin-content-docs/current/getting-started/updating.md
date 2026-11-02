@@ -140,7 +140,7 @@ tail -f ~/.chiper/logs/update.log
 chiper version
 ```
 
-与 [GitHub releases 页面](https://github.com/Chiper/chiper-agent/releases) 上的最新版本进行比较。
+与 [GitHub releases 页面](https://github.com/iamtubasya/chiper-agent.git/releases) 上的最新版本进行比较。
 
 ### 从消息平台更新
 

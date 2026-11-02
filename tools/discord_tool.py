@@ -79,7 +79,7 @@ def _discord_request(
         headers={
             "Authorization": f"Bot {token}",
             "Content-Type": "application/json",
-            "User-Agent": "Chiper-Agent (https://github.com/Chiper/chiper-agent)",
+            "User-Agent": "Chiper-Agent (https://github.com/iamtubasya/chiper-agent.git)",
         },
     )
 

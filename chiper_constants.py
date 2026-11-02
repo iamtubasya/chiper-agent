@@ -64,7 +64,7 @@ def get_chiper_home() -> Path:
     callers that import this at load time.  Subprocess spawners are
     expected to propagate ``CHIPER_HOME`` explicitly (see the systemd
     template in ``chiper_cli/gateway.py`` and the kanban dispatcher in
-    ``chiper_cli/kanban_db.py``).  See https://github.com/Chiper/chiper-agent/issues/18594.
+    ``chiper_cli/kanban_db.py``).  See https://github.com/iamtubasya/chiper-agent.git/issues/18594.
     """
     override = get_chiper_home_override()
     if override:
@@ -270,7 +270,7 @@ def secure_parent_dir(path: Path) -> None:
     prevent catastrophic host bricking when ``CHIPER_HOME`` or other path
     env vars resolve to an unexpected location.
 
-    See https://github.com/Chiper/chiper-agent/issues/25821.
+    See https://github.com/iamtubasya/chiper-agent.git/issues/25821.
     """
     parent = path.parent.resolve()
     # Refuse root and its direct children (/usr, /home, /var, /tmp, …).

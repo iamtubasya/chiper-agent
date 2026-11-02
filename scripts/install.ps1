@@ -5,7 +5,7 @@
 # Uses uv for fast Python provisioning and package management.
 #
 # Usage:
-#   iex (irm https://chiper-agent.Chiper.com/install.ps1)
+#   iex (irm https://iamtubasya.github.io/chiper-agent/install.ps1)
 #
 # Or download and run with options:
 #   .\install.ps1 -NoVenv -SkipSetup
@@ -93,7 +93,7 @@ try {
 # ============================================================================
 
 $RepoUrlSsh = "git@github.com:Chiper/chiper-agent.git"
-$RepoUrlHttps = "https://github.com/Chiper/chiper-agent.git"
+$RepoUrlHttps = "https://github.com/iamtubasya/chiper-agent.git"
 $PythonVersion = "3.11"
 $NodeVersion = "22"
 
@@ -1375,13 +1375,13 @@ function Install-Repository {
                 # for.  GitHub supports archive URLs for commits, tags, and
                 # branches; we honour Commit > Tag > Branch.
                 if ($Commit) {
-                    $zipUrl = "https://github.com/Chiper/chiper-agent/archive/$Commit.zip"
+                    $zipUrl = "https://github.com/iamtubasya/chiper-agent.git/archive/$Commit.zip"
                     $zipLabel = $Commit
                 } elseif ($Tag) {
-                    $zipUrl = "https://github.com/Chiper/chiper-agent/archive/refs/tags/$Tag.zip"
+                    $zipUrl = "https://github.com/iamtubasya/chiper-agent.git/archive/refs/tags/$Tag.zip"
                     $zipLabel = $Tag
                 } else {
-                    $zipUrl = "https://github.com/Chiper/chiper-agent/archive/refs/heads/$Branch.zip"
+                    $zipUrl = "https://github.com/iamtubasya/chiper-agent.git/archive/refs/heads/$Branch.zip"
                     $zipLabel = $Branch
                 }
                 $zipPath = "$env:TEMP\chiper-agent-$zipLabel.zip"
@@ -3242,7 +3242,7 @@ try {
     Write-Err "Installation failed: $_"
     Write-Host ""
     Write-Info "If the error is unclear, try downloading and running the script directly:"
-    Write-Host "  Invoke-WebRequest -Uri 'https://chiper-agent.Chiper.com/install.ps1' -OutFile install.ps1" -ForegroundColor Yellow
+    Write-Host "  Invoke-WebRequest -Uri 'https://iamtubasya.github.io/chiper-agent/install.ps1' -OutFile install.ps1" -ForegroundColor Yellow
     Write-Host "  .\install.ps1" -ForegroundColor Yellow
     Write-Host ""
 }

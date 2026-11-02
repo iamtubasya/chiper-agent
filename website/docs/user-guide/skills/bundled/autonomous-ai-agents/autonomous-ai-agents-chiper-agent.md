@@ -46,13 +46,13 @@ People use Chiper for software development, research, system administration, dat
 
 **This skill helps you work with Chiper Agent effectively** — setting it up, configuring features, spawning additional agent instances, troubleshooting issues, finding the right commands and settings, and understanding how the system works when you need to extend or contribute to it.
 
-**Docs:** https://chiper-agent.Chiper.com/docs/
+**Docs:** https://iamtubasya.github.io/chiper-agent/docs/
 
 ## Quick Start
 
 ```bash
 # Install
-curl -fsSL https://chiper-agent.Chiper.com/install.sh | bash
+curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash
 
 # Interactive chat (default)
 chiper
@@ -174,7 +174,7 @@ chiper gateway setup        Configure platforms
 
 Supported platforms: Telegram, Discord, Slack, WhatsApp, Signal, Email, SMS, Matrix, Mattermost, Home Assistant, DingTalk, Feishu, WeCom, BlueBubbles (iMessage), Weixin (WeChat), API Server, Webhooks. Open WebUI connects via the API Server adapter.
 
-Platform docs: https://chiper-agent.Chiper.com/docs/user-guide/messaging/
+Platform docs: https://iamtubasya.github.io/chiper-agent/docs/user-guide/messaging/
 
 ### Sessions
 
@@ -256,7 +256,7 @@ chiper uninstall            Uninstall Chiper
 
 Type these during an interactive chat session. New commands land fairly
 often; if something below looks stale, run `/help` in-session for the
-authoritative list or see the [live slash commands reference](https://chiper-agent.Chiper.com/docs/reference/slash-commands).
+authoritative list or see the [live slash commands reference](https://iamtubasya.github.io/chiper-agent/docs/reference/slash-commands).
 The registry of record is `chiper_cli/commands.py` — every consumer
 (autocomplete, Telegram menu, Slack mapping, `/help`) derives from it.
 
@@ -389,7 +389,7 @@ Edit with `chiper config edit` or `chiper config set section.key value`.
 | `delegation` | `model`, `provider`, `base_url`, `api_key`, `max_iterations` (50), `reasoning_effort` |
 | `checkpoints` | `enabled`, `max_snapshots` (50) |
 
-Full config reference: https://chiper-agent.Chiper.com/docs/user-guide/configuration
+Full config reference: https://iamtubasya.github.io/chiper-agent/docs/user-guide/configuration
 
 ### Providers
 
@@ -419,7 +419,7 @@ Full config reference: https://chiper-agent.Chiper.com/docs/user-guide/configura
 | Custom endpoint | Config | `model.base_url` + `model.api_key` in config.yaml |
 | GitHub Copilot ACP | External | `COPILOT_CLI_PATH` or Copilot CLI |
 
-Full provider docs: https://chiper-agent.Chiper.com/docs/integrations/providers
+Full provider docs: https://iamtubasya.github.io/chiper-agent/docs/integrations/providers
 
 ### Toolsets
 
@@ -679,7 +679,7 @@ the `cronjob` tool, the `chiper cron` CLI (`list`, `add`, `edit`,
   header/footer instead of being mirrored into the target gateway
   session (keeps role alternation intact).
 
-User docs: https://chiper-agent.Chiper.com/docs/user-guide/features/cron
+User docs: https://iamtubasya.github.io/chiper-agent/docs/user-guide/features/cron
 
 ### Curator (skill lifecycle)
 
@@ -700,7 +700,7 @@ so nothing is lost.
 
 Config: `curator.*` (`enabled`, `interval_hours`, `min_idle_hours`,
 `stale_after_days`, `archive_after_days`, `backup.*`).
-User docs: https://chiper-agent.Chiper.com/docs/user-guide/features/curator
+User docs: https://iamtubasya.github.io/chiper-agent/docs/user-guide/features/curator
 
 ### Kanban (multi-agent work queue)
 
@@ -729,7 +729,7 @@ sessions still have zero `kanban_*` schema footprint unless configured.
   `CHIPER_KANBAN_BOARD` pinned in env); tenant is a soft namespace
   within a board for workspace-path + memory-key isolation.
 
-User docs: https://chiper-agent.Chiper.com/docs/user-guide/features/kanban
+User docs: https://iamtubasya.github.io/chiper-agent/docs/user-guide/features/kanban
 
 ---
 
@@ -880,18 +880,18 @@ chiper config set auxiliary.vision.model <model_name>
 
 | Looking for... | Location |
 |----------------|----------|
-| Config options | `chiper config edit` or [Configuration docs](https://chiper-agent.Chiper.com/docs/user-guide/configuration) |
-| Available tools | `chiper tools list` or [Tools reference](https://chiper-agent.Chiper.com/docs/reference/tools-reference) |
-| Slash commands | `/help` in session or [Slash commands reference](https://chiper-agent.Chiper.com/docs/reference/slash-commands) |
-| Skills catalog | `chiper skills browse` or [Skills catalog](https://chiper-agent.Chiper.com/docs/reference/skills-catalog) |
-| Provider setup | `chiper model` or [Providers guide](https://chiper-agent.Chiper.com/docs/integrations/providers) |
-| Platform setup | `chiper gateway setup` or [Messaging docs](https://chiper-agent.Chiper.com/docs/user-guide/messaging/) |
-| MCP servers | `chiper mcp list` or [MCP guide](https://chiper-agent.Chiper.com/docs/user-guide/features/mcp) |
-| Profiles | `chiper profile list` or [Profiles docs](https://chiper-agent.Chiper.com/docs/user-guide/profiles) |
-| Cron jobs | `chiper cron list` or [Cron docs](https://chiper-agent.Chiper.com/docs/user-guide/features/cron) |
-| Memory | `chiper memory status` or [Memory docs](https://chiper-agent.Chiper.com/docs/user-guide/features/memory) |
-| Env variables | `chiper config env-path` or [Env vars reference](https://chiper-agent.Chiper.com/docs/reference/environment-variables) |
-| CLI commands | `chiper --help` or [CLI reference](https://chiper-agent.Chiper.com/docs/reference/cli-commands) |
+| Config options | `chiper config edit` or [Configuration docs](https://iamtubasya.github.io/chiper-agent/docs/user-guide/configuration) |
+| Available tools | `chiper tools list` or [Tools reference](https://iamtubasya.github.io/chiper-agent/docs/reference/tools-reference) |
+| Slash commands | `/help` in session or [Slash commands reference](https://iamtubasya.github.io/chiper-agent/docs/reference/slash-commands) |
+| Skills catalog | `chiper skills browse` or [Skills catalog](https://iamtubasya.github.io/chiper-agent/docs/reference/skills-catalog) |
+| Provider setup | `chiper model` or [Providers guide](https://iamtubasya.github.io/chiper-agent/docs/integrations/providers) |
+| Platform setup | `chiper gateway setup` or [Messaging docs](https://iamtubasya.github.io/chiper-agent/docs/user-guide/messaging/) |
+| MCP servers | `chiper mcp list` or [MCP guide](https://iamtubasya.github.io/chiper-agent/docs/user-guide/features/mcp) |
+| Profiles | `chiper profile list` or [Profiles docs](https://iamtubasya.github.io/chiper-agent/docs/user-guide/profiles) |
+| Cron jobs | `chiper cron list` or [Cron docs](https://iamtubasya.github.io/chiper-agent/docs/user-guide/features/cron) |
+| Memory | `chiper memory status` or [Memory docs](https://iamtubasya.github.io/chiper-agent/docs/user-guide/features/memory) |
+| Env variables | `chiper config env-path` or [Env vars reference](https://iamtubasya.github.io/chiper-agent/docs/reference/environment-variables) |
+| CLI commands | `chiper --help` or [CLI reference](https://iamtubasya.github.io/chiper-agent/docs/reference/cli-commands) |
 | Gateway logs | `~/.chiper/logs/gateway.log` |
 | Session files | `chiper sessions browse` (reads state.db) |
 | Source code | `~/.chiper/chiper-agent/` |
@@ -900,7 +900,7 @@ chiper config set auxiliary.vision.model <model_name>
 
 ## Contributor Quick Reference
 
-For occasional contributors and PR authors. Full developer docs: https://chiper-agent.Chiper.com/docs/developer-guide/
+For occasional contributors and PR authors. Full developer docs: https://iamtubasya.github.io/chiper-agent/docs/developer-guide/
 
 ### Project Layout
 
