@@ -26,7 +26,7 @@ echo -e "${BOLD}${CYAN}          🛡️   CHIPER-CYBER SECURITY SUITE SETUP   �
 echo -e "${MAGENTA}═══════════════════════════════════════════════════════════════════${NC}"
 echo -e "Pilih opsi instalasi skills keamanan siber untuk Chiper Agent:"
 echo ""
-echo -e "  ${BOLD}[1]${NC} ${GREEN}🚀 Full Cyber Security Suite${NC} (147 Domains)"
+echo -e "  ${BOLD}[1]${NC} ${GREEN}🚀 Full Cyber Security Suite${NC} (140 Domains)"
 echo -e "      (Web, Network, Cloud, AI Red Team, Telecom, Hardware, Exploit Dev)"
 echo ""
 echo -e "  ${BOLD}[2]${NC} ${YELLOW}🎯 Bug Bounty Hunter Edition${NC} (28 Domains Terpilih)"
@@ -47,7 +47,7 @@ fi
 case "$CYBER_CHOICE" in
     1)
         echo ""
-        echo -e "${CYAN}→${NC} Menginstal Full Cyber Security Suite (147 domains)..."
+        echo -e "${CYAN}→${NC} Menginstal Full Cyber Security Suite (140 domains)..."
         mkdir -p "$TARGET_CYBER_DIR"
         cp -rf "$SOURCE_CYBER_DIR/"* "$TARGET_CYBER_DIR/" 2>/dev/null
         echo -e "${GREEN}✓ Full Cyber Suite berhasil dipasang di $TARGET_CYBER_DIR${NC}"
@@ -94,11 +94,7 @@ case "$CYBER_CHOICE" in
             "chiper-darkweb-intel"
             "chiper-blockchain-web3"
             "chiper-bootstrap"
-            "chiper-tools"
-            "chiper-heartbeat"
-            "chiper-pentest-orchestrator"
-            "chiper-security"
-        )
+                    )
         
         installed_count=0
         for skill in "${BB_SKILLS[@]}"; do

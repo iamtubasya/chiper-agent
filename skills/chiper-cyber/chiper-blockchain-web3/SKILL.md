@@ -1,45 +1,46 @@
 ---
 name: chiper-blockchain-web3
-description: "Use when Blockchain & Web3 security — Solidity/Vyper smart contract auditing, DeFi attack vectors (flash loans, MEV, oracle manipulation), bridge attacks, wallet security, with tooling from Slither/Mythril/Foundry."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Blockchain & Web3 security — Solidity/Vyper smart contract auditing, DeFi attack vectors (flash loans, MEV, oracle manipulation), bridge attacks, wallet security, with tooling from Slither/Mythril/Foundry."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, blockchain, web3]
-    domain: blockchain
+  domain: blockchain
+  tool_count: 14
+  guide_count: 2
+  mitre: "N/A (application-layer; maps loosely to TA0001-Initial Access via compromise)"
+  keywords:
+    - defi
+    - flash-loan
+    - oracle-manipulation
+    - mev
+    - sandwich-attack
+    - foundry
+    - forge
+    - anvil
+    - echidna
+    - certora
+    - bridge-attack
+  last_reviewed: "2026-08-16"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-web3/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-web3/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-web3/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-web3/guides
 ---
 
 # Skill: Blockchain & Web3 Security
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `echidna` — install: `echo "Download: https://github.com/crytic/echidna/releases"`
-- `mythril` — install: `pip install mythril`
-- `slither` — install: `pip install slither-analyzer`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in echidna mythril slither; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v echidna >/dev/null 2>&1 || echo "  echo "Download: https://github.com/crytic/echidna/releases""
-  command -v mythril >/dev/null 2>&1 || echo "  pip install mythril"
-  command -v slither >/dev/null 2>&1 || echo "  pip install slither-analyzer"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Command catalogue for Slither/Mythril/Echidna/Foundry plus exploit PoC code for reentrancy, flash loans, integer overflow, access control bypass, MEV, bridge attacks, oracle manipulation, proxy collisions, and Vyper-specific patterns — 15 sections with real Solidity/Vyper code.

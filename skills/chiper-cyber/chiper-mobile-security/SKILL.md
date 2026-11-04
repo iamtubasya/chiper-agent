@@ -1,49 +1,34 @@
 ---
 name: chiper-mobile-security
-description: "Use when Mobile security covers the complete attack/defense chain of Android/iOS application security testing, APK/IPA reverse engineering, runtime manipulation, certificate pinning bypass, and mobile data protection."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Mobile security covers the complete attack/defense chain of Android/iOS application security testing, APK/IPA reverse engineering, runtime manipulation, certificate pinning bypass, and mobile data protection."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, mobile]
-    domain: mobile
+  domain: mobile
+  tool_count: 6
+  guide_count: 5
+  mitre: "T1203-Exploitation for Client Execution, T1204.002-User Execution: Malicious File, T1518.001-Software Discovery: Security Software, T1552.001-Credentials In Files"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mobile-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mobile-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mobile-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mobile-security/guides
 ---
 
 # Skill: Mobile Security
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `apktool` — install: `sudo apt install -y apktool`
-- `drozer` — install: `pip install drozer`
-- `frida` — install: `pip install frida-tools`
-- `jadx` — install: `sudo apt install -y jadx`
-- `objection` — install: `pip install objection`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in apktool drozer frida jadx objection; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v apktool >/dev/null 2>&1 || echo "  sudo apt install -y apktool"
-  command -v drozer >/dev/null 2>&1 || echo "  pip install drozer"
-  command -v frida >/dev/null 2>&1 || echo "  pip install frida-tools"
-  command -v jadx >/dev/null 2>&1 || echo "  sudo apt install -y jadx"
-  command -v objection >/dev/null 2>&1 || echo "  pip install objection"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Complete mobile security attack/defense chain payloads (APK/IPA analysis, Frida hooks, SSL bypass, storage extraction, Intent attacks, etc.)

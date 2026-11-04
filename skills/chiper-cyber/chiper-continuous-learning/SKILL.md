@@ -1,12 +1,33 @@
 ---
 name: chiper-continuous-learning
-description: "Use when After completing a penetration test engagement - When encountering a novel attack technique or defense - After a tool produces unexpected results - When identifying recurring patterns across targets - User says \"
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "After completing a penetration test engagement - When encountering a novel attack technique or defense - After a tool produces unexpected results - When identifying recurring patterns across targets - User says \"learn\", \"remember this\", \"pattern."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, continuous, learning]
-    domain: knowledge
+  domain: knowledge
+  tool_count: 9
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-continuous-learning/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-continuous-learning/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-continuous-learning/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-continuous-learning/guides
 ---
 
 # Continuous Learning

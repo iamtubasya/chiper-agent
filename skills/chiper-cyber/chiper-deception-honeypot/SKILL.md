@@ -1,12 +1,28 @@
 ---
 name: chiper-deception-honeypot
-description: "Use when Defensive deception and honeypot deployment covering SSH/Telnet (Cowrie), web (OpenCanary), enterprise (HFish), ICS/SCADA (Conpot), all-in-one (T-Pot), AI-driven deception (Beelzebub), Thinkst Canarytokens (DNS, HTTP, file, AWS API key, SQL), Dionaea multi-protocol honeypot, notification pipelines (Slack/Teams webhooks), false positive tuning, and attacker engagement — including lure design, deployment OPSEC, IOC extraction, and attacker attribution."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Defensive deception and honeypot deployment covering SSH/Telnet (Cowrie), web (OpenCanary), enterprise (HFish), ICS/SCADA (Conpot), all-in-one (T-Pot), AI-driven deception (Beelzebub), Thinkst Canarytokens (DNS, HTTP, file, AWS API key, SQL), Dionaea multi-protocol honeypot, notification pipelines (Slack/Teams webhooks), false positive tuning, and attacker engagement — including lure design, deployment OPSEC, IOC extraction, and attacker attribution.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.29"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, deception, honeypot]
-    domain: defense
+  domain: defense
+  tool_count: 12
+  guide_count: 2
+  mitre: "TA0040-Detection (deception), maps to MITRE Engage framework"
+  last_reviewed: "2026-08-19"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-deception-honeypot/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-deception-honeypot/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-deception-honeypot/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-deception-honeypot/guides
 ---
 
 # Skill: Deception & Honeypot

@@ -836,7 +836,7 @@
 
 **Defense Triple**: Defense Perspective ✓ | Detection Methods ✓ | Defense Evasion ✓
 
-**文件**: payloads.md, guides/abuse-case-development-guide.md, guides/business-logic-attack-patterns-guide.md, guides/insecure_design_complete_guide.md, guides/race-condition-exploitation-guide.md
+**文件**: payloads.md, guides/abuse-case-development-guide.md, guides/business-logic-attack-patterns-guide.md, chiper-insecure-design/guides/insecure_design_complete_guide.md, guides/race-condition-exploitation-guide.md
 
 ---
 

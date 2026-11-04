@@ -1,38 +1,35 @@
 ---
 name: chiper-web-deserialization
-description: "Use when Deserialization vulnerabilities arise when an application reconstructs objects from byte streams (Java), serialized strings (PHP), Base64 blobs (.NET), or pickle data (Python) supplied by the client."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Deserialization vulnerabilities arise when an application reconstructs objects from byte streams (Java), serialized strings (PHP), Base64 blobs (.NET), or pickle data (Python) supplied by the client."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, web, deserialization]
-    domain: web-attack
+  domain: web-attack
+  tool_count: 6
+  guide_count: 5
+  owasp: "A08:2021-Software Integrity Failures"
+  mitre: "T1190-Exploit Public-Facing App"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-deserialization/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-deserialization/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-deserialization/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-deserialization/guides
 ---
 
 # Skill: Web Deserialization Attacks
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `file` — `sudo apt install -y file`
-- `strings` — `sudo apt install -y binutils`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in file strings; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v file >/dev/null 2>&1 || sudo apt install -y file
-command -v strings >/dev/null 2>&1 || sudo apt install -y binutils
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- Deserialization payloads for Java, PHP, .NET, Python, Ruby, Jackson/Fastjson, and bypass techniques

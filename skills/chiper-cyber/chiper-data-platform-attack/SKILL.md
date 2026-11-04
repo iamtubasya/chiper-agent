@@ -1,41 +1,34 @@
 ---
 name: chiper-data-platform-attack
-description: "Use when Attacks against cloud data platforms and analytics pipelines — Snowflake, Databricks, BigQuery, Redshift, dbt, Apache Airflow, and lakehouse architectures. Covers identity-based breaches (no perimeter), warehouse SQL injection at scale, IAM privilege escalation, secrets in DAGs, notebook code injection, and cross-tenant data exfiltration. Distinct from database-attack (protocol-level RDBMS) and cloud-security (broader CSP control plane)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Attacks against cloud data platforms and analytics pipelines — Snowflake, Databricks, BigQuery, Redshift, dbt, Apache Airflow, and lakehouse architectures. Covers identity-based breaches (no perimeter), warehouse SQL injection at scale, IAM privilege escalation, secrets in DAGs, notebook code injection, and cross-tenant data exfiltration. Distinct from database-attack (protocol-level RDBMS) and cloud-security (broader CSP control plane)."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, data, platform, attack]
-    domain: data-platform
+  domain: data-platform
+  tool_count: 14
+  guide_count: 2
+  mitre: "TA0006-Credential Access, T1078-Valid Accounts, T1213-Data from Information Repositories"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-platform-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-platform-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-platform-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-platform-attack/guides
 ---
 
 # Data Platform Attack
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `sqlmap` — install: `sudo apt install -y sqlmap`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in sqlmap; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v sqlmap >/dev/null 2>&1 || echo "  sudo apt install -y sqlmap"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Attack payloads and commands organized by platform: Snowflake, Databricks, BigQuery, Redshift, dbt, Airflow, Spark, and lakehouse cross-platform attacks
@@ -274,8 +267,8 @@ Coverage includes: Snowflake account enumeration (origins + `ORGNAME-USERNAME`),
 - `chiper-database-attack/SKILL.md` — protocol-level RDBMS attacks (Oracle TNS, MySQL socket)
 - `chiper-cloud-security/SKILL.md` — broader CSP control plane attacks
 - `chiper-ai-agent-framework-attack/SKILL.md` — when LLM agents become the data platform consumer
-- `skills/secret-discovery/SKILL.md` — secrets discovery techniques applicable to DAGs and notebooks
-- `skills/persistence-attacks/SKILL.md` — Snowflake persistent query-tag evasion
+- `chiper-secret-management-attack/SKILL.md` — secrets discovery techniques applicable to DAGs and notebooks
+- `chiper-post-exploitation/SKILL.md` — Snowflake persistent query-tag evasion
 - `chiper-pentest-reporting/SKILL.md` — reporting templates for data-breach simulations
 
 ## References

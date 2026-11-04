@@ -1,38 +1,37 @@
 ---
 name: chiper-open-banking-attack
-description: "Use when Open Banking / PSD2 / Open Finance attacks — FAPI (Financial-grade API), OpenID Connect for Financial APIs, OAuth2 PKCE, Strong Customer Authentication (SCA) bypass, AIS/PIS/CBPII API abuse, payment redirection, consent manipulation. Covers UK Open Banking, US FDX, Brazil Open Finance, India Account Aggregator, Singapore MAS APIX, Australia CDR. Includes 2024-2025 incidents (Token Hijacking, IdOR on AIS endpoints, PIS redirect manipulation)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Open Banking / PSD2 / Open Finance attacks — FAPI (Financial-grade API), OpenID Connect for Financial APIs, OAuth2 PKCE, Strong Customer Authentication (SCA) bypass, AIS/PIS/CBPII API abuse, payment redirection, consent manipulation. Covers UK Open Banking, US FDX, Brazil Open Finance, India Account Aggregator, Singapore MAS APIX, Australia CDR. Includes 2024-2025 incidents (Token Hijacking, IdOR on AIS endpoints, PIS redirect manipulation).
+origin: chiper-cyber Wave 10 (v0.1.41) — 2026-06-28
+version: "0.2.0.2"
+compatibility:
+  kali_version: "2025.2"
+  python_version: ">=3.11"
+allowed-tools:
+  - burpsuite
+  - mitmproxy
+  - httpx
+  - curl
+  - jq
+  - python3
+  - oidc-debugger
+  - jwt-tool
+  - oauth2-proxy
+  - postman
+  - gh
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, open, banking, attack]
-    domain: fintech-banking
+  domain: fintech-banking
+  tool_count: 13
+  guide_count: 2
+  mitre: "TA0001-Initial Access, TA0006-Credential Access, TA0009-Collection, T1552-Unsecured Credentials, T1550-Use Alternate Authentication Material, T1185-Man in the Browser"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-open-banking-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-open-banking-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-open-banking-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-open-banking-attack/guides
 ---
 
 # Open Banking Attack Skill
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `curl` — `sudo apt install -y curl`
-- `jq` — `sudo apt install -y jq`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in curl jq; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v curl >/dev/null 2>&1 || sudo apt install -y curl
-command -v jq >/dev/null 2>&1 || sudo apt install -y jq
-```
-
 
 > Red-team operations against Open Banking / Open Finance infrastructure — the modern OAuth2/FAPI stack that powers UK Open Banking, PSD2, Brazil Open Finance, US FDX, India Account Aggregator, and more. Targets: TPPs (Third-Party Providers), banks (ASPSPs), consent APIs, and the customer journey from consent → data access → payment initiation.
 

@@ -1,12 +1,33 @@
 ---
 name: chiper-knowledge-ops
-description: "Use when Build and maintain structured, persistent knowledge graphs across sessions. Knowledge-ops transforms ephemeral session findings into reusable intelligence — connecting entities, tracking confidence over time, and enabling recall across engagements."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Build and maintain structured, persistent knowledge graphs across sessions. Knowledge-ops transforms ephemeral session findings into reusable intelligence — connecting entities, tracking confidence over time, and enabling recall across engagements."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, knowledge, ops]
-    domain: knowledge
+  domain: knowledge
+  tool_count: 0
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-knowledge-ops/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-knowledge-ops/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-knowledge-ops/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-knowledge-ops/guides
 ---
 
 # Knowledge Operations (knowledge-ops)

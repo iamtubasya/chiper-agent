@@ -1,38 +1,45 @@
 ---
 name: chiper-hypervisor-introspection
-description: "Use when Hypervisor introspection (VMI) and virtualization escape attacks — VMware ESXi, Hyper-V, KVM/QEMU, Xen, Proxmox, VirtualBox, LibVMI, DRAKVUF, VENOM CVE-2015-3456, hardware-assisted VT-x/EPT/AMD-V"
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Hypervisor introspection (VMI) and virtualization escape attacks — VMware ESXi, Hyper-V, KVM/QEMU, Xen, Proxmox, VirtualBox, LibVMI, DRAKVUF, VENOM CVE-2015-3456, hardware-assisted VT-x/EPT/AMD-V"
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - claude-code
+  - claude-sonnet-4.5
+  - chiper
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, hypervisor, introspection]
-    domain: hypervisor-introspection
+  domain: hypervisor-introspection
+  category: virtualization
+  tool_count: 13
+  guide_count: 1
+  mitre: "T1068-Exploitation for Privilege Escalation"
+  keywords:
+    - hypervisor
+    - VMI
+    - VMware ESXi
+    - Hyper-V
+    - KVM
+    - QEMU
+    - Xen
+    - escape
+    - LibVMI
+    - DRAKVUF
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hypervisor-introspection/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hypervisor-introspection/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hypervisor-introspection/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hypervisor-introspection/guides
 ---
 
 # Skill: Hypervisor Introspection (VMI) and Virtualization Escape
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `volatility` — `pip install volatility3`
-- `wireshark` — `sudo apt install -y wireshark`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in volatility wireshark; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v volatility >/dev/null 2>&1 || pip install volatility3
-command -v wireshark >/dev/null 2>&1 || sudo apt install -y wireshark
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Attack payloads and commands organized by hypervisor family: VMware ESXi/vSphere, Hyper-V, KVM/QEMU, Xen, Proxmox, VirtualBox, VMI tooling (LibVMI/DRAKVUF/DECAF/PANDA), and hardware-assisted virtualization abuse

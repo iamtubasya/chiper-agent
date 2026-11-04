@@ -1,42 +1,34 @@
 ---
 name: chiper-network-tunneling-proxy
-description: "Use when Network tunneling encapsulates one protocol inside another to bypass firewalls, evade detection, and route traffic through restricted networks."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Network tunneling encapsulates one protocol inside another to bypass firewalls, evade detection, and route traffic through restricted networks."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, network, tunneling, proxy]
-    domain: network-attack
+  domain: network-attack
+  tool_count: 0
+  guide_count: 8
+  mitre: "TA0008-Lateral Movement"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-network-tunneling-proxy/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-network-tunneling-proxy/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-network-tunneling-proxy/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-network-tunneling-proxy/guides
 ---
 
 # Network Tunneling & Proxy
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `chisel` — `go install github.com/jpillora/chisel@latest`
-- `curl` — `sudo apt install -y curl`
-- `ligolo` — `echo "Download: https://github.com/nicocha30/ligolo-ng/releases"`
-- `nmap` — `sudo apt install -y nmap`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in chisel curl ligolo nmap; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v chisel >/dev/null 2>&1 || go install github.com/jpillora/chisel@latest
-command -v curl >/dev/null 2>&1 || sudo apt install -y curl
-command -v ligolo >/dev/null 2>&1 || echo "Download: https://github.com/nicocha30/ligolo-ng/releases"
-command -v nmap >/dev/null 2>&1 || sudo apt install -y nmap
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- Tunneling and proxy payloads: HTTP/SOCKS tunnels, SSH pivoting, DNS/ICMP covert channels, TLS wrapping, proxy chaining, multi-hop pivot construction

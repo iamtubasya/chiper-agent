@@ -1,12 +1,33 @@
 ---
 name: chiper-codebase-onboarding
-description: "Use when Rapidly acquire a mental model of any unfamiliar codebase — from a 500-line script to a 100M+ line monorepo. This skill transforms raw code into structured intelligence: architecture maps, entry points, data flows, security surfaces, and onboarding confidence scores."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Rapidly acquire a mental model of any unfamiliar codebase — from a 500-line script to a 100M+ line monorepo. This skill transforms raw code into structured intelligence: architecture maps, entry points, data flows, security surfaces, and onboarding confidence scores."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, codebase, onboarding]
-    domain: knowledge
+  domain: knowledge
+  tool_count: 0
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-codebase-onboarding/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-codebase-onboarding/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-codebase-onboarding/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-codebase-onboarding/guides
 ---
 
 # Codebase Onboarding

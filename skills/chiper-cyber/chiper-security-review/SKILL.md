@@ -1,12 +1,32 @@
 ---
 name: chiper-security-review
-description: "Use when Comprehensive security checklist and review patterns for analyzing applications, configurations, and infrastructure. This skill provides structured review methodology to identify vulnerabilities across OWASP Top 10 categories during penetration testing."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Comprehensive security checklist and review patterns for analyzing applications, configurations, and infrastructure. This skill provides structured review methodology to identify vulnerabilities across OWASP Top 10 categories during penetration testing."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, review]
-    domain: assessment
+  domain: assessment
+  tool_count: 0
+  guide_count: 5
+  mitre: "T1190-Exploit Public-Facing Application, T1059-Command and Scripting Interpreter, T1562.001-Impair Defenses: Disable Tools, T1070-Indicator Removal"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-review/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-review/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-review/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-review/guides
 ---
 
 # Skill: Security Review

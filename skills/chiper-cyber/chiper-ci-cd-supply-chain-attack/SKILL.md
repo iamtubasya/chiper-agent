@@ -1,41 +1,48 @@
 ---
 name: chiper-ci-cd-supply-chain-attack
-description: "Use when CI/CD pipeline and software supply chain compromise covering Jenkins (script console, Jenkinsfile injection, shared library abuse, CVE-2024-23897 args4j), GitLab CI/CD (runner abuse, .gitlab-ci.yml injection, self-hosted runner takeover, CVE-2022-1162, OmniAuth CVE-2024-9653), GitHub Actions (self-hosted runner abuse, pull_request_target trap, workflow injection via issue/PR title, secrets exfiltration via cache/artifact, GITHUB_TOKEN scope), CircleCI (context theft, OIDC abuse), Argo CD (CVE-2022-24348, default app creds), Flux CD (GitRepository CRD abuse), Tekton, Buildkite, Drone CI, software supply chain attacks (dependency confusion, typosquatting, brandjacking, malicious npm/PyPI packages, SBOM/SLSA, Sigstore/cosign, in-toto, S2C2F), notable incidents (SolarWinds SUNBURST, 3CX, Codecov, xz-utils CVE-2024-3094, event-stream, ua-parser-js), and detection/defense tooling (StepSecurity Harden-Runner, OpenSSF Scorecard, Socket, Sonatype Nexus, Snyk, Anchore Syft/Grype, KICS, "
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: CI/CD pipeline and software supply chain compromise covering Jenkins (script console, Jenkinsfile injection, shared library abuse, CVE-2024-23897 args4j), GitLab CI/CD (runner abuse, .gitlab-ci.yml injection, self-hosted runner takeover, CVE-2022-1162, OmniAuth CVE-2024-9653), GitHub Actions (self-hosted runner abuse, pull_request_target trap, workflow injection via issue/PR title, secrets exfiltration via cache/artifact, GITHUB_TOKEN scope), CircleCI (context theft, OIDC abuse), Argo CD (CVE-2022-24348, default app creds), Flux CD (GitRepository CRD abuse), Tekton, Buildkite, Drone CI, software supply chain attacks (dependency confusion, typosquatting, brandjacking, malicious npm/PyPI packages, SBOM/SLSA, Sigstore/cosign, in-toto, S2C2F), notable incidents (SolarWinds SUNBURST, 3CX, Codecov, xz-utils CVE-2024-3094, event-stream, ua-parser-js), and detection/defense tooling (StepSecurity Harden-Runner, OpenSSF Scorecard, Socket, Sonatype Nexus, Snyk, Anchore Syft/Grype, KICS, Checkov, semgrep).
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.38"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, ci, cd, supply, chain, attack]
-    domain: appsec
+  domain: appsec
+  category: supply-chain-continuous-delivery
+  tool_count: 22
+  guide_count: 1
+  mitre: "T1195-Supply Chain Compromise, T1195.001-Compromise Software Dependencies, T1195.002-Compromise Software Supply Chain, T1195.003-Hardware Compromise, T1199-Trusted Relationship, T1078-Valid Accounts"
+  keywords:
+    - ci-cd
+    - supply-chain
+    - jenkins
+    - gitlab-ci
+    - github-actions
+    - argo-cd
+    - flux-cd
+    - dependency-confusion
+    - typosquatting
+    - sbom
+    - slsa
+    - sigstore
+    - solarwinds
+    - xz-utils
+    - codecov
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ci-cd-supply-chain-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ci-cd-supply-chain-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ci-cd-supply-chain-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ci-cd-supply-chain-attack/guides
 ---
 
 # Skill: CI/CD & Supply Chain Attack — Pipeline Compromise, Build-System Exploitation & Dependency-Chain Implant
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `kubectl` — install: `sudo apt install -y kubectl`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in kubectl; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v kubectl >/dev/null 2>&1 || echo "  sudo apt install -y kubectl"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Per-platform attack catalogs (Jenkins script console + CVE-2024-23897 + Jenkinsfile injection + shared library abuse; GitLab CI runner takeover + .gitlab-ci.yml injection + CVE-2022-1162 + CVE-2024-9653; GitHub Actions `pull_request_target` trap + workflow injection via issue/PR title + self-hosted runner escape + cache/artifact exfiltration; CircleCI context theft + OIDC abuse; Argo CD CVE-2022-24348 + default app creds; Flux CD GitRepository CRD abuse; Tekton/Buildkite/Drone), dependency-confusion lab payloads, malicious npm/PyPI package templates, build-artifact tampering, detection-evasion (workflow-output obfuscation, log redaction, runner cleanup), SBOM/SLSA/Sigstore verification commands, OpenSSF Scorecard + StepSecurity Harden-Runner usage, Socket/Sonatype/Snyk triage commands — 80+ code blocks across 14 sections

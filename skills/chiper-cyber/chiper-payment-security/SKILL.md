@@ -1,45 +1,44 @@
 ---
 name: chiper-payment-security
-description: "Use when Payment systems security — PCI-DSS compliance testing, payment API security (Stripe/Adyen/PayPal), EMV chip/PIN, 3-D Secure, mobile wallets (Apple Pay/Google Pay), and fraud system assessment."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Payment systems security — PCI-DSS compliance testing, payment API security (Stripe/Adyen/PayPal), EMV chip/PIN, 3-D Secure, mobile wallets (Apple Pay/Google Pay), and fraud system assessment."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, payment]
-    domain: financial
+  domain: financial
+  tool_count: 12
+  guide_count: 2
+  mitre: "T1566-Phishing (credential harvesting) + domain-specific"
+  keywords:
+    - p2pe
+    - hsm
+    - ped
+    - pci-p2pe
+    - key-injection
+    - tamper-response
+    - verifone
+    - ingenico
+    - fips-140
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-payment-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-payment-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-payment-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-payment-security/guides
 ---
 
 # Skill: Payment Systems Security
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `frida` — install: `pip install frida-tools`
-- `mitmproxy` — install: `sudo apt install -y mitmproxy`
-- `objection` — install: `pip install objection`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in frida mitmproxy objection; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v frida >/dev/null 2>&1 || echo "  pip install frida-tools"
-  command -v mitmproxy >/dev/null 2>&1 || echo "  sudo apt install -y mitmproxy"
-  command -v objection >/dev/null 2>&1 || echo "  pip install objection"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — PCI-DSS 4.0 requirement map, Stripe/Adyen/PayPal API test patterns, 3-D Secure 2.x challenge flow probing, card testing / BIN attack detection, recurring billing manipulation, mobile wallet Frida hooks (Apple Pay / Google Pay), EMV L2/L3 review, fraud system (Sift / Forter) feature probing, Python pipeline for Stripe CLI / webhook replay / card-test bot detection

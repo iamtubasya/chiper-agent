@@ -1,12 +1,40 @@
 ---
 name: chiper-threat-hunting
-description: "Use when Proactive threat hunting — MITRE ATT&CK-mapped hunt hypotheses, Sigma detection engineering, SIEM query authoring (Splunk SPL, KQL, Lucene), and SOC workflow integration."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Proactive threat hunting — MITRE ATT&CK-mapped hunt hypotheses, Sigma detection engineering, SIEM query authoring (Splunk SPL, KQL, Lucene), and SOC workflow integration."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, threat, hunting]
-    domain: defense
+  domain: defense
+  tool_count: 12
+  guide_count: 2
+  mitre: "TA0040-Detection"
+  keywords:
+    - sigma
+    - sigma-cli
+    - detection-as-code
+    - splunk-spl
+    - sentinel-kql
+    - elastic-lucene
+    - mitre-attack
+    - false-positive-tuning
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-threat-hunting/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-threat-hunting/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-threat-hunting/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-threat-hunting/guides
 ---
 
 # Skill: Threat Hunting

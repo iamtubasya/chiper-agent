@@ -1,43 +1,35 @@
 ---
 name: chiper-web-ssrf
-description: "Use when Server-Side Request Forgery (SSRF) attacks including basic, blind, and advanced bypass techniques, internal port scanning, cloud metadata extraction (AWS/GCP/Azure), protocol smuggling (gopher://, dict://, file://), and chained RCE exploitation."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Server-Side Request Forgery (SSRF) attacks including basic, blind, and advanced bypass techniques, internal port scanning, cloud metadata extraction (AWS/GCP/Azure), protocol smuggling (gopher://, dict://, file://), and chained RCE exploitation."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, web, ssrf]
-    domain: web-attack
+  domain: web-attack
+  tool_count: 6
+  guide_count: 6
+  owasp: "A10:2021-SSRF"
+  mitre: "T1190-Exploit Public-Facing App"
+  last_reviewed: "2026-07-19"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-ssrf/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-ssrf/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-ssrf/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-ssrf/guides
 ---
 
 # Skill: SSRF serviceendrequestforgery / Server-Side Request Forgery
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `curl` — install: `sudo apt install -y curl`
-- `ffuf` — install: `go install github.com/ffuf/ffuf/v2@latest`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in curl ffuf; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v curl >/dev/null 2>&1 || echo "  sudo apt install -y curl"
-  command -v ffuf >/dev/null 2>&1 || echo "  go install github.com/ffuf/ffuf/v2@latest"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — SSRF attack payload allset：basic detect、protocolsmuggling、cloud metadatadata extraction、bypasstechnique、DNS rebinding、blind SSRF、RCE groupcombinechain

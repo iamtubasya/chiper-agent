@@ -201,7 +201,7 @@ def main():
         reports = [lint_skill(skill_dir)]
     else:
         reports = []
-        for skill_dir in sorted(p for p in SKILLS_DIR.iterdir() if p.is_dir() and p.name.startswith('chiper-')):
+        for skill_dir in sorted(p for p in SKILLS_DIR.iterdir() if p.is_dir() and p.name.startswith('chiper-') and (p / 'SKILL.md').exists()):
             if skill_dir.is_dir():
                 reports.append(lint_skill(skill_dir))
 

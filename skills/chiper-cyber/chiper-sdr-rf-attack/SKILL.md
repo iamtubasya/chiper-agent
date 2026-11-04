@@ -1,47 +1,35 @@
 ---
 name: chiper-sdr-rf-attack
-description: "Use when Software Defined Radio and RF signal attacks encompass a broad range of offensive techniques targeting wireless communication systems."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Software Defined Radio and RF signal attacks encompass a broad range of offensive techniques targeting wireless communication systems."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, sdr, rf, attack]
-    domain: security
+  domain: security
+  tool_count: 7
+  guide_count: 8
+  mitre: "T1557-Adversary-in-the-Middle, T1040-Network Sniffing, T1200-Hardware Additions, T1095-Non-Application Layer Protocol"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-sdr-rf-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-sdr-rf-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-sdr-rf-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-sdr-rf-attack/guides
 ---
 
 # Skill: SDR and RF Signal Attacks
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `gnuradio` — install: `sudo apt install -y gnuradio`
-- `gqrx` — install: `sudo apt install -y gqrx-sdr`
-- `hackrf` — install: `sudo apt install -y hackrf`
-- `urh` — install: `sudo apt install -y urh`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in gnuradio gqrx hackrf urh; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v gnuradio >/dev/null 2>&1 || echo "  sudo apt install -y gnuradio"
-  command -v gqrx >/dev/null 2>&1 || echo "  sudo apt install -y gqrx-sdr"
-  command -v hackrf >/dev/null 2>&1 || echo "  sudo apt install -y hackrf"
-  command -v urh >/dev/null 2>&1 || echo "  sudo apt install -y urh"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- Complete payload collection organized by attack type (SDR setup, spectrum scanning, GSM/LTE analysis, RFID exploitation, keyfob replay, protocol reverse engineering, GNURadio development -- 11 major categories)

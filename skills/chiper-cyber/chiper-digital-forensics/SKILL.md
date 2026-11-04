@@ -1,47 +1,34 @@
 ---
 name: chiper-digital-forensics
-description: "Use when Digital forensics covers the complete workflow of disk forensics, memory forensics, network forensics, file recovery/carving, and chain of custody."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Digital forensics covers the complete workflow of disk forensics, memory forensics, network forensics, file recovery/carving, and chain of custody."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, digital, forensics]
-    domain: forensics
+  domain: forensics
+  tool_count: 10
+  guide_count: 5
+  mitre: "T1070.006-Timestomp, T1562-Impair Defenses, T1547.001-Registry Run Keys / Startup Folder, T1055-Process Injection"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-digital-forensics/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-digital-forensics/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-digital-forensics/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-digital-forensics/guides
 ---
 
 # Skill: Digital Forensics
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `autopsy` — install: `sudo apt install -y autopsy`
-- `binwalk` — install: `sudo apt install -y binwalk`
-- `foremost` — install: `sudo apt install -y foremost`
-- `volatility` — install: `pip install volatility3`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in autopsy binwalk foremost volatility; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v autopsy >/dev/null 2>&1 || echo "  sudo apt install -y autopsy"
-  command -v binwalk >/dev/null 2>&1 || echo "  sudo apt install -y binwalk"
-  command -v foremost >/dev/null 2>&1 || echo "  sudo apt install -y foremost"
-  command -v volatility >/dev/null 2>&1 || echo "  pip install volatility3"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Forensics command reference covering disk imaging, filesystem analysis, memory forensics, network forensics, log analysis, timeline reconstruction, file carving, anti-forensics detection, Windows/Linux forensics, and more

@@ -47,7 +47,7 @@ binary-reverse → reverse-engineering-advanced → exploit-development → ai-f
 - **Patch file** (`*.patch` or git diff between tags)
 - **Kali Linux 2025-2** with: Ghidra 11.x + BinDiff 6; AFL++ + libFuzzer; ASan/UBSan runtime; syft + trufflehog; jq; yara 4.x + sigma-cli
 - **Isolated VM with snapshots** — revert between detonations
-- **Schema 3 memory file** initialized — `repro-attempt-memory.json` (see `SCEN-MEMORY-SCHEMA.md`)
+- **Schema 3 memory file** initialized — `repro-attempt-memory.json` (see `validation/scenarios/SCEN-MEMORY-SCHEMA.md`)
 
 ---
 
@@ -218,7 +218,7 @@ jq -n --arg v "$(cat /work/vulnerable.exitcode)" --arg p "$(cat /work/patched.ex
 [convergence] stop_condition_met=true iterations=4
 ```
 
-**Stop condition**: runner halts only when `verification_results.vulnerable.crashed == true` AND `verification_results.patched.crashed == false`. Any other state with `stop_condition_met=true` triggers an anti-pattern alert ("Premature stop", see `SCEN-MEMORY-SCHEMA.md`).
+**Stop condition**: runner halts only when `verification_results.vulnerable.crashed == true` AND `verification_results.patched.crashed == false`. Any other state with `stop_condition_met=true` triggers an anti-pattern alert ("Premature stop", see `validation/scenarios/SCEN-MEMORY-SCHEMA.md`).
 
 ---
 

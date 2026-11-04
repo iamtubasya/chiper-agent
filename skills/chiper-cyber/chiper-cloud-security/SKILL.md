@@ -1,41 +1,34 @@
 ---
 name: chiper-cloud-security
-description: "Use when Cloud security covers security assessment for major cloud platforms including AWS, Azure, and GCP, with core focus on IAM misconfiguration detection, storage bucket exposure scanning, metadata service attacks, container escape, and Kubernetes RBAC auditing."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Cloud security covers security assessment for major cloud platforms including AWS, Azure, and GCP, with core focus on IAM misconfiguration detection, storage bucket exposure scanning, metadata service attacks, container escape, and Kubernetes RBAC auditing."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, cloud]
-    domain: cloud
+  domain: cloud
+  tool_count: 6
+  guide_count: 8
+  mitre: "TA0008-Lateral Movement"
+  last_reviewed: "2026-08-19"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-security/guides
 ---
 
 # Skill: Cloud Security
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `trivy` — install: `sudo apt install -y trivy`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in trivy; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v trivy >/dev/null 2>&1 || echo "  sudo apt install -y trivy"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- Cloud security attack payloads organized by category (AWS/Azure/GCP enumeration, IAM analysis, S3 exposure, metadata exploitation, container/K8s exploitation)

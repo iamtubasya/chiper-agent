@@ -1,12 +1,33 @@
 ---
 name: chiper-data-scraper-agent
-description: "Use when Automated data collection from structured sources: CVE databases, threat intelligence feeds, exploit databases, and security advisories. Transform unstructured web data into structured knowledge units."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Automated data collection from structured sources: CVE databases, threat intelligence feeds, exploit databases, and security advisories. Transform unstructured web data into structured knowledge units."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, data, scraper, agent]
-    domain: research
+  domain: research
+  tool_count: 0
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-scraper-agent/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-scraper-agent/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-scraper-agent/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-scraper-agent/guides
 ---
 
 # Data Scraper Agent

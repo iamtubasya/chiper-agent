@@ -1,40 +1,35 @@
 ---
 name: chiper-terminal-ops
-description: "Use when Evidence-first execution workflow for running security commands, inspecting system state, debugging tool failures, and making verified changes. This skill enforces a disciplined approach: inspect before acting, keep changes narrow, and report exact execution state."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Evidence-first execution workflow for running security commands, inspecting system state, debugging tool failures, and making verified changes. This skill enforces a disciplined approach: inspect before acting, keep changes narrow, and report exact execution state."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, terminal, ops]
-    domain: workflow
+  domain: workflow
+  tool_count: 0
+  guide_count: 5
+  mitre: "T1059-Command and Scripting Interpreter, T1059.004-Unix Shell, T1021.004-Remote Services: SSH, T1518-Software Discovery"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-terminal-ops/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-terminal-ops/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-terminal-ops/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-terminal-ops/guides
 ---
 
 # Skill: Terminal Operations
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `curl` — `sudo apt install -y curl`
-- `nmap` — `sudo apt install -y nmap`
-- `tcpdump` — `sudo apt install -y tcpdump`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in curl nmap tcpdump; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v curl >/dev/null 2>&1 || sudo apt install -y curl
-command -v nmap >/dev/null 2>&1 || sudo apt install -y nmap
-command -v tcpdump >/dev/null 2>&1 || sudo apt install -y tcpdump
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Common pentest terminal command patterns organized by task (recon, exploitation, post-exploitation, reporting)

@@ -1,43 +1,36 @@
 ---
 name: chiper-crypto-attacks
-description: "Use when Cryptographic Attacks target implementation flaws and algorithm weaknesses in encryption systems, covering OWASP A04: Cryptographic Failures."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Cryptographic Attacks target implementation flaws and algorithm weaknesses in encryption systems, covering OWASP A04: Cryptographic Failures."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, crypto, attacks]
-    domain: cryptography
+  domain: cryptography
+  tool_count: 7
+  guide_count: 6
+  owasp: "A04:2021-Cryptographic Failures"
+  mitre: "T1110.002-Password Cracking, T1552.001-Credentials In Files, T1600.001-Weaken Encryption: Reduce Key Space, T1557-Adversary-in-the-Middle"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-crypto-attacks/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-crypto-attacks/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-crypto-attacks/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-crypto-attacks/guides
+  - path: ~/.chiper/skills/chiper-cyber/chiper-crypto-attacks/scripts
 ---
 
 # Skill: Cryptographic Attacks
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `hashcat` — install: `sudo apt install -y hashcat`
-- `sslscan` — install: `sudo apt install -y sslscan`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in hashcat sslscan; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v hashcat >/dev/null 2>&1 || echo "  sudo apt install -y hashcat"
-  command -v sslscan >/dev/null 2>&1 || echo "  sudo apt install -y sslscan"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Cryptographic attack payload collection: weak algorithm detection, hash cracking, Padding Oracle, Hash Length Extension, ECB mode, JWT attacks, RSA attacks, SSL/TLS test commands

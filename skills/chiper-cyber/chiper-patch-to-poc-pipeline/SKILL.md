@@ -1,12 +1,42 @@
 ---
 name: chiper-patch-to-poc-pipeline
-description: "Use when The end-to-end patch-diff vulnerability reproduction workflow — patch analysis (read diff, identify protective pattern, hypothesize bug class), source or binary-only code path walking (Ghidra + BinDiff), PoC generation (manual craft OR AFL++/libFuzzer harness with ASan/UBSan), CyberGym-style differential verification (vuln crashes, patched clean) as the deterministic stop condition, and YARA + Sigma detection rule authoring tested against both versions. Covers 2024-2026 CVEs (libwebp, xz-utils, runc, glibc Looney Tuner, regreSSHion, MOVEit, Jenkins, Confluence, TeamCity, OFBiz). Solidifies validation/scenarios/SCEN-008.md into a reusable knowledge base and wires in Schema 3 reproduction memory for memory-driven convergence."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: The end-to-end patch-diff vulnerability reproduction workflow — patch analysis (read diff, identify protective pattern, hypothesize bug class), source or binary-only code path walking (Ghidra + BinDiff), PoC generation (manual craft OR AFL++/libFuzzer harness with ASan/UBSan), CyberGym-style differential verification (vuln crashes, patched clean) as the deterministic stop condition, and YARA + Sigma detection rule authoring tested against both versions. Covers 2024-2026 CVEs (libwebp, xz-utils, runc, glibc Looney Tuner, regreSSHion, MOVEit, Jenkins, Confluence, TeamCity, OFBiz). Solidifies validation/scenarios/SCEN-008.md into a reusable knowledge base and wires in Schema 3 reproduction memory for memory-driven convergence.
+origin: chiper-cyber Wave 12 (v0.1.45) — 2026-07-03
+version: "0.2.0.2"
+compatibility:
+  kali_version: "2025.2"
+  python_version: ">=3.11"
+  ghidra_required: true
+  aflpp_required: true
+allowed-tools:
+  - git
+  - ghidra
+  - bindiff
+  - radare2
+  - angr
+  - pwntools
+  - afl-fuzz
+  - libFuzzer
+  - clang
+  - asan_symbolize
+  - jq
+  - yara
+  - sigma-cli
+  - syft
+  - grype
+  - python3
+  - bash
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, patch, to, poc, pipeline]
-    domain: vuln-research
+  domain: vuln-research
+  tool_count: 17
+  guide_count: 2
+  mitre: "TA0040-Detection; CWE-787 Out-of-Bounds Write, CWE-125 OOB Read, CWE-190 Integer Overflow, CWE-416 Use-After-Free, CWE-119 Buffer Overflow, CWE-94 Code Injection, CWE-89 SQLi, CWE-22 Path Traversal"
+  last_reviewed: "2026-08-17"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-patch-to-poc-pipeline/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-patch-to-poc-pipeline/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-patch-to-poc-pipeline/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-patch-to-poc-pipeline/guides
 ---
 
 # Patch-to-PoC Pipeline Skill
@@ -253,7 +283,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 | `convergence_state.status` | `"IN_PROGRESS"` | `"POC_CONFIRMED_DIFFERENTIALLY"` |
 | `convergence_state.stop_condition_met` | `false` | `true` |
 
-**Stop condition**: runner halts only when `vulnerable.crashed == true` AND `patched.crashed == false`. Any other terminal state with `stop_condition_met=true` fires the **"Premature stop"** anti-pattern alert (see `SCEN-MEMORY-SCHEMA.md`).
+**Stop condition**: runner halts only when `vulnerable.crashed == true` AND `patched.crashed == false`. Any other terminal state with `stop_condition_met=true` fires the **"Premature stop"** anti-pattern alert (see `validation/scenarios/SCEN-MEMORY-SCHEMA.md`).
 
 ### Phase 5 — Detection Rule Authoring
 

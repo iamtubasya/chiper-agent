@@ -1,12 +1,32 @@
 ---
 name: chiper-vpn-attack
-description: "Use when Virtual Private Networks (VPNs) are a critical component of enterprise network security, providing encrypted tunnels for remote access and site-to-site connectivity."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Virtual Private Networks (VPNs) are a critical component of enterprise network security, providing encrypted tunnels for remote access and site-to-site connectivity."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, vpn, attack]
-    domain: security
+  domain: security
+  tool_count: 5
+  guide_count: 8
+  mitre: "T1133-External Remote Services, T1190-Exploit Public-Facing Application, T1078-Valid Accounts, T1046-Network Service Scanning"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-vpn-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-vpn-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-vpn-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-vpn-attack/guides
 ---
 
 # Skill: VPN Attack

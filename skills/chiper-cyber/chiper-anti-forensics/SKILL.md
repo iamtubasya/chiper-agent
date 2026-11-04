@@ -1,43 +1,34 @@
 ---
 name: chiper-anti-forensics
-description: "Use when Anti-forensics is the offensive counterpart to digital forensics."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Anti-forensics is the offensive counterpart to digital forensics."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, anti, forensics]
-    domain: forensics
+  domain: forensics
+  tool_count: 14
+  guide_count: 3
+  mitre: "TA0005-Defense Evasion"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-anti-forensics/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-anti-forensics/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-anti-forensics/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-anti-forensics/guides
 ---
 
 # Anti-Forensics
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `bulk_extractor` — install: `sudo apt install -y bulk-extractor`
-- `steghide` — install: `sudo apt install -y steghide`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in bulk_extractor steghide; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v bulk_extractor >/dev/null 2>&1 || echo "  sudo apt install -y bulk-extractor"
-  command -v steghide >/dev/null 2>&1 || echo "  sudo apt install -y steghide"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Command reference covering secure file deletion, disk/volume encryption, log cleaning, timestamp manipulation, steganographic hiding, and anti-forensic countermeasure testing

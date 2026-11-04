@@ -1,36 +1,34 @@
 ---
 name: chiper-voip-sip-attack
-description: "Use when Voice over IP (VoIP) systems use the Session Initiation Protocol (SIP) for call signaling, the Real-time Transport Protocol (RTP) for media streaming, and the Inter-Asterisk eXchange protocol (IAX2) for alternative VoIP communication."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Voice over IP (VoIP) systems use the Session Initiation Protocol (SIP) for call signaling, the Real-time Transport Protocol (RTP) for media streaming, and the Inter-Asterisk eXchange protocol (IAX2) for alternative VoIP communication."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, voip, sip, attack]
-    domain: voip
+  domain: voip
+  tool_count: 8
+  guide_count: 3
+  mitre: "TA0046-Initial Access"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-voip-sip-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-voip-sip-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-voip-sip-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-voip-sip-attack/guides
 ---
 
 # VoIP/SIP Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `sipvicious` — `pip install sipvicious`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in sipvicious; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v sipvicious >/dev/null 2>&1 || pip install sipvicious
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Attack payloads organized by category (SIP recon, extension enumeration, password cracking, eavesdropping, DoS, VLAN hopping)

@@ -1,40 +1,73 @@
 ---
 name: chiper-pam-privilege-attack
-description: "Use when Privileged Access Management (PAM) vendor abuse — CyberArk PVWA/PSM/EPV/AIM/CFE, BeyondTrust PRA/Password Safe/Identity Security Insights, Delinea Secret Server/Privilege Manager, One Identity Safeguard, ManageEngine Password Manager Pro, WALLIX Bastion, Devolutions Server, Xton Core. Covers PVWA auth bypass (CVE-2025-32564 area), CyberArk safe enumeration via WebSocket, credential file (.cue) theft and decryption, PSM session hijacking, AIM/CCP provider abuse, master key escrow analysis, BeyondTrust SAML account injection (CVE-2022-2451), Password Safe API abuse, session recording tampering, Delinea OAuth token theft, DPAPI-protected agent config extraction, distributed engine lateral movement, One Identity Safeguard SSL pinning bypass, ManageEngine PMP API key enumeration, PostgreSQL backend extraction (CVE-2022-28226 area), pass-the-hash in PAM contexts, golden ticket interaction with PAM credential rotation, and modern ransomware operator TTPs targeting PAM (BlackCat/ALPHV"
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Privileged Access Management (PAM) vendor abuse — CyberArk PVWA/PSM/EPV/AIM/CFE, BeyondTrust PRA/Password Safe/Identity Security Insights, Delinea Secret Server/Privilege Manager, One Identity Safeguard, ManageEngine Password Manager Pro, WALLIX Bastion, Devolutions Server, Xton Core. Covers PVWA auth bypass (CVE-2025-32564 area), CyberArk safe enumeration via WebSocket, credential file (.cue) theft and decryption, PSM session hijacking, AIM/CCP provider abuse, master key escrow analysis, BeyondTrust SAML account injection (CVE-2022-2451), Password Safe API abuse, session recording tampering, Delinea OAuth token theft, DPAPI-protected agent config extraction, distributed engine lateral movement, One Identity Safeguard SSL pinning bypass, ManageEngine PMP API key enumeration, PostgreSQL backend extraction (CVE-2022-28226 area), pass-the-hash in PAM contexts, golden ticket interaction with PAM credential rotation, and modern ransomware operator TTPs targeting PAM (BlackCat/ALPHV, LockBit, Royal/BlackSuit)."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - claude-code
+  - claude-sonnet-4.5
+  - cursor
+  - windsurf
+  - chiper
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, pam, privilege, attack]
-    domain: pam-privilege-attack
+  domain: pam-privilege-attack
+  category: privileged-access-management
+  tool_count: 18
+  guide_count: 1
+  mitre: "T1552-Unsecured Credentials"
+  keywords:
+    - PAM
+    - privileged access management
+    - CyberArk
+    - PVWA
+    - PSM
+    - EPV
+    - AIM
+    - CFE
+    - BeyondTrust
+    - PRA
+    - Password Safe
+    - Delinea
+    - Thycotic
+    - Secret Server
+    - One Identity
+    - Safeguard
+    - ManageEngine
+    - Password Manager Pro
+    - PMP
+    - WALLIX
+    - Bastion
+    - Devolutions
+    - Xton
+    - credential file
+    - .cue file
+    - DPAPI
+    - SAML injection
+    - CVE-2025-32564
+    - CVE-2022-2451
+    - CVE-2022-28226
+    - session hijacking
+    - just-in-time
+    - JIT access
+    - BlackCat
+    - ALPHV
+    - LockBit
+  last_reviewed: "2026-08-16"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-pam-privilege-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-pam-privilege-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-pam-privilege-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-pam-privilege-attack/guides
 ---
 
 # Skill: Privileged Access Management (PAM) Privilege Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `curl` — `sudo apt install -y curl`
-- `nmap` — `sudo apt install -y nmap`
-- `nuclei` — `go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in curl nmap nuclei; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v curl >/dev/null 2>&1 || sudo apt install -y curl
-command -v nmap >/dev/null 2>&1 || sudo apt install -y nmap
-command -v nuclei >/dev/null 2>&1 || go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- Per-vendor payload catalogs for CyberArk, BeyondTrust, Delinea, One Identity, ManageEngine PMP, WALLIX, Devolutions, Xton Core; plus cross-cutting patterns (cred file theft, session hijack, API key abuse, JIT workflow bypass, PAM-aware pass-the-hash) (70+ code blocks, 2,200+ lines)

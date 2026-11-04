@@ -1,45 +1,36 @@
 ---
 name: chiper-web-auth-bypass
-description: "Use when Authentication Bypass refers to attackers exploiting design flaws or implementation vulnerabilities in authentication mechanisms to bypass the normal authentication process and gain unauthorized access."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Authentication Bypass refers to attackers exploiting design flaws or implementation vulnerabilities in authentication mechanisms to bypass the normal authentication process and gain unauthorized access."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, web, auth, bypass]
-    domain: web-attack
+  domain: web-attack
+  tool_count: 5
+  guide_count: 5
+  owasp: "A07:2021-Identification"
+  mitre: "T1078-Valid Accounts, T1110.003-Password Spraying, T1552.001-Credentials In Files, T1187-Forced Authentication"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-auth-bypass/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-auth-bypass/auth-bypass-guide.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-auth-bypass/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-auth-bypass/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-auth-bypass/guides
 ---
 
 # Skill: Authentication Bypass
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `hashcat` — install: `sudo apt install -y hashcat`
-- `hydra` — install: `sudo apt install -y hydra`
-- `medusa` — install: `sudo apt install -y medusa`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in hashcat hydra medusa; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v hashcat >/dev/null 2>&1 || echo "  sudo apt install -y hashcat"
-  command -v hydra >/dev/null 2>&1 || echo "  sudo apt install -y hydra"
-  command -v medusa >/dev/null 2>&1 || echo "  sudo apt install -y medusa"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Payload collection organized by 8 major attack types (username enumeration, brute force, JWT, session, MFA, OAuth, password reset)
@@ -135,7 +126,7 @@ Auxiliary tools: **Burp AuthMatrix** (permission matrix testing), **Cookie Edito
 
 | Defense Layer | Measures | Key Points |
 |---------------|----------|------------|
-| **Password Policy** | Minimum 12 characters + mixed case + digits + special characters + common password blacklist | See `guides/authentication_failures_complete_guide.md` Section 2 |
+| **Password Policy** | Minimum 12 characters + mixed case + digits + special characters + common password blacklist | See `chiper-web-auth-bypass/guides/auth-bypass-complete-guide.md` Section 2 |
 | **Rate Limiting** | Progressive delays + account lockout + IP blocking + CAPTCHA | Key measure for defending against brute force and credential stuffing |
 | **Session Management** | Regenerate session ID after login + secure cookie attributes + reasonable timeout | `HttpOnly; Secure; SameSite=Strict` trio — all three are essential |
 | **MFA Enforcement** | Set `partial_auth` after password verification, only set `authenticated` after MFA passes | See guide Section 5 for secure MFA implementation patterns |

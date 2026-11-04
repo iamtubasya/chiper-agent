@@ -1,36 +1,68 @@
 ---
 name: chiper-quantum-crypto-attack
-description: "Use when Post-quantum and modern national cryptography attack surface testing covering NIST PQC candidates (ML-KEM/ML-DSA/SLH-DSA), hybrid TLS analysis, QKD/BB84 protocol attacks, Chinese national crypto (SM2/SM3/SM4/SM9) implementation flaws, lattice/hashing signature probing, and quantum-vulnerable RSA/ECC asset discovery using liboqs, GmSSL, cloudflare/circl, OQS-OpenSSL, and PQCrypto-Break."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Post-quantum and modern national cryptography attack surface testing covering NIST PQC candidates (ML-KEM/ML-DSA/SLH-DSA), hybrid TLS analysis, QKD/BB84 protocol attacks, Chinese national crypto (SM2/SM3/SM4/SM9) implementation flaws, lattice/hashing signature probing, and quantum-vulnerable RSA/ECC asset discovery using liboqs, GmSSL, cloudflare/circl, OQS-OpenSSL, and PQCrypto-Break.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.31"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, quantum, crypto, attack]
-    domain: cryptography
+  domain: cryptography
+  tool_count: 12
+  guide_count: 3
+  mitre: "T1040-Network Sniffing (crypto layer), T1573-Encrypted Channel (PQC analysis), forward-looking (no canonical MITRE mapping yet)"
+  keywords:
+    - post-quantum-cryptography
+    - PQC
+    - ML-KEM
+    - ML-DSA
+    - SLH-DSA
+    - Kyber
+    - Dilithium
+    - SPHINCS
+    - hybrid-TLS
+    - QKD
+    - BB84
+    - photon-number-splitting
+    - detector-blinding
+    - SM2
+    - SM3
+    - SM4
+    - SM9
+    - GmSSL
+    - Tongsuo
+    - GM-SSL
+    - GB/T-38636
+    - RFC-8998
+    - SNDL
+    - store-now-decrypt-later
+    - CNSA-2.0
+    - NIST-800-227
+    - FIPS-203
+    - FIPS-204
+    - FIPS-205
+    - lattice-cryptography
+    - NTT
+    - side-channel
+    - crypto-agility
+    - ROCA
+    - XMSS
+    - LMS
+  last_reviewed: "2026-08-17"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-quantum-crypto-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-quantum-crypto-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-quantum-crypto-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-quantum-crypto-attack/guides
 ---
 
 # Skill: Post-Quantum & Modern National Cryptography Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `cryptography` — `pip install cryptography`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in cryptography; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v cryptography >/dev/null 2>&1 || pip install cryptography
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Command catalogue for liboqs, OQS-OpenSSL, GmSSL, cloudflare/circl, PQCrypto-Break, plus PoC code for quantum-vulnerability inventory, Shor/Grover impact modelling, ML-KEM/ML-DSA probing, hybrid TLS analysis, BB84 photon-number-splitting, SM2 side-channel, SM4 cache timing, and crypto-agility stress tests — 19 sections with real OpenSSL/GmSSL commands.

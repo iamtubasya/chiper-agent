@@ -1,43 +1,38 @@
 ---
 name: chiper-web-sqli
-description: "Use when SQL injection attacks and defense - covering all major SQLi types including error-based, union-based, blind (boolean/time), double query (error-based), stacked queries, and out-of-band injection."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "SQL injection attacks and defense - covering all major SQLi types including error-based, union-based, blind (boolean/time), double query (error-based), stacked queries, and out-of-band injection."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, web, sqli]
-    domain: web-attack
+  domain: web-attack
+  tool_count: 5
+  guide_count: 14
+  owasp: "A03:2021-Injection"
+  mitre: "T1190-Exploit Public-Facing App"
+  last_reviewed: "2026-07-19"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-sqli/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-sqli/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-sqli/sqli-cross-db-guide.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-sqli/sqli-double-query-guide.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-sqli/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-sqli/guides
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-sqli/scripts
 ---
 
 # Skill: SQL Injection
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `curl` — install: `sudo apt install -y curl`
-- `sqlmap` — install: `sudo apt install -y sqlmap`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in curl sqlmap; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v curl >/dev/null 2>&1 || echo "  sudo apt install -y curl"
-  command -v sqlmap >/dev/null 2>&1 || echo "  sudo apt install -y sqlmap"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Payload collection organized by 10 injection types (injection detection, UNION, Error, Blind, Double Query, WAF bypass, cross-database, file read/write)

@@ -1,36 +1,41 @@
 ---
 name: chiper-cps-attack
-description: "Use when Cyber-Physical Systems (CPS) attacks — PLCs (Siemens S7, Rockwell ControlLogix, Schneider Modicon, Mitsubishi MELSEC), ICS protocols (Modbus, DNP3, Profinet, EtherNet/IP, IEC 61850, OPC UA), HMIs, SCADA historians, OT-to-IT pivot, SIS bypass. Distinct from scada-ics-security (broader ICS overview) — this skill goes deep on protocol-level PLC exploitation, packet replay/injection, and field-device firmware attacks. Covers 2024-2025 incidents (Unitronics PLC attack, Pipedream/Incontroller, multi-vendor PLC CVEs)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Cyber-Physical Systems (CPS) attacks — PLCs (Siemens S7, Rockwell ControlLogix, Schneider Modicon, Mitsubishi MELSEC), ICS protocols (Modbus, DNP3, Profinet, EtherNet/IP, IEC 61850, OPC UA), HMIs, SCADA historians, OT-to-IT pivot, SIS bypass. Distinct from scada-ics-security (broader ICS overview) — this skill goes deep on protocol-level PLC exploitation, packet replay/injection, and field-device firmware attacks. Covers 2024-2025 incidents (Unitronics PLC attack, Pipedream/Incontroller, multi-vendor PLC CVEs).
+origin: chiper-cyber Wave 10 (v0.1.41) — 2026-06-28
+version: "0.2.0.2"
+compatibility:
+  kali_version: "2025.2"
+  python_version: ">=3.11"
+allowed-tools:
+  - nmap
+  - wireshark
+  - scapy
+  - mitmproxy
+  - python3
+  - plcscan
+  - redpoint
+  - claroty
+  - bedrock
+  - mbpoll
+  - plc4x
+  - opendnp3
+  - node-red
+  - metasploit
+  - gamma
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, cps, attack]
-    domain: industrial-control-systems
+  domain: industrial-control-systems
+  tool_count: 15
+  guide_count: 2
+  mitre: "TA0040-Impact, TA0008-Lateral Movement, TA0009-Collection, T0817-Drive-by Compromise, T0859-Valid Accounts, T0886-Exploitation of Remote Services, T0890-Exploitation for Privilege Escalation, T0808-Activate Firmware, T0884-Connection Proxy, T0858-Change Operating Mode"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cps-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cps-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cps-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cps-attack/guides
 ---
 
 # Cyber-Physical Systems (CPS) Attack Skill
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `tcpdump` — `sudo apt install -y tcpdump`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in tcpdump; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v tcpdump >/dev/null 2>&1 || sudo apt install -y tcpdump
-```
-
 
 > Red-team operations against Industrial Control Systems at the protocol and field-device level. This skill goes deep on PLC firmware, ICS protocol abuse, packet replay, and OT-to-IT pivot — distinct from the broader `scada-ics-security` skill which covers general ICS methodology.
 

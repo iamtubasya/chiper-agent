@@ -1,40 +1,60 @@
 ---
 name: chiper-storage-san-attack
-description: "Use when Storage/SAN/NAS/Object storage penetration testing — iSCSI, Fibre Channel, NFSv3/v4, SMB3, S3-compatible APIs, NetApp ONTAP, Dell EMC, Pure Storage, QNAP, Synology, TrueNAS, NDMP backup tape pilfering, and ransomware patterns targeting storage appliances. Distinct from database-attack (which targets RDBMS/NoSQL query protocols) and cloud-native-vuln-research (which focuses on CVE research rather than storage fabric and appliance pentest)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Storage/SAN/NAS/Object storage penetration testing — iSCSI, Fibre Channel, NFSv3/v4, SMB3, S3-compatible APIs, NetApp ONTAP, Dell EMC, Pure Storage, QNAP, Synology, TrueNAS, NDMP backup tape pilfering, and ransomware patterns targeting storage appliances. Distinct from database-attack (which targets RDBMS/NoSQL query protocols) and cloud-native-vuln-research (which focuses on CVE research rather than storage fabric and appliance pentest)."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - chiper-cyber
+  - claude-code
+  - claude-sonnet-4.5
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, storage, san, attack]
-    domain: storage-san-attack
+  domain: storage-san-attack
+  category: storage
+  tool_count: 13
+  guide_count: 1
+  mitre:
+    - T1552-Unsecured Credentials
+    - T1021-Remote Services
+    - T1486-Data Encrypted for Impact
+    - T1530-Data from Cloud Storage Object
+    - T1213-Data from Information Repositories
+  keywords:
+    - SAN
+    - NAS
+    - iSCSI
+    - Fibre Channel
+    - FCoE
+    - NFS
+    - SMB
+    - CIFS
+    - S3
+    - object storage
+    - NetApp
+    - Dell EMC
+    - Pure Storage
+    - QNAP
+    - Synology
+    - TrueNAS
+    - MinIO
+    - NDMP
+    - SMI-S
+    - ONTAP
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-storage-san-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-storage-san-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-storage-san-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-storage-san-attack/guides
 ---
 
 # Storage SAN Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `file` — `sudo apt install -y file`
-- `nmap` — `sudo apt install -y nmap`
-- `wireshark` — `sudo apt install -y wireshark`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in file nmap wireshark; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v file >/dev/null 2>&1 || sudo apt install -y file
-command -v nmap >/dev/null 2>&1 || sudo apt install -y nmap
-command -v wireshark >/dev/null 2>&1 || sudo apt install -y wireshark
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Attack payloads organized by attack surface: iSCSI, Fibre Channel, NFS, SMB, S3/object storage, vendor APIs (NetApp/Dell/Pure), NDMP, SMI-S/SNMP management, and ransomware patterns

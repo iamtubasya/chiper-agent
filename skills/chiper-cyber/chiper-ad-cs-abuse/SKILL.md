@@ -1,36 +1,50 @@
 ---
 name: chiper-ad-cs-abuse
-description: "Use when Active Directory Certificate Services (AD CS) abuse — ESC1-ESC15 attack patterns, PKINIT, PetitPotam to AD CS to Domain Admin chains, CVE-2022-26923 (Certifried), Shadow Credentials, Golden Certificate, certificate template ACL abuse, NTLM relay to web enrollment."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Active Directory Certificate Services (AD CS) abuse — ESC1-ESC15 attack patterns, PKINIT, PetitPotam to AD CS to Domain Admin chains, CVE-2022-26923 (Certifried), Shadow Credentials, Golden Certificate, certificate template ACL abuse, NTLM relay to web enrollment."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - claude-code
+  - claude-sonnet-4.5
+  - cursor
+  - windsurf
+  - chiper
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, ad, cs, abuse]
-    domain: ad-cs-abuse
+  domain: ad-cs-abuse
+  category: enterprise-cloud
+  tool_count: 13
+  guide_count: 1
+  mitre: "T1552-Unsecured Credentials"
+  last_reviewed: "2026-07-24"
+  keywords:
+    - AD CS
+    - PKI
+    - ESC1
+    - PetitPotam
+    - PKINIT
+    - Certipy
+    - X.509
+    - certificate template
+    - ADCSPwn
+    - CVE-2022-26923
+    - Shadow Credentials
+    - Golden Certificate
+    - NTLM relay
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ad-cs-abuse/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ad-cs-abuse/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ad-cs-abuse/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ad-cs-abuse/guides
 ---
 
 # Skill: Active Directory Certificate Services (AD CS) Abuse
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `certipy` — `pip install certipy-ad`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in certipy; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v certipy >/dev/null 2>&1 || pip install certipy-ad
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- Payload collection organized by ESC1-ESC15 patterns plus PetitPotam relay, Certifried, Shadow Credentials, Golden Certificate, and PKINIT abuse (60+ code blocks, 2,000+ lines)

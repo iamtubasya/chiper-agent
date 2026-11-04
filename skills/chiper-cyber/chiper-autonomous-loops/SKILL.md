@@ -1,12 +1,33 @@
 ---
 name: chiper-autonomous-loops
-description: "Use when Performing repetitive enumeration across many targets - Running batch vulnerability scans on multiple hosts - Monitoring for changes in target environment - Executing attack chains that require iterative steps - User says \"
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Performing repetitive enumeration across many targets - Running batch vulnerability scans on multiple hosts - Monitoring for changes in target environment - Executing attack chains that require iterative steps - User says \"loop\", \"automate\", \"batch\", \"repeat."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, autonomous, loops]
-    domain: infrastructure
+  domain: infrastructure
+  tool_count: 0
+  guide_count: 8
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-autonomous-loops/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-autonomous-loops/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-autonomous-loops/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-autonomous-loops/guides
 ---
 
 # Autonomous Loops

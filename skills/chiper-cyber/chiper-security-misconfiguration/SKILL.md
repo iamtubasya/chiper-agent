@@ -1,45 +1,35 @@
 ---
 name: chiper-security-misconfiguration
-description: "Use when Security misconfiguration detection (OWASP A02:2025) covering default credentials, unnecessary services, verbose errors, missing security headers, and directory listing exposures across deployed systems."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Security misconfiguration detection (OWASP A02:2025) covering default credentials, unnecessary services, verbose errors, missing security headers, and directory listing exposures across deployed systems."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, misconfiguration]
-    domain: defense
+  domain: defense
+  tool_count: 5
+  guide_count: 8
+  owasp: "A02:2025-Misconfiguration"
+  mitre: "T1190-Exploit Public-Facing Application, T1210-Exploitation of Remote Services, T1078.004-Valid Accounts: Cloud Accounts, T1552.001-Credentials In Files"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-misconfiguration/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-misconfiguration/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-misconfiguration/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-misconfiguration/guides
 ---
 
 # Skill: security configurationerrorDetect / Security Misconfiguration Detection
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `nikto` — install: `sudo apt install -y nikto`
-- `nmap` — install: `sudo apt install -y nmap`
-- `whatweb` — install: `sudo apt install -y whatweb`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in nikto nmap whatweb; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v nikto >/dev/null 2>&1 || echo "  sudo apt install -y nikto"
-  command -v nmap >/dev/null 2>&1 || echo "  sudo apt install -y nmap"
-  command -v whatweb >/dev/null 2>&1 || echo "  sudo apt install -y whatweb"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — byclassotherorganization attackpayloadandtestingcommand（HTTP Header、TLS/SSL、defaultcredentials、directorylist、CORS、Cookie etc.）
@@ -192,7 +182,7 @@ Effective misconfiguration detection combines active probing with passive analys
  **Related Skills**: chiper-logging-monitoring/SKILL.md, chiper-container-security/SKILL.md
 
  **internalmaterial (this workspace)**:
- - `guides/security_misconfiguration_complete_guide.md` -- security configurationerrorcompleteguide（directoryEnumerate、informationleakage、cloud storageconfiguration、automated ScanTool）
+ - `chiper-security-misconfiguration/guides/security_misconfiguration_complete_guide.md` -- security configurationerrorcompleteguide（directoryEnumerate、informationleakage、cloud storageconfiguration、automated ScanTool）
 
  **External Resources**:
  - [OWASP Top 10 - A02:2025 Security Misconfiguration](https://owasp.org/Top10/A02_2021-Security_Misconfiguration/)

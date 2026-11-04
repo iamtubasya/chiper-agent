@@ -1,41 +1,36 @@
 ---
 name: chiper-identity-provider-attack
-description: "Use when Identity Provider (IdP) attack patterns covering OAuth 2.0/OIDC, SAML, JWT, token theft/replay, MFA fatigue, service principal abuse (Azure AD/Entra ID), Okta, Auth0, Keycloak, and modern identity-based attacks."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Identity Provider (IdP) attack patterns covering OAuth 2.0/OIDC, SAML, JWT, token theft/replay, MFA fatigue, service principal abuse (Azure AD/Entra ID), Okta, Auth0, Keycloak, and modern identity-based attacks."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, identity, provider, attack]
-    domain: identity
+  domain: identity
+  category: cloud-identity
+  tool_count: 7
+  guide_count: 0
+  mitre: "TA0006-Credential Access, T1556-Modify Authentication Process"
+  last_reviewed: "2026-07-26"
+  keywords: ["OAuth", "OIDC", "SAML", "JWT", "IdP", "Azure AD", "Okta", "Auth0", "Keycloak", "MFA fatigue", "token theft"]
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-identity-provider-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-identity-provider-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-identity-provider-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-identity-provider-attack/guides
 ---
 
 # Skill: identity-provider-attack
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `garak` — install: `pip install garak`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in garak; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v garak >/dev/null 2>&1 || echo "  pip install garak"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 ## Summary
 

@@ -1,41 +1,36 @@
 ---
 name: chiper-supply-chain-security
-description: "Use when Software supply chain security covering the entire lifecycle from code development to deployment: dependency vulnerabilities (known-vulnerable third-party packages), malicious packages (injection and typosquatting."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Software supply chain security covering the entire lifecycle from code development to deployment: dependency vulnerabilities (known-vulnerable third-party packages), malicious packages (injection and typosquatting."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, supply, chain]
-    domain: supply-chain
+  domain: supply-chain
+  tool_count: 6
+  guide_count: 5
+  owasp: "A08:2021-Software Integrity"
+  mitre: "T1195-Supply Chain Compromise, T1195.001-Compromise Software Dependencies and Development Tools, T1195.002-Compromise Software Supply Chain, T1199-Trusted Relationship"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-supply-chain-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-supply-chain-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-supply-chain-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-supply-chain-security/guides
+  - path: ~/.chiper/skills/chiper-cyber/chiper-supply-chain-security/scripts
 ---
 
 # Skill: Software Supply Chain Security
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `trivy` — install: `sudo apt install -y trivy`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in trivy; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v trivy >/dev/null 2>&1 || echo "  sudo apt install -y trivy"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Supply chain security testing commands and payloads categorized by dependency scanning, package integrity, typosquatting detection, CI/CD auditing, SBOM analysis, dependency confusion attacks, etc.

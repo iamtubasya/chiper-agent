@@ -1,46 +1,34 @@
 ---
 name: chiper-osint
-description: "Use when A specialized skill for intelligence gathering using publicly available sources."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "A specialized skill for intelligence gathering using publicly available sources."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, osint]
-    domain: osint
+  domain: osint
+  tool_count: 0
+  guide_count: 8
+  mitre: "TA0043-Reconnaissance"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-osint/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-osint/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-osint/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-osint/guides
 ---
 
 # Skill: Open Source Intelligence (OSINT)
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `dig` — `sudo apt install -y dnsutils`
-- `recon-ng` — `sudo apt install -y recon-ng`
-- `spiderfoot` — `sudo apt install -y spiderfoot`
-- `subfinder` — `go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest`
-- `theharvester` — `sudo apt install -y theharvester`
-- `whois` — `sudo apt install -y whois`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in dig recon-ng spiderfoot subfinder theharvester whois; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v dig >/dev/null 2>&1 || sudo apt install -y dnsutils
-command -v recon-ng >/dev/null 2>&1 || sudo apt install -y recon-ng
-command -v spiderfoot >/dev/null 2>&1 || sudo apt install -y spiderfoot
-command -v subfinder >/dev/null 2>&1 || go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-command -v theharvester >/dev/null 2>&1 || sudo apt install -y theharvester
-command -v whois >/dev/null 2>&1 || sudo apt install -y whois
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — OSINT attack payloads and command collection (domain reconnaissance, DNS enumeration, subdomain discovery, Google Dorking, email collection, social media intelligence, metadata extraction, Shodan/Censys queries, leaked data queries, technology fingerprinting)

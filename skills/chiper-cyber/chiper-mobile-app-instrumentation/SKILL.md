@@ -1,41 +1,26 @@
 ---
 name: chiper-mobile-app-instrumentation
-description: "Use when Dynamic instrumentation of iOS/Android apps via Frida, Objection, r2frida, and Introspy; runtime SSL pinning bypass, jailbreak/root detection bypass, native library hooking, and runtime secrets extraction."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Dynamic instrumentation of iOS/Android apps via Frida, Objection, r2frida, and Introspy; runtime SSL pinning bypass, jailbreak/root detection bypass, native library hooking, and runtime secrets extraction.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: Claude Code, Claude Agent SDK
+allowed-tools: Bash, Read, Edit, Write, Glob, Grep
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, mobile, app, instrumentation]
-    domain: mobile-deep
+  domain: mobile-deep
+  category: mobile-deep
+  tool_count: 13
+  guide_count: 2
+  mitre: "T1623-Mobile Adware, T1518-Software Discovery, T1406-Defacement, T1627.001-Adversary-in-the-Mobile-Device, T1437-Application Layer Protocol"
+  keywords: [frida, objection, r2frida, introspy, instrumentation, ssl-pinning-bypass, jailbreak-detection, keychain, keystore, ios, android]
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mobile-app-instrumentation/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mobile-app-instrumentation/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mobile-app-instrumentation/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mobile-app-instrumentation/guides
 ---
 
 # Skill: Mobile App Instrumentation — Runtime Exploitation of iOS/Android Applications
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `frida` — install: `pip install frida-tools`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in frida; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v frida >/dev/null 2>&1 || echo "  pip install frida-tools"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — 18 instrumentation sections with 60+ Frida JS scripts, Objection CLI one-liners, r2frida bridges, and runtime manipulation recipes (SSL pinning bypass, jailbreak/root detection bypass, anti-debug bypass, keychain/keystore dumping, native lib instrumentation, crypto tracing, WebView manipulation, anti-Frida evasion, and blue-side detection patterns)

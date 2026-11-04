@@ -1,43 +1,36 @@
 ---
 name: chiper-5g-6g-telecom-attack-advanced
-description: "Use when Advanced 5G/6G telecom attacks covering 5G Core (SBA) exploitation, IMSI catcher evolution (5G Stingray), SIP/Diameter protocol attacks, Open RAN vulnerabilities, network slicing abuse, and early 6G research vectors (THz comms, AI-native air interface)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Advanced 5G/6G telecom attacks covering 5G Core (SBA) exploitation, IMSI catcher evolution (5G Stingray), SIP/Diameter protocol attacks, Open RAN vulnerabilities, network slicing abuse, and early 6G research vectors (THz comms, AI-native air interface)."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, 5g, 6g, telecom, attack, advanced]
-    domain: telecom
+  domain: telecom
+  category: telecom-advanced
+  tool_count: 7
+  guide_count: 0
+  mitre: "TA0001-Initial Access, T1557-Adversary-in-the-Middle"
+  last_reviewed: "2026-09-04"
+  keywords: ["5G Core", "SBA", "IMSI catcher", "Diameter", "SIP", "Open RAN", "network slicing", "6G"]
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-5g-6g-telecom-attack-advanced/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-5g-6g-telecom-attack-advanced/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-5g-6g-telecom-attack-advanced/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-5g-6g-telecom-attack-advanced/guides
 ---
 
 # Skill: 5g-6g-telecom-attack-advanced
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `garak` — install: `pip install garak`
-- `wireshark` — install: `sudo apt install -y wireshark`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in garak wireshark; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v garak >/dev/null 2>&1 || echo "  pip install garak"
-  command -v wireshark >/dev/null 2>&1 || echo "  sudo apt install -y wireshark"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 ## Summary
 

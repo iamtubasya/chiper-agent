@@ -1,12 +1,64 @@
 ---
 name: chiper-ai-agent-framework-attack
-description: "Use when AI agent framework attack surface — orchestration-layer compromise of LangChain (Python/JS), LangGraph, CrewAI, Microsoft AutoGen, OpenAI Assistants API v2, Anthropic Claude Agent SDK, LlamaIndex, Microsoft Semantic Kernel, Google ADK, SmolAgents, and MCP-integrated agent runtimes. Covers tool poisoning (Simon Willison 2025 research), indirect prompt injection via untrusted tool outputs, tool rug-pull attacks (npm/PyPI dependency confusion in agent toolkits), LangChain SSRF via RequestsTool / SqlQueryTool / PythonREPLTool (CVE-2024-21514 area, CVE-2024-43480 area), CrewAI tool RCE via decorators (CVE-2024-10231 area), AutoGen code executor escape (Docker/code execution services), OpenAI Assistants API code_interpreter abuse, Claude Agent SDK MCP injection, LangGraph state injection via checkpoint poisoning, LlamaIndex query engine injection, MCP server poisoning (Anthropic/rug-pull.com research Nov 2024), tool description injection, agent memory poisoning, Retrieval-Augmented "
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "AI agent framework attack surface — orchestration-layer compromise of LangChain (Python/JS), LangGraph, CrewAI, Microsoft AutoGen, OpenAI Assistants API v2, Anthropic Claude Agent SDK, LlamaIndex, Microsoft Semantic Kernel, Google ADK, SmolAgents, and MCP-integrated agent runtimes. Covers tool poisoning (Simon Willison 2025 research), indirect prompt injection via untrusted tool outputs, tool rug-pull attacks (npm/PyPI dependency confusion in agent toolkits), LangChain SSRF via RequestsTool / SqlQueryTool / PythonREPLTool (CVE-2024-21514 area, CVE-2024-43480 area), CrewAI tool RCE via decorators (CVE-2024-10231 area), AutoGen code executor escape (Docker/code execution services), OpenAI Assistants API code_interpreter abuse, Claude Agent SDK MCP injection, LangGraph state injection via checkpoint poisoning, LlamaIndex query engine injection, MCP server poisoning (Anthropic/rug-pull.com research Nov 2024), tool description injection, agent memory poisoning, Retrieval-Augmented Generation (RAG) corpus poisoning, agent-in-the-middle attacks, shadow tools, and recent APT actor abuse of agentic AI systems (UNC5812, STAC-0050)."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - claude-code
+  - claude-sonnet-4.5
+  - cursor
+  - windsurf
+  - chiper
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, ai, agent, framework, attack]
-    domain: ai-agent-framework-attack
+  domain: ai-agent-framework-attack
+  category: ai-agent-framework
+  tool_count: 14
+  guide_count: 1
+  mitre: "T1195-Supply Chain Compromise"
+  last_reviewed: "2026-07-24"
+  keywords:
+    - AI agent
+    - LLM agent
+    - LangChain
+    - LangGraph
+    - CrewAI
+    - AutoGen
+    - OpenAI Assistants
+    - Claude Agent SDK
+    - LlamaIndex
+    - Semantic Kernel
+    - Google ADK
+    - SmolAgents
+    - MCP
+    - Model Context Protocol
+    - tool poisoning
+    - prompt injection
+    - indirect prompt injection
+    - tool rug-pull
+    - RAG poisoning
+    - agent memory poisoning
+    - shadow tools
+    - SSRF
+    - code_interpreter
+    - CVE-2024-21514
+    - CVE-2024-43480
+    - CVE-2024-10231
+    - Simon Willison
+    - hidden prompt
+    - system prompt leak
+    - agentic AI
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-framework-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-framework-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-framework-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-framework-attack/guides
 ---
 
 # Skill: AI Agent Framework Attack

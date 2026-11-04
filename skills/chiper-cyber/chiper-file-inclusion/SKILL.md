@@ -1,41 +1,35 @@
 ---
 name: chiper-file-inclusion
-description: "Use when Local File Inclusion (LFI) and Remote File Inclusion (RFI) attack techniques covering path traversal, PHP wrapper abuse, log poisoning, session file inclusion, and remote payload hosting for code execution."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Local File Inclusion (LFI) and Remote File Inclusion (RFI) attack techniques covering path traversal, PHP wrapper abuse, log poisoning, session file inclusion, and remote payload hosting for code execution."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, file, inclusion]
-    domain: web-attack
+  domain: web-attack
+  tool_count: 7
+  guide_count: 3
+  owasp: "A01:2021-Broken Access Control"
+  mitre: "T1190-Exploit Public-Facing Application, T1105-Ingress Tool Transfer, T1210-Exploitation of Remote Services, T1505.003-Web Shell"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-file-inclusion/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-file-inclusion/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-file-inclusion/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-file-inclusion/guides
 ---
 
 # Skill: File Inclusion (LFI / RFI)
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `ffuf` — install: `go install github.com/ffuf/ffuf/v2@latest`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in ffuf; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v ffuf >/dev/null 2>&1 || echo "  go install github.com/ffuf/ffuf/v2@latest"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — File inclusion attack payload collection: LFI probes, path traversal bypass, PHP wrapper exploitation, log poisoning, RFI payloads, and filter evasion techniques

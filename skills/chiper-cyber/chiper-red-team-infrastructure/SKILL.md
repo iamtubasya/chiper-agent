@@ -1,36 +1,52 @@
 ---
 name: chiper-red-team-infrastructure
-description: "Use when Building, deploying, and operating stealthy C2 infrastructure for red team engagements. Covers Mythic, Havoc, Sliver, Covenant, PoshC2, Brute Ratel, and Cobalt Strike; redirector chains (Nginx mTLS, Cloudflare workers, CDN domain fronting); dead-drop resolvers; infrastructure OPSEC (compartmentalized servers, auto-rotated certs, decoupled domains); AMIS/GoDaddy API for automated rotation. Use when deploying dedicated adversary emulation infrastructure, planning redirector chains, or testing OPSEC resilience of red team operators."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Building, deploying, and operating stealthy C2 infrastructure for red team engagements. Covers Mythic, Havoc, Sliver, Covenant, PoshC2, Brute Ratel, and Cobalt Strike; redirector chains (Nginx mTLS, Cloudflare workers, CDN domain fronting); dead-drop resolvers; infrastructure OPSEC (compartmentalized servers, auto-rotated certs, decoupled domains); AMIS/GoDaddy API for automated rotation. Use when deploying dedicated adversary emulation infrastructure, planning redirector chains, or testing OPSEC resilience of red team operators.
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - kali-linux-2025-2-arm64
+  - python-3.11+
+  - docker-26+
+  - mythic-3.3+
+  - sliver-1.5+
+  - havoc-0.7+
+  - nginx-1.24+
+  - cloudflared-2024+
+allowed-tools:
+  - mythic
+  - havoc
+  - sliver
+  - covenant
+  - poshc2
+  - brute-ratel
+  - cobalt-strike
+  - chisel
+  - gost
+  - nginx
+  - socat
+  - cloudflared
+  - frps
+  - wireguard
+  - ansible
+  - terraform
+  - certbot
+  - dnscat2
+  - iodine
+  - merlin
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, red, team, infrastructure]
-    domain: red-team-infrastructure
+  domain: red-team-infrastructure
+  tool_count: 20
+  guide_count: 2
+  mitre: "TA0011-Command and Control, T1001, T1008, T1090, T1104, T1132, T1568, T1571, T1572, T1573"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-red-team-infrastructure/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-red-team-infrastructure/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-red-team-infrastructure/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-red-team-infrastructure/guides
 ---
 
 # Red Team Infrastructure
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `docker` — `sudo apt install -y docker.io`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in docker; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v docker >/dev/null 2>&1 || sudo apt install -y docker.io
-```
-
 
 ## Summary
 

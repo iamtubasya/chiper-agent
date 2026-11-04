@@ -1,36 +1,34 @@
 ---
 name: chiper-confidential-computing-attack
-description: "Use when Attacks against Trusted Execution Environments (TEEs) and confidential computing platforms — Intel SGX (Foreshadow/SGAxe/LVI/ÆPIC Leak), Intel TDX, AMD SEV/SEV-ES/SEV-SNP (CrossLine/BadRAM), Azure CCF, Marblerun, and Gramine/Occlum libos enclaves. Covers side-channel leakage, attestation forgery, ABI misuse, host-to-enclave breakout, enclave-to-host escape, and recovery of sealed secrets. Distinct from hardware-security (broad hardware attacks) and firmware-reverse (UEFI/BIOS)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Attacks against Trusted Execution Environments (TEEs) and confidential computing platforms — Intel SGX (Foreshadow/SGAxe/LVI/ÆPIC Leak), Intel TDX, AMD SEV/SEV-ES/SEV-SNP (CrossLine/BadRAM), Azure CCF, Marblerun, and Gramine/Occlum libos enclaves. Covers side-channel leakage, attestation forgery, ABI misuse, host-to-enclave breakout, enclave-to-host escape, and recovery of sealed secrets. Distinct from hardware-security (broad hardware attacks) and firmware-reverse (UEFI/BIOS)."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, confidential, computing, attack]
-    domain: confidential-computing
+  domain: confidential-computing
+  tool_count: 14
+  guide_count: 2
+  mitre: "T1046-Network Service Discovery, T1602-Data from Configuration Repository"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-confidential-computing-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-confidential-computing-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-confidential-computing-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-confidential-computing-attack/guides
 ---
 
 # Confidential Computing Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `file` — `sudo apt install -y file`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in file; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v file >/dev/null 2>&1 || sudo apt install -y file
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Attack payloads organized by TEE: Intel SGX (Foreshadow/SGAxe/LVI/ÆPIC Leak), Intel TDX, AMD SEV-SNP (CrossLine/BadRAM), Azure CCF, Marblerun, Gramine/Occlum

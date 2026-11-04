@@ -1,41 +1,34 @@
 ---
 name: chiper-firmware-reverse
-description: "Use when Firmware reverse engineering covers the full pipeline from raw firmware image acquisition through filesystem extraction, static and dynamic analysis, full-system emulation, and vulnerability/backdoor detection."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Firmware reverse engineering covers the full pipeline from raw firmware image acquisition through filesystem extraction, static and dynamic analysis, full-system emulation, and vulnerability/backdoor detection."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, firmware, reverse]
-    domain: firmware
+  domain: firmware
+  tool_count: 18
+  guide_count: 3
+  mitre: "TA0002-Execution"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-firmware-reverse/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-firmware-reverse/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-firmware-reverse/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-firmware-reverse/guides
 ---
 
 # Firmware Reverse Engineering
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `binwalk` — install: `sudo apt install -y binwalk`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in binwalk; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v binwalk >/dev/null 2>&1 || echo "  sudo apt install -y binwalk"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- Firmware extraction, analysis, emulation, and vulnerability scanning commands organized by phase (6 sections, 25+ code blocks)

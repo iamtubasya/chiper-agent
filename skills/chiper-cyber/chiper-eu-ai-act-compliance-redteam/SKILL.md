@@ -1,12 +1,43 @@
 ---
 name: chiper-eu-ai-act-compliance-redteam
-description: "Use when EU AI Act (Regulation (EU) 2024/1689) compliance-focused red team testing for high-risk AI systems — Article 9 adversarial testing, Annex III classification, Annex IV technical documentation, conformity assessment, and Notified Body audit preparation. Enforceable since 2 August 2026 with fines up to €35M or 7% global turnover."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "EU AI Act (Regulation (EU) 2024/1689) compliance-focused red team testing for high-risk AI systems — Article 9 adversarial testing, Annex III classification, Annex IV technical documentation, conformity assessment, and Notified Body audit preparation. Enforceable since 2 August 2026 with fines up to €35M or 7% global turnover."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Python
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, eu, ai, act, compliance, redteam]
-    domain: ai-compliance
+  domain: ai-compliance
+  category: ai
+  tool_count: 8
+  guide_count: 1
+  mitre: "EUAI-Article-9, TA0040-Impact"
+  owasp: "N/A — regulatory framework, not vulnerability class"
+  keywords:
+    - EU-AI-Act
+    - AI-compliance
+    - Article-9
+    - red-team
+    - Annex-III
+    - Annex-IV
+    - conformity-assessment
+    - Notified-Body
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-eu-ai-act-compliance-redteam/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-eu-ai-act-compliance-redteam/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-eu-ai-act-compliance-redteam/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-eu-ai-act-compliance-redteam/guides
 ---
 
 # Skill: EU AI Act Compliance Red Team

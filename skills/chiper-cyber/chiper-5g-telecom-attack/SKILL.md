@@ -1,12 +1,29 @@
 ---
 name: chiper-5g-telecom-attack
-description: "Use when 5G core (AMF/SMF/UPF), RAN, signaling (PFCP/GTP/Diameter/SS7), IMSI catchers, O-RAN security, roaming abuse, SMS interception, and telecom infrastructure red team operations."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: 5G core (AMF/SMF/UPF), RAN, signaling (PFCP/GTP/Diameter/SS7), IMSI catchers, O-RAN security, roaming abuse, SMS interception, and telecom infrastructure red team operations.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: Claude Code, Claude Agent SDK
+allowed-tools:
+  - Bash
+  - Read
+  - Edit
+  - Write
+  - Glob
+  - Grep
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, 5g, telecom, attack]
-    domain: telecom
+  domain: telecom
+  category: telecom
+  tool_count: 13
+  guide_count: 2
+  mitre: "TA0001-Initial Access, T1557-Adversary-in-the-Middle, T1565-Exfiltration"
+  last_reviewed: "2026-07-26"
+  keywords: [5g, telecom, srsran, open5gs, pfcp, gtp, diameter, ss7, imsi-catcher, oran, roaming, sms-interception]
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-5g-telecom-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-5g-telecom-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-5g-telecom-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-5g-telecom-attack/guides
 ---
 
 # Skill: 5G Telecom Attack
@@ -240,12 +257,12 @@ This skill is the **only** telecom-focused skill in the workspace. The closest a
 
 ## See Also
 
-- `bluetooth-rfid-nfc/SKILL.md` — local-radio attack surface
-- `wifi-pentest/SKILL.md` — Wi-Fi attack surface
-- `sdr-rf-attack/SKILL.md` — SDR physical-layer attacks
-- `ad-ldap-attack/SKILL.md` — enterprise identity infrastructure
-- `cloud-identity-attack/SKILL.md` — cloud identity infrastructure
-- `network-tunneling-proxy/SKILL.md` — GTP-U and other tunnel protocols overlap
+- `chiper-bluetooth-rfid-nfc/SKILL.md` — local-radio attack surface
+- `chiper-wifi-pentest/SKILL.md` — Wi-Fi attack surface
+- `chiper-sdr-rf-attack/SKILL.md` — SDR physical-layer attacks
+- `chiper-ad-ldap-attack/SKILL.md` — enterprise identity infrastructure
+- `chiper-cloud-identity-attack/SKILL.md` — cloud identity infrastructure
+- `chiper-network-tunneling-proxy/SKILL.md` — GTP-U and other tunnel protocols overlap
 - `payloads.md` — 18 sections of working telecom attack commands
 - `test-cases.md` — 18 structured test cases (TC-5G-001..018)
 - `guides/5g-telecom-attack-playbook.md` — end-to-end red team playbook with lab setup, signaling methodology, real-world incidents, and 3GPP/NIST/ENISA references

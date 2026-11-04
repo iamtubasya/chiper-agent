@@ -1,51 +1,34 @@
 ---
 name: chiper-binary-reverse
-description: "Use when Binary reverse engineering covers the complete chain from static analysis, dynamic debugging, to vulnerability discovery, exploit development, and malware analysis."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Binary reverse engineering covers the complete chain from static analysis, dynamic debugging, to vulnerability discovery, exploit development, and malware analysis."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, binary, reverse]
-    domain: binary-analysis
+  domain: binary-analysis
+  tool_count: 10
+  guide_count: 5
+  mitre: "T1027-Obfuscated Files or Information, T1027.002-Software Packing, T1027.007-Dynamic API Resolution, T1027.011-Fileless Storage"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-binary-reverse/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-binary-reverse/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-binary-reverse/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-binary-reverse/guides
 ---
 
 # Skill: Binary Analysis & Reverse Engineering
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `binwalk` — install: `sudo apt install -y binwalk`
-- `checksec` — install: `sudo apt install -y checksec`
-- `gdb` — install: `sudo apt install -y gdb`
-- `ghidra` — install: `sudo apt install -y ghidra`
-- `objdump` — install: `sudo apt install -y binutils`
-- `radare2` — install: `sudo apt install -y radare2`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in binwalk checksec gdb ghidra objdump radare2; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v binwalk >/dev/null 2>&1 || echo "  sudo apt install -y binwalk"
-  command -v checksec >/dev/null 2>&1 || echo "  sudo apt install -y checksec"
-  command -v gdb >/dev/null 2>&1 || echo "  sudo apt install -y gdb"
-  command -v ghidra >/dev/null 2>&1 || echo "  sudo apt install -y ghidra"
-  command -v objdump >/dev/null 2>&1 || echo "  sudo apt install -y binutils"
-  command -v radare2 >/dev/null 2>&1 || echo "  sudo apt install -y radare2"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Command and payload collection organized by 10 major phases (binary identification, radare2 analysis, GDB debugging, buffer overflow, shellcode, ROP chain, ret2libc, format string, r2pipe scripting, firmware extraction)

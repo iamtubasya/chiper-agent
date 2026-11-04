@@ -1,36 +1,31 @@
 ---
 name: chiper-llm-red-team
-description: "Use when LLM and generative AI red team testing covering prompt injection, jailbreaking (DAN, many-shot, Crescendo, PAIR/TAP, GCG suffix, persona modulation, prefix injection, payload smuggling), model extraction, RAG poisoning, agentic tool abuse, and safety policy bypass using promptfoo, garak, PyRIT, PurpleLlama, AI-Infra-Guard and llm-guard — plus Constitutional AI, Llama Guard, NeMo Guardrails, and Azure AI Content Filter evasion."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: LLM and generative AI red team testing covering prompt injection, jailbreaking (DAN, many-shot, Crescendo, PAIR/TAP, GCG suffix, persona modulation, prefix injection, payload smuggling), model extraction, RAG poisoning, agentic tool abuse, and safety policy bypass using promptfoo, garak, PyRIT, PurpleLlama, AI-Infra-Guard and llm-guard — plus Constitutional AI, Llama Guard, NeMo Guardrails, and Azure AI Content Filter evasion.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.29"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, llm, red, team]
-    domain: ai-red-team
+  domain: ai-red-team
+  tool_count: 12
+  guide_count: 2
+  mitre: "LLM-ATT&CK (promptfoo/garak taxonomy), maps to OWASP LLM Top 10 (LLM01-LLM10) and TA0043-Reconnaissance"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-llm-red-team/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-llm-red-team/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-llm-red-team/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-llm-red-team/guides
 ---
 
 # Skill: LLM Red Team
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `garak` — `pip install garak`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in garak; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v garak >/dev/null 2>&1 || pip install garak
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Prompt injection payloads (direct/indirect/encoded), jailbreak corpora (DAN, roleplay, many-shot, encoding), model-extraction probes, RAG-poisoning document templates, membership-inference scripts, agentic tool-abuse payloads, safety-filter bypass techniques (multi-language, tokenizer tricks, homoglyphs), hallucination induction patterns, model DoS vectors, perimeter recon (model fingerprinting), reporting templates, and defense-evasion obfuscation patterns

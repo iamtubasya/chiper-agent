@@ -1,36 +1,52 @@
 ---
 name: chiper-hf-vhf-radio-attack
-description: "Use when Licensed HF/VHF/UHF radio attack — ADS-B 1090 MHz, AIS, ACARS, VDL Mode 2, POCSAG/FLEX pagers, APRS, NDB, ATC/maritime VHF, DSC, weather fax, MLAT"
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Licensed HF/VHF/UHF radio attack — ADS-B 1090 MHz, AIS, ACARS, VDL Mode 2, POCSAG/FLEX pagers, APRS, NDB, ATC/maritime VHF, DSC, weather fax, MLAT
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - Claude Code
+  - Claude Sonnet 4.5+
+  - chiper
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, hf, vhf, radio, attack]
-    domain: hf-vhf-radio-attack
+  domain: hf-vhf-radio-attack
+  category: lowfreq-radio
+  tool_count: 13
+  guide_count: 2
+  mitre: T1557-Adversary-in-the-Middle
+  keywords:
+    - SDR
+    - HF
+    - VHF
+    - UHF
+    - ADS-B
+    - AIS
+    - ACARS
+    - pager
+    - aviation
+    - maritime
+    - POCSAG
+    - FLEX
+    - APRS
+    - NDB
+    - DSC
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hf-vhf-radio-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hf-vhf-radio-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hf-vhf-radio-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hf-vhf-radio-attack/guides
 ---
 
 # Skill: Licensed HF/VHF/UHF Radio Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `hackrf` — `sudo apt install -y hackrf`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in hackrf; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v hackrf >/dev/null 2>&1 || sudo apt install -y hackrf
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- Complete payload collection organized by licensed radio service (ADS-B, AIS, ACARS, VDL Mode 2, HFDL, POCSAG/FLEX/APOC pagers, APRS, NDB, weather fax, DSC, ATC/maritime VHF voice, MLAT/TIS-B/UAT, Inmarsat/Iridium L-band) -- 18 sections covering RX hardware setup, decoding chains, TX-side spoofing with HackRF/BladeRF, replay attacks, OPSEC for engagements, and red-team aviation/maritime scenarios.
@@ -128,7 +144,7 @@ Licensed HF/VHF/UHF radio attack encompasses a broad range of receive-side intel
 - **ATC Voice (118-137 MHz AM)**: Monitor air traffic control voice communications between pilots and controllers. AM modulation, 25 kHz (or 8.33 kHz in Europe) channel spacing. Critical context for aviation security assessment and red-team OPSEC.
 - **Maritime VHF Voice (Ch 16 = 156.8 MHz, Ch 13 = 156.65 MHz)**: Monitor international maritime distress, safety, and bridge-to-bridge communications. NBFM modulation, 25 kHz channel spacing.
 - **MLAT / TIS-B / UAT (978 MHz)**: Decode Mode U transponders, Traffic Information Service-Broadcast (TIS-B), and Automatic Dependent Surveillance-Broadcast (ADS-B) on the UAT frequency used primarily in US airspace. Complements 1090 MHz ADS-B reception.
-- **Satellite L-band (Inmarsat / Iridium 1525-1660 MHz)**: Brief coverage for context -- Inmarsat STD-C (fleet messaging), Iridium bursty transmissions, and the limits of consumer SDR in this band. Full satellite exploitation is out of scope; see `sdr-rf-attack/satellite-signal-analysis-guide.md` for complementary NOAA/AIS/ADS-B satellite work.
+- **Satellite L-band (Inmarsat / Iridium 1525-1660 MHz)**: Brief coverage for context -- Inmarsat STD-C (fleet messaging), Iridium bursty transmissions, and the limits of consumer SDR in this band. Full satellite exploitation is out of scope; see `chiper-sdr-rf-attack/guides/satellite-signal-analysis-guide.md` for complementary NOAA/AIS/ADS-B satellite work.
 
 **Privacy and OPSEC Implications**:
 

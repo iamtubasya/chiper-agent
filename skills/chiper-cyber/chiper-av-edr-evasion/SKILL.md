@@ -1,41 +1,34 @@
 ---
 name: chiper-av-edr-evasion
-description: "Use when AV/EDR evasion covers techniques for bypassing antivirus (AV) and Endpoint Detection/Response (EDR) solutions during payload delivery, execution, and post-exploitation."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "AV/EDR evasion covers techniques for bypassing antivirus (AV) and Endpoint Detection/Response (EDR) solutions during payload delivery, execution, and post-exploitation."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, av, edr, evasion]
-    domain: exploitation
+  domain: exploitation
+  tool_count: 7
+  guide_count: 5
+  mitre: "TA0005-Defense Evasion"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-av-edr-evasion/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-av-edr-evasion/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-av-edr-evasion/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-av-edr-evasion/guides
 ---
 
 # Skill: AV/EDR Evasion
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `msfvenom` — install: `sudo apt install -y metasploit-framework`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in msfvenom; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v msfvenom >/dev/null 2>&1 || echo "  sudo apt install -y metasploit-framework"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- AV/EDR evasion payload collection: payload generation with msfvenom, PE injection with shellter, framework evasion with veil, .NET shellcode with donut, PE-to-shellcode conversion with pe2shc, encryption with hyperion, custom crypter techniques

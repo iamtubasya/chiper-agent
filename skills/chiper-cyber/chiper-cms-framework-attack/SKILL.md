@@ -1,53 +1,34 @@
 ---
 name: chiper-cms-framework-attack
-description: "Use when Targeted security assessment of Content Management Systems (WordPress, Joomla, Drupal) using specialized scanners and exploit techniques."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Targeted security assessment of Content Management Systems (WordPress, Joomla, Drupal) using specialized scanners and exploit techniques."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, cms, framework, attack]
-    domain: web-attack
+  domain: web-attack
+  tool_count: 7
+  guide_count: 3
+  mitre: "T1190-Exploit Public-Facing Application, T1195.002-Compromise Software Supply Chain, T1505.003-Web Shell, T1078-Valid Accounts"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cms-framework-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cms-framework-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cms-framework-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cms-framework-attack/guides
 ---
 
 # Skill: CMS Framework Attack / Content Management System Exploitation
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `cmseek` — install: `sudo apt install -y cmseek`
-- `droopescan` — install: `pip install droopescan`
-- `joomscan` — install: `sudo apt install -y joomscan`
-- `nikto` — install: `sudo apt install -y nikto`
-- `nuclei` — install: `go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest`
-- `whatweb` — install: `sudo apt install -y whatweb`
-- `wpscan` — install: `sudo apt install -y wpscan`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in cmseek droopescan joomscan nikto nuclei whatweb wpscan; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v cmseek >/dev/null 2>&1 || echo "  sudo apt install -y cmseek"
-  command -v droopescan >/dev/null 2>&1 || echo "  pip install droopescan"
-  command -v joomscan >/dev/null 2>&1 || echo "  sudo apt install -y joomscan"
-  command -v nikto >/dev/null 2>&1 || echo "  sudo apt install -y nikto"
-  command -v nuclei >/dev/null 2>&1 || echo "  go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest"
-  command -v whatweb >/dev/null 2>&1 || echo "  sudo apt install -y whatweb"
-  command -v wpscan >/dev/null 2>&1 || echo "  sudo apt install -y wpscan"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — CMS attack payload collection: CMS fingerprinting, WordPress enumeration, Joomla/Drupal scanning, plugin/theme vulnerability exploitation, admin brute force, webshell upload, config disclosure

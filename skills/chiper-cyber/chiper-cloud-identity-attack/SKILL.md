@@ -1,12 +1,28 @@
 ---
 name: chiper-cloud-identity-attack
-description: "Use when Cloud identity provider attacks covering Azure AD/Entra ID, Okta, Auth0, Ping, AWS IAM Identity Center, and Google Workspace — including OAuth 2.0 token theft, OIDC redirect abuse, SAML response forgery, conditional access bypass, MFA fatigue, federation compromise (AD FS, Ping), app registration abuse, and JIT access exploitation using ROADtools, AADInternals, MicroBurst, MFASweep, TokenTactics, and Okta API probing tools."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Cloud identity provider attacks covering Azure AD/Entra ID, Okta, Auth0, Ping, AWS IAM Identity Center, and Google Workspace — including OAuth 2.0 token theft, OIDC redirect abuse, SAML response forgery, conditional access bypass, MFA fatigue, federation compromise (AD FS, Ping), app registration abuse, and JIT access exploitation using ROADtools, AADInternals, MicroBurst, MFASweep, TokenTactics, and Okta API probing tools.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.31"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, cloud, identity, attack]
-    domain: enterprise-cloud
+  domain: enterprise-cloud
+  tool_count: 14
+  guide_count: 1
+  mitre: "T1078-Valid Accounts (cloud), T1550-Use Alternate Authentication Material (token reuse), T1606-Forge Web Credentials"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-identity-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-identity-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-identity-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-identity-attack/guides
 ---
 
 # Skill: Cloud Identity Provider Attack

@@ -1,47 +1,35 @@
 ---
 name: chiper-command-injection-advanced
-description: "Use when Advanced injection attacks beyond SQL - covering OS command injection, LDAP injection, NoSQL injection, template injection (SSTI), XPath injection, and comprehensive filter bypass techniques."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Advanced injection attacks beyond SQL - covering OS command injection, LDAP injection, NoSQL injection, template injection (SSTI), XPath injection, and comprehensive filter bypass techniques."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, command, injection, advanced]
-    domain: web-attack
+  domain: web-attack
+  tool_count: 10
+  guide_count: 4
+  owasp: "A03:2021-Injection"
+  mitre: "TA0002-Execution"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-command-injection-advanced/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-command-injection-advanced/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-command-injection-advanced/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-command-injection-advanced/guides
 ---
 
 # Skill: Advanced Command Injection
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `commix` — install: `sudo apt install -y commix`
-- `ldapsearch` — install: `sudo apt install -y ldap-utils`
-- `sqlmap` — install: `sudo apt install -y sqlmap`
-- `tplmap` — install: `pip install tplmap`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in commix ldapsearch sqlmap tplmap; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v commix >/dev/null 2>&1 || echo "  sudo apt install -y commix"
-  command -v ldapsearch >/dev/null 2>&1 || echo "  sudo apt install -y ldap-utils"
-  command -v sqlmap >/dev/null 2>&1 || echo "  sudo apt install -y sqlmap"
-  command -v tplmap >/dev/null 2>&1 || echo "  pip install tplmap"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- Injection payloads organized by 10 categories (OS command basics, filter bypass, LDAP injection, NoSQL injection, template injection, XPath injection, encoding/obfuscation, context-specific, blind injection, CyberGym templates)

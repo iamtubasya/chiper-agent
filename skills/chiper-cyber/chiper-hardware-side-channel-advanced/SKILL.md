@@ -1,41 +1,36 @@
 ---
 name: chiper-hardware-side-channel-advanced
-description: "Use when Advanced hardware side-channel attacks covering power analysis (SPA/DPA), electromagnetic emanation, timing attacks, cache-timing attacks (Spectre/Meltdown variants), glitching (voltage/clock), optical fault injection, and countermeasure evaluation."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Advanced hardware side-channel attacks covering power analysis (SPA/DPA), electromagnetic emanation, timing attacks, cache-timing attacks (Spectre/Meltdown variants), glitching (voltage/clock), optical fault injection, and countermeasure evaluation."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, hardware, side, channel, advanced]
-    domain: hardware
+  domain: hardware
+  category: side-channel
+  tool_count: 7
+  guide_count: 0
+  mitre: "T1041-Physical Attacks; emerging hardware-specific"
+  last_reviewed: "2026-09-04"
+  keywords: ["SPA", "DPA", "EM", "timing", "Spectre", "Meltdown", "glitching", "fault injection"]
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hardware-side-channel-advanced/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hardware-side-channel-advanced/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hardware-side-channel-advanced/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hardware-side-channel-advanced/guides
 ---
 
 # Skill: hardware-side-channel-advanced
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `garak` — install: `pip install garak`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in garak; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v garak >/dev/null 2>&1 || echo "  pip install garak"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 ## Summary
 

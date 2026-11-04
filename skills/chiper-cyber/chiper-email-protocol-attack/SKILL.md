@@ -1,36 +1,34 @@
 ---
 name: chiper-email-protocol-attack
-description: "Use when Email protocol attacks targeting mail infrastructure at the protocol level."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Email protocol attacks targeting mail infrastructure at the protocol level."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, email, protocol, attack]
-    domain: network-attack
+  domain: network-attack
+  tool_count: 7
+  guide_count: 3
+  mitre: "T1114-Email Collection"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-email-protocol-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-email-protocol-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-email-protocol-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-email-protocol-attack/guides
 ---
 
 # Skill: Email Protocol Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `dig` — `sudo apt install -y dnsutils`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in dig; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v dig >/dev/null 2>&1 || sudo apt install -y dnsutils
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Payload collection organized by 9 attack categories (SMTP enumeration, open relay, email forgery, SPF/DKIM/DMARC testing, IMAP brute force, Exchange attacks, header manipulation, TLS testing, fingerprinting)

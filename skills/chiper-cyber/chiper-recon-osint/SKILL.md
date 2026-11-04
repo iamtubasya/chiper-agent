@@ -1,42 +1,34 @@
 ---
 name: chiper-recon-osint
-description: "Use when The most critical first step in penetration testing. Information gathering determines the precision and efficiency of subsequent attacks."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "The most critical first step in penetration testing. Information gathering determines the precision and efficiency of subsequent attacks."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, recon, osint]
-    domain: osint
+  domain: osint
+  tool_count: 0
+  guide_count: 11
+  mitre: "TA0043-Reconnaissance"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-recon-osint/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-recon-osint/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-recon-osint/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-recon-osint/guides
 ---
 
 # Skill: Recon & OSINT
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `dig` — `sudo apt install -y dnsutils`
-- `nmap` — `sudo apt install -y nmap`
-- `theharvester` — `sudo apt install -y theharvester`
-- `whois` — `sudo apt install -y whois`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in dig nmap theharvester whois; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v dig >/dev/null 2>&1 || sudo apt install -y dnsutils
-command -v nmap >/dev/null 2>&1 || sudo apt install -y nmap
-command -v theharvester >/dev/null 2>&1 || sudo apt install -y theharvester
-command -v whois >/dev/null 2>&1 || sudo apt install -y whois
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Complete command set categorized by Passive Recon, Active Scanning, Subdomain Enumeration, Technology Fingerprinting, Email Harvesting, Social Media OSINT, Metadata Extraction, and Google Dorks
@@ -180,21 +172,21 @@ Cross-correlate collected information and build a complete attack surface map.
 
 ### Tool Memory Files (memory/)
 
-- `memory/photon.md` - Photon crawler usage guide and option details
-- `memory/dirb.md` - Dirb directory scanner configuration and practical examples
-- `memory/dnsenum.md` - Dnsenum DNS enumeration tool usage
-- `memory/fierce.md` - Fierce subdomain scanning and DNS analysis
+- `guides/2026-03-21-information-gathering-tools.md` - Photon crawler usage guide and option details
+- `guides/2026-03-21-information-gathering-tools.md` - Dirb directory scanner configuration and practical examples
+- `guides/2026-03-21-information-gathering-tools.md` - Dnsenum DNS enumeration tool usage
+- `guides/2026-03-21-information-gathering-tools.md` - Fierce subdomain scanning and DNS analysis
 - `memory/maltego.md` - Maltego visual OSINT analysis workflow
-- `memory/legion.md` - Legion semi-automated penetration testing framework
+- `guides/2026-03-21-information-gathering-tools.md` - Legion semi-automated penetration testing framework
 - `memory/recon-ng.md` - Recon-ng modular reconnaissance framework guide
-- `memory/caido.md` - Caido web proxy tool
-- `memory/hping3.md` - Hping3 advanced network probing tool
+- `guides/2026-03-21-information-gathering-tools.md` - Caido web proxy tool
+- `guides/2026-03-22-sniffing-spoofing-tools.md` - Hping3 advanced network probing tool
 
 ### Reference Guides (guides/)
 
-- `guides/api_security_complete_guide.md` - API security assessment guide
-- `guides/security_misconfiguration_complete_guide.md` - Security misconfiguration identification
-- `guides/insecure_design_complete_guide.md` - Insecure design pattern identification
+- `chiper-api-security/guides/api-security-complete-guide.md` - API security assessment guide
+- `chiper-security-misconfiguration/guides/security_misconfiguration_complete_guide.md` - Security misconfiguration identification
+- `chiper-insecure-design/guides/insecure_design_complete_guide.md` - Insecure design pattern identification
 
 ### Core System Files
 

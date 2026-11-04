@@ -1,43 +1,35 @@
 ---
 name: chiper-web-xss
-description: "Use when XSS (Cross-Site Scripting) is an attack that injects malicious scripts into trusted websites."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "XSS (Cross-Site Scripting) is an attack that injects malicious scripts into trusted websites."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, web, xss]
-    domain: web-attack
+  domain: web-attack
+  tool_count: 5
+  guide_count: 5
+  owasp: "A03:2021-Injection"
+  mitre: "T1189-Drive-by Compromise"
+  last_reviewed: "2026-07-19"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-xss/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-xss/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-xss/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-xss/guides
 ---
 
 # Skill: Cross-Site Scripting (XSS)
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `dalfox` — install: `go install github.com/hahwul/dalfox/v2@latest`
-- `xsstrike` — install: `pip install xsstrike`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in dalfox xsstrike; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v dalfox >/dev/null 2>&1 || echo "  go install github.com/hahwul/dalfox/v2@latest"
-  command -v xsstrike >/dev/null 2>&1 || echo "  pip install xsstrike"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- XSS attack payloads organized by category (probing, reflected, stored, DOM-based, encoding bypass, WAF bypass, blind, CSP bypass, cookie theft)
@@ -120,8 +112,8 @@ Auxiliary tools: **DOMPurify** (defense-side testing), **Hack-Bar** (browser qui
 | Defense Layer | Measures | Key Points |
 |---------------|----------|------------|
 | **Output Encoding** | HTML entity encoding, JavaScript encoding, URL encoding, CSS encoding | Choose the appropriate encoding method based on output context; no one-size-fits-all |
-| **Content Security Policy** | `script-src 'self'`; prohibit `unsafe-inline` / `unsafe-eval` | CSP is the last line of defense; see `guides/security_misconfiguration_complete_guide.md` |
-| **Cookie Protection** | `HttpOnly` + `Secure` + `SameSite=Strict` | Prevent JavaScript from reading session cookies; see `guides/authentication_failures_complete_guide.md` |
+| **Content Security Policy** | `script-src 'self'`; prohibit `unsafe-inline` / `unsafe-eval` | CSP is the last line of defense; see `chiper-security-misconfiguration/guides/security_misconfiguration_complete_guide.md` |
+| **Cookie Protection** | `HttpOnly` + `Secure` + `SameSite=Strict` | Prevent JavaScript from reading session cookies; see `chiper-web-auth-bypass/guides/auth-bypass-complete-guide.md` |
 | **Input Validation** | Allowlist validation, length limits, character filtering | Input validation is the first line of defense but cannot replace output encoding |
 | **Framework Built-in Protection** | React JSX auto-escaping, Vue `v-text`, Angular auto-sanitization | Understand framework default behaviors and bypass methods (`dangerouslySetInnerHTML`, `v-html`) |
 | **DOMPurify** | Server-side and client-side HTML sanitization | Be aware of mXSS attack surface; keep the library version updated |
@@ -437,5 +429,5 @@ Modern XSS detection combines signature-based WAF rules, behavioral analysis, an
 
 **Workspace related documents**:
 - `plans/web_security_advanced_plan.md` -- XSS advanced techniques learning module
-- `guides/security_misconfiguration_complete_guide.md` -- CSP and security header configuration
-- `guides/authentication_failures_complete_guide.md` -- Session hijacking and cookie security
+- `chiper-security-misconfiguration/guides/security_misconfiguration_complete_guide.md` -- CSP and security header configuration
+- `chiper-web-auth-bypass/guides/auth-bypass-complete-guide.md` -- Session hijacking and cookie security

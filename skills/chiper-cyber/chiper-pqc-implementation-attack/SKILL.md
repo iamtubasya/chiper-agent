@@ -1,12 +1,47 @@
 ---
 name: chiper-pqc-implementation-attack
-description: "Use when Post-quantum cryptography implementation-layer attacks — ML-KEM/Kyber side channels (KyberSlash-class timing, single-trace power/EM, template and deep-learning SCA), fault injection on decapsulation, RNG/keygen weaknesses in liboqs/oqs-provider/PQClean/pqm4, hybrid KEM combiner implementation flaws, and Kyber ransomware sample triage with implementation-defect recovery paths."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Post-quantum cryptography implementation-layer attacks — ML-KEM/Kyber side channels (KyberSlash-class timing, single-trace power/EM, template and deep-learning SCA), fault injection on decapsulation, RNG/keygen weaknesses in liboqs/oqs-provider/PQClean/pqm4, hybrid KEM combiner implementation flaws, and Kyber ransomware sample triage with implementation-defect recovery paths."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Python
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, pqc, implementation, attack]
-    domain: crypto
+  domain: crypto
+  category: post-quantum
+  tool_count: 10
+  guide_count: 2
+  mitre: "T1600-Weaken Encryption, T1600.001-Reduce Key Space, T1110.002-Password Cracking, T1486-Data Encrypted for Impact, T1040-Network Sniffing"
+  owasp: "N/A — cryptographic implementation class (A02:2021 Cryptographic Failures adjacent)"
+  keywords:
+    - ML-KEM
+    - Kyber
+    - KyberSlash
+    - liboqs
+    - oqs-provider
+    - pqm4
+    - side-channel
+    - fault-injection
+    - KEM-combiner
+    - pqc-ransomware
+    - FIPS-203
+    - crypto-agility
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-pqc-implementation-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-pqc-implementation-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-pqc-implementation-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-pqc-implementation-attack/guides
 ---
 
 # Skill: PQC Implementation Attack

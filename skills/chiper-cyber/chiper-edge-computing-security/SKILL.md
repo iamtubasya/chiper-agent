@@ -1,41 +1,36 @@
 ---
 name: chiper-edge-computing-security
-description: "Use when Edge computing security testing covering CDN bypass, Cloudflare Workers abuse, AWS Lambda@Edge attacks, cache poisoning, origin IP discovery, WAF bypass, and edge function injection."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Edge computing security testing covering CDN bypass, Cloudflare Workers abuse, AWS Lambda@Edge attacks, cache poisoning, origin IP discovery, WAF bypass, and edge function injection."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, edge, computing]
-    domain: edge
+  domain: edge
+  category: cdn-edge
+  tool_count: 7
+  guide_count: 0
+  mitre: "TA0001-Initial Access, T1190-Exploit Public-Facing App"
+  last_reviewed: "2026-07-26"
+  keywords: ["CDN", "Cloudflare", "Lambda@Edge", "cache poisoning", "origin IP", "WAF bypass"]
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-edge-computing-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-edge-computing-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-edge-computing-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-edge-computing-security/guides
 ---
 
 # Skill: edge-computing-security
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `garak` — install: `pip install garak`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in garak; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v garak >/dev/null 2>&1 || echo "  pip install garak"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 ## Summary
 

@@ -1,12 +1,33 @@
 ---
 name: chiper-search-first
-description: "Use when Systematizes the \"
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Systematizes the \"search for existing tools, exploits, and techniques before writing custom ones\" workflow."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, search, first]
-    domain: workflow
+  domain: workflow
+  tool_count: 0
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-search-first/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-search-first/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-search-first/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-search-first/guides
 ---
 
 # Skill: Search First — Research Before You Exploit

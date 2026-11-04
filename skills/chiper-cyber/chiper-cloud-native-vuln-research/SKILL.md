@@ -1,36 +1,26 @@
 ---
 name: chiper-cloud-native-vuln-research
-description: "Use when CVE research methodology, PoC reproduction, patch gap analysis, and exploit chain composition across container/k8s/cloud-native surfaces; SBOM-driven vuln management and nuclei template authoring."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: CVE research methodology, PoC reproduction, patch gap analysis, and exploit chain composition across container/k8s/cloud-native surfaces; SBOM-driven vuln management and nuclei template authoring.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: Claude Code, Claude Agent SDK
+allowed-tools: Bash, Read, Edit, Write, Glob, Grep
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, cloud, native, vuln, research]
-    domain: cloud-native
+  domain: cloud-native
+  category: cloud-native
+  tool_count: 13
+  guide_count: 1
+  mitre: T1068-Exploitation for Privilege Escalation, T1210-Exploitation of Remote Services, T1190-Exploit Public-Facing App
+  keywords: [cve, poc, nuclei, trivy, grype, sbom, log4shell, spring4shell, chaos-db, omigod, patch-gap, exploit-chain]
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-native-vuln-research/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-native-vuln-research/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-native-vuln-research/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-native-vuln-research/guides
 ---
 
 # Skill: Cloud-Native Vulnerability Research
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `nuclei` — `go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in nuclei; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v nuclei >/dev/null 2>&1 || go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Command catalogue for nuclei, nuclei-templates contribution, trivy, grype, syft, osv-scanner, kube-bench, kube-hunter, peirates, plus PoC recipes for Log4Shell (CVE-2021-44228), Spring4Shell (CVE-2022-22965), Text4Shell (CVE-2022-42889), OMIGOD (CVE-2021-38645), Chaos DB (CVE-2021-42306), runc escape (CVE-2019-5736), CVE-2022-0185, CVE-2022-0847 Dirty Pipe, CVE-2018-1002105, plus KEV tracking and patch-gap analysis — 18 sections with real CVE references and nuclei YAML.

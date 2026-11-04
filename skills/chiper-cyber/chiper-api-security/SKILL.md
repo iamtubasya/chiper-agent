@@ -1,41 +1,36 @@
 ---
 name: chiper-api-security
-description: "Use when API Security Testing covers security assessment across three major API architectures: REST, GraphQL, and gRPC, focusing on the OWASP API Security Top 10 core risks: Broken Authentication, Broken Object Level Authorization (BOLA), Excessive Data Exposure, Rate Limiting Bypass."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "API Security Testing covers security assessment across three major API architectures: REST, GraphQL, and gRPC, focusing on the OWASP API Security Top 10 core risks: Broken Authentication, Broken Object Level Authorization (BOLA), Excessive Data Exposure, Rate Limiting Bypass."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, api]
-    domain: web-attack
+  domain: web-attack
+  tool_count: 5
+  guide_count: 5
+  owasp: "API Security Top 10"
+  mitre: "T1190-Exploit Public-Facing Application, T1528-Steal Application Access Token, T1539-Steal Web Session Cookie, T1552.001-Credentials In Files"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-api-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-api-security/api-security-guide.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-api-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-api-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-api-security/guides
 ---
 
 # Skill: API Security Testing
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `ffuf` — install: `go install github.com/ffuf/ffuf/v2@latest`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in ffuf; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v ffuf >/dev/null 2>&1 || echo "  go install github.com/ffuf/ffuf/v2@latest"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Complete payload collection organized by attack type (endpoint discovery, BOLA, Mass Assignment, JWT, GraphQL, etc. — 8 major categories)

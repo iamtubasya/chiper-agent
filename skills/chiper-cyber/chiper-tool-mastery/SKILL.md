@@ -1,40 +1,35 @@
 ---
 name: chiper-tool-mastery
-description: "Use when Verification and assessment of practical proficiency with Kali Linux security tools. Covers tool classification, proficiency levels, verification methods, and combination strategies across the 518-tool Kali arsenal."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Verification and assessment of practical proficiency with Kali Linux security tools. Covers tool classification, proficiency levels, verification methods, and combination strategies across the 518-tool Kali arsenal."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, tool, mastery]
-    domain: knowledge
+  domain: knowledge
+  tool_count: 0
+  guide_count: 2
+  mitre: "T1046-Network Service Scanning, T1190-Exploit Public-Facing Application, T1110-Brute Force, T1003-OS Credential Dumping"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-tool-mastery/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-tool-mastery/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-tool-mastery/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-tool-mastery/guides
 ---
 
 # Tool Mastery
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `metasploit` — `sudo apt install -y metasploit-framework`
-- `nmap` — `sudo apt install -y nmap`
-- `sqlmap` — `sudo apt install -y sqlmap`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in metasploit nmap sqlmap; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v metasploit >/dev/null 2>&1 || sudo apt install -y metasploit-framework
-command -v nmap >/dev/null 2>&1 || sudo apt install -y nmap
-command -v sqlmap >/dev/null 2>&1 || sudo apt install -y sqlmap
-```
-
 
 ## Summary
 

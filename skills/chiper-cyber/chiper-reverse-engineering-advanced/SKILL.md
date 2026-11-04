@@ -1,46 +1,54 @@
 ---
 name: chiper-reverse-engineering-advanced
-description: "Use when Advanced reverse engineering covering symbolic execution (angr, KLEE, manticore), decompiler confusion (Hex-Rays, Ghidra deobfuscation), binary diffing (BinDiff, Diaphora, Kam1n0), firmware RE workflow (binwalk, FACT, EMBA), and obfuscated code analysis (LLVM obfuscation, OLLVM, Tigress). Distinct from foundational `binary-reverse` — focuses on advanced program analysis, automated RE techniques, and firmware / obfuscation workflows. Use when analyzing obfuscated or packed binaries, automating RE pipelines, analyzing firmware, or studying APT-grade obfuscation (Equation Group, Pegasus)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Advanced reverse engineering covering symbolic execution (angr, KLEE, manticore), decompiler confusion (Hex-Rays, Ghidra deobfuscation), binary diffing (BinDiff, Diaphora, Kam1n0), firmware RE workflow (binwalk, FACT, EMBA), and obfuscated code analysis (LLVM obfuscation, OLLVM, Tigress). Distinct from foundational `binary-reverse` — focuses on advanced program analysis, automated RE techniques, and firmware / obfuscation workflows. Use when analyzing obfuscated or packed binaries, automating RE pipelines, analyzing firmware, or studying APT-grade obfuscation (Equation Group, Pegasus).
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - kali-linux-2025-2-arm64
+  - python-3.11+
+  - angr-9.2+
+  - ghidra-11.0+
+  - ida-9.0+
+  - binary-ninja-5.0+
+  - radare2-5.8+
+  - binwalk-3.0+
+  - bindiff-8.0+
+allowed-tools:
+  - angr
+  - klee
+  - manticore
+  - ghidra
+  - ida
+  - binary-ninja
+  - radare2
+  - binwalk
+  - bindiff
+  - diaphora
+  - kam1n0
+  - fact-core
+  - emba
+  - ollvm-tools
+  - deflat
+  - snowman-decompiler
+  - retdec
+  - imhex
+  - pe-tree
+  - ida-deobfuscator
+  - ghidra-deobfuscator
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, reverse, engineering, advanced]
-    domain: reverse-engineering
+  domain: reverse-engineering
+  tool_count: 20
+  guide_count: 2
+  mitre: "TA0005-Defense Evasion, T1027-Obfuscated Files, T1027.002-Binary Padding, T1027.010-Command Obfuscation, T1140-Deobfuscate/Decode"
+  last_reviewed: "2026-08-17"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-reverse-engineering-advanced/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-reverse-engineering-advanced/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-reverse-engineering-advanced/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-reverse-engineering-advanced/guides
 ---
 
 # Reverse Engineering Advanced
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `angr` — `pip install angr`
-- `binwalk` — `sudo apt install -y binwalk`
-- `file` — `sudo apt install -y file`
-- `ghidra` — `sudo apt install -y ghidra`
-- `readelf` — `sudo apt install -y binutils`
-- `strings` — `sudo apt install -y binutils`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in angr binwalk file ghidra readelf strings; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v angr >/dev/null 2>&1 || pip install angr
-command -v binwalk >/dev/null 2>&1 || sudo apt install -y binwalk
-command -v file >/dev/null 2>&1 || sudo apt install -y file
-command -v ghidra >/dev/null 2>&1 || sudo apt install -y ghidra
-command -v readelf >/dev/null 2>&1 || sudo apt install -y binutils
-command -v strings >/dev/null 2>&1 || sudo apt install -y binutils
-```
-
 
 ## Summary
 

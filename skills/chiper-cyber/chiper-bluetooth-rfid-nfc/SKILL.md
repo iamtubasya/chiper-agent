@@ -1,45 +1,34 @@
 ---
 name: chiper-bluetooth-rfid-nfc
-description: "Use when Near-field wireless penetration testing skills covering Bluetooth Classic device enumeration and exploitation, BLE GATT service attacks against IoT devices, RFID card cloning (MIFARE Classic/DESFire), NFC tag manipulation, and contactless payment probing."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Near-field wireless penetration testing skills covering Bluetooth Classic device enumeration and exploitation, BLE GATT service attacks against IoT devices, RFID card cloning (MIFARE Classic/DESFire), NFC tag manipulation, and contactless payment probing."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, bluetooth, rfid, nfc]
-    domain: wireless
+  domain: wireless
+  tool_count: 13
+  guide_count: 3
+  mitre: "TA0046-Initial Access"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-bluetooth-rfid-nfc/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-bluetooth-rfid-nfc/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-bluetooth-rfid-nfc/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-bluetooth-rfid-nfc/guides
 ---
 
 # Bluetooth, RFID & NFC Security
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `bluelog` — install: `sudo apt install -y bluelog`
-- `btscanner` — install: `sudo apt install -y btscanner`
-- `redfang` — install: `sudo apt install -y redfang`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in bluelog btscanner redfang; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v bluelog >/dev/null 2>&1 || echo "  sudo apt install -y bluelog"
-  command -v btscanner >/dev/null 2>&1 || echo "  sudo apt install -y btscanner"
-  command -v redfang >/dev/null 2>&1 || echo "  sudo apt install -y redfang"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Attack commands and payloads categorized by Bluetooth Reconnaissance, Bluetooth Exploitation, BLE GATT Attacks, RFID/NFC Card Operations, and NFC Tag Operations

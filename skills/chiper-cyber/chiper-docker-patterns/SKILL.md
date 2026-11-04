@@ -1,36 +1,35 @@
 ---
 name: chiper-docker-patterns
-description: "Use when Setting up a practice lab for penetration testing techniques - Creating isolated environments for exploit development and testing - Building vulnerable application targets for training - Testing tools against known-vulnerable configurations - User says \"
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Setting up a practice lab for penetration testing techniques - Creating isolated environments for exploit development and testing - Building vulnerable application targets for training - Testing tools against known-vulnerable configurations - User says \"lab\", \"docker lab."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, docker, patterns]
-    domain: infrastructure
+  domain: infrastructure
+  tool_count: 0
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-docker-patterns/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-docker-patterns/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-docker-patterns/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-docker-patterns/guides
 ---
 
 # Docker Patterns for Security Testing
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `docker` — `sudo apt install -y docker.io`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in docker; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v docker >/dev/null 2>&1 || sudo apt install -y docker.io
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Quick launch commands, additional lab configurations, evidence extraction patterns, and cleanup commands

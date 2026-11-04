@@ -1,41 +1,34 @@
 ---
 name: chiper-social-intelligence
-description: "Use when Real-time intelligence gathering from social platforms and community discussions — capturing what people are saying, sharing, and leaking right now."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Real-time intelligence gathering from social platforms and community discussions — capturing what people are saying, sharing, and leaking right now."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, social, intelligence]
-    domain: osint
+  domain: osint
+  tool_count: 10
+  guide_count: 8
+  mitre: "TA0043-Reconnaissance"
+  last_reviewed: "2026-08-19"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-social-intelligence/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-social-intelligence/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-social-intelligence/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-social-intelligence/guides
 ---
 
 # Skill: Social Intelligence
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `sherlock` — install: `pip install sherlock-project`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in sherlock; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v sherlock >/dev/null 2>&1 || echo "  pip install sherlock-project"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Platform-specific search queries for Reddit, HackerNews, Twitter/X, YouTube, forums, and paste sites organized by intelligence gathering scenario

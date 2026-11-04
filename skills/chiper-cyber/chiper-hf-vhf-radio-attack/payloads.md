@@ -2162,7 +2162,7 @@ rtl_sdr -f 1537.5e6 -s 2000000 -g 40 -n 20000000 inmarsat_stdc.raw
 rtl_sdr -f 1624e6 -s 2000000 -g 40 -n 20000000 iridium.raw
 
 # Note: Full satellite exploitation is out of scope for this skill
-# See sdr-rf-attack/satellite-signal-analysis-guide.md for NOAA/AIS/ADS-B satellites
+# See chiper-sdr-rf-attack/guides/satellite-signal-analysis-guide.md for NOAA/AIS/ADS-B satellites
 ```
 
 ```bash
@@ -2192,7 +2192,7 @@ cat << 'EOF' > lband_satellite_findings.md
 - Full satellite exploitation requires dedicated setup and out of this skill's scope
 
 ## Adjacent Coverage
-- See sdr-rf-attack/guides/satellite-signal-analysis-guide.md for:
+- See chiper-sdr-rf-attack/guides/satellite-signal-analysis-guide.md for:
   - NOAA weather satellite image reception (137 MHz)
   - Satellite AIS (Sat-AIS on Orbcomm)
   - Satellite ADS-B (Aireon on Iridium)

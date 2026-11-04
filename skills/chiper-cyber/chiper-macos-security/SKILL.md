@@ -1,12 +1,23 @@
 ---
 name: chiper-macos-security
-description: "Use when macOS red team and security assessment — SIP/TCC bypass, Endpoint Security framework, Apple Silicon/T2/M-series attacks, Mach-O analysis, Keychain extraction, MDM bypass, LaunchAgents/Daemons persistence, and macOS-native malware analysis."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: macOS red team and security assessment — SIP/TCC bypass, Endpoint Security framework, Apple Silicon/T2/M-series attacks, Mach-O analysis, Keychain extraction, MDM bypass, LaunchAgents/Daemons persistence, and macOS-native malware analysis.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: Claude Code, Agent SDK
+allowed-tools: Bash, Read, Edit, Write, Glob, Grep
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, macos]
-    domain: macos
+  domain: macos
+  category: macos
+  tool_count: 13
+  guide_count: 2
+  mitre: TA0005-Defense Evasion, T1547-Boot or Logon Autostart, T1555-Credentials from Password Stores
+  keywords: [macos, sip, tcc, endpoint-security, mach-o, keychain, apple-silicon, m2, launchd, mdm, knockknock, lulu]
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-macos-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-macos-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-macos-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-macos-security/guides
 ---
 
 # Skill: macOS Security Assessment
@@ -613,7 +624,7 @@ A reproducible macOS test lab is essential — never test live exploits on a dai
 - **`chiper-post-exploitation/SKILL.md`** — General post-exploitation activities. The macOS-specific persistence (LaunchAgents/Daemons, login items, Spotlight importers) is here.
 - **`chiper-pentest-reporting/SKILL.md`** — Structuring the deliverable. macOS findings map to MITRE ATT&CK for macOS (which is a fully-supported platform in ATT&CK).
 - **`chiper-scada-ics-security/SKILL.md`** — Industrial control systems. Not directly related, but some Mac-based engineering workstations in OT environments warrant macOS-specific hardening (rare).
-- **`skills/identity-attack/SKILL.md`** (if present) — Cross-platform identity attacks. macOS-bound identities (Keychain certificates, MDM enrollment identity, CloudKit) are covered here.
+- **`chiper-identity-provider-attack/SKILL.md`** (if present) — Cross-platform identity attacks. macOS-bound identities (Keychain certificates, MDM enrollment identity, CloudKit) are covered here.
 
 ## Learning Resources
 

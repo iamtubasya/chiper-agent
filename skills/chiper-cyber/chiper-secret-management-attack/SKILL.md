@@ -1,41 +1,31 @@
 ---
 name: chiper-secret-management-attack
-description: "Use when Secret discovery, SAST code audit, and secrets-management platform attack covering gitleaks, semgrep, trufflehog, infisical, bearer, DeepAudit, apkleaks, and cariddi — including HashiCorp Vault exploitation (auth methods, secrets engines, policies, response-wrap hijacking, SSRF), AWS KMS key policy abuse, GCP KMS IAM escalation, Azure Key Vault access policy review, BYOK/HYOK attacks, Kyverno/external-secrets/secrets-store-csi-driver misconfig hunting, hardcoded credential discovery, secret rotation abuse, and CI/CD pipeline secret theft."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Secret discovery, SAST code audit, and secrets-management platform attack covering gitleaks, semgrep, trufflehog, infisical, bearer, DeepAudit, apkleaks, and cariddi — including HashiCorp Vault exploitation (auth methods, secrets engines, policies, response-wrap hijacking, SSRF), AWS KMS key policy abuse, GCP KMS IAM escalation, Azure Key Vault access policy review, BYOK/HYOK attacks, Kyverno/external-secrets/secrets-store-csi-driver misconfig hunting, hardcoded credential discovery, secret rotation abuse, and CI/CD pipeline secret theft.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.29"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, secret, management, attack]
-    domain: appsec
+  domain: appsec
+  tool_count: 14
+  guide_count: 3
+  mitre: "T1552-Unsecured Credentials, T1552.001-Credentials In Files, T1552.004-Private Keys, T1552.007-Container and Cloud"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-secret-management-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-secret-management-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-secret-management-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-secret-management-attack/guides
 ---
 
 # Skill: Secret Management Attack — Discovery, SAST Audit & Vault Exploitation
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `trivy` — install: `sudo apt install -y trivy`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in trivy; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v trivy >/dev/null 2>&1 || echo "  sudo apt install -y trivy"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — gitleaks / trufflehog / semgrep / bearer command catalogs, AWS-GCP-Azure metadata secret extraction, HashiCorp Vault token-theft payloads, Infisical/Doppler/AWS Secrets Manager abuse, GitHub Actions/GitLab CI/Jenkins secret exfiltration, Kubernetes secret + etcd dump, container image layer analysis (dive/trivy), DeepAudit multi-agent audit invocation, apkleaks DEX scanning, cariddi web crawl, custom regex patterns for proprietary tokens, OPSEC-aware scanning techniques, canary-token evasion

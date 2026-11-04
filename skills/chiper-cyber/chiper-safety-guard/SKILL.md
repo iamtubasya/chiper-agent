@@ -1,12 +1,33 @@
 ---
 name: chiper-safety-guard
-description: "Use when Before executing ANY potentially destructive or irreversible command - When a command targets production or critical infrastructure - When operating under a defined rules of engagement (ROE) - When a loop or automated sequence is about to start - User says \"
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Before executing ANY potentially destructive or irreversible command - When a command targets production or critical infrastructure - When operating under a defined rules of engagement (ROE) - When a loop or automated sequence is about to start - User says \"safe?"
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, safety, guard]
-    domain: defense
+  domain: defense
+  tool_count: 0
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-safety-guard/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-safety-guard/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-safety-guard/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-safety-guard/guides
 ---
 
 # Safety Guard

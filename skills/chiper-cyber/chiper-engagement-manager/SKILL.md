@@ -1,12 +1,32 @@
 ---
 name: chiper-engagement-manager
-description: "Use when End-to-end penetration test project management skill. Orchestrates the full engagement lifecycle from scoping through reporting, managing skill composition, evidence chains, and phase transitions."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "End-to-end penetration test project management skill. Orchestrates the full engagement lifecycle from scoping through reporting, managing skill composition, evidence chains, and phase transitions."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, engagement, manager]
-    domain: management
+  domain: management
+  tool_count: 0
+  guide_count: 3
+  mitre: "T1595-Active Scanning, T1592-Gather Victim Host Info, T1590-Gather Victim Network Info, T1589-Gather Victim Identity Information"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-engagement-manager/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-engagement-manager/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-engagement-manager/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-engagement-manager/guides
 ---
 
 # Engagement Manager

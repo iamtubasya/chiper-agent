@@ -1,45 +1,54 @@
 ---
 name: chiper-ics-fieldbus-attack
-description: "Use when Industrial fieldbus protocol penetration testing beyond Modbus — Profibus/PROFINET, EtherCAT, DNP3, IEC 61850 (GOOSE/SV/MMS), IEC 60870-5-101/104, Foundation Fieldbus, HART, CC-Link, BACnet deep dive. Covers power utility, process automation, building automation, and automotive fieldbus attack surfaces."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Industrial fieldbus protocol penetration testing beyond Modbus — Profibus/PROFINET, EtherCAT, DNP3, IEC 61850 (GOOSE/SV/MMS), IEC 60870-5-101/104, Foundation Fieldbus, HART, CC-Link, BACnet deep dive. Covers power utility, process automation, building automation, and automotive fieldbus attack surfaces.
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - Claude Code
+  - Claude Sonnet 4.5+
+  - Claude Opus 4.5+
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, ics, fieldbus, attack]
-    domain: ics-fieldbus-attack
+  domain: ics-fieldbus-attack
+  category: fieldbus
+  tool_count: 13
+  guide_count: 1
+  mitre: "T0817-Program Logic Controller Software"
+  keywords:
+    - ICS
+    - SCADA
+    - fieldbus
+    - DNP3
+    - IEC 61850
+    - Profibus
+    - industrial protocols
+    - PROFINET
+    - EtherCAT
+    - IEC 60870
+    - GOOSE
+    - HART
+    - Foundation Fieldbus
+    - CC-Link
+    - BACnet
+    - power utility
+    - substation
+    - process automation
+  last_reviewed: "2026-08-12"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ics-fieldbus-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ics-fieldbus-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ics-fieldbus-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ics-fieldbus-attack/guides
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ics-fieldbus-attack/scripts
 ---
 
 # ICS Fieldbus Protocol Attack Assessment
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `boofuzz` — install: `pip install boofuzz`
-- `scapy` — install: `pip install scapy`
-- `wireshark` — install: `sudo apt install -y wireshark`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in boofuzz scapy wireshark; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v boofuzz >/dev/null 2>&1 || echo "  pip install boofuzz"
-  command -v scapy >/dev/null 2>&1 || echo "  pip install scapy"
-  command -v wireshark >/dev/null 2>&1 || echo "  sudo apt install -y wireshark"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Protocol-specific payloads for 12 fieldbus families: DNP3, IEC 60870-5, IEC 61850 (GOOSE/SV/MMS), Profibus/PROFINET, EtherCAT, EtherNet/IP-CIP deep, Foundation Fieldbus, HART/WirelessHART, CC-Link, BACnet deep, Modbus RTU/Plus, and SCADA fuzzing templates

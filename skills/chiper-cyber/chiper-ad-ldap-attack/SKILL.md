@@ -1,40 +1,34 @@
 ---
 name: chiper-ad-ldap-attack
-description: "Use when Active Directory is the backbone of enterprise identity and access management, making it a primary target during internal network penetration tests."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Active Directory is the backbone of enterprise identity and access management, making it a primary target during internal network penetration tests."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, ad, ldap, attack]
-    domain: enterprise
+  domain: enterprise
+  tool_count: 0
+  guide_count: 3
+  mitre: "TA0006-Credential Access"
+  last_reviewed: "2026-07-24"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ad-ldap-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ad-ldap-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ad-ldap-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ad-ldap-attack/guides
 ---
 
 # Skill: Active Directory and LDAP Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `impacket` — `pip install impacket`
-- `nbtscan` — `sudo apt install -y nbtscan`
-- `secretsdump` — `pip install impacket`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in impacket nbtscan secretsdump; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v impacket >/dev/null 2>&1 || pip install impacket
-command -v nbtscan >/dev/null 2>&1 || sudo apt install -y nbtscan
-command -v secretsdump >/dev/null 2>&1 || pip install impacket
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- Payload collection organized by 10 attack phases (reconnaissance, LDAP enumeration, Kerberos attacks, credential harvesting, lateral movement, domain dominance)

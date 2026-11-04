@@ -1,38 +1,43 @@
 ---
 name: chiper-threat-intel-platform-attack
-description: "Use when Attacking threat intelligence platforms (MISP, OpenCTI, Anomali ThreatStream, ThreatQuotient, ThreatConnect, IBM Threat Intel, Palo Alto AutoFocus, Mandiant Advantage). Covers platform CVEs (MISP CVE-2022-29527, OpenCTI vulnerabilities), API abuse, sharing-group trust abuse, false-positive IOC injection, STIX/TAXII feed manipulation, and supply-chain attacks via poisoned TI feeds. Use when testing threat-intel platform security, validating IOC sharing trust models, or simulating APT feed-poisoning campaigns."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Attacking threat intelligence platforms (MISP, OpenCTI, Anomali ThreatStream, ThreatQuotient, ThreatConnect, IBM Threat Intel, Palo Alto AutoFocus, Mandiant Advantage). Covers platform CVEs (MISP CVE-2022-29527, OpenCTI vulnerabilities), API abuse, sharing-group trust abuse, false-positive IOC injection, STIX/TAXII feed manipulation, and supply-chain attacks via poisoned TI feeds. Use when testing threat-intel platform security, validating IOC sharing trust models, or simulating APT feed-poisoning campaigns.
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - kali-linux-2025-2-arm64
+  - python-3.11+
+  - misp-2.4+
+  - opencti-6.0+
+  - docker-26+
+  - stix2-python
+allowed-tools:
+  - misp
+  - opencti
+  - curl
+  - python3
+  - jq
+  - burpsuite
+  - zaproxy
+  - nuclei
+  - sqlmap
+  - stix2
+  - taxii2-client
+  - gh
+  - mitre-attack-python
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, threat, intel, platform, attack]
-    domain: threat-intel-platforms
+  domain: threat-intel-platforms
+  tool_count: 13
+  guide_count: 2
+  mitre: "TA0001-Initial Access, TA0006-Credential Access, T1078-Valid Accounts, T1190-Exploit Public-Facing App, T1552-Unsecured Credentials, T1566-Phishing"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-threat-intel-platform-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-threat-intel-platform-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-threat-intel-platform-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-threat-intel-platform-attack/guides
 ---
 
 # Threat Intel Platform Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `curl` — `sudo apt install -y curl`
-- `jq` — `sudo apt install -y jq`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in curl jq; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v curl >/dev/null 2>&1 || sudo apt install -y curl
-command -v jq >/dev/null 2>&1 || sudo apt install -y jq
-```
-
 
 ## Summary
 

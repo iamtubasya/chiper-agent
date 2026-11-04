@@ -1,41 +1,44 @@
 ---
 name: chiper-ai-safety-redteam-advanced
-description: "Use when Advanced AI safety red team operations covering OWASP LLM Top 10 (2025), prompt injection (direct/indirect/multi-turn), jailbreak techniques (DAN, cognitive hacking, persona-based), data poisoning detection, model inversion attacks, adversarial examples (evasion), model extraction, and AI supply chain attacks against LLM-integrated applications, agent frameworks, and RAG systems."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Advanced AI safety red team operations covering OWASP LLM Top 10 (2025), prompt injection (direct/indirect/multi-turn), jailbreak techniques (DAN, cognitive hacking, persona-based), data poisoning detection, model inversion attacks, adversarial examples (evasion), model extraction, and AI supply chain attacks against LLM-integrated applications, agent frameworks, and RAG systems."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, ai, safety, redteam, advanced]
-    domain: ai-safety
+  domain: ai-safety
+  category: ai-emerging
+  tool_count: 12
+  guide_count: 4
+  mitre: "Emerging (LLM-specific); overlaps T1059-Automated Command Execution, T1566-Phishing via prompt injection, T1190-Exploit Public-Facing App via LLM abuse"
+  last_reviewed: "2026-07-26"
+  keywords:
+    - LLM red team
+    - prompt injection
+    - jailbreak
+    - OWASP LLM Top 10
+    - adversarial ML
+    - model extraction
+    - data poisoning
+    - AI safety
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-safety-redteam-advanced/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-safety-redteam-advanced/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-safety-redteam-advanced/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-safety-redteam-advanced/guides
 ---
 
 # Skill: AI Safety Red Team — Advanced
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `garak` — install: `pip install garak`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in garak; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v garak >/dev/null 2>&1 || echo "  pip install garak"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — 60+ ready-to-use LLM attack payloads (prompt injection, jailbreak, RAG poisoning, model extraction)
@@ -416,4 +419,4 @@ AI red team sits at intersection of multiple chiper-cyber skills. LLM red team (
 - [AI Village DEF CON](https://aivillage.org/) — AI security community
 - [Lakera AI Security](https://lakera.ai/) — LLM firewall and security research
 
-> Workspace notes: `memory/llm-red-team.md` | `memory/ai-agent-frameworks.md`
+> Workspace notes: `chiper-llm-red-team/SKILL.md` | `chiper-ai-agent-framework-attack/SKILL.md`

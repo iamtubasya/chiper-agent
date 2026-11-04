@@ -1,41 +1,34 @@
 ---
 name: chiper-container-security
-description: "Use when Container security covers the complete lifecycle from image building, registry management, runtime protection, to orchestration platform (Kubernetes) security."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Container security covers the complete lifecycle from image building, registry management, runtime protection, to orchestration platform (Kubernetes) security."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, container]
-    domain: cloud
+  domain: cloud
+  tool_count: 6
+  guide_count: 5
+  mitre: "TA0008-Lateral Movement"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-container-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-container-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-container-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-container-security/guides
 ---
 
 # Skill: Container Security
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `trivy` — install: `sudo apt install -y trivy`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in trivy; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v trivy >/dev/null 2>&1 || echo "  sudo apt install -y trivy"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Container security testing attack payloads, categorized by image analysis, escape techniques, Kubernetes security, runtime security, registry security, network policies, secret detection, and privilege escalation

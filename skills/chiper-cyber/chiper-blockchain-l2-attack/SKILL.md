@@ -1,45 +1,47 @@
 ---
 name: chiper-blockchain-l2-attack
-description: "Use when Layer-2 blockchain attack — Lightning Network (BOLT, HTLC), Optimistic Rollups (Optimism/Arbitrum/Boba/Base), ZK Rollups (zkSync/StarkNet/Polygon zkEVM/Scroll/Linea), Polygon PoS, Gnosis sidechain, cross-chain bridges (Wormhole/Nomad/Ronin/Poly Network/Multichain/Horizon), state channels, ERC-4337 account abstraction, and DA layers (Celestia/EigenDA/Avail)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Layer-2 blockchain attack — Lightning Network (BOLT, HTLC), Optimistic Rollups (Optimism/Arbitrum/Boba/Base), ZK Rollups (zkSync/StarkNet/Polygon zkEVM/Scroll/Linea), Polygon PoS, Gnosis sidechain, cross-chain bridges (Wormhole/Nomad/Ronin/Poly Network/Multichain/Horizon), state channels, ERC-4337 account abstraction, and DA layers (Celestia/EigenDA/Avail)."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - claude-code
+  - claude-sonnet-4.5
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, blockchain, l2, attack]
-    domain: blockchain-l2-attack
+  domain: blockchain-l2-attack
+  category: blockchain-l2
+  tool_count: 13
+  guide_count: 1
+  mitre: "TA0006-Credential Access"
+  keywords:
+    - L2
+    - rollup
+    - bridge
+    - Lightning Network
+    - Optimism
+    - Arbitrum
+    - zkSync
+    - cross-chain
+    - sequencer
+    - fraud-proof
+    - HTLC
+    - ERC-4337
+    - Wormhole
+    - Nomad
+    - Ronin
+  last_reviewed: "2026-08-17"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-l2-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-l2-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-l2-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-l2-attack/guides
 ---
 
 # Skill: Layer-2 Blockchain Attack
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `echidna` — install: `echo "Download: https://github.com/crytic/echidna/releases"`
-- `mythril` — install: `pip install mythril`
-- `slither` — install: `pip install slither-analyzer`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in echidna mythril slither; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v echidna >/dev/null 2>&1 || echo "  echo "Download: https://github.com/crytic/echidna/releases""
-  command -v mythril >/dev/null 2>&1 || echo "  pip install mythril"
-  command -v slither >/dev/null 2>&1 || echo "  pip install slither-analyzer"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Command + exploit catalogue organized by L2 family (Lightning Network, Optimistic Rollups, ZK Rollups, Bridges, Account Abstraction, DA layers) — 60+ code blocks with Foundry/Hardhat/Brownie PoCs, Slither/Echidna harnesses, and replay attack templates for every major L2 incident class.

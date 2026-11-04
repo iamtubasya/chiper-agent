@@ -1,45 +1,34 @@
 ---
 name: chiper-ai-fuzzing
-description: "Use when AI-assisted fuzzing for automated vulnerability discovery. Coverage-guided fuzzing engines, AI-driven seed generation, intelligent mutation strategies, and systematic crash triage."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "AI-assisted fuzzing for automated vulnerability discovery. Coverage-guided fuzzing engines, AI-driven seed generation, intelligent mutation strategies, and systematic crash triage."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, ai, fuzzing]
-    domain: ai
+  domain: ai
+  tool_count: 6
+  guide_count: 7
+  mitre: "T1190-Exploit Public-Facing Application, T1203-Exploitation for Client Execution, T1068-Exploitation for Privilege Escalation, T1610-Deploy Container"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-fuzzing/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-fuzzing/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-fuzzing/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-fuzzing/guides
 ---
 
 # AI-Assisted Fuzzing
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `boofuzz` — install: `pip install boofuzz`
-- `radare2` — install: `sudo apt install -y radare2`
-- `wfuzz` — install: `sudo apt install -y wfuzz`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in boofuzz radare2 wfuzz; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v boofuzz >/dev/null 2>&1 || echo "  pip install boofuzz"
-  command -v radare2 >/dev/null 2>&1 || echo "  sudo apt install -y radare2"
-  command -v wfuzz >/dev/null 2>&1 || echo "  sudo apt install -y wfuzz"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Tool commands and payloads organized by 9 phases (target analysis, corpus preparation, AFL++ execution, libFuzzer, Honggfuzz, web API fuzzing, protocol fuzzing, crash analysis, quick start checklist)

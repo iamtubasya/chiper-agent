@@ -1,43 +1,31 @@
 ---
 name: chiper-kubernetes-attack
-description: "Use when Kubernetes cluster attack and red team covering RBAC abuse, pod escape (privileged pods, hostPath, capabilities, hostPID/hostIPC, container runtime sockets, kernel CVEs), kubelet API abuse (10250/10255), etcd direct access, service account token theft (legacy and projected), RBAC privilege escalation chains, cloud-managed K8s (EKS/GKE/AKS) pivoting, and kubectl plugin ecosystem (peirates, CDK, kube-hunter, BOtB, kubeletctl, kubescape, stratus-red-team, kubernetes-goat)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Kubernetes cluster attack and red team covering RBAC abuse, pod escape (privileged pods, hostPath, capabilities, hostPID/hostIPC, container runtime sockets, kernel CVEs), kubelet API abuse (10250/10255), etcd direct access, service account token theft (legacy and projected), RBAC privilege escalation chains, cloud-managed K8s (EKS/GKE/AKS) pivoting, and kubectl plugin ecosystem (peirates, CDK, kube-hunter, BOtB, kubeletctl, kubescape, stratus-red-team, kubernetes-goat).
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.29"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, kubernetes, attack]
-    domain: cloud-native
+  domain: cloud-native
+  tool_count: 14
+  guide_count: 2
+  mitre: "TA0008-Lateral Movement (containers), maps to MITRE ATT&CK for Containers"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-kubernetes-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-kubernetes-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-kubernetes-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-kubernetes-attack/guides
 ---
 
 # Skill: Kubernetes Attack
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `kubectl` — install: `sudo apt install -y kubectl`
-- `trivy` — install: `sudo apt install -y trivy`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in kubectl trivy; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v kubectl >/dev/null 2>&1 || echo "  sudo apt install -y kubectl"
-  command -v trivy >/dev/null 2>&1 || echo "  sudo apt install -y trivy"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Command catalogue for kubectl, CDK, peirates, kube-hunter, kubescape, stratus-red-team, kube-bench, plus exploit recipes for RBAC abuse, pod escape, SA token theft, etcd dump, admission controller bypass, image poisoning, network policy evasion, EKS/GKE/AKS IAM pivot, persistence, and audit-log evasion — 13 sections with real kubectl flags and CVE references.
@@ -533,7 +521,7 @@ kubectl apply -f backdoor-cron.yaml
 - **`chiper-post-exploitation/SKILL.md`** — Host-level post-exploitation once you've escaped a pod to the node. Covers sudo/SUID/kernel privesc on the node.
 - **`chiper-privilege-escalation/SKILL.md`** — Host privesc on the node post-escape. Overlaps with container-security on kernel CVEs.
 - **`chiper-supply-chain-security/SKILL.md`** — Dependency/package provenance for code. Kubernetes-attack covers the deploy-time supply chain (images, admission, registry) which is adjacent.
-- **`skills/lateral-movement/SKILL.md`** — General lateral movement across a network. K8s-specific lateral (cross-namespace exec, etcd dump) is here.
+- **`chiper-post-exploitation/SKILL.md`** — General lateral movement across a network. K8s-specific lateral (cross-namespace exec, etcd dump) is here.
 - **`chiper-anti-forensics/SKILL.md`** — Cleaning up the DaemonSet, CronJob, forged RBAC binding, and audit log entries post-engagement.
 - **`chiper-pentest-reporting/SKILL.md`** — Structuring the engagement deliverable with the K8s attack chain as the narrative spine.
 - **`chiper-digital-forensics/SKILL.md`** — Defender-side analysis of audit logs, Falco events, and Hubble flows when responding to a real cluster compromise.

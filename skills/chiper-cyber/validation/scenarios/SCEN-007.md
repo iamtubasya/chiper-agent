@@ -19,7 +19,7 @@ Coordinate **3 parallel agents** against ONE shared `exploit-attempt-memory.json
 - **Agent B** — **Harness-entry direction**: write an AFL++/libFuzzer harness, fuzz the vulnerable binary, take the first crash, work backwards to the root cause.
 - **Agent C** — **Sanitizer direction**: run the binary under ASan/UBSan against an input corpus, capture the stack trace, localize to source line.
 
-All agents read/write the **same** memory file using the atomic-write + version-vector protocol defined in `SCEN-MEMORY-SCHEMA.md` (Schema 2). Stop condition: any candidate PoC passes **differential verification** — crashes the vulnerable binary, ASan-clean on the patched binary.
+All agents read/write the **same** memory file using the atomic-write + version-vector protocol defined in `validation/scenarios/SCEN-MEMORY-SCHEMA.md` (Schema 2). Stop condition: any candidate PoC passes **differential verification** — crashes the vulnerable binary, ASan-clean on the patched binary.
 
 ---
 

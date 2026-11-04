@@ -1,43 +1,44 @@
 ---
 name: chiper-darkweb-intel
-description: "Use when Dark web intelligence gathering — Tor/onion service reconnaissance, marketplace monitoring, breach data markets, threat actor profiling, with strict OPSEC for investigators."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Dark web intelligence gathering — Tor/onion service reconnaissance, marketplace monitoring, breach data markets, threat actor profiling, with strict OPSEC for investigators."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, darkweb, intel]
-    domain: osint
+  domain: osint
+  tool_count: 10
+  guide_count: 2
+  mitre: "TA0043-Reconnaissance"
+  keywords:
+    - tor
+    - onion-crawl
+    - onionscan
+    - ahmia
+    - hunchly
+    - whonix
+    - tails
+    - breach-forum
+    - opsec
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-darkweb-intel/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-darkweb-intel/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-darkweb-intel/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-darkweb-intel/guides
 ---
 
 # Skill: Dark Web Intelligence
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `spiderfoot` — install: `sudo apt install -y spiderfoot`
-- `tor` — install: `sudo apt install -y tor`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in spiderfoot tor; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v spiderfoot >/dev/null 2>&1 || echo "  sudo apt install -y spiderfoot"
-  command -v tor >/dev/null 2>&1 || echo "  sudo apt install -y tor"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Tor/Whonix/Tails setup, ahmia.fi/Torch/dark.fail/Onionland/Haystak search patterns, OnionScan enumeration, IntelX/DarkOwl/HIBP/DeHashed API usage, threat actor pivot (handles, PGP keys, XMR wallets), Recon-ng darkweb modules, async Python scraping pipeline, OPSEC detection, counter-OSINT cleanup, and a quick-reference cheat sheet

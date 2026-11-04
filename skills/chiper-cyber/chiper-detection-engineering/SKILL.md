@@ -1,12 +1,28 @@
 ---
 name: chiper-detection-engineering
-description: "Use when Detection-as-code engineering covering Sigma rule authoring, YARA signature development, Splunk SPL / Kusto KQL / Elastic EQL queries, MITRE ATT&CK mapping, detection CI/CD pipelines, false-positive tuning, and rule testing against EVTX-ATTACK-SAMPLES — using SigmaHQ, Yara-Rules, Loki, yarGen, hayabusa, SigmaCLI, and zircollo."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Detection-as-code engineering covering Sigma rule authoring, YARA signature development, Splunk SPL / Kusto KQL / Elastic EQL queries, MITRE ATT&CK mapping, detection CI/CD pipelines, false-positive tuning, and rule testing against EVTX-ATTACK-SAMPLES — using SigmaHQ, Yara-Rules, Loki, yarGen, hayabusa, SigmaCLI, and zircollo.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.30"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, detection, engineering]
-    domain: defense
+  domain: defense
+  tool_count: 14
+  guide_count: 2
+  mitre: "TA0040-Detection (detection engineering discipline); provides coverage across all ATT&CK techniques via Sigma rule taxonomy"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-detection-engineering/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-detection-engineering/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-detection-engineering/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-detection-engineering/guides
 ---
 
 # Skill: Detection Engineering

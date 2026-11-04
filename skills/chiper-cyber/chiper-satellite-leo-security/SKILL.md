@@ -1,36 +1,40 @@
 ---
 name: chiper-satellite-leo-security
-description: "Use when Satellite and LEO communication security — Starlink, Kuiper, OneWeb, Iridium, Inmarsat, Viasat KA-SAT, HughesNet, DVB-S/S2, VSAT (iDirect/Hughes), GNSS receiver attacks, AcidRain wiper (Viasat 2022)"
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Satellite and LEO communication security — Starlink, Kuiper, OneWeb, Iridium, Inmarsat, Viasat KA-SAT, HughesNet, DVB-S/S2, VSAT (iDirect/Hughes), GNSS receiver attacks, AcidRain wiper (Viasat 2022)
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility: Claude Code, Claude Sonnet 4.5+
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, satellite, leo]
-    domain: satellite-leo-security
+  domain: satellite-leo-security
+  category: satellite
+  tool_count: 13
+  guide_count: 1
+  mitre: T1557-Adversary-in-the-Middle
+  keywords:
+    - satellite
+    - LEO
+    - Starlink
+    - Kuiper
+    - Iridium
+    - Inmarsat
+    - Viasat
+    - DVB-S
+    - VSAT
+    - GNSS
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-satellite-leo-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-satellite-leo-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-satellite-leo-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-satellite-leo-security/guides
 ---
 
 # Skill: Satellite & LEO Communication Security
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `hackrf` — `sudo apt install -y hackrf`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in hackrf; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v hackrf >/dev/null 2>&1 || sudo apt install -y hackrf
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Command catalogue organized by satellite family: Starlink (terminal hardware, boot chain, gRPC terminal APIs, starlinkground, Open Satellite Project), Iridium (gr-iridium L-band burst demod, SBD short-burst data, Iridium NEXT enumeration), Inmarsat (BGAN, FleetExpress, IsatPhone, Sned SBD), Viasat KA-SAT (SurfBeam2 firmware, AcidRain wiper analysis, TtDotMon), DVB-S/S2/S2X (leandvb software decoder, welle.io, blind scan, DVB-CSA descrambling in authorized lab), VSAT/iDirect/Hughes (9500/9800 modem shell, HM/HT attach, DNS hijack on uplink, provisioning abuse), GNSS receiver attacks (GPS-SDR-SIM, Galileo spoofing, RAIM detection). 60+ code blocks, 2,000+ lines.

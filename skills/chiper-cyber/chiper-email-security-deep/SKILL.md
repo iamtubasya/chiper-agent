@@ -1,41 +1,31 @@
 ---
 name: chiper-email-security-deep
-description: "Use when Phishing infrastructure and email gateway bypass covering AiTM MFA interception (evilginx2/modlishka/evilgophish), campaign platforms (gophish/King-Phisher), enterprise gateway evasion (Proofpoint/Mimecast/Cisco ESA/Microsoft Defender for Office), email bombing/DoS, sender reputation engineering, and full-stack campaign operations including landing pages, payload staging, and post-click telemetry — complementary to email-protocol-attack which handles protocol-level forgery."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Phishing infrastructure and email gateway bypass covering AiTM MFA interception (evilginx2/modlishka/evilgophish), campaign platforms (gophish/King-Phisher), enterprise gateway evasion (Proofpoint/Mimecast/Cisco ESA/Microsoft Defender for Office), email bombing/DoS, sender reputation engineering, and full-stack campaign operations including landing pages, payload staging, and post-click telemetry — complementary to email-protocol-attack which handles protocol-level forgery.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.31"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, email, deep]
-    domain: appsec
+  domain: appsec
+  tool_count: 14
+  guide_count: 2
+  mitre: "T1566-Phishing (Spearfish, Service Spearfish, Spearfish Attachment), T1114-Email Collection, T1059-Automated Command Execution via payload"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-email-security-deep/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-email-security-deep/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-email-security-deep/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-email-security-deep/guides
 ---
 
 # Skill: Email Security Deep — Phishing Infrastructure & Gateway Bypass
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `gophish` — install: `echo "Download: https://github.com/gophish/gophish/releases"`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in gophish; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v gophish >/dev/null 2>&1 || echo "  echo "Download: https://github.com/gophish/gophish/releases""
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — 14 sections: evilginx2 phishlet authoring + AiTM proxy, evilgophish integration, modlishka flexible reverse-proxy, gophish campaign platform + API, King-Phisher alternative platform, gateway evasion (Proofpoint URL Defense / Mimecast / Cisco ESA / Microsoft Defender Safe Links & Safe Attachments), sender reputation engineering (BIMI/ARC/MX), email bombing/DoS, landing-page + payload staging (HTML smuggling, decrypted-on-click), post-click telemetry & beacon design, FIDO2/hardware-key detection and pivot logic, real-world AiTM campaigns (CozyCar / EvilProxy / NakedTenant)

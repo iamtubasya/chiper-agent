@@ -1,12 +1,31 @@
 ---
 name: chiper-privilege-escalation
-description: "Use when Privilege escalation is the process of elevating access from a low-privileged user context (standard user, service account, or limited shell) to root on Linux or SYSTEM/Administrator on Windows."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Privilege escalation is the process of elevating access from a low-privileged user context (standard user, service account, or limited shell) to root on Linux or SYSTEM/Administrator on Windows."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, privilege, escalation]
-    domain: post-exploitation
+  domain: post-exploitation
+  tool_count: 8
+  guide_count: 3
+  mitre: "TA0004-Privilege Escalation"
+  last_reviewed: "2026-07-21"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-privilege-escalation/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-privilege-escalation/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-privilege-escalation/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-privilege-escalation/guides
 ---
 
 # Skill: Privilege Escalation

@@ -1,36 +1,50 @@
 ---
 name: chiper-mainframe-security
-description: "Use when IBM z/OS, RACF (Resource Access Control Facility), CICS, DB2, JES2, TSO/ISPF penetration testing; APF library abuse, dataset access control, SNA/Appc attacks, and legacy mainframe security assessment for financial/government environments."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: IBM z/OS, RACF (Resource Access Control Facility), CICS, DB2, JES2, TSO/ISPF penetration testing; APF library abuse, dataset access control, SNA/Appc attacks, and legacy mainframe security assessment for financial/government environments.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility:
+  - claude-code
+  - agent-sdk
+  - chiper
+  - cursor
+allowed-tools:
+  - Bash
+  - Read
+  - Edit
+  - Write
+  - Glob
+  - Grep
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, mainframe]
-    domain: mainframe
+  domain: mainframe
+  category: mainframe
+  tool_count: 13
+  guide_count: 4
+  mitre: "TA0006-Credential Access, T1078-Valid Accounts, T1003-OS Credential Dumping"
+  keywords:
+    - mainframe
+    - zos
+    - racf
+    - cics
+    - db2
+    - jes2
+    - tso
+    - ispf
+    - apf
+    - sna
+    - jcl
+    - ibm-z
+    - vtam
+    - tk4
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mainframe-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mainframe-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mainframe-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-mainframe-security/guides
 ---
 
 # Skill: Mainframe Security (IBM z/OS / RACF)
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `nmap` — `sudo apt install -y nmap`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in nmap; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v nmap >/dev/null 2>&1 || sudo apt install -y nmap
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- 18 sections covering mainframe ecosystem, Hercules lab setup, TN3270, TSO/ISPF, RACF commands, APF library audit, dataset access, JCL, CICS, DB2, SNA, JES2, IRRDBU00 unload, SEAR API, z/OSMF REST, SMF detection, and a quick reference cheat sheet

@@ -1,49 +1,34 @@
 ---
 name: chiper-steganography
-description: "Use when Steganography is the practice of concealing data within non-secret carrier files such as images, audio, video, and documents. Unlike encryption, which makes data unreadable but visibly present, steganography hides the very existence of the hidden data."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Steganography is the practice of concealing data within non-secret carrier files such as images, audio, video, and documents. Unlike encryption, which makes data unreadable but visibly present, steganography hides the very existence of the hidden data."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, steganography]
-    domain: forensics
+  domain: forensics
+  tool_count: 6
+  guide_count: 5
+  mitre: "T1001.002-Data Obfuscation Steganography, T1027-Obfuscated Files or Information, T1560-Archive Collected Data, T1105-Ingress Tool Transfer"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-steganography/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-steganography/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-steganography/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-steganography/guides
 ---
 
 # Skill: Steganography
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `binwalk` — install: `sudo apt install -y binwalk`
-- `exiftool` — install: `sudo apt install -y exiftool`
-- `foremost` — install: `sudo apt install -y foremost`
-- `steghide` — install: `sudo apt install -y steghide`
-- `zsteg` — install: `gem install zsteg`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in binwalk exiftool foremost steghide zsteg; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v binwalk >/dev/null 2>&1 || echo "  sudo apt install -y binwalk"
-  command -v exiftool >/dev/null 2>&1 || echo "  sudo apt install -y exiftool"
-  command -v foremost >/dev/null 2>&1 || echo "  sudo apt install -y foremost"
-  command -v steghide >/dev/null 2>&1 || echo "  sudo apt install -y steghide"
-  command -v zsteg >/dev/null 2>&1 || echo "  gem install zsteg"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Steganography command reference covering format identification, embedding and extraction with steghide, PNG analysis with zsteg, firmware extraction with binwalk, file carving with foremost, metadata analysis with exiftool, and password recovery with stegcracker

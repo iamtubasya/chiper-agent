@@ -1,38 +1,45 @@
 ---
 name: chiper-post-quantum-migration-attack
-description: "Use when Attacks against cryptographic systems during the PQC migration period. Covers Harvest-Now-Decrypt-Later (SNDL/HNDL), hybrid PQC downgrade abuse, KEM combiner flaws, mixed-protocol failures, NIST PQC standard implementations (ML-KEM/Kyber, ML-DSA/Dilithium, SLH-DSA/SPHINCS+), and QKD infrastructure attacks. Use when reviewing cryptographic agility, hybrid deployments, or preparing for quantum threat readiness."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Attacks against cryptographic systems during the PQC migration period. Covers Harvest-Now-Decrypt-Later (SNDL/HNDL), hybrid PQC downgrade abuse, KEM combiner flaws, mixed-protocol failures, NIST PQC standard implementations (ML-KEM/Kyber, ML-DSA/Dilithium, SLH-DSA/SPHINCS+), and QKD infrastructure attacks. Use when reviewing cryptographic agility, hybrid deployments, or preparing for quantum threat readiness.
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - kali-linux-2025-2-arm64
+  - python-3.11+
+  - openssl-3.x
+  - oqs-provider
+allowed-tools:
+  - wireshark
+  - tcpdump
+  - openssl
+  - python3
+  - jq
+  - curl
+  - mitmproxy
+  - ssh-audit
+  - testssl.sh
+  - oqs-provider
+  - liboqs
+  - thundercat
+  - kalker
+  - gpw
+  - cryptoadvance
+  - sagemath
+  - sage
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, post, quantum, migration, attack]
-    domain: post-quantum-cryptography
+  domain: post-quantum-cryptography
+  tool_count: 17
+  guide_count: 2
+  mitre: "TA0006-Credential Access, TA0010-Exfiltration, TA0040-Impact, T1552, T1041, T1565, T1020"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-post-quantum-migration-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-post-quantum-migration-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-post-quantum-migration-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-post-quantum-migration-attack/guides
 ---
 
 # Post-Quantum Migration Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `cryptography` — `pip install cryptography`
-- `testssl` — `sudo apt install -y testssl.sh`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in cryptography testssl; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v cryptography >/dev/null 2>&1 || pip install cryptography
-command -v testssl >/dev/null 2>&1 || sudo apt install -y testssl.sh
-```
-
 
 ## Summary
 

@@ -1,12 +1,33 @@
 ---
 name: chiper-browser-qa
-description: "Use when Automated browser-based security testing using Playwright and browser devtools. Interact with web applications as a user would — click, type, navigate — while monitoring network traffic, JavaScript execution, and DOM changes for security issues."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Automated browser-based security testing using Playwright and browser devtools. Interact with web applications as a user would — click, type, navigate — while monitoring network traffic, JavaScript execution, and DOM changes for security issues."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, browser, qa]
-    domain: testing
+  domain: testing
+  tool_count: 0
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-browser-qa/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-browser-qa/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-browser-qa/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-browser-qa/guides
 ---
 
 # Browser QA

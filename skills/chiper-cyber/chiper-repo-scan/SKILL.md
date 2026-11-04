@@ -1,38 +1,35 @@
 ---
 name: chiper-repo-scan
-description: "Use when Cross-stack source code asset audit that classifies every file, detects embedded third-party libraries, and delivers actionable verdicts per module."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Cross-stack source code asset audit that classifies every file, detects embedded third-party libraries, and delivers actionable verdicts per module."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, repo, scan]
-    domain: assessment
+  domain: assessment
+  tool_count: 0
+  guide_count: 5
+  mitre: "T1595.002-Vulnerability Scanning, T1195.002-Compromise Software Supply Chain, T1552.001-Credentials In Files, T1083-File and Directory Discovery"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-repo-scan/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-repo-scan/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-repo-scan/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-repo-scan/guides
 ---
 
 # Skill: Repository Scan — Cross-Stack Source Code Audit
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `file` — `sudo apt install -y file`
-- `trivy` — `sudo apt install -y trivy`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in file trivy; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v file >/dev/null 2>&1 || sudo apt install -y file
-command -v trivy >/dev/null 2>&1 || sudo apt install -y trivy
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Repository scanning commands, classification scripts, and analysis payloads organized by scan phase

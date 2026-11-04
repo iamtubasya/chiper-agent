@@ -1,43 +1,36 @@
 ---
 name: chiper-data-loss-prevention-bypass
-description: "Use when DLP bypass techniques covering steganography (LSB, audio, video), DNS tunneling, ICMP tunneling, cloud sync abuse (Dropbox, OneDrive), WebSocket/HTTP3 exfil, AI-augmented exfil (semantic chunking), and modern DLP evasion patterns."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "DLP bypass techniques covering steganography (LSB, audio, video), DNS tunneling, ICMP tunneling, cloud sync abuse (Dropbox, OneDrive), WebSocket/HTTP3 exfil, AI-augmented exfil (semantic chunking), and modern DLP evasion patterns."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, data, loss, prevention, bypass]
-    domain: data-protection
+  domain: data-protection
+  category: dlp-evasion
+  tool_count: 7
+  guide_count: 0
+  mitre: "TA0010-Exfiltration, T1048-Exfiltration Over Alternative Protocol"
+  last_reviewed: "2026-09-04"
+  keywords: ["DLP", "exfiltration", "steganography", "DNS tunneling", "ICMP tunneling", "data loss prevention"]
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-loss-prevention-bypass/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-loss-prevention-bypass/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-loss-prevention-bypass/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-loss-prevention-bypass/guides
 ---
 
 # Skill: data-loss-prevention-bypass
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `garak` — install: `pip install garak`
-- `steghide` — install: `sudo apt install -y steghide`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in garak steghide; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v garak >/dev/null 2>&1 || echo "  pip install garak"
-  command -v steghide >/dev/null 2>&1 || echo "  sudo apt install -y steghide"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 ## Summary
 

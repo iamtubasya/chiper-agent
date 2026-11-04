@@ -1,38 +1,34 @@
 ---
 name: chiper-security-bounty-hunter
-description: "Use when Hunt for exploitable, bounty-worthy security issues in target systems. Focuses on remotely reachable vulnerabilities that qualify for real reports and responsible disclosure, not broad best-practices reviews or theoretical findings."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Hunt for exploitable, bounty-worthy security issues in target systems. Focuses on remotely reachable vulnerabilities that qualify for real reports and responsible disclosure, not broad best-practices reviews or theoretical findings."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, bounty, hunter]
-    domain: assessment
+  domain: assessment
+  tool_count: 0
+  guide_count: 8
+  mitre: "T1190-Exploit Public-Facing Application, T1595.002-Vulnerability Scanning, T1210-Exploitation of Remote Services, T1203-Exploitation for Client Execution"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/guides
 ---
 
 # Skill: Security Bounty Hunter
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `burp` — `echo "Download: https://portswigger.net/burp/communitydownload"`
-- `sqlmap` — `sudo apt install -y sqlmap`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in burp sqlmap; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v burp >/dev/null 2>&1 || echo "Download: https://portswigger.net/burp/communitydownload"
-command -v sqlmap >/dev/null 2>&1 || sudo apt install -y sqlmap
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Static analysis commands, triage scripts, and PoC templates organized by vulnerability class
@@ -301,25 +297,3 @@ Before submitting any report:
 - [ ] The PoC works and demonstrates real impact
 - [ ] The issue is not already covered by an advisory, CVE, or open ticket
 - [ ] The target is in scope for the program
-
-
-## Chiper Custom Bug Bounty Recon & Triage Workflow
-
-### Bounty Hunter Workflow
-
-**Step 1: Scope & Policy Extraction**
-
-Before any testing:
-- Read the program's scope, rules, and exclusions (SECURITY.md, policy pages, `.well-known/security.txt`)
-- Identify in-scope domains, IP ranges, and application types
-- Note any out-of-scope targets (e.g., third-party CNAMEs like Unbounce, WP Engine, HubSpot) and testing restrictions
-- If the policy page is behind Cloudflare and obfuscates reporting/legal emails with `data-cfemail`, decode the hex string (`r = int(cf[:2], 16); ''.join(chr(int(cf[i:i+2], 16) ^ r) for i in range(2, len(cf), 2))`) to extract official contact addresses and legal entities
-
-**Step 2: Find Real Entrypoints & Map Attack Surface**
-
-Focus on network-reachable attack surfaces:
-- **CT Log Enumeration with Failover**: Query `crt.sh` (`https://crt.sh/?q=%25.domain&output=json`) and fall back to CertSpotter (`https://api.certspotter.com/v1/issuances?domain=domain&include_subdomains=true&expand=dns_names`) when `crt.sh` times out. Inspect `dns_names` in CertSpotter results to spot sibling/shadow domains sharing the same TLS certificate.
-- **TLS Certificate SAN Verification**: For non-CDN origin hosts, verify shared certificates via `openssl s_client -connect host:443 -servername host 2>/dev/null | openssl x509 -noout -subject -issuer -ext subjectAltName` to prove asset ownership and correlate shadow hosts.
-- **CSP & SPA Bundle Mining**: Inspect `Content-Security-Policy` headers on web apps to discover backend API domains and third-party services. Download main SPA JS bundles (`/assets/index-*.js`) and extract both string and backtick template literals matching `/api/v[0-9]+/` to enumerate backend API endpoints (`GET`, `POST`, `PATCH`) and parameterized routes (`${id}`).
-- **Unauthenticated Surface & MCP Probing**: Sweep discovered public API endpoints (e.g., `/api/v1/env`, `/api/v1/currencies`, `/swagger/v1/swagger.json`) with non-destructive `GET`/`OPTIONS` requests. If a path like `/mcp` returns `405 Method Not Allowed` on `GET`, test a read-only JSON-RPC `initialize` and `tools/list` `POST` request to identify exposed Model Context Protocol (MCP) servers and inspect tool schemas before attempting authenticated testing.
-- **Low-to-High Triage Order**: Validate unauthenticated findings first (environment info disclosure, CORS misconfigurations, dangling CNAMEs, exposed MCP/debug endpoints) before moving to authenticated testing (IDOR/BOLA, 2FA flows, business logic) using self-owned test accounts.

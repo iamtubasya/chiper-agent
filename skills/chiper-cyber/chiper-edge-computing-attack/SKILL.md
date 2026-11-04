@@ -1,12 +1,31 @@
 ---
 name: chiper-edge-computing-attack
-description: "Use when Attacks against edge computing platforms — Cloudflare Workers (V8 isolate), Fastly Compute@Edge (WASM/Wasmtime), AWS Lambda@Edge and CloudFront Functions, Akamai EdgeWorkers, Vercel Edge Functions, and Deno Deploy. Covers V8 isolate escape, WASM sandbox bypass, request smuggling at the edge, edge KV store abuse, secret leakage via edge logs, and bypass of origin WAF via edge script injection. Distinct from cloud-security (broader CSP control plane), container-security (Linux namespaces), and web-ssrf (origin-side issues)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Attacks against edge computing platforms — Cloudflare Workers (V8 isolate), Fastly Compute@Edge (WASM/Wasmtime), AWS Lambda@Edge and CloudFront Functions, Akamai EdgeWorkers, Vercel Edge Functions, and Deno Deploy. Covers V8 isolate escape, WASM sandbox bypass, request smuggling at the edge, edge KV store abuse, secret leakage via edge logs, and bypass of origin WAF via edge script injection. Distinct from cloud-security (broader CSP control plane), container-security (Linux namespaces), and web-ssrf (origin-side issues)."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, edge, computing, attack]
-    domain: edge-computing
+  domain: edge-computing
+  tool_count: 14
+  guide_count: 2
+  mitre: "T1190-Exploit Public-Facing Application, T1552.007-Container and Cloud Instance Credentials API"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-edge-computing-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-edge-computing-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-edge-computing-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-edge-computing-attack/guides
 ---
 
 # Edge Computing Attack
@@ -318,8 +337,8 @@ curl -s https://target/_vercel/edge-config/_default
 - `chiper-web-ssrf/SKILL.md` — origin-side SSRF (compare to edge-side)
 - `chiper-dns-attacks/SKILL.md` — DNS attacks relevant to edge routing
 - `chiper-api-security/SKILL.md` — API gateway attacks
-- `skills/persistence-attacks/SKILL.md` — edge-side persistence patterns
-- `skills/cdn-cache-attack/SKILL.md` — CDN-specific cache attacks
+- `chiper-post-exploitation/SKILL.md` — edge-side persistence patterns
+- `chiper-edge-computing-security/SKILL.md` — CDN-specific cache attacks
 
 ## References
 

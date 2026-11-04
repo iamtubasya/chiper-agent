@@ -1,12 +1,32 @@
 ---
 name: chiper-logging-monitoring
-description: "Use when Security logging and monitoring deficiencies (OWASP A09:2021) refer to applications failing to properly record security events or lacking effective monitoring, resulting in attacks going undetected, malicious activities being untraceable."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Security logging and monitoring deficiencies (OWASP A09:2021) refer to applications failing to properly record security events or lacking effective monitoring, resulting in attacks going undetected, malicious activities being untraceable."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, logging, monitoring]
-    domain: defense
+  domain: defense
+  tool_count: 6
+  guide_count: 5
+  owasp: "A09:2021-Logging Failures"
+  mitre: "T1070-Indicator Removal, T1562-Impair Defenses, T1027-Obfuscated Files or Information, T1059-Command and Scripting Interpreter"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-logging-monitoring/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-logging-monitoring/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-logging-monitoring/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-logging-monitoring/guides
 ---
 
 # Skill: Logging & Monitoring Security

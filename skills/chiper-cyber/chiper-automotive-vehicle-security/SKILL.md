@@ -1,12 +1,23 @@
 ---
 name: chiper-automotive-vehicle-security
-description: "Use when CAN/CAN-FD bus analysis, UDS diagnostics, IVI pentest, OBD-II exploitation, key fob replay/relay attacks, GNSS spoofing, EV charging station (ISO 15118), and connected vehicle red team operations."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: CAN/CAN-FD bus analysis, UDS diagnostics, IVI pentest, OBD-II exploitation, key fob replay/relay attacks, GNSS spoofing, EV charging station (ISO 15118), and connected vehicle red team operations.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: Claude Code, Claude Agent SDK
+allowed-tools: Bash, Read, Edit, Write, Glob, Grep
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, automotive, vehicle]
-    domain: automotive
+  domain: automotive
+  category: automotive
+  tool_count: 13
+  guide_count: 2
+  mitre: TA0001-Initial Access, TA0040-Detection, T1557-Adversary-in-the-Middle
+  keywords: [can, can-fd, uds, obd-ii, automotive, vehicle, key-fob, gnss-spoofing, iso-15118, ecu, ivi]
+  last_reviewed: "2026-08-16"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-automotive-vehicle-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-automotive-vehicle-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-automotive-vehicle-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-automotive-vehicle-security/guides
 ---
 
 # Skill: Automotive & Vehicle Security

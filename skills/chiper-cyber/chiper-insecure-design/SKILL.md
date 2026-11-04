@@ -1,36 +1,35 @@
 ---
 name: chiper-insecure-design
-description: "Use when Insecure Design (OWASP A06:2025) focuses on security flaws in system architecture and design phases, rather than code implementation-level bugs."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Insecure Design (OWASP A06:2025) focuses on security flaws in system architecture and design phases, rather than code implementation-level bugs."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, insecure, design]
-    domain: design
+  domain: design
+  tool_count: 2
+  guide_count: 7
+  owasp: "A06:2025-Insecure Design"
+  mitre: "T1190-Exploit Public-Facing Application, T1078-Valid Accounts, T1059-Command and Scripting Interpreter, T1562.001-Impair Defenses Disable Tools"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-insecure-design/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-insecure-design/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-insecure-design/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-insecure-design/guides
 ---
 
 # Skill: Insecure Design
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `burp` — `echo "Download: https://portswigger.net/burp/communitydownload"`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in burp; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v burp >/dev/null 2>&1 || echo "Download: https://portswigger.net/burp/communitydownload"
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Attack payloads for business logic testing, race condition exploitation, rate limiting bypass, IDOR, mass assignment, and threat modeling

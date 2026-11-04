@@ -1,43 +1,45 @@
 ---
 name: chiper-username-profiling
-description: "Use when Build a complete dossier on a person using only a username."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Build a complete dossier on a person using only a username."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, username, profiling]
-    domain: osint
+  domain: osint
+  tool_count: 12
+  guide_count: 3
+  mitre: "TA0043-Reconnaissance"
+  keywords:
+    - maigret
+    - sherlock
+    - whatsmyname
+    - holehe
+    - username-enumeration
+    - osint
+    - identity-resolution
+    - cross-platform
+    - breach-correlation
+    - pivot
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-username-profiling/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-username-profiling/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-username-profiling/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-username-profiling/guides
 ---
 
 # Skill: Username Profiling
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `jq` — install: `sudo apt install -y jq`
-- `sherlock` — install: `pip install sherlock-project`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in jq sherlock; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v jq >/dev/null 2>&1 || echo "  sudo apt install -y jq"
-  command -v sherlock >/dev/null 2>&1 || echo "  pip install sherlock-project"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Maigret command catalogue: basic search, report formats (HTML/PDF/XMind/JSON/CSV/TXT/graph), tag filtering, recursive `--parse`, `--permute` variants, keyword highlighting, proxy/Tor/I2P routing, AI summary, database self-check, and cross-tool workflow with Sherlock/Holehe/WhatsMyName

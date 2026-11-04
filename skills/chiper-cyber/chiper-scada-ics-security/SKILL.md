@@ -1,38 +1,34 @@
 ---
 name: chiper-scada-ics-security
-description: "Use when SCADA/ICS security assessment covering industrial control system protocols including Modbus TCP, S7comm (Siemens), DNP3, EtherNet/IP (CIP), OPC UA, BACnet, and GOOSE."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "SCADA/ICS security assessment covering industrial control system protocols including Modbus TCP, S7comm (Siemens), DNP3, EtherNet/IP (CIP), OPC UA, BACnet, and GOOSE."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, scada, ics]
-    domain: ics
+  domain: ics
+  tool_count: 8
+  guide_count: 7
+  mitre: "TA0100-ICS Attack"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-scada-ics-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-scada-ics-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-scada-ics-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-scada-ics-security/guides
 ---
 
 # SCADA/ICS Security Assessment
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `tcpdump` — `sudo apt install -y tcpdump`
-- `tshark` — `sudo apt install -y tshark`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in tcpdump tshark; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v tcpdump >/dev/null 2>&1 || sudo apt install -y tcpdump
-command -v tshark >/dev/null 2>&1 || sudo apt install -y tshark
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Protocol-specific attack payloads: Modbus, S7comm, EtherNet/IP, OPC UA, and ICS network scanning

@@ -1,38 +1,51 @@
 ---
 name: chiper-data-exfiltration-attack
-description: "Use when Attacks for exfiltrating data from compromised networks and bypassing DLP/egress controls. Covers DNS tunneling, ICMP/HTTPS tunneling, protocol smuggling, steganographic exfil, cloud-native exfil (S3/OpenSearch/BigQuery), and DLP bypass. Use when testing egress monitoring, validating DLP controls, or simulating APT exfiltration campaigns."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Attacks for exfiltrating data from compromised networks and bypassing DLP/egress controls. Covers DNS tunneling, ICMP/HTTPS tunneling, protocol smuggling, steganographic exfil, cloud-native exfil (S3/OpenSearch/BigQuery), and DLP bypass. Use when testing egress monitoring, validating DLP controls, or simulating APT exfiltration campaigns.
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - kali-linux-2025-2-arm64
+  - python-3.11+
+  - dnscat2
+  - iodine
+  - chisel
+  - merlin
+  - sliver
+allowed-tools:
+  - dnscat2
+  - iodine
+  - dns2tcp
+  - chisel
+  - merlin
+  - sliver
+  - gost
+  - ngrok
+  - cloudflared
+  - stunnel
+  - socat
+  - proxychains
+  - tor
+  - steghide
+  - zsteg
+  - powershell
+  - certutil
+  - bitsadmin
+  - curl
+  - python3
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, data, exfiltration, attack]
-    domain: data-exfiltration
+  domain: data-exfiltration
+  tool_count: 19
+  guide_count: 2
+  mitre: "TA0010-Exfiltration, TA0011-Command and Control, T1041, T1048, T1048.002, T1053, T1071, T1071.001, T1071.004, T1090, T1104, T1132, T1567, T1567.002, T1571, T1572, T1573"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-exfiltration-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-exfiltration-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-exfiltration-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-data-exfiltration-attack/guides
 ---
 
 # Data Exfiltration Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `chisel` — `go install github.com/jpillora/chisel@latest`
-- `dig` — `sudo apt install -y dnsutils`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in chisel dig; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v chisel >/dev/null 2>&1 || go install github.com/jpillora/chisel@latest
-command -v dig >/dev/null 2>&1 || sudo apt install -y dnsutils
-```
-
 
 ## Summary
 

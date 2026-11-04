@@ -1,12 +1,33 @@
 ---
 name: chiper-multi-agent-collaboration
-description: "Use when Coordinating multiple specialized agents to conduct complex penetration testing engagements through task decomposition, parallel execution, result aggregation, and conflict resolution."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Coordinating multiple specialized agents to conduct complex penetration testing engagements through task decomposition, parallel execution, result aggregation, and conflict resolution."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, multi, agent, collaboration]
-    domain: infrastructure
+  domain: infrastructure
+  tool_count: 0
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-multi-agent-collaboration/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-multi-agent-collaboration/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-multi-agent-collaboration/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-multi-agent-collaboration/guides
 ---
 
 # Skill: Multi-Agent Collaboration

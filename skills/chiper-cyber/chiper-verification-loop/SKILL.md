@@ -1,12 +1,33 @@
 ---
 name: chiper-verification-loop
-description: "Use when After discovering a potential vulnerability or exploit - Before submitting any finding to a report or bounty platform - When verifying that a remediation or patch is effective - When cross-checking automated scanner results - User says \"
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "After discovering a potential vulnerability or exploit - Before submitting any finding to a report or bounty platform - When verifying that a remediation or patch is effective - When cross-checking automated scanner results - User says \"verify\", \"confirm\", \"validate."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, verification, loop]
-    domain: workflow
+  domain: workflow
+  tool_count: 0
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-verification-loop/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-verification-loop/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-verification-loop/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-verification-loop/guides
 ---
 
 # Verification Loop

@@ -1,12 +1,28 @@
 ---
 name: chiper-physical-security-testing
-description: "Use when Physical penetration testing covering mechanical lock bypass (pin-tubular/wafer), RFID/NFC badge cloning (Proxmark3/ESP-RFID-Tool/Walrus), HID iCLASS/Mifare duplication, drop box deployment (LAN Turtle/Packet Squirrel), USB weapons (Rubber Ducky/Bash Bunny), hidden camera placement, and on-site engagement operations including tailgating pretext preparation and physical-docs legal templates."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Physical penetration testing covering mechanical lock bypass (pin-tubular/wafer), RFID/NFC badge cloning (Proxmark3/ESP-RFID-Tool/Walrus), HID iCLASS/Mifare duplication, drop box deployment (LAN Turtle/Packet Squirrel), USB weapons (Rubber Ducky/Bash Bunny), hidden camera placement, and on-site engagement operations including tailgating pretext preparation and physical-docs legal templates.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.31"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, physical, testing]
-    domain: physical
+  domain: physical
+  tool_count: 12
+  guide_count: 1
+  mitre: "TA0001-Initial Access (physical), T1192-Hardware Additions, T1366-Physical Security Bypass"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-physical-security-testing/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-physical-security-testing/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-physical-security-testing/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-physical-security-testing/guides
 ---
 
 # Skill: Physical Security Testing

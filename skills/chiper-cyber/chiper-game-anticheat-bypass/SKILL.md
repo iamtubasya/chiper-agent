@@ -1,36 +1,47 @@
 ---
 name: chiper-game-anticheat-bypass
-description: "Use when Security research on game anti-cheat systems (EAC/BattlEye/Vanguard/Ricochet) — kernel-mode driver architecture, BYOVD attacks, memory access interception, integrity check evasion, and defense-side anti-cheat engineering."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Security research on game anti-cheat systems (EAC/BattlEye/Vanguard/Ricochet) — kernel-mode driver architecture, BYOVD attacks, memory access interception, integrity check evasion, and defense-side anti-cheat engineering."
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility:
+  - claude-code
+  - agent-sdk
+  - chiper
+allowed-tools:
+  - Bash
+  - Read
+  - Edit
+  - Write
+  - Glob
+  - Grep
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, game, anticheat, bypass]
-    domain: game-security
+  domain: game-security
+  category: game-security
+  tool_count: 13
+  guide_count: 1
+  mitre: "TA0005-Defense Evasion, T1068-Exploitation for Privilege Escalation, T1547-Boot or Logon Autostart"
+  keywords:
+    - anti-cheat
+    - eac
+    - battleye
+    - vanguard
+    - byovd
+    - kernel-driver
+    - game-security
+    - cheat-engine
+    - scyllahide
+    - reclass
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-game-anticheat-bypass/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-game-anticheat-bypass/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-game-anticheat-bypass/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-game-anticheat-bypass/guides
 ---
 
 # Skill: Game Anti-Cheat Bypass (Security Research)
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `ghidra` — `sudo apt install -y ghidra`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in ghidra; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v ghidra >/dev/null 2>&1 || sudo apt install -y ghidra
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- Anti-cheat ecosystem reference, kernel-mode driver architecture, driver enumeration commands, BYOVD exploitation methodology, EAC/BattlEye/Vanguard internals, detection engineering patterns, and a quick-reference cheat sheet (18 sections, 60+ code blocks).

@@ -1,12 +1,32 @@
 ---
 name: chiper-council
-description: "Use when Council provides a structured framework for analyzing security questions from multiple adversarial and defensive perspectives simultaneously."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Council provides a structured framework for analyzing security questions from multiple adversarial and defensive perspectives simultaneously."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, council]
-    domain: analysis
+  domain: analysis
+  tool_count: 5
+  guide_count: 5
+  mitre: "T1595-Active Scanning, T1592-Gather Victim Host Info, T1590-Gather Victim Network Info, T1078-Valid Accounts"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-council/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-council/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-council/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-council/guides
 ---
 
 # Council (council)

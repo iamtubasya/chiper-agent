@@ -1,38 +1,26 @@
 ---
 name: chiper-uav-drone-security
-description: "Use when UAV/drone security testing — PX4/ArduPilot autopilot attacks, MAVLink protocol fuzzing, RF link hijacking (2.4GHz control / 5.8GHz video), GPS spoofing/jamming, DroneSploit framework, DJI hardware reversing, and counter-UAS methodologies."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: UAV/drone security testing — PX4/ArduPilot autopilot attacks, MAVLink protocol fuzzing, RF link hijacking (2.4GHz control / 5.8GHz video), GPS spoofing/jamming, DroneSploit framework, DJI hardware reversing, and counter-UAS methodologies.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: Claude Code, Agent SDK
+allowed-tools: Bash, Read, Edit, Write, Glob, Grep
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, uav, drone]
-    domain: aerial
+  domain: aerial
+  category: aerial
+  tool_count: 13
+  guide_count: 1
+  mitre: TA0040-Detection, T1557-Adversary-in-the-Middle, TA0001-Initial Access
+  keywords: [drone, uav, px4, ardupilot, mavlink, hackrf, dronesploit, djid, gps-spoofing, counter-uas, fpv, 5.8ghz]
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-uav-drone-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-uav-drone-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-uav-drone-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-uav-drone-security/guides
 ---
 
 # Skill: UAV & Drone Security
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `hackrf` — `sudo apt install -y hackrf`
-- `metasploit` — `sudo apt install -y metasploit-framework`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in hackrf metasploit; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v hackrf >/dev/null 2>&1 || sudo apt install -y hackrf
-command -v metasploit >/dev/null 2>&1 || sudo apt install -y metasploit-framework
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Complete payload collection organized by attack type (drone ecosystem map, RF spectrum recon 2.4 GHz/5.8 GHz, DJI DroneID decoding, MAVLink protocol/capture/fuzzing, PX4 & ArduPilot attack surface, GPS spoofing/jamming, control-link hijacking, video-link interception, DroneSploit framework, firmware extraction, flight log forensics, counter-UAS methodology, blue-team detection, quick reference cheat sheet — 18 major categories, 60+ code blocks with real `mavproxy.py`, `tshark`, `hackrf_transfer`, GPS-SDR-SIM, and DroneSploit CLI flags, plus incident references: RQ-170 Iran 2011, DJI tracking 2017, Apache Vegas 2020, CISA PX4 advisory).

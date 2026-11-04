@@ -1,36 +1,45 @@
 ---
 name: chiper-hsm-attack
-description: "Use when Hardware Security Module attacks — physical (side-channel, fault injection, decapping) and logical (PKCS#11 API abuse, key extraction, M-of-N quorum bypass, RDP, firmware exploitation). Covers Thales Luna (SafeNet), Utimaco SecurityServer, nCipher nShield, YubiHSM, AWS CloudHSM, Azure Dedicated HSM, Google Cloud HSM. Includes 2024-2025 CVEs (CVE-2024-47787 Thales Luna, CVE-2024-45294 Utimaco), HSM-as-a-Service tenant isolation attacks, and quorum-spoofing scenarios. Distinct from crypto-attacks (algorithm-level) and pam-privilege-attack (credential management)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Hardware Security Module attacks — physical (side-channel, fault injection, decapping) and logical (PKCS#11 API abuse, key extraction, M-of-N quorum bypass, RDP, firmware exploitation). Covers Thales Luna (SafeNet), Utimaco SecurityServer, nCipher nShield, YubiHSM, AWS CloudHSM, Azure Dedicated HSM, Google Cloud HSM. Includes 2024-2025 CVEs (CVE-2024-47787 Thales Luna, CVE-2024-45294 Utimaco), HSM-as-a-Service tenant isolation attacks, and quorum-spoofing scenarios. Distinct from crypto-attacks (algorithm-level) and pam-privilege-attack (credential management).
+origin: chiper-cyber Wave 10 (v0.1.41) — 2026-06-28
+version: "0.2.0.2"
+compatibility:
+  kali_version: "2025.2"
+  python_version: ">=3.11"
+  pkcs11_tool_required: true
+  openssl_required: true
+allowed-tools:
+  - pkcs11-tool
+  - opensc-tool
+  - openssl
+  - yubihsm-shell
+  - ykman
+  - python3
+  - ltrace
+  - strace
+  - gdb
+  - chipwhisperer
+  - saleae-logic
+  - glitchcat
+  - hashcat
+  - john
+  - jtagenum
+  - binwalk
+  - ghidra
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, hsm, attack]
-    domain: hardware-security
+  domain: hardware-security
+  tool_count: 16
+  guide_count: 2
+  mitre: "TA0006-Credential Access, TA0010-Exfiltration, T1552-Unsecured Credentials, T1552.007 Container and Cloud Instance Credentials API, T1041-Exfiltration Over C2 Channel"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hsm-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hsm-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hsm-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hsm-attack/guides
 ---
 
 # HSM (Hardware Security Module) Attack Skill
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `nmap` — `sudo apt install -y nmap`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in nmap; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v nmap >/dev/null 2>&1 || sudo apt install -y nmap
-```
-
 
 > Red-team operations against Hardware Security Modules — thetamper-resistant hardware that anchors enterprise PKI, payment HSMs, code signing, and increasingly blockchain / Web3 key custody. This skill covers both physical access attacks (fault injection, side-channel, decap) and logical API attacks (PKCS#11 abuse, quorum bypass, tenant escape in cloud HSM).
 

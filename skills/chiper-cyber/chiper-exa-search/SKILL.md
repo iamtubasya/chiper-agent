@@ -1,12 +1,33 @@
 ---
 name: chiper-exa-search
-description: "Use when Semantic search using Exa API for security research queries. Unlike keyword-based search, Exa understands context and retrieves high-quality, relevant results for technical research."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Semantic search using Exa API for security research queries. Unlike keyword-based search, Exa understands context and retrieves high-quality, relevant results for technical research."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, exa, search]
-    domain: research
+  domain: research
+  tool_count: 0
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-exa-search/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-exa-search/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-exa-search/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-exa-search/guides
 ---
 
 # Exa Search

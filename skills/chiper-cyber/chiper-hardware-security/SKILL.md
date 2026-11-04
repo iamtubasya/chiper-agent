@@ -1,12 +1,31 @@
 ---
 name: chiper-hardware-security
-description: "Use when Hardware and embedded system security testing covering physical interface exploitation, firmware extraction and analysis, side-channel attacks, RFID/NFC cloning, and fault injection."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Hardware and embedded system security testing covering physical interface exploitation, firmware extraction and analysis, side-channel attacks, RFID/NFC cloning, and fault injection."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, hardware]
-    domain: hardware
+  domain: hardware
+  tool_count: 0
+  guide_count: 5
+  mitre: "T1200-Hardware Additions, T1195.002-Compromise Software Supply Chain, T1040-Network Sniffing, T1068-Exploitation for Privilege Escalation"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hardware-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hardware-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hardware-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-hardware-security/guides
 ---
 
 # Skill: Hardware Security

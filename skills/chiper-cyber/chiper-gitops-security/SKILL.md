@@ -1,36 +1,42 @@
 ---
 name: chiper-gitops-security
-description: "Use when Attacks against GitOps control planes (Argo CD, FluxCD, Jenkins X, Tekton, Fleet, Rancher) — repo impersonation, manifest tampering, RBAC bypass, sync-wave abuse, secret management compromise (Sealed Secrets / SOPS / External Secrets / Vault), cluster privilege escalation via Application/CRDs, and post-exploitation persistence through CRD backdoors. Covers 2024-2025 Argo CD CVEs (CVE-2022-24348, CVE-2024-21626, CVE-2024-32564), FluxCD CVE-2024-37286, and the Akuukam/Code Catalyst supply chain incidents."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Attacks against GitOps control planes (Argo CD, FluxCD, Jenkins X, Tekton, Fleet, Rancher) — repo impersonation, manifest tampering, RBAC bypass, sync-wave abuse, secret management compromise (Sealed Secrets / SOPS / External Secrets / Vault), cluster privilege escalation via Application/CRDs, and post-exploitation persistence through CRD backdoors. Covers 2024-2025 Argo CD CVEs (CVE-2022-24348, CVE-2024-21626, CVE-2024-32564), FluxCD CVE-2024-37286, and the Akuukam/Code Catalyst supply chain incidents.
+origin: chiper-cyber Wave 10 (v0.1.41) — 2026-06-28
+version: "0.2.0.2"
+compatibility:
+  kali_version: "2025.2"
+  python_version: ">=3.11"
+  kubectl_required: true
+  helm_required: true
+allowed-tools:
+  - kubectl
+  - helm
+  - argocd
+  - flux
+  - tkn
+  - git
+  - jq
+  - yq
+  - curl
+  - python3
+  - openssl
+  - sops
+  - kubeseal
+  - vault
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, gitops]
-    domain: gitops
+  domain: gitops
+  tool_count: 16
+  guide_count: 2
+  mitre: "TA0001-Initial Access, TA0003-Persistence, TA0004-Privilege Escalation, TA0005-Defense Evasion, TA0006-Credential Access, TA0009-Collection, T1190-Exploit Public-Facing Application, T1611-Escape to Host, T1525-Implant Internal Image, T1609-Container and Resource Discovery, T1613-Container and Resource Discovery, T1610-Deploy Container, T1611-Escape to Host"
+  last_reviewed: "2026-08-17"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-gitops-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-gitops-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-gitops-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-gitops-security/guides
 ---
 
 # GitOps Security Attack Skill
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `kubectl` — `sudo apt install -y kubectl`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in kubectl; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v kubectl >/dev/null 2>&1 || sudo apt install -y kubectl
-```
-
 
 > Red-team operations against GitOps control planes — the declarative CD layer that owns entire Kubernetes fleets. While adjacent skills cover the CI build side (`ci-cd-supply-chain-attack`) or container runtime (`container-security`), **gitops-security** targets the **runtime reconciliation loop**: the control plane that watches a Git source of truth and continuously reconciles thousands of clusters to that state. Compromise here = silent fleet-wide backdoor.
 

@@ -1,45 +1,34 @@
 ---
 name: chiper-payload-generation
-description: "Use when Payload generation covers the creation, encoding, and delivery of shellcode and executable payloads for initial access and command-and-control (C2) communication."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Payload generation covers the creation, encoding, and delivery of shellcode and executable payloads for initial access and command-and-control (C2) communication."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, payload, generation]
-    domain: exploitation
+  domain: exploitation
+  tool_count: 7
+  guide_count: 8
+  mitre: "TA0007-Command and Control"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-payload-generation/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-payload-generation/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-payload-generation/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-payload-generation/guides
 ---
 
 # Skill: Payload Generation
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `msfvenom` — install: `sudo apt install -y metasploit-framework`
-- `netcat` — install: `sudo apt install -y netcat-traditional`
-- `socat` — install: `sudo apt install -y socat`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in msfvenom netcat socat; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v msfvenom >/dev/null 2>&1 || echo "  sudo apt install -y metasploit-framework"
-  command -v netcat >/dev/null 2>&1 || echo "  sudo apt install -y netcat-traditional"
-  command -v socat >/dev/null 2>&1 || echo "  sudo apt install -y socat"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Complete payload collection organized by category: reverse shells (Bash/Python/PowerShell/Netcat), msfvenom formats, encoding chains, delivery mechanisms, listener setup, and shell stabilization

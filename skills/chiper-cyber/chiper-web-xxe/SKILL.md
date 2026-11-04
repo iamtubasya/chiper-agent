@@ -1,41 +1,35 @@
 ---
 name: chiper-web-xxe
-description: "Use when XML External Entity (XXE) injection exploits vulnerable XML parsers to read local files, initiate SSRF attacks, exfiltrate data through out-of-band channels, and cause denial of service."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "XML External Entity (XXE) injection exploits vulnerable XML parsers to read local files, initiate SSRF attacks, exfiltrate data through out-of-band channels, and cause denial of service."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, web, xxe]
-    domain: web-attack
+  domain: web-attack
+  tool_count: 6
+  guide_count: 3
+  owasp: "A05:2021-Security Misconfiguration"
+  mitre: "T1190-Exploit Public-Facing Application, T1005-Data from Local System, T1105-Ingress Tool Transfer, T1210-Exploitation of Remote Services"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-xxe/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-xxe/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-xxe/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-web-xxe/guides
 ---
 
 # Skill: XML External Entity (XXE) Injection
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `netcat` — install: `sudo apt install -y netcat-traditional`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in netcat; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v netcat >/dev/null 2>&1 || echo "  sudo apt install -y netcat-traditional"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` -- XXE attack payloads organized by category (basic detection, file disclosure, blind XXE, OOB exfiltration, XXE to SSRF, Office document XXE, WAF bypass)

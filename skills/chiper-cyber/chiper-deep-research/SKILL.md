@@ -1,36 +1,35 @@
 ---
 name: chiper-deep-research
-description: "Use when Multi-source intelligence gathering through systematic web research — producing thorough, cited reports from diverse sources."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Multi-source intelligence gathering through systematic web research — producing thorough, cited reports from diverse sources."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, deep, research]
-    domain: research
+  domain: research
+  tool_count: 0
+  guide_count: 6
+  mitre: "T1592-Gather Victim Host Info, T1593-Search Open Websites/Domains, T1590-Gather Victim Network Info, T1589-Gather Victim Identity Information"
+  last_reviewed: "2026-08-19"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-deep-research/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-deep-research/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-deep-research/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-deep-research/guides
 ---
 
 # Skill: Deep Research
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `shodan` — `pip install shodan`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in shodan; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v shodan >/dev/null 2>&1 || pip install shodan
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Search query templates, OSINT operator quick-reference, and data-extraction commands organized by research scenario

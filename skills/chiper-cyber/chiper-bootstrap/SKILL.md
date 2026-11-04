@@ -58,8 +58,8 @@ Run `chiper-verify` to confirm all tools are installed.
 
 ```
 1. chiper-bootstrap    ← YOU ARE HERE (run first)
-2. chiper-kali-tools   (tool selection reference)
-3. chiper-kali-identity (skill matrix, 12 Laws)
+2. chiper-tool-mastery   (tool selection reference)
+3. chiper-cyber (skill matrix, 12 Laws)
 4. chiper-*            (all other skills)
 ```
 

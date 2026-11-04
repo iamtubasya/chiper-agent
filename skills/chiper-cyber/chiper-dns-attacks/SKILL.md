@@ -1,45 +1,34 @@
 ---
 name: chiper-dns-attacks
-description: "Use when DNS Attacks exploit the Domain Name System protocol for reconnaissance, spoofing, tunneling, and data exfiltration. DNS is a foundational infrastructure service that is frequently misconfigured, poorly monitored, and trusted by default -- making it an ideal attack vector."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "DNS Attacks exploit the Domain Name System protocol for reconnaissance, spoofing, tunneling, and data exfiltration. DNS is a foundational infrastructure service that is frequently misconfigured, poorly monitored, and trusted by default -- making it an ideal attack vector."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, dns, attacks]
-    domain: network-attack
+  domain: network-attack
+  tool_count: 8
+  guide_count: 6
+  mitre: "TA0011-Command and Control"
+  last_reviewed: "2026-08-17"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-dns-attacks/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-dns-attacks/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-dns-attacks/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-dns-attacks/guides
 ---
 
 # Skill: DNS Attacks
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `dnsenum` — install: `sudo apt install -y dnsenum`
-- `dnsrecon` — install: `sudo apt install -y dnsrecon`
-- `fierce` — install: `sudo apt install -y fierce`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in dnsenum dnsrecon fierce; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v dnsenum >/dev/null 2>&1 || echo "  sudo apt install -y dnsenum"
-  command -v dnsrecon >/dev/null 2>&1 || echo "  sudo apt install -y dnsrecon"
-  command -v fierce >/dev/null 2>&1 || echo "  sudo apt install -y fierce"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — DNS attack payload collection: zone transfer attempts, record enumeration, subdomain brute force, DNS spoofing, tunneling, exfiltration commands

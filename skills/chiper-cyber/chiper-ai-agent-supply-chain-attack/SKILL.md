@@ -1,12 +1,43 @@
 ---
 name: chiper-ai-agent-supply-chain-attack
-description: "Use when AI/ML supply chain attacks — model poisoning, Pickle RCE, Hugging Face / Ollama registry compromise, LangChain plugin backdoors, Chiper Agent / ClawHub ecosystem threats. Distinguishes from ci-cd-supply-chain-attack by focusing on model weights, training data, and serialization formats. Anchored by the 2026-07 Hugging Face incident (the 'Chernobyl moment' of software supply chain security)."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "AI/ML supply chain attacks — model poisoning, Pickle RCE, Hugging Face / Ollama registry compromise, LangChain plugin backdoors, Chiper Agent / ClawHub ecosystem threats. Distinguishes from ci-cd-supply-chain-attack by focusing on model weights, training data, and serialization formats. Anchored by the 2026-07 Hugging Face incident (the 'Chernobyl moment' of software supply chain security)."
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Python
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, ai, agent, supply, chain, attack]
-    domain: ai-supply-chain
+  domain: ai-supply-chain
+  category: ai
+  tool_count: 10
+  guide_count: 1
+  mitre: "T1195-Supply Chain Compromise, T1195.002-Compromise Software Supply Chain"
+  owasp: "A08:2021-Software and Data Integrity Failures"
+  keywords:
+    - AI-supply-chain
+    - Hugging-Face
+    - model-poisoning
+    - Pickle-RCE
+    - LangChain
+    - Chiper Agent
+    - ClawHub
+    - ML-BOM
+  last_reviewed: "2026-08-09"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-supply-chain-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-supply-chain-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-supply-chain-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-supply-chain-attack/guides
 ---
 
 # Skill: AI Agent Supply Chain Attack

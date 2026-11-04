@@ -1,36 +1,31 @@
 ---
 name: chiper-ai-agent-security
-description: "Use when Offensive security testing of AI agent systems covering MCP server attacks, tool poisoning, indirect prompt injection against agents, RAG knowledge base poisoning, agent sandbox escape, multi-agent compromise chains, and autonomous agent hijacking — using MCP security testers, HexStrike AI, AI-Infra-Guard, custom agent harness probes, and prompt injection toolkits."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: Offensive security testing of AI agent systems covering MCP server attacks, tool poisoning, indirect prompt injection against agents, RAG knowledge base poisoning, agent sandbox escape, multi-agent compromise chains, and autonomous agent hijacking — using MCP security testers, HexStrike AI, AI-Infra-Guard, custom agent harness probes, and prompt injection toolkits.
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.30"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, ai, agent]
-    domain: ai-emerging
+  domain: ai-emerging
+  tool_count: 12
+  guide_count: 2
+  mitre: "Emerging (no canonical MITRE mapping); overlaps with T1059-Automated Command Execution, T1566-Phishing via prompt injection, T1190-Exploit Public-Facing App via tool abuse"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-ai-agent-security/guides
 ---
 
 # Skill: AI Agent Security — Offensive Testing of Deployed AI Agent Systems
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `file` — `sudo apt install -y file`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in file; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v file >/dev/null 2>&1 || sudo apt install -y file
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — MCP JSON-RPC probe templates, malicious MCP server source, tool-description injection corpora, RAG vector-DB poisoning payloads (Pinecone/Weaviate/Chroma/Qdrant), agent sandbox-escape primitives (filesystem/network/exec), tool-chain escalation sequences, long-term memory manipulation payloads, multi-agent lateral movement scripts, OAuth-token-capture MCP tools, autonomous-goal-hijack templates, detection-evasion techniques, payload-delivery vectors (email/web/file/API), and writeups of real-world incidents (CVE-2025-3128 Cursor, MCP rug-pull, ChatGPT plugin prompt injection)

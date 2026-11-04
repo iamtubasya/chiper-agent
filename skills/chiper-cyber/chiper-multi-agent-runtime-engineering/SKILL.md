@@ -1,36 +1,40 @@
 ---
 name: chiper-multi-agent-runtime-engineering
-description: "Use when Runtime engineering discipline for agent systems — structured JSON memory schemas, memory-driven convergence rules, shared-memory multi-agent coordination via POSIX flock + atomic write + version vector, anti-pattern prevention, and topology selection. Solidifies the engineering patterns of SCEN-007 (shared-memory multi-agent exploit dev) and SCEN-MEMORY-SCHEMA (structured memory foundation) into a reusable knowledge base. Inspired by MopMonk Agent three-layer harness (Chinese press nickname *扫地僧* — CyberGym 73.1%, China #1) — proving that harness engineering beats base-model parameter scaling."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Runtime engineering discipline for agent systems — structured JSON memory schemas, memory-driven convergence rules, shared-memory multi-agent coordination via POSIX flock + atomic write + version vector, anti-pattern prevention, and topology selection. Solidifies the engineering patterns of SCEN-007 (shared-memory multi-agent exploit dev) and SCEN-MEMORY-SCHEMA (structured memory foundation) into a reusable knowledge base. Inspired by MopMonk Agent three-layer harness (Chinese press nickname *扫地僧* — CyberGym 73.1%, China #1) — proving that harness engineering beats base-model parameter scaling."
+origin: chiper-cyber Wave 12 (v0.1.45) — 2026-07-03
+version: "0.2.0.2"
+compatibility:
+  kali_version: "2025.2"
+  python_version: ">=3.11"
+  jq_required: true
+  flock_available: true
+allowed-tools:
+  - bash
+  - jq
+  - flock
+  - python3
+  - git
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Agent
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, multi, agent, runtime, engineering]
-    domain: agent-runtime
+  domain: agent-runtime
+  tool_count: 12
+  guide_count: 2
+  mitre: "N/A — meta-skill (runtime engineering, not a specific ATT&CK technique)"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-multi-agent-runtime-engineering/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-multi-agent-runtime-engineering/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-multi-agent-runtime-engineering/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-multi-agent-runtime-engineering/guides
 ---
 
 # Multi-Agent Runtime Engineering Skill
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `jq` — `sudo apt install -y jq`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in jq; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v jq >/dev/null 2>&1 || sudo apt install -y jq
-```
-
 
 > *"Harness engineering > base-model parameters. MopMonk took MiniMax M3 (smaller base) to 73.1% on CyberGym — beating Claude Opus 4.6 (66.6%) and matching GPT-5.4 (79.0%) within a stone's throw. The harness is the moat."* — adapted from 36kr's coverage of MopMonk Agent (Chinese press nickname *扫地僧*), 2026-06-30
 

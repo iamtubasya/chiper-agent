@@ -1,12 +1,60 @@
 ---
 name: chiper-cspm-casb-attack
-description: "Use when CSPM/CASB/CNAPP platform bypass and abuse — rule suppression exploitation, IaC state manipulation, CASB proxy evasion, SaaS shadow discovery, Wiz/Prisma/Lacework/Defender coverage gap identification, and tag-tampering attacks against cloud posture management tools."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "CSPM/CASB/CNAPP platform bypass and abuse — rule suppression exploitation, IaC state manipulation, CASB proxy evasion, SaaS shadow discovery, Wiz/Prisma/Lacework/Defender coverage gap identification, and tag-tampering attacks against cloud posture management tools."
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, cspm, casb, attack]
-    domain: cloud
+  domain: cloud
+  category: cloud-posture-casb
+  tool_count: 18
+  guide_count: 1
+  mitre: "T1068-Exploitation for Privilege Escalation, T1565-Adversary-Inhibited-Response-System, T1611-Escape to Host"
+  keywords:
+    - cspm
+    - casb
+    - cnapp
+    - wiz
+    - prisma-cloud
+    - defender-for-cloud
+    - security-hub
+    - lacework
+    - orca
+    - sysdig-secure
+    - checkov
+    - kics
+    - prowler
+    - scoutsuite
+    - cloudfox
+    - terrascan
+    - snyk-iac
+    - kubescape
+    - netskope
+    - zscaler-casb
+    - skyhigh
+    - tagsuppression
+    - iac-drift
+    - terraform-state
+    - policy-as-code
+    - opa
+    - kyverno
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cspm-casb-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cspm-casb-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cspm-casb-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-cspm-casb-attack/guides
 ---
 
 # Skill: CSPM / CASB / CNAPP Attack and Evasion

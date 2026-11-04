@@ -29,7 +29,7 @@ Skills define _how_ tools work. This file records _your_ specific configuration 
 
 | Category | Tool Count | Status | Learning Notes |
 |----------|------------|--------|----------------|
-| recon-osint | 28 | Mastered | memory/photon.md, memory/dirb.md, etc. |
+| recon-osint | 28 | Mastered | chiper-recon-osint/guides/2026-03-21-information-gathering-tools.md, chiper-recon-osint/guides/2026-03-21-information-gathering-tools.md, etc. |
 | osint | 12 | Mastered | chiper-osint/SKILL.md |
 | web-xss | 8 | Mastered | chiper-web-xss/guides/ |
 | web-sqli | 6 | Mastered | chiper-web-sqli/guides/ |
@@ -37,20 +37,20 @@ Skills define _how_ tools work. This file records _your_ specific configuration 
 | web-auth-bypass | 6 | Mastered | chiper-web-auth-bypass/SKILL.md |
 | web-access-control | 5 | Mastered | chiper-web-access-control/SKILL.md |
 | api-security | 7 | Mastered | chiper-api-security/SKILL.md |
-| network-pentest | 15 | Mastered | memory/tshark.md, memory/bettercap.md |
-| post-exploitation | 11 | Mastered | memory/2026-03-21-post-exploitation-tools.md |
-| password-attack | 10 | Mastered | memory/2026-03-21-password-attack-tools.md |
-| wifi-pentest | 17 | Mastered | memory/wifi-cracking-course.md |
+| network-pentest | 15 | Mastered | chiper-network-pentest/guides/2026-03-22-sniffing-spoofing-tools.md, chiper-network-pentest/guides/2026-03-22-sniffing-spoofing-tools.md |
+| post-exploitation | 11 | Mastered | chiper-post-exploitation/guides/2026-03-21-post-exploitation-tools.md |
+| password-attack | 10 | Mastered | chiper-password-attack/guides/2026-03-21-password-attack-tools.md |
+| wifi-pentest | 17 | Mastered | chiper-wifi-pentest/guides/wifi-cracking-course.md |
 | binary-reverse | 4 | Expert-level | binary_analysis/ |
-| cloud-security | 8 | Mastered | guides/cloud_security_complete_guide.md |
+| cloud-security | 8 | Mastered | chiper-cloud-security/guides/cloud_security_complete_guide.md |
 | container-security | 6 | Mastered | chiper-container-security/SKILL.md |
 | crypto-attacks | 5 | Mastered | chiper-crypto-attacks/SKILL.md |
 | digital-forensics | 7 | Mastered | chiper-digital-forensics/SKILL.md |
 | insecure-design | 3 | Mastered | chiper-insecure-design/SKILL.md |
 | logging-monitoring | 4 | Mastered | chiper-logging-monitoring/SKILL.md |
-| mobile-security | 6 | Mastered | guides/mobile_security_complete_guide.md |
+| mobile-security | 6 | Mastered | chiper-mobile-security/guides/mobile_security_complete_guide.md |
 | security-misconfiguration | 5 | Mastered | chiper-security-misconfiguration/SKILL.md |
-| social-engineering | 4 | Mastered | memory/2026-03-21-social-engineering-tools.md |
+| social-engineering | 4 | Mastered | chiper-social-engineering/guides/2026-03-21-social-engineering-tools.md |
 | supply-chain-security | 5 | Mastered | chiper-supply-chain-security/SKILL.md |
 | vulnerability-assessment | 6 | Mastered | chiper-vulnerability-assessment/SKILL.md |
 | security-bounty-hunter | 4 | Mastered | chiper-security-bounty-hunter/SKILL.md |

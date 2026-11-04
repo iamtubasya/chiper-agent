@@ -1,12 +1,35 @@
 ---
 name: chiper-chronicle
-description: "Use when A system for recording, indexing, and distilling knowledge from agent lifecycle events. Through a three-layer document system (overview -> detailed records -> knowledge distillation), raw conversation events are transformed into reusable experience."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "A system for recording, indexing, and distilling knowledge from agent lifecycle events. Through a three-layer document system (overview -> detailed records -> knowledge distillation), raw conversation events are transformed into reusable experience."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
+  - Agent
+defense_triple_required: false
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, chronicle]
-    domain: knowledge
+  domain: knowledge
+  tool_count: 4
+  guide_count: 5
+  mitre: "N/A (non-attack meta skill)"
+  last_reviewed: "2026-09-04"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-chronicle/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-chronicle/chronicle-template.py
+  - path: ~/.chiper/skills/chiper-cyber/chiper-chronicle/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-chronicle/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-chronicle/guides
+  - path: ~/.chiper/skills/chiper-cyber/chiper-chronicle/scripts
 ---
 
 # Skill: Chronicle System

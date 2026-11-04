@@ -1,40 +1,64 @@
 ---
 name: chiper-sase-sse-attack
-description: "Use when Secure Access Service Edge (SASE) and Security Service Edge (SSE) platform compromise covering Zscaler (ZIA/ZPA/ZDX/Client Connector), Netskope (Security Cloud, SWG, CASB, Private Access), Palo Alto Prisma Access, Cisco Umbrella, CATO Networks SASE, Cloudflare One (WARP, Gateway, Access), and Microsoft Entra Global Secure Access — including client connector reverse engineering, TLS inspection bypass via certificate pinning and ESNI/ECH, split-tunnel race conditions, BYOD vs managed device bypass, stolen SSO token replay through SSE proxy, anonymizer proxy evasion (Shadowsocks/V2Ray/Obfs4/Trojan), and detection avoidance using Wireshark, Frida, mitmproxy, JA3/JA4 fingerprint spoofing."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Secure Access Service Edge (SASE) and Security Service Edge (SSE) platform compromise covering Zscaler (ZIA/ZPA/ZDX/Client Connector), Netskope (Security Cloud, SWG, CASB, Private Access), Palo Alto Prisma Access, Cisco Umbrella, CATO Networks SASE, Cloudflare One (WARP, Gateway, Access), and Microsoft Entra Global Secure Access — including client connector reverse engineering, TLS inspection bypass via certificate pinning and ESNI/ECH, split-tunnel race conditions, BYOD vs managed device bypass, stolen SSO token replay through SSE proxy, anonymizer proxy evasion (Shadowsocks/V2Ray/Obfs4/Trojan), and detection avoidance using Wireshark, Frida, mitmproxy, JA3/JA4 fingerprint spoofing."
+origin: github-trending-2026
+version: "0.2.0.2"
+compatibility: ">=0.1.31"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, sase, sse, attack]
-    domain: network-security
+  domain: network-security
+  category: sase-sse
+  tool_count: 11
+  guide_count: 1
+  mitre: "T1557-Adversary-in-the-Middle, T1027-Obfuscated Files or Information, T1078-Valid Accounts, T1550-Use Alternate Authentication Material, T1572-Protocol Tunneling, T1573-Encrypted Channel"
+  keywords:
+    - sase
+    - sse
+    - zscaler
+    - zia
+    - zpa
+    - netskope
+    - prisma-access
+    - cisco-umbrella
+    - cato-networks
+    - cloudflare-one
+    - cloudflare-warp
+    - entra-global-secure-access
+    - swg
+    - casb
+    - ztna
+    - fwaas
+    - tls-inspection
+    - ssl-bypass
+    - client-connector
+    - ja3
+    - ja4
+    - doh
+    - dot
+    - esni
+    - ech
+    - split-tunnel
+    - byod
+    - shadowsocks
+    - v2ray
+    - obfs4
+    - trojan-proxy
+  last_reviewed: "2026-08-17"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-sase-sse-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-sase-sse-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-sase-sse-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-sase-sse-attack/guides
 ---
 
 # Skill: SASE / SSE Platform Attack
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `frida` — `pip install frida-tools`
-- `tshark` — `sudo apt install -y tshark`
-- `wireshark` — `sudo apt install -y wireshark`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in frida tshark wireshark; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v frida >/dev/null 2>&1 || pip install frida-tools
-command -v tshark >/dev/null 2>&1 || sudo apt install -y tshark
-command -v wireshark >/dev/null 2>&1 || sudo apt install -y wireshark
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Command catalogue organized by vendor (Zscaler, Netskope, Palo Alto Prisma Access, Cisco Umbrella, CATO Networks, Cloudflare One, Microsoft Entra Global Secure Access) and by cross-cutting technique (client connector reverse engineering, TLS inspection bypass, split-tunnel abuse, anonymizer proxy evasion, identity-based bypass). 14 sections with real commands, Frida scripts, mitmproxy addons, JA3/JA4 spoofing configs, and detection-evasion patterns for authorized red team operations.

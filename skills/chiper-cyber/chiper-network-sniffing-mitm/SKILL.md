@@ -1,49 +1,34 @@
 ---
 name: chiper-network-sniffing-mitm
-description: "Use when Network Sniffing and MITM attacks focus on intercepting, analyzing, and manipulating network traffic between two communicating parties."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Network Sniffing and MITM attacks focus on intercepting, analyzing, and manipulating network traffic between two communicating parties."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, network, sniffing, mitm]
-    domain: network-attack
+  domain: network-attack
+  tool_count: 10
+  guide_count: 3
+  mitre: "TA0006-Credential Access"
+  last_reviewed: "2026-07-26"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-network-sniffing-mitm/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-network-sniffing-mitm/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-network-sniffing-mitm/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-network-sniffing-mitm/guides
 ---
 
 # Skill: Network Sniffing and Man-in-the-Middle (MITM)
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `bettercap` — install: `sudo apt install -y bettercap`
-- `dsniff` — install: `sudo apt install -y dsniff`
-- `ettercap` — install: `sudo apt install -y ettercap-text-only`
-- `responder` — install: `sudo apt install -y responder`
-- `tcpdump` — install: `sudo apt install -y tcpdump`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in bettercap dsniff ettercap responder tcpdump; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v bettercap >/dev/null 2>&1 || echo "  sudo apt install -y bettercap"
-  command -v dsniff >/dev/null 2>&1 || echo "  sudo apt install -y dsniff"
-  command -v ettercap >/dev/null 2>&1 || echo "  sudo apt install -y ettercap-text-only"
-  command -v responder >/dev/null 2>&1 || echo "  sudo apt install -y responder"
-  command -v tcpdump >/dev/null 2>&1 || echo "  sudo apt install -y tcpdump"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Attack payload collection: passive capture, ARP spoofing, DNS spoofing, credential harvesting, SSL stripping, caplet scripting, and traffic manipulation commands

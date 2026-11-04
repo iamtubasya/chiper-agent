@@ -1,47 +1,34 @@
 ---
 name: chiper-social-engineering
-description: "Use when Social engineering is the art of exploiting human psychological weaknesses rather than technical vulnerabilities to execute attacks. Attack vectors encompass Phishing, Pretexting, Baiting, Tailgating, Vishing, and other techniques."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Social engineering is the art of exploiting human psychological weaknesses rather than technical vulnerabilities to execute attacks. Attack vectors encompass Phishing, Pretexting, Baiting, Tailgating, Vishing, and other techniques."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, social, engineering]
-    domain: social
+  domain: social
+  tool_count: 6
+  guide_count: 5
+  mitre: "TA0043-Reconnaissance"
+  last_reviewed: "2026-07-21"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-social-engineering/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-social-engineering/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-social-engineering/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-social-engineering/guides
 ---
 
 # Skill: Social Engineering
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `gophish` — install: `echo "Download: https://github.com/gophish/gophish/releases"`
-- `maltego` — install: `sudo apt install -y maltego`
-- `recon-ng` — install: `sudo apt install -y recon-ng`
-- `theharvester` — install: `sudo apt install -y theharvester`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in gophish maltego recon-ng theharvester; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v gophish >/dev/null 2>&1 || echo "  echo "Download: https://github.com/gophish/gophish/releases""
-  command -v maltego >/dev/null 2>&1 || echo "  sudo apt install -y maltego"
-  command -v recon-ng >/dev/null 2>&1 || echo "  sudo apt install -y recon-ng"
-  command -v theharvester >/dev/null 2>&1 || echo "  sudo apt install -y theharvester"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — SE attack payloads organized by category: phishing, email spoofing, credential harvesting, smishing, vishing, USB baiting, OSINT profiling, physical social engineering

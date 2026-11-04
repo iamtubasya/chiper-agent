@@ -1,51 +1,34 @@
 ---
 name: chiper-password-attack
-description: "Use when Password attacks encompass the complete attack chain from hash extraction, hash type identification, dictionary attacks, rule-based attacks, and bruteforcing to online service brute forcing."
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: "Password attacks encompass the complete attack chain from hash extraction, hash type identification, dictionary attacks, rule-based attacks, and bruteforcing to online service brute forcing."
+origin: chiper
+version: "0.2.0.2"
+compatibility:
+  - chiper
+  - claude-code
+  - cursor
+  - windsurf
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - WebSearch
+  - WebFetch
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, password, attack]
-    domain: credential-access
+  domain: credential-access
+  tool_count: 6
+  guide_count: 7
+  mitre: "TA0006-Credential Access"
+  last_reviewed: "2026-07-19"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-password-attack/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-password-attack/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-password-attack/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-password-attack/guides
 ---
 
 # Skill: Password Attacks
-
-## Prerequisites
-
-> 💡 Missing tools? This skill will auto-check before execution.
-
-**Required tools:**
-
-- `cewl` — install: `sudo apt install -y cewl`
-- `crunch` — install: `sudo apt install -y crunch`
-- `hashcat` — install: `sudo apt install -y hashcat`
-- `hydra` — install: `sudo apt install -y hydra`
-- `john` — install: `sudo apt install -y john`
-- `medusa` — install: `sudo apt install -y medusa`
-
-**Quick check (run before using this skill):**
-
-```bash
-# Check which tools are missing
-MISSING=""
-for cmd in cewl crunch hashcat hydra john medusa; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-if [ -n "$MISSING" ]; then
-  echo "⚠️  Missing tools:$MISSING"
-  echo "Install with:"
-  command -v cewl >/dev/null 2>&1 || echo "  sudo apt install -y cewl"
-  command -v crunch >/dev/null 2>&1 || echo "  sudo apt install -y crunch"
-  command -v hashcat >/dev/null 2>&1 || echo "  sudo apt install -y hashcat"
-  command -v hydra >/dev/null 2>&1 || echo "  sudo apt install -y hydra"
-  command -v john >/dev/null 2>&1 || echo "  sudo apt install -y john"
-  command -v medusa >/dev/null 2>&1 || echo "  sudo apt install -y medusa"
-else
-  echo "✅ All tools installed"
-fi
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Complete attack payloads organized into eight categories: Online Attacks, Offline Hash Cracking, Wordlist Generation, Hash Identification, Password Spray, Credential Stuffing, NTLM/NetNTLM, and Password Policy Analysis
@@ -221,7 +204,7 @@ GPU cracking performance varies by hash algorithm: MD5/SHA1 achieve billions of 
 
 - **This skill's supplementary files**: `payloads.md`, `test-cases.md`
 - **Related skills**: `chiper-web-auth-bypass/SKILL.md`, `chiper-crypto-attacks/SKILL.md`
-- **Workspace internal resources**: `memory/2026-03-21-password-attack-tools.md` - Complete tool learning notes, including tool combination strategies and practical considerations
+- **Workspace internal resources**: `chiper-password-attack/guides/2026-03-21-password-attack-tools.md` - Complete tool learning notes, including tool combination strategies and practical considerations
 - **Hashcat Official Documentation**: [hashcat.net/wiki](https://hashcat.net/wiki/) - Complete reference for attack modes, hash types, and rule syntax
 - **John the Ripper Official Wiki**: [openwall.com/john](https://www.openwall.com/john/) - Format support, configuration options, and best practices
 - **Hydra GitHub**: [github.com/vanhauser-thc/thc-hydra](https://github.com/vanhauser-thc/thc-hydra) - Protocol modules and usage instructions

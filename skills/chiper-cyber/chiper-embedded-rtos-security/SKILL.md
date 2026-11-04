@@ -1,36 +1,37 @@
 ---
 name: chiper-embedded-rtos-security
-description: "Use when RTOS penetration testing — VxWorks WDB debug agent (Urgent/11), QNX microkernel, FreeRTOS+TCP CVEs, ThreadX/Azure RTOS, Zephyr, Mbed OS, TI-RTOS, MicroC/OS, NuttX, RIOT, Contiki"
-version: "0.3.5"
-author: Chiper (Chiper-Cyber)
+description: RTOS penetration testing — VxWorks WDB debug agent (Urgent/11), QNX microkernel, FreeRTOS+TCP CVEs, ThreadX/Azure RTOS, Zephyr, Mbed OS, TI-RTOS, MicroC/OS, NuttX, RIOT, Contiki
+origin: chiper-cyber
+version: "0.2.0.2"
+compatibility: Claude Code, Claude Sonnet 4.5+
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
 metadata:
-  chiper:
-    tags: [pentest, security, chiper-cyber, embedded, rtos]
-    domain: embedded-rtos-security
+  domain: embedded-rtos-security
+  category: rtos
+  tool_count: 13
+  guide_count: 3
+  mitre: T1548-Abuse Elevation Control Mechanism
+  keywords:
+    - RTOS
+    - VxWorks
+    - QNX
+    - FreeRTOS
+    - Zephyr
+    - embedded
+    - microkernel
+  last_reviewed: "2026-08-16"
+references:
+  - path: ~/.chiper/skills/chiper-cyber/chiper-embedded-rtos-security/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-embedded-rtos-security/payloads.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-embedded-rtos-security/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-embedded-rtos-security/guides
 ---
 
 # Skill: Embedded RTOS Security
-
-## Prerequisites
-
-> 💡 Tools are auto-checked when this skill is invoked.
-> Missing tools get install commands; installed tools are skipped.
-
-**Required tools:**
-
-- `gdb` — `sudo apt install -y gdb`
-
-```bash
-# Auto-check: only install what's missing
-MISSING=""
-for cmd in gdb; do
-  command -v "$cmd" >/dev/null 2>&1 || MISSING="$MISSING $cmd"
-done
-[ -z "$MISSING" ] && echo "✅ All tools ready" && exit 0
-echo "⚠️  Missing:$MISSING"
-command -v gdb >/dev/null 2>&1 || sudo apt install -y gdb
-```
-
 
 > **Supplementary Files**:
 > - `payloads.md` — Command catalogue for VxWorks WDB RPC/Wind debug agent exploitation (Urgent/11 CVEs CVE-2019-12256/12258/12260, IPstack flaws), QNX Neutrino Qnet/qconn/procfs exploitation, FreeRTOS+TCP CVE-2018-16528 stack attacks, ThreadX/Azure RTOS bug matrix, Zephyr Kconfig/Bluetooth host CVEs, Mbed OS uVisor/Pelion, TI-RTOS/BIOS, MicroC/OS-II/III, NuttX, RIOT, Contiki-NG, plus hardware attack surfaces (JTAG/UART/SWD enumeration via JTAGulator/Shikra/J-Link/Black Magic Probe, OpenOCD target control, voltage/clock glitching via ChipWhisperer/NewAE, side-channel analysis with GreatFET/HydraBus/Bus Pirate) — 11 sections, 60+ code blocks.
