@@ -25,8 +25,6 @@
 
 | Language | File |
 |----------|------|
-| 中文 | [GUIDE-OPENCLAW-zh.md](GUIDE-OPENCLAW-zh.md) |
-| English | [GUIDE-OPENCLAW-en.md](GUIDE-OPENCLAW-en.md) |
 
 ### Migration Guides
 

@@ -8,7 +8,7 @@ When updating or syncing `chiper-cyber` from upstream multi-file security skill 
   - All skill directories and frontmatter `name:` fields must use `chiper-<domain>`.
   - Executable scripts inside `guides/` or `validation/` must be placed in `scripts/` (and `validation/`) with the `chiper-` prefix (e.g., `scripts/chiper-bug-bounty-sqli-scanner.py`, `validation/chiper-tool-selector.sh`, `validation/chiper-orchestrator.sh`).
   - Baseline files must use `CHIPER_TOOLS_BASELINE_*.md`.
-  - Strip all upstream `kali-claw` and `openclaw` branding and rewrite cross-skill links (`skills/<domain>/...` or `<domain>/SKILL.md`) to `chiper-<domain>/...`.
+  - Strip all upstream legacy upstream branding and rewrite cross-skill links (`skills/<domain>/...` or `<domain>/SKILL.md`) to `chiper-<domain>/...`.
 - **Zero Missing References:**
   - Copy every companion file in each skill directory (`payloads.md`, `test-cases.md`, `guides/*`, and root-level companion guides such as `sqli-double-query-guide.md`, `sqli-cross-db-guide.md`, `api-security-guide.md`, `access-control-guide.md`, `auth-bypass-guide.md`).
   - Populate frontmatter `references:` only with paths that exist on disk.
