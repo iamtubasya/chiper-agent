@@ -1,19 +1,15 @@
 ---
 name: chiper-cloud-security
-description: "Use when Cloud security covers security assessment for major cloud platforms including AWS, Azure, and GCP, with core focus on IAM misconfiguration detection, storage bucket"
-version: "0.2.0"
+description: "Use when Cloud security covers security assessment for major cloud platforms including AWS, Azure, and GCP, with core focus on IAM misconfiguration detection, storage bucket exposure scanning, metadata service attacks, container escape, and Kubernetes RBAC auditing."
+version: "0.3.5"
 author: Chiper (Chiper-Cyber)
 metadata:
-  Chiper:
-    tags: [pentest, security, kali-linux, chiper-cyber, cloud]
-references:
-  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-security/SKILL.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-security/payloads.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-security/test-cases.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-cloud-security/guides
+  chiper:
+    tags: [pentest, security, chiper-cyber, cloud]
+    domain: cloud
 ---
 
-# Cloud Security
+# Skill: Cloud Security
 
 ## Prerequisites
 
@@ -40,7 +36,12 @@ else
 fi
 ```
 
-## When to Use
+
+> **Supplementary Files**:
+> - `payloads.md` -- Cloud security attack payloads organized by category (AWS/Azure/GCP enumeration, IAM analysis, S3 exposure, metadata exploitation, container/K8s exploitation)
+> - `test-cases.md` -- Structured test cases covering cloud reconnaissance, IAM & access testing, storage security, network security, and advanced exploitation
+
+## Summary
 
 Cloud Security skill domain covering cloud operations.
 
@@ -50,15 +51,38 @@ Cloud Security skill domain covering cloud operations.
 
 **MITRE ATT&CK**: TA0008-Lateral Movement
 
+## Description
+
+Cloud security covers security assessment for major cloud platforms including AWS, Azure, and GCP, with core focus on IAM misconfiguration detection, storage bucket exposure scanning, metadata service attacks, container escape, and Kubernetes RBAC auditing. The fundamental difference between cloud environments and traditional networks is: blurred boundaries, API-driven everything, and identity as the perimeter.
+
+Mastering this skill requires deep understanding of cloud service architecture and the Shared Responsibility Model, the ability to identify cloud misconfigurations, abuse overly permissive IAM policies, and leverage metadata services and SSRF chains to complete attack chains from information leakage to lateral movement.
+
+---
+
+## Use Cases
+
+1. **Cloud Environment Security Assessment** - Conduct comprehensive security audits of AWS/Azure/GCP accounts to discover configuration flaws and excessive permissions
+2. **IAM Permission Audit** - Enumerate and analyze IAM users, roles, and policies to identify over-privilege and privilege escalation paths
+3. **Storage Bucket Exposure Detection** - Scan publicly accessible S3/Azure Blob/GCS storage buckets, assess data leakage risk
+4. **Container and Orchestration Security** - Assess Docker container escape risks and Kubernetes cluster RBAC configurations
+5. **Cloud Metadata Attack Verification** - Test IMDSv1 exposure risk and IAM credential theft feasibility through SSRF
+
+---
+
 ## Core Tools
 
 | Tool | Purpose | Command Example |
 |------|---------|-----------------|
 | **pacu** | AWS penetration testing framework, modular IAM enumeration and exploitation | `pacu -> run iam__enum_users` |
 | **scoutsuite** | Multi-cloud security audit, generates compliance reports | `scout aws -p default` |
+| **awscli** | AWS CLI operations, IAM/S3/EC2 manual enumeration | `aws iam list-users --output json` |
+| **s3scanner** | S3 bucket public access scanning | `s3scanner scan --bucket target-bucket` |
+| **kubeaudit** | Kubernetes security audit, detects RBAC and Pod configuration issues | `kubeaudit all` |
+| **trivy** | Container image and IaC vulnerability scanning | `trivy image alpine:latest` |
 
+---
 
-## Methodology Overview
+## Methodology
 
 ### Attack Chain
 
@@ -67,28 +91,249 @@ Cloud Asset Discovery -> IAM Enumeration -> Storage Bucket Exposure -> Network M
 (awscli, cloud enum)     (pacu, iam__enum)   (s3scanner, awscli)       (scoutsuite, nmap)
       |                      |                      |                      |
       v                      v                      v                      v
-Metadata Attack       Container Security     
+Metadata Attack       Container Security      Kubernetes Audit        Lateral Movement
+(IMDSv1 SSRF,        Assessment              (kubeaudit, RBAC)       (stolen credentials,
+ credential theft)    (trivy, docker escape)                           cross-service exploit)
+```
 
-## Instructions
+**Phase Details**:
 
-Read the referenced chiper-cyber files for full methodology:
-- **SKILL.md** — Step-by-step methodology, attack chain, tools, and defense perspective
-- **payloads.md** — Ready-to-use attack payloads organized by type and technique
-- **test-cases.md** — Structured test procedures with prerequisites and expected results
-- **guides/** — Deep-dive learning materials and scripts
+1. **Cloud Asset Discovery** - Enumerate EC2, S3, Lambda, RDS, and other resources in AWS accounts, build cloud asset inventory
+2. **IAM Enumeration** - Analyze users, roles, policies, and trust relationships, identify privilege escalation paths and over-privilege
+3. **Storage Bucket Exposure** - Detect publicly accessible S3 buckets, assess data leakage scope and sensitive information exposure
+4. **Network Misconfiguration** - Audit security groups, NACLs, VPC configurations, discover overly permissive network rules
+5. **Metadata Attacks** - Leverage SSRF to access IMDSv1 and obtain IAM temporary credentials
+6. **Container Security Assessment** - Scan container image vulnerabilities, detect privileged containers and mount risks
+7. **Kubernetes Audit** - Check RBAC rules, Pod security policies, and secrets management
 
-Full skill content at: `~/.chiper/skills/chiper-cyber/chiper-cloud-security/`
+### Defense Perspective
 
-## Examples
+- **Least Privilege IAM** - Each role should only be granted the precise permissions needed to complete its tasks; disable wildcard `*:*`
+- **Encryption at Rest and in Transit** - S3 SSE-KMS encryption, RDS TDE, TLS enforcement, full-chain data protection
+- **Security Group Minimization** - Inbound rules should only open necessary ports and IP ranges; outbound rules restricted by default
+- **CSPM Continuous Monitoring** - Use ScoutSuite or AWS Config for continuous detection of configuration drift and violations
+- **IMDSv2 Enforcement** - Disable IMDSv1, require PUT request to obtain token, block SSRF metadata attacks
+- **CloudTrail Full Logging** - Enable multi-region, global service logging; record all API calls for forensics
 
-See `payloads.md` in the referenced directory for ready-to-use attack payloads.
+---
 
-## Test Cases
+## Practical Steps
 
-See `test-cases.md` in the referenced directory for structured test procedures.
+> **For detailed payloads see `payloads.md`, and for the complete test checklist see `test-cases.md`.**
 
-## Notes
+### AWS IAM Enumeration and Privilege Escalation
 
-- Source: Chiper-Cyber v1.0.0 — Security Skills Ecosystem (Chiper 2026)
-- Defense Triple: Defense Perspective + Detection Methods + Evasion Techniques
-- Update: `cd ~/.chiper/skills/chiper-cyber && git pull`
+Use pacu or awscli to enumerate IAM users, roles, and policies, scan for privilege escalation paths. Key operations: `set_keys` to configure credentials, `iam__privesc_scan` to discover escalation paths, `sts get-caller-identity` to confirm current identity.
+
+### S3 Storage Bucket Security Assessment
+
+Check bucket ACLs and policies, test anonymous access, bulk scan public buckets. Core commands are in the "S3 bucket enumeration" section of `payloads.md`.
+
+### Multi-Cloud Security Audit
+
+Use ScoutSuite for comprehensive security audits of AWS/Azure/GCP, with focus on IAM policies, bucket public status, security group rules, and encryption configurations.
+
+### Container and Kubernetes Security
+
+Use trivy to scan image vulnerabilities and IaC configurations, use kubeaudit to audit RBAC rules and Pod security contexts. Detect privileged containers and anonymous bindings.
+
+### Kubernetes Attack Tree
+
+```
+K8s Cluster
+├── API Server
+│   ├── Unauthenticated access (anonymous auth)
+│   ├── Service account token theft
+│   ├── RBAC privilege escalation
+│   └── Webhook bypass
+├── etcd
+│   ├── Unauthenticated access (default port 2379)
+│   └── Keyspace enumeration
+├── Kubelet
+│   ├── Exec into pods (10250)
+│   ├── Running pods enumeration
+│   └── Container logs access
+├── Pods
+│   ├── Privileged container escape
+│   ├── hostPath mount escape
+│   ├── hostPID/hostNetwork abuse
+│   └── Service account token mount
+└── Network
+    ├── No network policy (default allow)
+    ├── Service mesh bypass
+    └── Ingress controller misconfig
+```
+
+### Serverless Attack Chain
+
+Serverless functions introduce unique attack vectors through event sources:
+
+1. **Event Injection**: Malicious data in trigger events (S3 object names, SQS messages, HTTP bodies)
+2. **Permission Chain**: Function -> Service Account -> Cross-service access
+3. **Data Flow**: Sensitive data processed by functions without encryption
+4. **Cold Start Leak**: Residual data from previous invocations
+
+### Infrastructure as Code Risks
+
+IaC templates define cloud infrastructure -- vulnerabilities here are infrastructure-scale:
+
+| Risk | Impact | Detection Tool |
+|------|--------|---------------|
+| Public S3 buckets | Data exposure | tfsec, checkov |
+| Open security groups | Network exposure | scoutsuite |
+| Hardcoded secrets | Credential theft | git-secrets, trufflehog |
+| Overprivileged IAM | Privilege escalation | pmapper |
+| Unencrypted resources | Data at rest exposure | cfsec |
+
+See `guides/kubernetes-security-deep-dive.md`, `guides/serverless-security.md`, and `guides/infrastructure-as-code-security.md`.
+
+---
+
+## Hacker Laws
+
+| Law | Manifestation in Cloud Security |
+|------|---------------------------------|
+| **Least Privilege** | `*:*` in IAM policies is the biggest enemy. Each role should only have the precise permissions needed for its function; pacu's privesc_scan is specifically designed to find paths that violate this principle |
+| **Assume Breach** | Assume Breach means cloud architecture design must assume attackers have already gained initial access. VPC segmentation, IMDSv2, temporary credentials (STS) are all defenses based on this assumption |
+| **Minimize Attack Surface** | Public S3 buckets, open security groups, IMDSv1 reachability — each is an unnecessary attack surface. The core of ScoutSuite reports is enumerating these overexposures |
+| **Defense in Depth** | IAM alone is not enough. Need IAM + encryption + network segmentation + log monitoring + CSPM in multiple layers, ensuring a single misconfiguration does not lead to total compromise |
+| **Trust but Verify** | Do not trust cloud provider default configurations. S3 is not public by default but policies may change it to public; IMDSv1 is enabled by default but can be upgraded to v2 — always verify |
+| **First Principles** | Understand how cloud APIs work. Without understanding IAM policy evaluation logic, you cannot understand privilege escalation; without understanding metadata services, you cannot understand SSRF credential theft |
+
+---
+
+## Detection Methods
+
+Cloud security detection relies on CloudTrail / Audit Logs, Cloud Security Posture Management (CSPM), Cloud Workload Protection (CWP), and Cloud Detection & Response (CDR). Understanding attacker patterns helps defenders prioritize monitoring.
+
+### Cloud Provider Audit Logs
+- **AWS CloudTrail**: All API calls; alert on `DeleteTrail`, `UpdateTrail`, `StopLogging` (attacker trying to blind monitoring).
+- **AWS ConsoleLogin**: Alert on root logins, logins without MFA, logins from new geographies.
+- **AWS IAM events**: `CreateAccessKey`, `CreateUser`, `AttachUserPolicy`, `AssumeRole` chains; correlate with source IP & UA.
+- **Azure Activity Log**: Alert on `Microsoft.Authorization/elevate/elevate` (PIM activation), new Role Assignments.
+- **GCP Audit Logs**: Alert on `SetIamPolicy`, `iam.serviceAccountKeys.create`, `gce.instances.setMetadata` (SSH key injection).
+- **Kubernetes Audit Log**: `kubectl` exec, privileged pod creation, RBAC modifications, ServiceAccount token creation.
+
+### Identity & Access Anomalies
+- **IMDS access**: EC2 making IMDS calls from non-ECS-workload processes (credential theft via SSRF).
+- **STS AssumeRole chains**: Long assume role chains (role A → B → C); indicates privesc lateral movement.
+- **Service Account key creation**: GCP `serviceAccount.keys.create` spikes — long-lived keys are discouraged; alert.
+- **Admin role grant**: Newly created user immediately assigned `roles/owner` or `AdministratorAccess`.
+- **SSRF metadata access**: EC2 outbound to `169.254.169.254` from web app logs; metadata extraction attempt.
+
+### Storage / Data Exfiltration
+- **S3 GET spike**: One principal requesting `s3:GetObject` across many buckets in short window (mass download).
+- **S3 bucket policy changes**: `s3:PutBucketPolicy` making bucket public; `s3:PutBucketAcl` granting `AllUsers`.
+- **EBS snapshot sharing**: `ec2:ModifySnapshotAttribute` adding `shared-with:external-account`.
+- **AMI publishing**: `ec2:ModifyImageAttribute` making AMI public (data exfil via AMI sharing).
+- **Cloud Storage egress**: GCS / Azure Blob download volume exceeding baseline (>10 GB/day per principal).
+- **Snowball / Transfer Family**: Data transfer to physical media; correlate with budget alerts.
+
+### Compute / Container Indicators
+- **EC2 instance metadata**: EC2 launched with `UserData` containing reverse shell or IAM role over-privilege.
+- **Lambda function creation**: New Lambda with `LambdaFullAccess` or `AmazonS3FullAccess` permission; data exfil vector.
+- **ECS task privileged**: ECS task definition with `privileged: true`; container escape risk.
+- **EKS pod creation**: Pod with `hostPath`, `hostPID`, `hostNetwork` mounts; node-level access.
+- **Instance launch anomalies**: Burst of EC2 launches in unusual region (cryptomining).
+
+### SIEM Detection Rules
+- **Splunk SPL (AWS)**: `index=aws sourcetype=aws:cloudtrail eventName=ConsoleLogin sourceIPAddress=*NOT-DEFAULT* | stats count by userIdentity.arn`
+- **Splunk SPL (K8s)**: `index=k8s verb=create resource=pods AND requestObject.spec.securityContext.privileged=true`
+- **Sigma rule**: `sigma/rules/cloud/aws_root_login.yml`
+- **GuardDuty**: Native AWS threat detection — enable all detector types (especially `UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration`).
+- **Microsoft Defender for Cloud**: Enable all plans (Servers, Containers, SQL, Storage, Key Vault).
+- **Falco** (runtime K8s): Default ruleset catches container escapes, reverse shells, privilege escalations.
+
+### CSPM / Posture Management
+- **Public S3 buckets**: Continuous scan via Prowler / CloudSploit / ScoutSuite; alert on new public buckets.
+- **Security groups open to internet**: `0.0.0.0/0` on ports 22, 3389, 3306, 5432, 6379; alert on creation.
+- **Missing encryption**: EBS volumes, S3 buckets, RDS instances without `KmsKeyId` or `ServerSideEncryption`.
+- **IAM keys > 90 days**: Alert on long-lived access keys; encourage rotation.
+- **CloudTrail disabled**: Alert on `CloudTrail` deletion, S3 bucket policy changes affecting logs.
+
+## Defense Evasion Techniques
+
+### CloudTrail / Logging Evasion
+- **Disable CloudTrail**: `aws cloudtrail delete-trail` or `stop-logging` (loud; needs `cloudtrail:DeleteTrail`).
+- **Event selector manipulation**: Modify trail event selectors to exclude `ReadWriteType` events or specific keys (subtle).
+- **Logging by service bypass**: Use services that don't emit CloudTrail events (e.g., `s3:ListAllMyBuckets` on global endpoint).
+- **Data events exclusion**: Ensure S3/Lambda data events are NOT enabled; attacker's `s3:GetObject` won't be logged.
+- **Log file encryption/key disablement**: Disable the KMS key used to encrypt CloudTrail logs (`kms:DisableKey`).
+- **VPC Flow Logs tampering**: Disable VPC Flow Logs (`ec2:DeleteFlowLogs`); add `deny` for logging services in SCP.
+- **Region hopping**: Operate in regions where CloudTrail is not configured (need to verify multi-region trail).
+
+### Identity Evasion
+- **STS role chaining**: Use assume role multiple times to launder credentials across accounts (harder to track origin).
+- **Cross-account role assumption**: Use role in target account; trail in target account shows different identity than attacker.
+- **Service role abuse**: Use EC2 instance profile credentials; appears as legit workload in CloudTrail.
+- **Long-lived keys over STS**: Use IAM user keys (no session token) — easier to hide among legitimate long-lived key usage.
+- **Federation abuse**: Use SAML federation with forged assertion; appears as legit SSO user in logs.
+- **Web identity federation**: Use OIDC tokens from GitHub / Google; exploit trust relationships.
+
+### Compute Stealth
+- **Lambda in same region as target**: Use Lambda in target's region for credentialed API calls; blends with legit Lambda traffic.
+- **ECS Fargate over EC2**: Fargate leaves no EC2 host logs; harder to detect runtime activity.
+- **Spot Instance over On-Demand**: Spot instances are transient; less monitoring baseline.
+- **Lightsail over EC2**: Lightsail has less detailed CloudTrail events; defenders may not monitor it.
+- **Lambda layer obfuscation**: Hide malicious code in Lambda layer (less visible than function code).
+
+### Data Exfiltration Stealth
+- **S3 cross-region replication**: Set up replication to attacker-controlled bucket (looks like legitimate DR config).
+- **EBS snapshot copy**: `ec2:CopySnapshot` to external account; defender must check `CreateVolumePermission`.
+- **AMI copy**: `ec2:CopyImage` to external account; defender must check `LaunchPermission`.
+- **Snowball**: Physical data exfil via Snowball; bypasses network DLP.
+- **AWS Transfer Family**: SFTP / FTPS data exfil using legitimate service.
+- **VPC endpoint to external service**: Use PrivateLink to attacker's VPC service; appears as private network traffic.
+
+### Container / Kubernetes Evasion
+- **Sidecar over new pod**: Inject into existing pod via `kubectl exec`; avoids new pod creation alert.
+- **ServiceAccount token theft over creation**: Steal mounted SA token; appear as legit pod to API server.
+- **Anonymous auth abuse**: Kubelet / API server with `--anonymous-auth=true`; appear as anonymous system user.
+- **kubeconfig in ConfigMap**: Embed kubeconfig in ConfigMap (no Secret creation event); attacker fetches via API.
+- **Privileged pod via cron**: Schedule one-shot pod via CronJob; short-lived, may evade runtime detection.
+- **Host PID/Network only (no Privileged)**: Pods with `hostPID` / `hostNetwork` get many capabilities without `privileged: true` flag.
+- **Capability drop evasion**: Drop all caps, then add `CAP_SYS_ADMIN` via `setcap`; appears benign on initial inspection.
+- **Container layer obfuscation**: Use multi-layer images with payload in lower layers; evades simple image scans.
+
+### Network Stealth
+- **VPC peering to external account**: Use peering connection; traffic appears as private VPC traffic.
+- **Transit Gateway**: Use TGW with complex routing; harder to trace east-west traffic.
+- **PrivateLink**: Exfiltrate via AWS PrivateLink (private IP space); evades internet-facing DLP.
+- **Direct Connect**: Use Direct Connect for high-bandwidth exfil; bypasses internet egress monitoring.
+- **CloudFront / API Gateway**: Use CloudFront as reverse proxy; appears as legit CDN traffic.
+
+---
+
+## Orchestration
+
+### ECC Loop Pattern
+- **Pattern**: Batch Processing
+- **Rationale**: Cloud environments typically have many resources (instances, buckets, functions) that can be audited in parallel batches
+- **Integration**: codebase-onboarding (IaC template analysis), data-scraper-agent (CVE collection), verification-loop (finding confirmation)
+
+### Cross-Skill Pipeline
+```
+codebase-onboarding -> cloud-security -> verification-loop -> article-writing
+```
+
+### Quality Gate
+- Pre-condition: Cloud credentials configured, scope defined (which accounts/subscriptions)
+- Post-condition: All resources audited, misconfigurations documented with evidence
+- Verification: Use verification-loop Phase 4 (confirm with different tool -- e.g., ScoutSuite + Prowler cross-check)
+
+---
+
+## Learning Resources
+
+- [Pacu Official Repository](https://github.com/RhinoSecurityLabs/pacu) - AWS penetration testing framework, modular attack tools
+- [ScoutSuite Official Documentation](https://github.com/nccgroup/ScoutSuite) - Multi-cloud security audit tool
+- [Trivy Official Documentation](https://aquasecurity.github.io/trivy/) - Container and IaC vulnerability scanning
+- [AWS IAM Best Practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html) - Authoritative guide for IAM security configuration
+- [Kubernetes Security Documentation](https://kubernetes.io/docs/concepts/security/) - K8s security model and RBAC
+- [Cloud Security Alliance](https://cloudsecurityalliance.org/) - Cloud security industry standards and whitepapers
+
+---
+
+**Supplementary files for this skill**: payloads.md, test-cases.md, guides/kubernetes-security-deep-dive.md, guides/serverless-security.md, guides/infrastructure-as-code-security.md
+**Related skills**: chiper-container-security/SKILL.md, chiper-network-pentest/SKILL.md
+**External resources**: https://github.com/RhinoSecurityLabs/pacu, https://github.com/nccgroup/ScoutSuite, https://aquasecurity.github.io/trivy/, https://cloudsecurityalliance.org/

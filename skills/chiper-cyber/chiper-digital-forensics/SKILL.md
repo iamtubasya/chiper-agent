@@ -1,19 +1,15 @@
 ---
 name: chiper-digital-forensics
 description: "Use when Digital forensics covers the complete workflow of disk forensics, memory forensics, network forensics, file recovery/carving, and chain of custody."
-version: "0.2.0"
+version: "0.3.5"
 author: Chiper (Chiper-Cyber)
 metadata:
-  Chiper:
-    tags: [pentest, security, kali-linux, chiper-cyber, digital, forensics]
-references:
-  - path: ~/.chiper/skills/chiper-cyber/chiper-digital-forensics/SKILL.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-digital-forensics/payloads.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-digital-forensics/test-cases.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-digital-forensics/guides
+  chiper:
+    tags: [pentest, security, chiper-cyber, digital, forensics]
+    domain: forensics
 ---
 
-# Digital Forensics
+# Skill: Digital Forensics
 
 ## Prerequisites
 
@@ -46,7 +42,12 @@ else
 fi
 ```
 
-## When to Use
+
+> **Supplementary Files**:
+> - `payloads.md` — Forensics command reference covering disk imaging, filesystem analysis, memory forensics, network forensics, log analysis, timeline reconstruction, file carving, anti-forensics detection, Windows/Linux forensics, and more
+> - `test-cases.md` — Structured test case list covering evidence acquisition, filesystem analysis, memory forensics, network forensics, and anti-forensics detection
+
+## Summary
 
 Digital Forensics skill domain covering forensics operations.
 
@@ -54,15 +55,32 @@ Digital Forensics skill domain covering forensics operations.
 
 **Domain**: forensics
 
+## Description
+
+Digital forensics covers the complete workflow of disk forensics, memory forensics, network forensics, file recovery/carving, and chain of custody. The core objective is to extract, analyze, and present admissible electronic evidence from digital media while maintaining evidence integrity and legal validity.
+
+The agent has mastered the SleuthKit command-line toolset (mmls, fsstat, fls, icat, ifind, ils), Autopsy forensics platform, Scalpel/Foremost file carving, Bulk Extractor high-performance extraction, ExifTool metadata analysis, PhotoRec data recovery, TestDisk partition repair, and has Volatility memory analysis and Wireshark/tshark network forensics capabilities.
+
+## Use Cases
+
+1. **Incident Response Forensics** - After a security incident, perform disk image analysis and memory dump extraction on compromised systems to reconstruct the attack timeline and lateral movement paths
+2. **File Recovery and Carving** - Recover deleted files from damaged or formatted disks, reconstruct fragmented data using file header/tail signatures
+3. **Malware Forensics** - Extract malicious processes, injected code, and rootkit-hidden modules from memory dumps, combined with disk analysis to locate persistence mechanisms
+4. **Network Attack Reconstruction** - Reconstruct network attack traffic through PCAP analysis, identify C2 communications, data exfiltration, and lateral movement behavior
+5. **Legal Electronic Evidence** - Strictly follow chain of custody procedures, generate court-admissible forensics reports and hash verification records
+
 ## Core Tools
 
 | Tool | Purpose | Command Example |
 |------|---------|-----------------|
 | **autopsy** | Web-based forensics platform built on SleuthKit | `autopsy -p 8080 -d /case/evidence` |
 | **sleuth kit** | Command-line filesystem forensics toolset | `mmls image.dd && fls -r -o 2048 image.dd` |
-| **volatility
+| **volatility** | Memory dump analysis framework | `vol.py -f memory.dmp --profile=Win10 pslist` |
+| **wireshark/tshark** | Network traffic analysis and PCAP forensics | `tshark -r capture.pcap -Y "http.request" -T fields -e http.host` |
+| **binwalk** | Firmware/binary signature identification and extraction | `binwalk -Me firmware.bin` |
+| **foremost** | Signature-based data carving | `foremost -t jpg,png,pdf -i image.dd -o /recovery` |
 
-## Methodology Overview
+## Methodology
 
 ### Attack Chain
 
@@ -71,28 +89,163 @@ Evidence Collection    Disk Analysis        Memory Analysis      Network Reconst
 (Imaging/Hash/         (Partition/          (Process/Injection/  (PCAP/C2/Data
  Write-Blocking)        Filesystem/Deleted)  Rootkit)             Exfiltration)
        |                    |                     |                      |
-       v                    v                     v     
+       v                    v                     v                      v
+                Timeline Building        Report & Presentation
+                (MAC Times/Event         (Chain of Custody/
+                 Correlation)             Admissible Report)
+```
 
-## Instructions
+**Phase Details**:
 
-Read the referenced chiper-cyber files for full methodology:
-- **SKILL.md** — Step-by-step methodology, attack chain, tools, and defense perspective
-- **payloads.md** — Ready-to-use attack payloads organized by type and technique
-- **test-cases.md** — Structured test procedures with prerequisites and expected results
-- **guides/** — Deep-dive learning materials and scripts
+1. **Evidence Collection** - Use hardware write-blockers to prevent tampering, create bit-by-bit images of original media (dd / dcfldd / FTK Imager), calculate MD5/SHA256 hash verification values, and complete chain of custody forms
+2. **Disk Analysis** - Use mmls for partition table analysis, fsstat for filesystem examination, fls for file/directory listing, and icat for file content extraction, focusing on searching for deleted files, hidden partitions, and slack space
+3. **Memory Analysis** - Use Volatility to extract running processes (pslist/pstree), network connections (netscan), DLL injections (malfind), and registry hives (hivelist), identifying malicious code residency and rootkit hiding
+4. **Network Reconstruction** - Use tshark to filter and analyze network traffic, reconstruct DNS queries, HTTP requests, TLS handshake metadata, and identify C2 communication patterns and data exfiltration behavior
+5. **Timeline Building** - Combine disk MAC times (fls -m), network traffic timestamps, and memory process creation times; use log2timeline/supertimeline to generate a unified event timeline
 
-Full skill content at: `~/.chiper/skills/chiper-cyber/chiper-digital-forensics/`
+### Defense Perspective
 
-## Examples
+| Best Practice | Description | Priority |
+|---------------|-------------|----------|
+| **Write-Blockers** | Hardware write-blockers prevent any writes to original evidence, ensuring image integrity | CRITICAL |
+| **Hash Verification** | Calculate MD5/SHA256 for original media and copies to verify images are identical to originals | CRITICAL |
+| **Chain of Custody** | Completely record every handler, time, location, and operation from evidence collection to court presentation | CRITICAL |
+| **Imaging Best Practices** | Use dd/dcfldd/FTK Imager to create bit-by-bit images; perform all analysis on copies | HIGH |
+| **Documentation** | Detailed recording of every analysis step, tool versions, command parameters, and output results | HIGH |
+| **Tool Validation** | Verify the accuracy of forensics tool output using known samples for cross-validation | MEDIUM |
 
-See `payloads.md` in the referenced directory for ready-to-use attack payloads.
+## Practical Steps
 
-## Test Cases
+### Step 1: Disk Image Analysis and Autopsy
 
-See `test-cases.md` in the referenced directory for structured test procedures.
+Create bit-by-bit images and verify hashes, use SleuthKit command-line tools for quick analysis of partition tables, filesystems, and deleted files, or perform interactive forensics analysis through the Autopsy web platform.
 
-## Notes
+### Step 2: Memory Dump Analysis with Volatility
 
-- Source: Chiper-Cyber v1.0.0 — Security Skills Ecosystem (Chiper 2026)
-- Defense Triple: Defense Perspective + Detection Methods + Evasion Techniques
-- Update: `cd ~/.chiper/skills/chiper-cyber && git pull`
+Identify the memory dump's operating system profile, extract process lists and process trees, detect hidden processes, code injection, and API hooks, analyze network connections, and export suspicious processes with their loaded DLLs.
+
+### Step 3: File Carving and Binwalk
+
+Use foremost/scalpel for file signature-based deleted file recovery, use binwalk for recursive extraction of firmware and embedded files, use bulk_extractor for high-performance feature data extraction, and use exiftool for file metadata analysis.
+
+### Step 4: Network Forensics and tshark
+
+Perform traffic statistics and conversation analysis on PCAP files, reconstruct HTTP requests and DNS queries, extract transferred files, analyze TLS handshake metadata to identify C2 communications, and detect data exfiltration techniques such as DNS tunneling.
+
+### Step 5: Timeline Reconstruction
+
+Use SleuthKit to generate MAC timelines, combining disk MAC times, network traffic timestamps, memory process creation times, and system logs to build a unified event timeline that reconstructs the complete attack process.
+
+> **Detailed payloads in `payloads.md`, complete test checklist in `test-cases.md`.**
+
+## Common Pitfalls
+
+- **Analyzing original evidence directly**: Working on the original media instead of a verified forensic image risks accidental modification that destroys evidence integrity. Always create a bit-by-bit image first, verify hashes match, and perform all analysis on the copy.
+- **Skipping chain of custody documentation**: Even with perfect technical analysis, evidence without a documented chain of custody may be inadmissible in court. Record every handler, time, location, and operation from the moment evidence is collected to its final presentation.
+- **Relying on a single tool for analysis**: Different forensic tools may parse filesystem structures differently, especially for corrupted or unusual filesystem types. Cross-validate critical findings between SleuthKit, Autopsy, and manual inspection to avoid tool-specific false conclusions.
+
+## Detection Methods
+
+### Forensic Artifact Analysis
+- **Filesystem timeline**: NTFS `$MFT`, USN Journal; Linux `ext4` journal; reveal deleted files and timestamps.
+- **Registry analysis**: Windows Registry hives (SAM, SYSTEM, SOFTWARE); reveal persistence and config.
+- **Memory forensics**: Volatility / Rekall analysis of RAM dump; reveals processes, network connections, malware.
+- **Network forensics**: PCAP analysis with Wireshark / NetworkMiner; reveals attack timeline.
+
+### SIEM Detection Rules
+- **Splunk SPL**: Correlate forensic timeline with SIEM events; identify gaps.
+- **MITRE ATT&CK mapping**: Map forensic artifacts to ATT&CK techniques for standardized reporting.
+- **Velociraptor / GRR**: Enterprise forensic platforms with remote acquisition.
+
+## Defense Evasion Techniques
+
+### Anti-Forensics
+- **Secure deletion**: `shred`, `srm`, `bcwipe` to defeat filesystem recovery.
+- **Timestamp manipulation**: NTFS `$STANDARD_INFORMATION` + `$FILE_NAME` (defeat timeline analysis).
+- **USN Journal cleaning**: `fsutil usn deletejournal` to remove update sequence records.
+- **Log tampering**: Selective log entry removal; preserve legitimate-looking sequence.
+
+### Memory Anti-Forensics
+- **Process hollowing**: Replace legitimate process memory; appears legitimate in `ps`.
+- **DKOM (Direct Kernel Object Manipulation)**: Unlink process from active list; invisible to live response.
+- **Reflective DLL injection**: Load from memory; no file on disk.
+- **Memory-only execution**: `memfd_create` on Linux; no disk artifacts.
+
+### Network Anti-Forensics
+- **TLS to attacker C2**: Encrypt all traffic; PCAP shows only encrypted bytes.
+- **Domain fronting**: Use legitimate CDN; PCAP shows only CDN IP.
+- **DNS tunneling**: Encode data in DNS; bypasses HTTP-based PCAP analysis.
+- **Covert timing channels**: Encode data in inter-packet delays.
+
+## Automation and Scripting
+
+Automate forensic triage with scripts that chain SleuthKit commands: use `mmls` to identify partition offsets, pipe results into `fls` for file listing, then `icat` to extract files of interest based on extension or timestamp filters. Build Volatility automation scripts that run the full plugin suite (pslist, netscan, malfind, hivelist) against memory dumps and consolidate results into a structured timeline. Use bulk_extractor with custom regex patterns for rapid extraction of email addresses, credit card numbers, and custom identifiers from large disk images that would take hours to analyze manually through a GUI.
+
+## Reporting and Documentation
+
+Forensic reports must meet legal admissibility standards and include: the evidence inventory with hash verification for each item, the tools and versions used for each analysis step, detailed methodology documentation enabling reproducibility, findings organized by artifact type (disk, memory, network), and a conclusions section that separates factual observations from interpretive analysis. Timeline reconstruction should be presented in both tabular and visual format, with explicit notes about timezone handling and clock skew that may affect timestamp accuracy.
+
+## Legal and Ethical Considerations
+
+Digital forensics for legal proceedings requires strict adherence to evidence handling procedures that vary by jurisdiction. Ensure chain of custody forms are complete, evidence bags are sealed and numbered, and all analysis is performed on verified copies with write-blockers. Privacy laws (GDPR, CCPA) may restrict the analysis of personal data on seized devices — consult legal counsel before examining devices that may contain employee or customer personal information beyond the scope of the investigation. Never disclose findings to unauthorized parties, and store evidence in encrypted, access-controlled storage.
+
+## Integration with Other Tools
+
+Digital forensics connects to multiple adjacent security skills. Memory analysis findings from Volatility (malicious processes, injected DLLs) inform binary-reverse for deeper malware analysis. Network forensics results from tshark (C2 communications, data exfiltration patterns) correlate with network-pentest methodology to understand the attack infrastructure. Disk forensics findings of persistence mechanisms (scheduled tasks, registry run keys, rootkit artifacts) map directly to post-exploitation techniques, enabling defenders to understand what the attacker did after gaining access and how to detect similar activity in the future.
+
+## Case Studies and Examples
+
+- **Insider threat investigation**: An employee was suspected of exfiltrating proprietary source code. Autopsy analysis of the employee's workstation revealed USB device connection logs, file access timestamps matching the exfiltration window, and remnants of deleted 7z archives in unallocated space. The carved archive files contained the exact source code repositories in question, with creation timestamps predating the employee's last day.
+- **Ransomware incident reconstruction**: Volatility analysis of a memory dump from a compromised server revealed a Meterpreter process, LSASS credential dumping activity, and lateral movement connections to three other servers. Timeline reconstruction showed the initial compromise occurred 47 days before ransomware deployment, during which the attacker mapped the network and exfiltrated 12GB of data through DNS tunneling.
+- **Anti-forensics detection**: A suspect attempted to cover tracks by using a secure deletion tool and modifying file timestamps with `touch -t`. SleuthKit analysis of the filesystem journal recovered the original MAC timestamps, and bulk_extractor carved fragments of the deleted files from swap space that the secure deletion tool had not sanitized.
+
+## Detection and Anti-Forensics
+
+Forensic artifacts that indicate anti-forensics activity include: timestamp inconsistencies (files created before their parent directory), gaps in event logs (cleared logs leave metadata artifacts), Timestomp evidence in NTFS $Standard_Information attributes, and Secure Delete tool remnants. Detect rootkit activity through cross-view detection: compare Volatility's process listing (pslist) against hidden process scans (psscan) to identify processes hidden by DKOM. Common anti-forensics techniques include: Timestomp for MAC timestamp modification, encrypted containers (VeraCrypt, BitLocker) preventing disk analysis, secure deletion tools, and rootkit techniques hiding processes, files, and registry keys. Defenders should deploy EDR agents that capture process creation events in real-time before anti-forensics tools can modify or delete evidence.
+
+## Advanced Techniques
+
+Advanced forensic analysis includes: Windows registry forensics (ShellBags, UserAssist, ShimCache, Amcache) for detailed user activity reconstruction, hibernation file analysis for recovering memory contents from powered-off systems, Volume Shadow Copy analysis for accessing previous file versions that attackers believed were deleted, and mobile device forensics using Cellebrite or open-source alternatives. For network forensics, advanced techniques include TLS session decryption with captured keys, HTTP/2 and QUIC protocol analysis, and DNS tunnel reconstruction from fragmented query patterns.
+
+## Tool Comparison Matrix
+
+| Tool | Best For | Speed | Coverage | Skill Level |
+|------|----------|-------|----------|-------------|
+| **Autopsy** | GUI-based full disk forensics | Moderate | Very broad | Beginner |
+| **SleuthKit** | CLI filesystem forensics | Fast | Broad | Intermediate |
+| **Volatility** | Memory dump analysis | Variable | Broad (OS-dependent) | Advanced |
+| **Wireshark/tshark** | Network traffic analysis | Fast | Very broad | Intermediate |
+| **binwalk** | Firmware/binary extraction | Fast | Narrow (binary) | Intermediate |
+| **foremost** | File carving by signature | Moderate | Narrow (carving) | Beginner |
+
+## Performance and Remediation
+
+Forensic analysis performance depends heavily on evidence size and tool selection. Large disk images (1TB+) require significant time for initial ingestion into Autopsy — use SleuthKit CLI tools for targeted extraction when full GUI analysis is unnecessary. Volatility memory analysis performance scales with dump size: a 16GB Windows memory dump can take 30+ minutes for the full plugin suite. Use tshark with BPF filters to pre-filter large PCAP files before analysis. Bulk_extractor is optimized for parallel processing and can saturate all CPU cores. While digital forensics is primarily investigative, findings should drive remediation: revoke compromised credentials, rebuild systems with rootkit evidence (cleaning is insufficient), patch the initial access vector, implement monitoring for discovered persistence mechanisms, and update detection rules based on extracted malware artifacts.
+
+## Hacker Laws
+
+1. **First Principles** - The foundation of digital forensics is data immutability and verifiability. Every conclusion must be traceable to original evidence bits, and every operational step must be reproducibly verifiable. Understanding filesystem structures, memory management mechanisms, and network protocol specifications is a prerequisite for accurate analysis.
+
+2. **Trust but Verify** - Never assume tool output is 100% accurate. Cross-validate SleuthKit and Autopsy results, and use multiple methods to confirm critical findings. Verify file signatures and hashes after recovering deleted files; corroborate memory analysis results with network traffic timestamps.
+
+3. **Murphy's Security Law** - In forensic analysis, the most critical evidence often appears in the least expected places: residual data in slack space, plaintext keys in swap partitions, and forgotten auto-start entries in the registry. Comprehensive coverage is more important than selective depth.
+
+## Learning Resources
+
+**This skill's supplementary files**: `payloads.md`, `test-cases.md`
+
+**Related skills**:
+- `chiper-binary-reverse/SKILL.md` - Malware reverse engineering to complement forensic sample findings
+- `chiper-post-exploitation/SKILL.md` - Understanding attacker persistence mechanisms to guide forensic investigation direction
+
+**Internal resources (this workspace)**:
+- `memory/2026-03-21-digital-forensics-tools.md` - Complete digital forensics tool learning notes (SleuthKit/Autopsy/Scalpel/Bulk Extractor/ExifTool/PhotoRec/TestDisk)
+- `security-tools-67/digital-forensics-cli-reference.md` - Forensics command-line tool reference
+
+**External resources**:
+- [SleuthKit Official Documentation](https://sleuthkit.org/sleuthkit/) - Complete reference for filesystem forensics toolset
+- [Volatility 3 Documentation](https://volatility3.readthedocs.io/) - Memory forensics framework API and profile development
+- [Autopsy Official Tutorial](https://sleuthkit.org/autopsy/) - Web forensics platform usage guide
+- [Wireshark Wiki](https://gitlab.com/wireshark/wireshark/-/wikis/home) - Network protocol analysis reference
+- [NIST SP 800-86](https://csrc.nist.gov/publications/detail/sp/800-86/final) - Guide to Integrating Forensic Techniques into Incident Response
+- [HackTricks - Forensics](https://book.hacktricks.xyz/forensics/basic-forensic-methodology)

@@ -1,19 +1,15 @@
 ---
 name: chiper-repo-scan
 description: "Use when Cross-stack source code asset audit that classifies every file, detects embedded third-party libraries, and delivers actionable verdicts per module."
-version: "0.2.0"
+version: "0.3.5"
 author: Chiper (Chiper-Cyber)
 metadata:
-  Chiper:
-    tags: [pentest, security, kali-linux, chiper-cyber, repo, scan]
-references:
-  - path: ~/.chiper/skills/chiper-cyber/chiper-repo-scan/SKILL.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-repo-scan/payloads.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-repo-scan/test-cases.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-repo-scan/guides
+  chiper:
+    tags: [pentest, security, chiper-cyber, repo, scan]
+    domain: assessment
 ---
 
-# Repo Scan
+# Skill: Repository Scan — Cross-Stack Source Code Audit
 
 ## Prerequisites
 
@@ -37,11 +33,30 @@ command -v file >/dev/null 2>&1 || sudo apt install -y file
 command -v trivy >/dev/null 2>&1 || sudo apt install -y trivy
 ```
 
-## When to Use
+
+> **Supplementary Files**:
+> - `payloads.md` — Repository scanning commands, classification scripts, and analysis payloads organized by scan phase
+> - `test-cases.md` — Structured test cases for surface classification, dependency detection, hotspot mapping, and complete audit workflows
+
+## Summary
 
 Repo Scan skill domain covering assessment operations.
 
 **Domain**: assessment
+
+## Description
+
+Cross-stack source code asset audit that classifies every file, detects embedded third-party libraries, and delivers actionable verdicts per module. This skill is used during white-box penetration testing and security code reviews to understand what code is present, what's third-party, and where security risks may hide.
+
+Difference from `security-review`: security-review provides a checklist for auditing security patterns. This skill focuses on mapping and classifying the codebase itself — understanding what code exists, what's custom vs third-party, and where to focus security analysis.
+
+## Use Cases
+
+- White-box penetration test preparation: understand the target codebase structure before deep analysis
+- Open-source security audit: map the attack surface of a project before hunting vulnerabilities
+- Third-party library inventory: identify embedded dependencies with known vulnerabilities
+- M&A security due diligence: assess code quality and security of an acquired codebase
+- Supply chain audit: verify what third-party code is actually running in the target
 
 ## Core Tools
 
@@ -50,9 +65,12 @@ Repo Scan skill domain covering assessment operations.
 | semgrep | Pattern-based static analysis | `semgrep --config=auto --json .` |
 | trivy | Dependency and container scanning | `trivy fs .` |
 | grype | Vulnerability matching for packages | `grype dir:.` |
-| trufflehog | Secret 
+| trufflehog | Secret scanning in git history | `trufflehog git file://. --since-commit HEAD~100` |
+| gitleaks | Git secret detection | `gitleaks detect --source .` |
+| cloc | Line counting by language | `cloc --by-file .` |
+| gh | GitHub code search and analysis | `gh search code "<pattern>" --language python` |
 
-## Methodology Overview
+## Methodology
 
 ### Repo Scan Four-Phase Process
 
@@ -68,28 +86,153 @@ cloc --by-file . --json
 find . -type f | sed 's/.*\.//' | sort | uniq -c | sort -rn
 
 # Detect third-party directories
-find . -type d \( -name "vendor" -o -name "node_modules" -o -name "third_party" -o -name "external" -
+find . -type d \( -name "vendor" -o -name "node_modules" -o -name "third_party" -o -name "external" -o -name "libs" -o -name "deps" \)
+```
 
-## Instructions
+Classify each file as:
+- **Project code** — written by the project authors
+- **Third-party code** — embedded libraries, vendored dependencies
+- **Build artifacts** — compiled output, generated files
+- **Configuration** — settings, deployment files
+- **Test code** — test fixtures, mock data
 
-Read the referenced chiper-cyber files for full methodology:
-- **SKILL.md** — Step-by-step methodology, attack chain, tools, and defense perspective
-- **payloads.md** — Ready-to-use attack payloads organized by type and technique
-- **test-cases.md** — Structured test procedures with prerequisites and expected results
-- **guides/** — Deep-dive learning materials and scripts
+**Phase 2: Library Detection**
 
-Full skill content at: `~/.chiper/skills/chiper-cyber/chiper-repo-scan/`
+Identify embedded third-party libraries:
 
-## Examples
+```bash
+# Scan for known libraries and CVEs
+trivy fs --scanners vuln .
+grype dir:. --output json
 
-See `payloads.md` in the referenced directory for ready-to-use attack payloads.
+# Check specific library versions
+grep -r "version" vendor/*/package.json
+grep -r "VERSION" libs/*/*.h
+```
 
-## Test Cases
+**Phase 3: Security Hotspot Analysis**
 
-See `test-cases.md` in the referenced directory for structured test procedures.
+Focus review on high-value targets:
 
-## Notes
+```bash
+# Find authentication-related code
+grep -rn "password\|auth\|token\|session\|login" --include="*.py" --include="*.js" --include="*.java" .
 
-- Source: Chiper-Cyber v1.0.0 — Security Skills Ecosystem (Chiper 2026)
-- Defense Triple: Defense Perspective + Detection Methods + Evasion Techniques
-- Update: `cd ~/.chiper/skills/chiper-cyber && git pull`
+# Find database interaction
+grep -rn "query\|execute\|cursor\|select\|insert\|update" --include="*.py" .
+
+# Find file operations
+grep -rn "open(\|readfile\|upload\|download\|include\(" --include="*.php" .
+
+# Secret scanning
+trufflehog filesystem . --json
+gitleaks detect --source . --report-format json
+```
+
+**Phase 4: Verdict and Report**
+
+Assign verdicts per module:
+
+| Verdict | Meaning | Action |
+|---------|---------|--------|
+| **Core Asset** | Custom business logic, high security value | Deep security review required |
+| **Extract & Update** | Vendored library, should be managed dependency | Replace with package manager; check CVEs |
+| **Rebuild** | Duplicated or outdated wrapper code | Refactor; apply current security patterns |
+| **Deprecate** | Dead code, unused modules | Remove to reduce attack surface |
+
+### Cross-Stack Coverage
+
+| Stack | Key Files | Security Focus |
+|-------|-----------|----------------|
+| C/C++ | Makefile, CMakeLists.txt, *.c, *.h | Buffer overflows, memory management |
+| Java/Android | build.gradle, pom.xml, *.java | Deserialization, SQL injection |
+| iOS | Podfile, *.swift, *.m | Keychain usage, certificate pinning |
+| Web (JS/TS) | package.json, *.js, *.ts | XSS, prototype pollution, supply chain |
+| Python | requirements.txt, *.py | Pickle deserialization, command injection |
+| Go | go.mod, *.go | Race conditions, unsafe operations |
+| PHP | composer.json, *.php | SQL injection, file inclusion |
+| Rust | Cargo.toml, *.rs | Unsafe blocks, dependency auditing |
+
+### Defense Perspective
+
+- **Inventory everything**: You can't secure what you don't know exists
+- **Pin dependencies**: Lock exact versions to prevent supply chain attacks
+- **Remove dead code**: Every line of code is a potential attack surface
+- **Separate concerns**: Third-party code should be isolated from business logic
+- **Automate scanning**: Integrate repo scanning into CI/CD pipelines
+
+## Report Template
+
+```markdown
+# Repository Scan Report
+*Target: [repo/project] | Date: [date] | Depth: [fast/standard/deep]*
+
+## Executive Summary
+[Total files, languages, third-party ratio, key findings]
+
+## Classification Summary
+| Category | Files | Lines of Code | Percentage |
+|----------|-------|---------------|------------|
+| Project Code | N | N | N% |
+| Third-Party | N | N | N% |
+| Build Artifacts | N | N | N% |
+
+## Detected Libraries
+| Library | Version | Known CVEs | Status |
+|---------|---------|------------|--------|
+| [Name] | [X.Y.Z] | [N CVEs] | [Outdated/Current] |
+
+## Module Verdicts
+| Module | Verdict | Rationale | Security Priority |
+|--------|---------|-----------|-------------------|
+| [Name] | Core Asset / Extract / Rebuild / Deprecate | [Why] | [High/Med/Low] |
+
+## Security Hotspots
+[High-priority files/directories for deep security review]
+
+## Recommendations
+[Prioritized action items based on verdicts and findings]
+```
+
+## Detection Methods
+
+### Repository Activity Audit
+- **Mass cloning**: Single token cloning many repos; suspicious pattern.
+- **Code search anomalies**: `api.github.com/search/code` API abuse; rate limit violations.
+- **Commit frequency**: New contributor with many commits to security-sensitive files.
+
+### SIEM Detection Rules
+- **Splunk SPL**: `index=github audit | stats count by actor, action | where action="git.clone" | sort -count`
+- **GitHub Advanced Security**: Secret scanning, CodeQL alerts in PRs.
+- **GitGuardian / GitPrey**: Secret detection in repositories.
+
+## Defense Evasion Techniques
+
+### Stealth Cloning
+- **Slow & distributed**: Pace cloning; below per-token rate limit.
+- **Multiple tokens**: Use multiple credentials; spread across many sources.
+- **Mirror via CI**: Use legitimate CI pipeline to mirror repos; appears as routine sync.
+
+### Code Search Stealth
+- **Use authenticated API**: `api.github.com/search/code` over browser search (rate-limited but less suspicious).
+- **Local mirror**: Clone repos locally; search offline.
+- **Fork + scan**: Fork target repo privately; scan without revealing interest.
+
+## Orchestration
+
+### ECC Loop Pattern
+- **Pattern**: Batch Processing (classify → detect → map → scan → verdict across multiple files/modules)
+- **Rationale**: Repository scanning processes many files in batch — classification, dependency detection, and hotspot analysis all operate across the entire codebase simultaneously
+- **Integration**: security-review (consumes repo-scan output for targeted review), terminal-ops (evidence capture), continuous-learning (pattern extraction from scan results)
+
+### Cross-Skill Pipeline
+```
+repo-scan → security-review → verification-loop → chronicle
+    ↓                                                          ↑
+search-first (find tools)                continuous-learning (persist patterns)
+```
+
+### Quality Gate
+- Pre-condition: Repository accessible, scanning tools installed
+- Post-condition: All files classified, dependencies inventoried, hotspots mapped, verdicts assigned
+- Verification: Third-party ratio calculated, secret scan completed, report generated

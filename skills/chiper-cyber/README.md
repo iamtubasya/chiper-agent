@@ -1,11 +1,11 @@
 # Chiper-Cyber
 
-**144 security skill domains** untuk Chiper Agent — 302 tools, cross-platform.
+**147 security skill domains** untuk Chiper Agent — 302 tools, cross-platform.
 
 ## Install
 
 ```bash
-cp -r chiper-cyber ~/.Chiper/skills/
+cp -r chiper-cyber ~/.chiper/skills/
 bash ~/.chiper/skills/chiper-cyber/chiper-bootstrap/scripts/install.sh
 ```
 
@@ -91,8 +91,8 @@ chiper-cyber/
 ├── chiper-bootstrap/           ← MUST RUN FIRST
 │   ├── scripts/install.sh      ← Install 302 tools
 │   └── scripts/verify.sh       ← Verify installation
-├── chiper-kali-tools/          ← Tool selection reference
-├── chiper-kali-identity/       ← 12 Hacker Laws
+├── chiper-tools/          ← Tool selection reference
+├── chiper-tools/       ← 12 Hacker Laws
 ├── chiper-web-sqli/            ← SQL injection
 └── ... (144 skills)
 ```

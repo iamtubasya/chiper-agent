@@ -1,46 +1,266 @@
 ---
 name: chiper-verification-loop
-description: "Use when After discovering a potential vulnerability or exploit - Before submitting any finding to a report or bounty platform - When verifying that a remediation or patc"
-version: "0.2.0"
+description: "Use when After discovering a potential vulnerability or exploit - Before submitting any finding to a report or bounty platform - When verifying that a remediation or patch is effective - When cross-checking automated scanner results - User says \"
+version: "0.3.5"
 author: Chiper (Chiper-Cyber)
 metadata:
-  Chiper:
-    tags: [pentest, security, kali-linux, chiper-cyber, verification, loop]
-references:
-  - path: ~/.chiper/skills/chiper-cyber/chiper-verification-loop/SKILL.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-verification-loop/payloads.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-verification-loop/test-cases.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-verification-loop/guides
+  chiper:
+    tags: [pentest, security, chiper-cyber, verification, loop]
+    domain: workflow
 ---
 
 # Verification Loop
 
-## When to Use
+> **Supplementary Files**:
+> - `payloads.md` — Verification payloads, confirmation commands, and false positive elimination checklists organized by finding type
+> - `test-cases.md` — Structured test cases for SQL injection, XSS, authentication bypass, scanner results, and remediation verification
+
+## Summary
 
 Verification Loop skill domain covering workflow operations.
 
 **Domain**: workflow
 
-## Instructions
+## Use Cases
 
-Read the referenced chiper-cyber files for full methodology:
-- **SKILL.md** — Step-by-step methodology, attack chain, tools, and defense perspective
-- **payloads.md** — Ready-to-use attack payloads organized by type and technique
-- **test-cases.md** — Structured test procedures with prerequisites and expected results
-- **guides/** — Deep-dive learning materials and scripts
+1. **Vulnerability Verification** — Independently confirm scanner findings with manual exploitation to eliminate false positives
+2. **Exploit Reproducibility** — Verify that an exploit works consistently across multiple attempts before including in report
+3. **Remediation Validation** — Confirm that reported vulnerabilities are actually fixed after client applies patches
+4. **Evidence Documentation** — Capture proof-of-exploitation screenshots, command outputs, and chain-of-custody for each finding
+5. **Cross-Validation** — Use different tools and techniques to independently verify the same finding from multiple angles
 
-Full skill content at: `~/.chiper/skills/chiper-cyber/chiper-verification-loop/`
+## Activation
 
-## Examples
+- After discovering a potential vulnerability or exploit
+- Before submitting any finding to a report or bounty platform
+- When verifying that a remediation or patch is effective
+- When cross-checking automated scanner results
+- User says "verify", "confirm", "validate", "double-check"
 
-See `payloads.md` in the referenced directory for ready-to-use attack payloads.
+## Six-Phase Verification Process
 
-## Test Cases
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│  1. Pre-    │───→│  2. Execute │───→│  3. Post-   │
+│  Condition  │    │  & Observe  │    │  Condition  │
+└─────────────┘    └─────────────┘    └─────────────┘
+                                            │
+┌─────────────┐    ┌─────────────┐    ┌─────┴───────┐
+│  6. Evidence │←──│  5. False   │←──│  4. Independ│
+│  Document   │    │  Positive   │    │  Confirm    │
+│             │    │  Eliminate  │    │             │
+└─────────────┘    └─────────────┘    └─────────────┘
+```
 
-See `test-cases.md` in the referenced directory for structured test procedures.
+### Phase 1: Pre-Condition Check
 
-## Notes
+Before executing any verification:
 
-- Source: Chiper-Cyber v1.0.0 — Security Skills Ecosystem (Chiper 2026)
-- Defense Triple: Defense Perspective + Detection Methods + Evasion Techniques
-- Update: `cd ~/.chiper/skills/chiper-cyber && git pull`
+1. **Define success criteria** — What specific outcome confirms the finding?
+2. **Record baseline state** — Document the current system state before testing
+3. **Identify dependencies** — Network access, credentials, tools required
+4. **Set revert plan** — How to restore the system if the test causes changes
+
+```markdown
+## Verification Target: [Finding ID]
+- **Type:** [Vulnerability / Exploit / Remediation / Scanner Result]
+- **Claim:** [What needs to be verified]
+- **Success Criteria:** [Measurable outcome]
+- **Baseline State:** [Current conditions]
+- **Dependencies:** [Required access/tools]
+- **Revert Plan:** [How to undo changes]
+```
+
+### Phase 2: Execute & Observe
+
+Run the test or exploit under controlled conditions:
+
+1. **Use terminal-ops evidence protocol** — timestamp every command
+2. **Capture full output** — stdout, stderr, exit codes
+3. **Monitor side effects** — Watch for unintended changes
+4. **Record exact commands** — Including all flags and parameters
+
+Rules:
+- Execute the EXACT same steps claimed in the original finding
+- Do NOT modify parameters to force a result
+- If the first attempt fails, document the failure before retrying
+
+### Phase 3: Post-Condition Check
+
+After execution, verify the expected outcome:
+
+1. **Check success criteria** — Does the observed result match the claim?
+2. **Measure impact** — What actually changed vs. what was expected?
+3. **Capture evidence** — Screenshots, command output, log entries
+4. **Assess scope** — Did anything outside the target change?
+
+### Phase 4: Independent Confirmation
+
+Reproduce the finding using a DIFFERENT method:
+
+| Original Method | Independent Confirmation Method |
+|----------------|-------------------------------|
+| Automated scanner | Manual curl/python script |
+| Manual browser test | Command-line tool (nmap, nikto, sqlmap) |
+| One exploit tool | Different tool or manual technique |
+| Single payload | Different payload targeting same flaw |
+
+**Requirement:** The finding MUST be reproducible via at least one independent method.
+
+### Phase 5: False Positive Elimination
+
+Systematically rule out common false positive causes:
+
+1. **Environment-specific** — Does this only work in this specific setup?
+2. **Timing-dependent** — Does it require specific race conditions?
+3. **Privilege-dependent** — Does it only work with elevated access?
+4. **Configuration-dependent** — Does it rely on non-default settings?
+5. **Tool artifact** — Is the tool itself generating misleading output?
+
+```markdown
+## False Positive Analysis
+- [ ] Environment-specific? [Y/N] — Evidence:
+- [ ] Timing-dependent? [Y/N] — Evidence:
+- [ ] Privilege-dependent? [Y/N] — Evidence:
+- [ ] Configuration-dependent? [Y/N] — Evidence:
+- [ ] Tool artifact? [Y/N] — Evidence:
+```
+
+### Phase 6: Evidence Documentation
+
+Compile verified evidence into a structured report:
+
+```markdown
+## Verification Report: [Finding ID]
+
+### Summary
+- **Finding:** [Description]
+- **Verdict:** [CONFIRMED / NOT CONFIRMED / PARTIALLY CONFIRMED]
+- **Confidence:** [High / Medium / Low]
+- **Severity:** [Critical / High / Medium / Low / Info]
+
+### Evidence Chain
+1. Pre-condition baseline: [timestamp] — [state]
+2. Execution: [timestamp] — [exact command] → [output]
+3. Post-condition: [timestamp] — [observed change]
+4. Independent confirmation: [method] → [result]
+5. False positive analysis: [results]
+
+### Impact Assessment
+- [What an attacker could actually achieve]
+- [Prerequisites for exploitation]
+- [Scope of affected systems]
+
+### Reproduction Steps
+1. [Step 1 with exact command]
+2. [Step 2]
+3. [Expected vs actual result]
+```
+
+## Verification by Finding Type
+
+### SQL Injection
+
+```
+Phase 2: Execute original payload (e.g., ' OR 1=1--)
+Phase 4: Confirm with DIFFERENT payload (e.g., ' UNION SELECT NULL--)
+Phase 5: Check — is error-based or blind? Is WAF interfering?
+```
+
+### XSS
+
+```
+Phase 2: Execute original payload (e.g., <script>alert(1)</script>)
+Phase 4: Confirm with different vector (e.g., <img src=x onerror=alert(1)>)
+Phase 5: Check — does it only fire in specific browser/context?
+```
+
+### Authentication Bypass
+
+```
+Phase 2: Execute bypass technique
+Phase 4: Confirm with different session/account
+Phase 5: Check — is this a configuration issue vs a code flaw?
+```
+
+### Network Vulnerability
+
+```
+Phase 2: Run original nmap/nessus finding
+Phase 4: Manual netcat/telnet confirmation
+Phase 5: Check — is the service actually vulnerable or just version-matched?
+```
+
+### Remediation Verification
+
+```
+Phase 2: Attempt the ORIGINAL exploit after patch
+Phase 4: Try variant attacks on the same vector
+Phase 5: Check — is the fix complete or partial?
+Phase 6: Document: PATCHED / PARTIALLY PATCHED / NOT PATCHED
+```
+
+## Integration with Other Skills
+
+| Skill | How Verification Loop Applies |
+|-------|------------------------------|
+| `security-bounty-hunter` | Every bounty submission requires Phase 6 report |
+| `vulnerability-assessment` | Scanner results pass through Phase 5 false positive elimination |
+| `terminal-ops` | Verification uses terminal-ops evidence protocol |
+| `web-sqli` / `web-xss` | Every injection finding requires independent confirmation |
+| `network-pentest` | Network findings verified with secondary tool |
+| `deep-research` | CVE claims verified before acting on them |
+
+## Decision Matrix
+
+| Verification Result | Action |
+|-------------------|--------|
+| CONFIRMED (High confidence) | Include in report, proceed to exploitation or remediation |
+| CONFIRMED (Medium confidence) | Include with caveats, recommend manual verification |
+| PARTIALLY CONFIRMED | Document what works and what doesn't, adjust severity |
+| NOT CONFIRMED | Do NOT include in report, investigate why the original finding appeared |
+| INCONCLUSIVE | Flag for manual review, document all evidence collected |
+
+## Detection Methods
+
+### Verification Loop Audit
+- **Verification coverage**: What % of findings are independently verified.
+- **False positive rate**: <5% of verified findings are false positives.
+- **Re-test rate**: Verified findings re-tested after fix.
+
+### SIEM Detection Rules
+- **Custom tracking**: Verification status in finding lifecycle.
+
+## Defense Evasion Techniques
+
+### Verification Bypass
+- **Provide PoC videos**: Hard to verify independently; reduced scrutiny.
+- **Provide partial reproduction**: Some conditions for reproduction not documented.
+- **Claim environmental dependency**: "Only reproduces in target environment"; avoids independent verification.
+
+## Anti-Patterns
+
+- **Confirmation bias** — Do not adjust tests to force a positive result
+- **Single-method verification** — Always use at least two different methods
+- **Skipping Phase 5** — False positive elimination is never optional
+- **Over-reporting** — If it's not confirmed, it doesn't go in the report
+- **Under-evidence** — "It worked on my machine" is not evidence
+
+## Orchestration
+
+### ECC Loop Pattern
+- **Pattern**: Sequential Pipeline (pre-check → execute → post-check → confirm → eliminate FP → document)
+- **Rationale**: Verification is inherently sequential — each phase depends on the previous phase's results, and skipping steps invalidates the verification
+- **Integration**: terminal-ops (evidence capture during verification), security-bounty-hunter (pre-submission verification), autonomous-loops (loop result verification)
+
+### Cross-Skill Pipeline
+```
+[any skill] → verification-loop → security-bounty-hunter (report)
+                    ↓                        ↑
+              terminal-ops (evidence)   continuous-learning (FP patterns)
+```
+
+### Quality Gate
+- Pre-condition: Finding identified, scope authorized, success criteria defined
+- Post-condition: Finding independently confirmed with different method, false positives eliminated
+- Verification: Evidence chain complete with timestamps, reproducible by third party

@@ -47,7 +47,7 @@ EXCLUDED_SKILL_DIRS = frozenset(
 # skill_view(skill, file_path=...). They are not standalone skills and must not
 # be scanned for active SKILL.md/DESCRIPTION.md entries, even if a Curator or
 # archive workflow preserves a complete old skill package under references/.
-SKILL_SUPPORT_DIRS = frozenset(("references", "templates", "assets", "scripts"))
+SKILL_SUPPORT_DIRS = frozenset(("references", "templates", "assets", "scripts", "guides", "validation", "docs", "evidence"))
 
 
 def is_excluded_skill_path(path) -> bool:
@@ -85,6 +85,8 @@ def is_skill_support_path(path) -> bool:
     directory that contains ``SKILL.md``.
     """
     path_obj = path if isinstance(path, Path) else Path(str(path))
+    if path_obj.name != "SKILL.md" and (path_obj.parent / "SKILL.md").exists():
+        return True
     parts = path_obj.parts
     # Last component may be a file or candidate skill directory name. Only
     # components before the leaf can be containing support directories.

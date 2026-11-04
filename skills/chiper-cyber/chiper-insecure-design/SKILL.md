@@ -1,19 +1,15 @@
 ---
 name: chiper-insecure-design
 description: "Use when Insecure Design (OWASP A06:2025) focuses on security flaws in system architecture and design phases, rather than code implementation-level bugs."
-version: "0.2.0"
+version: "0.3.5"
 author: Chiper (Chiper-Cyber)
 metadata:
-  Chiper:
-    tags: [pentest, security, kali-linux, chiper-cyber, insecure, design]
-references:
-  - path: ~/.chiper/skills/chiper-cyber/chiper-insecure-design/SKILL.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-insecure-design/payloads.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-insecure-design/test-cases.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-insecure-design/guides
+  chiper:
+    tags: [pentest, security, chiper-cyber, insecure, design]
+    domain: design
 ---
 
-# Insecure Design
+# Skill: Insecure Design
 
 ## Prerequisites
 
@@ -35,7 +31,12 @@ echo "⚠️  Missing:$MISSING"
 command -v burp >/dev/null 2>&1 || echo "Download: https://portswigger.net/burp/communitydownload"
 ```
 
-## When to Use
+
+> **Supplementary Files**:
+> - `payloads.md` — Attack payloads for business logic testing, race condition exploitation, rate limiting bypass, IDOR, mass assignment, and threat modeling
+> - `test-cases.md` — Structured test cases with severity levels covering business logic, race conditions, asset management, and design flaws
+
+## Summary
 
 Insecure Design skill domain covering design operations.
 
@@ -45,14 +46,35 @@ Insecure Design skill domain covering design operations.
 
 **OWASP**: A06:2025-Insecure Design
 
+## Description
+
+Insecure Design (OWASP A06:2025) focuses on security flaws in system architecture and design phases, rather than code implementation-level bugs. Unlike specific technical vulnerabilities such as broken access control or injection, the root cause of insecure design is the failure to perform threat modeling, define abuse cases, or delineate trust boundaries during design. Such flaws cannot be fixed with patches — they require redesign. This skill covers business logic vulnerability exploitation, threat modeling, trust boundary analysis, and security architecture review.
+
+**Core Concepts**:
+- **Design Flaw vs Implementation Bug**: A design flaw is "doing the wrong thing," an implementation bug is "doing the thing wrong" — the former requires architectural changes
+- **Threat Modeling**: Examining the system from an attacker's perspective, identifying the six STRIDE threat categories
+- **Abuse Case**: In addition to normal use cases, abuse cases must be defined — "How would an attacker use this feature?"
+- **Trust Boundary**: Boundaries between different trust levels (user input vs internal data, authenticated vs unauthenticated), each requiring validation and authorization
+
+## Use Cases
+
+1. **Business Logic Security Testing** - Review business processes in e-commerce, finance, SaaS, and other systems to discover workflow bypasses, state machine vulnerabilities, and race conditions
+2. **Threat Modeling** - Perform structured threat analysis for new or existing systems (STRIDE/PASTA/LINDDUN)
+3. **Security Architecture Review** - Evaluate trust boundary delineation, missing security controls, and single points of failure in system architecture
+4. **CTF Competitions** - Solving challenges involving business logic vulnerabilities, race conditions, and design flaws
+5. **API Security Assessment** - Detect design-level issues such as missing rate limiting, input validation, and access controls
+
 ## Core Tools
 
 | Tool | Purpose | Description |
 |------|---------|-------------|
 | **OWASP Threat Dragon** | Threat modeling diagrams | Open-source cross-platform, supports STRIDE-categorized visual threat models |
-| **STRIDE Methodology** | Structured threat classification | Microsoft's 6-category threat framewor
+| **STRIDE Methodology** | Structured threat classification | Microsoft's 6-category threat framework (Spoofing/Tampering/Repudiation/Information Disclosure/Denial of Service/Elevation of Privilege) |
+| **Burp Suite** | Business logic testing | Repeater for manual debugging, Intruder for concurrency testing, Turbo Intruder for precise race conditions |
+| **draw.io / diagrams.net** | Architecture diagram drawing | Draw data flow diagrams (DFD), trust boundaries, and component interaction diagrams |
+| **Python threading / asyncio** | Race condition exploitation | Write concurrent scripts to test race condition vulnerabilities |
 
-## Methodology Overview
+## Methodology
 
 ### Attack Chain
 
@@ -63,28 +85,185 @@ Trust Boundary Analysis -> Abuse Case Development -> Business Logic Exploitation
 **1. Trust Boundary Analysis**
 - Identify all trust boundaries: user input boundary, authentication boundary, authorization boundary, network boundary
 - Check each boundary: Is there validation? Is there authorization? Is there logging?
-- Look for missing trust bound
+- Look for missing trust boundaries — "Is user input being directly trusted?"
 
-## Instructions
+**2. Abuse Case Development**
+- Generate corresponding abuse cases for each use case
+- Thinking framework: How to bypass? How to abuse? How to break consistency?
+- Focus on unconventional inputs: negative amounts, future dates, illegal states, extremely large values
 
-Read the referenced chiper-cyber files for full methodology:
-- **SKILL.md** — Step-by-step methodology, attack chain, tools, and defense perspective
-- **payloads.md** — Ready-to-use attack payloads organized by type and technique
-- **test-cases.md** — Structured test procedures with prerequisites and expected results
-- **guides/** — Deep-dive learning materials and scripts
+**3. Business Logic Exploitation**
+- Race conditions: Concurrent operations bypass check-use logic (TOCTOU)
+- Workflow bypass: Skip required steps and directly call subsequent interfaces
+- State machine attacks: Illegal state transitions, repeated state transitions, rollback attacks
+- Value tampering: Negative amounts, overflow, precision loss
 
-Full skill content at: `~/.chiper/skills/chiper-cyber/chiper-insecure-design/`
+**4. Design Pattern Attack**
+- Singleton abuse: Shared state causing concurrency issues
+- Observer pattern: Event ordering dependencies causing logic vulnerabilities
+- Factory pattern: Missing permission checks during object creation
+- Identify design patterns used by the system and find their security weaknesses
 
-## Examples
+### Defense Perspective
 
-See `payloads.md` in the referenced directory for ready-to-use attack payloads.
+| Defense Measure | Description | Priority |
+|-----------------|-------------|----------|
+| Secure Development Lifecycle | Introduce threat modeling during requirements, define security requirements during design | CRITICAL |
+| Threat Modeling | Use STRIDE and similar methods to systematically identify threats, update each iteration cycle | CRITICAL |
+| Abuse Case Testing | Include abuse case test cases in security testing, verify system defense against unintended use | HIGH |
+| Secure Design Patterns | Use proven secure design patterns (e.g., state machine validation, idempotent operations) | HIGH |
+| Architecture Review | Regularly conduct security architecture reviews, checking trust boundaries, security controls, and failure modes | HIGH |
+| Rate Limiting & Input Validation | Enforce rate limiting and input validation at trust boundaries | HIGH |
 
-## Test Cases
+## Practical Steps
 
-See `test-cases.md` in the referenced directory for structured test procedures.
+### Step 1: STRIDE Threat Modeling
 
-## Notes
+```
+1. Draw system architecture diagram / Data Flow Diagram (DFD)
+2. Mark all trust boundaries (external->internal, low-privilege->high-privilege)
+3. Apply STRIDE to each component and boundary:
 
-- Source: Chiper-Cyber v1.0.0 — Security Skills Ecosystem (Chiper 2026)
-- Defense Triple: Defense Perspective + Detection Methods + Evasion Techniques
-- Update: `cd ~/.chiper/skills/chiper-cyber && git pull`
+   S - Spoofing:    Can users be impersonated? Is the authentication mechanism reliable?
+   T - Tampering:   Can data be tampered with during transmission/storage? Integrity checks?
+   R - Repudiation: Can operations be repudiated? Are audit logs complete?
+   I - Info Disclosure: Is sensitive data exposed? Is encryption adequate?
+   D - Denial of Service: Is there a risk of resource exhaustion? Rate limiting?
+   E - Elevation of Privilege: Can privileges be escalated? Are permission checks consistent?
+
+4. Assess risk level for each threat (impact x likelihood)
+5. Design corresponding security controls
+```
+
+### Step 2: Trust Boundary Mapping
+
+```
+1. Draw the system's trust boundary map:
+
+   [Untrusted Zone]          [Trust Boundary]         [Trusted Zone]
+   +--------------+         +--------------+         +-------------+
+   |  User Input  | ------> |  Validation  | ------> |  Internal   |
+   |  HTTP Req    |         |  Auth Check  |         |  Processing |
+   |  API Calls   |         |  Rate Limit  |         |  Database   |
+   +--------------+         +--------------+         +-------------+
+
+2. Check each boundary:
+   - Does validation exist? Is it complete?
+   - Can it be bypassed?
+   - Does it fail safely (fail-safe)?
+
+3. Common trust boundary deficiencies:
+   - Internal APIs without authentication (assume internal = trusted)
+   - No authentication between microservice calls
+   - Admin interfaces protected only by network isolation
+   - WebSocket connections missing origin checks
+```
+
+### Step 3: Design Pattern Anti-Pattern Identification
+
+```
+Common security anti-patterns:
+
+1. Client-Side Security Control
+   - Frontend hides buttons but doesn't check backend permissions
+   - JavaScript validation replaces server-side validation
+   - Hidden fields store price/discount information
+
+2. Implicit Trust
+   - Internal APIs require no authentication
+   - Admin interfaces protected only by unreachable ports
+   - Unconditional trust between microservice calls
+
+3. Missing State Machine
+   - Order states have no valid transition definitions
+   - User account states have no constraint checks
+   - Workflow steps have no precondition validation
+
+4. No Fail-Safe Default
+   - Returns success instead of failure on exceptions
+   - Allows read-only access when permission checks fail
+   - Defaults to allowing on timeout
+```
+
+> **Detailed payloads in `payloads.md`, complete test checklist in `test-cases.md`.**
+
+## Detection Methods
+
+### Static Analysis Detection
+- **OWASP ASVS / Top 10 violations**: Code patterns matching known insecure design.
+- **CodeQL / Semgrep**: Custom queries for insecure design patterns (missing authz, broken access control).
+- **Architecture risk analysis**: STRIDE / PASTA threat modeling findings.
+
+### SIEM Detection Rules
+- **Splunk SPL**: `index=app sourcetype=codeql | where rule_id matches "authz/*"`
+- **Snyk Code / Veracode**: SAST platform findings.
+- **GitHub Advanced Security**: CodeQL alerts in pull requests.
+
+## Common Pitfalls
+
+- **Treating design flaws as implementation bugs**: Attempting to patch a business logic bypass with input validation instead of redesigning the workflow with proper state machine controls. Design flaws require architectural changes, not code patches.
+- **Ignoring internal trust boundaries**: Assuming that all microservice-to-microservice communication is inherently safe because it occurs "inside" the network. Every internal API call is a trust boundary that needs authentication and authorization.
+- **Testing only the happy path**: Security testing that only covers normal user flows will miss abuse cases. Always test negative amounts, skipped steps, reversed sequences, and concurrent operations against the same resource.
+
+## Case Studies and Examples
+
+- **E-commerce negative pricing**: An online store accepted negative quantities in the cart API, allowing attackers to receive refunds for items never purchased. Root cause: the design assumed quantities are always positive without enforcing a validation state machine.
+- **Multi-step workflow bypass**: A loan application system required credit check, manager approval, and disbursement as sequential steps. An attacker called the disbursement API directly, skipping the first two steps. Root cause: no server-side state machine enforcing step prerequisites.
+- **Race condition on balance transfer**: Two concurrent transfer requests drained more funds than the account balance by exploiting the TOCTOU gap between balance check and deduction. Root cause: the design lacked idempotent operations and pessimistic locking at the database level.
+
+## Reporting and Documentation
+
+When documenting insecure design findings, include a threat model diagram showing the flawed trust boundary, an abuse case narrative describing the attacker's path, and a design-level remediation recommendation (not just a code patch). Use DFDs (Data Flow Diagrams) to visually highlight where trust boundaries are missing or bypassed. Each finding should map to a specific STRIDE category and include an estimated redesign effort.
+
+## Integration with Other Tools
+
+Combine threat modeling tools with dynamic testing for maximum coverage. Export STRIDE analysis from OWASP Threat Dragon into test case templates, then validate those abuse cases using Burp Suite's Turbo Intruder for race conditions and Repeater for workflow bypass testing. Use draw.io architecture diagrams as a reference while fuzzing API endpoints to ensure every trust boundary identified in the diagram is tested during dynamic assessment.
+
+## Automation and Scripting
+
+Automate race condition testing with Python's `threading` or `asyncio` libraries to send dozens of concurrent requests at precise timing windows. Use Burp Suite's Turbo Intruder extension for HTTP/2 single-packet race conditions that hit the server within the same millisecond. Script abuse case generation by parsing OpenAPI/Swagger specs to automatically enumerate all API endpoints and their parameter combinations for design-level fuzzing.
+
+## Defense Evasion Techniques
+
+Design-level attacks are inherently stealthy because they follow valid API paths with legitimate-looking parameters. To avoid detection during testing: use realistic-looking test accounts that match normal user behavior patterns, space out race condition attempts across multiple sessions rather than firing them all at once, and ensure that any negative-value or boundary-testing payloads appear as normal form submissions to WAF and application logs.
+
+## Remediation Strategies
+
+Effective remediation of insecure design requires architectural-level changes, not patches. Key strategies include: implementing server-side state machines for all multi-step workflows, adding idempotency keys to prevent duplicate processing, enforcing validation at every trust boundary (not just the outermost one), and integrating threat modeling into every sprint planning cycle. For existing systems, prioritize redesigning the most critical business logic flows first (payment, authentication, authorization) before addressing lower-risk workflows.
+
+## Legal and Ethical Considerations
+
+Business logic testing often involves interacting with production systems in ways that mimic real fraud. Always obtain explicit written authorization that covers design-level testing, not just standard vulnerability scanning. Document the exact scope of permitted abuse case testing (e.g., whether modifying cart quantities is allowed, whether actual fund transfers are permitted). Never test race conditions against production financial systems without a dedicated test environment or explicit stakeholder approval.
+
+## Advanced Techniques
+
+Advanced insecure design testing goes beyond simple parameter tampering. Techniques include: state machine extraction by mapping all possible state transitions through API responses, trust boundary fuzzing by systematically testing every internal API endpoint as if it were externally accessible, and design pattern abuse by identifying which software patterns the application uses (Observer, Singleton, Factory) and crafting inputs that exploit the security assumptions inherent in those patterns.
+
+## Tool Comparison Matrix
+
+| Tool | Best For | Limitations | Skill Level |
+|------|----------|-------------|-------------|
+| **OWASP Threat Dragon** | Visual STRIDE threat modeling | Limited export formats, no auto-analysis | Beginner |
+| **Burp Suite (Turbo Intruder)** | HTTP/2 single-packet race conditions | Requires Burp Pro for full features | Intermediate |
+| **Python asyncio** | Custom concurrent abuse case scripting | Must build timing and assertion logic from scratch | Advanced |
+| **draw.io** | DFD and trust boundary documentation | Manual process, no automated threat detection | Beginner |
+
+## Hacker Laws
+
+1. **First Principles** - The essence of insecure design is "the attacker was not considered during design." Return to the fundamental question: Does the system validate at every trust boundary? Does every operation have corresponding abuse case protection? Understanding this first principle enables finding design flaws in any system.
+
+2. **Divergent Thinking** - Discovering business logic vulnerabilities requires stepping outside the "normal user" mindset. What if the amount is negative? What if two requests arrive simultaneously? What if the third interface is called directly, skipping the first two steps? Attackers don't follow preset usage paths; divergent thinking is the core capability for discovering design flaws.
+
+3. **Defense in Depth** - A single security control is never enough. Rate limiting + input validation + state machine validation + audit logging = defense in depth. Each layer is a backup for the next; the failure of any one layer does not cause total system collapse. Security design must assume every layer can fail.
+
+## Learning Resources
+
+  **This skill's supplementary files**: payloads.md, test-cases.md
+  **Related skills**: chiper-web-access-control/SKILL.md, chiper-web-auth-bypass/SKILL.md
+  **External resources**:
+  - [OWASP Top 10 - A04:2021 Insecure Design](https://owasp.org/Top10/A04_2021-Insecure_Design/)
+  - [OWASP Threat Modeling](https://owasp.org/www-community/Threat_Modeling)
+  - [OWASP Threat Dragon](https://threatdragon.github.io/)
+  - [Microsoft STRIDE Threat Model](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats)
+  - [PortSwigger - Business Logic Vulnerabilities](https://portswigger.net/web-security/logic-flaws)
+  - [HackTricks - Business Logic Vulnerabilities](https://book.hacktricks.xyz/pentesting-web/business-logic-vulnerabilities)

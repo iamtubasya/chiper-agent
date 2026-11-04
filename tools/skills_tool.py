@@ -1300,11 +1300,21 @@ def skill_view(
         script_files = []
 
         if skill_dir:
+            for companion_md in ("payloads.md", "test-cases.md"):
+                if (skill_dir / companion_md).is_file():
+                    reference_files.append(companion_md)
+
             references_dir = skill_dir / "references"
             if references_dir.exists():
-                reference_files = [
-                    str(f.relative_to(skill_dir)) for f in references_dir.glob("*.md")
-                ]
+                reference_files.extend(
+                    str(f.relative_to(skill_dir)) for f in sorted(references_dir.glob("*.md"))
+                )
+
+            guides_dir = skill_dir / "guides"
+            if guides_dir.exists():
+                reference_files.extend(
+                    str(f.relative_to(skill_dir)) for f in sorted(guides_dir.rglob("*.md"))
+                )
 
             templates_dir = skill_dir / "templates"
             if templates_dir.exists():

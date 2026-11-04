@@ -1,27 +1,82 @@
 ---
 name: chiper-knowledge-ops
-description: "Use when Build and maintain structured, persistent knowledge graphs across sessions. Knowledge-ops transforms ephemeral session findings into reusable intelligence — connecti"
-version: "0.2.0"
+description: "Use when Build and maintain structured, persistent knowledge graphs across sessions. Knowledge-ops transforms ephemeral session findings into reusable intelligence — connecting entities, tracking confidence over time, and enabling recall across engagements."
+version: "0.3.5"
 author: Chiper (Chiper-Cyber)
 metadata:
-  Chiper:
-    tags: [pentest, security, kali-linux, chiper-cyber, knowledge, ops]
-references:
-  - path: ~/.chiper/skills/chiper-cyber/chiper-knowledge-ops/SKILL.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-knowledge-ops/payloads.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-knowledge-ops/test-cases.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-knowledge-ops/guides
+  chiper:
+    tags: [pentest, security, chiper-cyber, knowledge, ops]
+    domain: knowledge
 ---
 
-# Knowledge Ops
+# Knowledge Operations (knowledge-ops)
 
-## When to Use
+## Summary
 
 Knowledge-ops transforms ephemeral session findings into reusable intelligence — connecting entities, tracking confidence over time, and enabling recall across engagements.
 
 **Domain**: knowledge
 
-## Methodology Overview
+## Skill Identity
+
+| Attribute | Value |
+|-----------|-------|
+| Domain | Knowledge Operations |
+| Skill ID | knowledge-ops |
+| Version | 1.0.0 |
+| Hacker Laws | Law 3 (Intelligence Over Force), Law 8 (Learn from Every Operation), Law 9 (Systematic Over Random) |
+| Related Skills | codebase-onboarding, deep-research, social-intelligence |
+
+## Purpose
+
+Build and maintain structured, persistent knowledge graphs across sessions. Knowledge-ops transforms ephemeral session findings into reusable intelligence — connecting entities, tracking confidence over time, and enabling recall across engagements.
+
+Without knowledge-ops, every session starts from zero. With it, each session builds on the last.
+
+## Core Concepts
+
+### Knowledge Unit
+
+The atomic element of the knowledge graph. Each unit contains:
+
+```json
+{
+  "id": "KU-2026-05-001",
+  "type": "finding | entity | relationship | pattern | hypothesis",
+  "created": "2026-05-11",
+  "updated": "2026-05-11",
+  "confidence": 78,
+  "tags": ["auth", "JWT", "CVE"],
+  "content": "The auth service uses HS256 with a static secret in config.go:45",
+  "source": "codebase-onboarding:auth-service",
+  "linked_to": ["KU-2026-04-012", "KU-2026-05-003"],
+  "expires": null
+}
+```
+
+### Knowledge Graph
+
+A network of linked knowledge units. Relationships between units reveal:
+- Attack chains (A → B → C = full exploit path)
+- Pattern recurrence (same vuln type across multiple targets)
+- Confidence evolution (a finding confirmed 3 times = higher confidence)
+
+### Knowledge Base
+
+A collection of knowledge graphs organized by domain (target, technology, vulnerability type). Stored in the `memory/` directory as markdown files with structured frontmatter.
+
+## Knowledge Types
+
+| Type | Description | Example |
+|------|-------------|---------|
+| `entity` | A person, system, domain, IP, org | `target.com`, `admin@target.com`, `192.168.1.1` |
+| `finding` | A discovered fact about a target | SQL injection in search endpoint |
+| `relationship` | Link between two entities | User X administers System Y |
+| `pattern` | Recurring vulnerability or behavior | This org consistently uses outdated JWT libs |
+| `hypothesis` | Unconfirmed, needs validation | Admin portal may be accessible via VPN bypass |
+| `intelligence` | Aggregated, analyzed insight | Target org has poor patch management practices |
+
+## Methodology
 
 ### Phase 1: Capture
 
@@ -32,26 +87,116 @@ Extract knowledge units from session outputs:
 - After social-intelligence: capture sentiment, key actors, timeline events
 - After an exploitation attempt: capture what worked, what failed, and why
 
-## Instructions
+### Phase 2: Structure
 
-Read the referenced chiper-cyber files for full methodology:
-- **SKILL.md** — Step-by-step methodology, attack chain, tools, and defense perspective
-- **payloads.md** — Ready-to-use attack payloads organized by type and technique
-- **test-cases.md** — Structured test procedures with prerequisites and expected results
-- **guides/** — Deep-dive learning materials and scripts
+Assign type, tags, confidence, and links to each unit. Establish relationships between related units.
 
-Full skill content at: `~/.chiper/skills/chiper-cyber/chiper-knowledge-ops/`
+### Phase 3: Store
 
-## Examples
+Write structured units to the appropriate memory file. Follow the naming convention: `memory/YYYY-MM-DD-[topic].md`.
 
-See `payloads.md` in the referenced directory for ready-to-use attack payloads.
+### Phase 4: Retrieve
 
-## Test Cases
+At session start, query the knowledge base for relevant units. Use tags, entity names, and linked IDs to surface prior context.
 
-See `test-cases.md` in the referenced directory for structured test procedures.
+### Phase 5: Maintain
 
-## Notes
+Update confidence scores as findings are confirmed or refuted. Mark expired intelligence. Remove stale hypotheses that were disproven.
 
-- Source: Chiper-Cyber v1.0.0 — Security Skills Ecosystem (Chiper 2026)
-- Defense Triple: Defense Perspective + Detection Methods + Evasion Techniques
-- Update: `cd ~/.chiper/skills/chiper-cyber && git pull`
+## Confidence Model
+
+Confidence scores represent certainty about a knowledge unit:
+
+| Score | Meaning | Action |
+|-------|---------|--------|
+| 0–25 | Speculation — no evidence | Label as hypothesis |
+| 26–50 | Unconfirmed — single source | Needs validation |
+| 51–75 | Probable — multiple consistent signals | Use with caution |
+| 76–90 | High confidence — independently confirmed | Act on it |
+| 91–100 | Verified — demonstrated/exploited | Treat as fact |
+
+Confidence is **not static**. Update it when:
+- A second source confirms a finding (+15 to +25)
+- An attempt fails that should have worked (-10 to -30)
+- A CVE is confirmed to affect the target (+20)
+- A hypothesis is proven false (set to 0, mark archived)
+
+## Storage Format
+
+### Knowledge File Template
+
+```markdown
+---
+id: KU-[YYYY]-[MM]-[NNN]
+type: [finding|entity|relationship|pattern|hypothesis|intelligence]
+target: [target name or scope]
+confidence: [0-100]
+created: [YYYY-MM-DD]
+updated: [YYYY-MM-DD]
+tags: [tag1, tag2, tag3]
+linked: [KU-ID-1, KU-ID-2]
+source: [skill that produced this]
+expires: [YYYY-MM-DD or null]
+---
+
+## Detail
+
+[Full context, evidence, commands used, observed behavior]
+
+## Connections
+
+- **Confirms**: [what this validates]
+- **Contradicts**: [what this disproves]
+- **Leads to**: [next investigation or action]
+
+## Confidence History
+
+| Date | Score | Reason |
+|------|-------|--------|
+| [date] | [score] | [why this score] |
+```
+
+## Use Cases
+
+1. **Target Intelligence Accumulation**: Track everything learned about a target across multiple sessions
+2. **Vulnerability Pattern Tracking**: Recognize when the same weakness appears in different systems
+3. **Cross-Engagement Intelligence**: Identify recurring patterns across different targets (org-level behavior)
+4. **Pentest Report Preparation**: Aggregate structured findings for final report generation
+5. **Knowledge Handoff**: Pass complete context to another session or team member
+
+## Detection Methods
+
+### Knowledge Base Audit
+- **Document access anomalies**: Bulk access to many documents in short window.
+- **Cross-tenant data access**: User accessing documents outside their tenant.
+- **Vector store poisoning**: Documents with embedding far from cluster centroid.
+- **Retrieval anomalies**: Specific queries consistently retrieving same documents (backdoor signature).
+
+### SIEM Detection Rules
+- **Splunk SPL**: `index=kb sourcetype=document_access | stats dc(doc_id) by user_id | where dc > 100`
+- **Custom KB monitoring**: Anomaly detection on RAG retrieval patterns.
+
+## Defense Evasion Techniques
+
+### Knowledge Base Exfiltration Stealth
+- **Distribute across queries**: Pace document reads; below rate limit.
+- **Use legitimate search**: Mimic analyst search behavior; avoid bulk export patterns.
+- **Cache results**: Avoid re-querying same documents; reduces read-count anomaly.
+
+### Vector Store Poisoning Stealth
+- **Match embedding distribution**: Poisoned documents close to legitimate cluster centroid.
+- **Trigger-based backdoor**: Activates only on specific query patterns.
+- **Cross-tenant indexing**: Index poison in tenant A; affect queries from tenant B (if not isolated).
+
+## Integration
+
+- **Input from**: codebase-onboarding, deep-research, social-intelligence, any skill that produces findings
+- **Output to**: article-writing (for reports), MEMORY.md (for distilled summaries)
+- **Session startup**: load relevant knowledge units before beginning any task
+- **Session end**: capture all new findings into knowledge base before closing
+
+## Hacker Laws Alignment
+
+- **Law 3 (Intelligence Over Force)**: Accumulated knowledge makes every subsequent session more effective
+- **Law 8 (Learn from Every Operation)**: Systematically capturing what worked and what failed
+- **Law 9 (Systematic Over Random)**: Structured knowledge graph beats random memory
