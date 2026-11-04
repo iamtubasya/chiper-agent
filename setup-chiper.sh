@@ -421,6 +421,13 @@ else
     fi
 fi
 
+# ============================================================================
+# Instalasi Tools Inti Bug Bounty (Wajib) & Chiper-Cyber Skills
+# ============================================================================
+if [ -f "$SCRIPT_DIR/scripts/install-bugbounty-tools.sh" ]; then
+    bash "$SCRIPT_DIR/scripts/install-bugbounty-tools.sh"
+fi
+
 # Opsi pemilihan instalasi Chiper-Cyber Skills
 if [ -f "$SCRIPT_DIR/scripts/install-cyber-skills.sh" ]; then
     bash "$SCRIPT_DIR/scripts/install-cyber-skills.sh"
