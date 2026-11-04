@@ -109,7 +109,7 @@ multi_agent_protocol:
 }
 ```
 
-**Confidence levels** (triangulation principle from deep-research skill):
+**Confidence levels** (triangulation principle from chiper-deep-research skill):
 - `CONFIRMED` — 3 independent evidence vectors
 - `LIKELY` — 2 vectors or 1 authoritative vector
 - `POSSIBLE` — 1 vector, plausible
@@ -303,7 +303,7 @@ mv "$tmp_file" memory.json
 chiper-cyber already has:
 - `memory/YYYY-MM-DD.md` (daily prose logs)
 - `MEMORY.md` (distilled long-term knowledge)
-- `chronicle/YYYY-MM/*.md` (monthly milestones)
+- `chiper-chronicle/YYYY-MM/*.md` (monthly milestones)
 
 **The new structured-memory schema does NOT replace these.** It runs alongside them:
 
@@ -311,7 +311,7 @@ chiper-cyber already has:
 |---|---|---|---|
 | `memory/` | Daily session logs | Markdown prose | Archived after 30 days |
 | `MEMORY.md` | Distilled cross-session knowledge | Markdown prose | Manually curated |
-| `chronicle/` | Monthly milestones | Markdown prose | Append-only |
+| `chiper-chronicle/` | Monthly milestones | Markdown prose | Append-only |
 | **Engagement memory** (NEW) | Per-engagement structured state | JSON | Engagement-scoped, archived post-engagement |
 | **Exploit attempt memory** (NEW) | Per-target exploit dev state | JSON | Target-scoped, archived post-PoC |
 

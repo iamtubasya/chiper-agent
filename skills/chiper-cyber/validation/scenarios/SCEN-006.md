@@ -24,21 +24,21 @@ This is the first chiper-cyber scenario where the **memory file is the engagemen
 ## Skill Chain
 
 ```
-recon-osint → network-pentest → web-sqli → post-exploitation → ad-ldap-attack → data-exfiltration-attack
+chiper-recon-osint → chiper-network-pentest → chiper-web-sqli → chiper-post-exploitation → chiper-ad-ldap-attack → chiper-data-exfiltration-attack
                   ↑                                                                  ↓
-       verification-loop (cross-cutting, every phase) ← engagement-manager (gates phase transitions)
+       chiper-verification-loop (cross-cutting, every phase) ← chiper-engagement-manager (gates phase transitions)
 ```
 
 | Step | Skill Domain | Phase | Memory Delta Written | Tools |
 |------|-------------|-------|---------------------|-------|
-| 1 | recon-osint | recon | `findings.entry_points`, `next_constraints.must_explore` | subfinder, amass, whatweb, theHarvester, nmap |
-| 2 | network-pentest | intrusion | `findings.entry_points[type!=web]`, `findings.vulnerabilities` | nmap, masscan, nuclei |
-| 3 | web-sqli | intrusion | `findings.vulnerabilities`, `findings.credentials` | sqlmap, burpsuite |
-| 4 | post-exploitation | privesc | `findings.lateral_pivots`, `findings.credentials` | linpeas, metasploit, chisel |
-| 5 | ad-ldap-attack | lateral | `findings.credentials[domain=admin]`, `findings.lateral_pivots` | crackmapexec, bloodhound, impacket |
-| 6 | data-exfiltration-attack | exfil | `evidence_index`, `decision_log` (close-out) | rsync-over-DNS, exiftool, tar |
-| ✗ | verification-loop | every phase | `convergence_state.failed_attempts_on_active_path`, `decision_log` | jq, sha256sum |
-| ✗ | engagement-manager | gates transitions | `phase_history`, `next_constraints.time_budget_remaining_hours` | jq, scenario-runner.sh |
+| 1 | chiper-recon-osint | recon | `findings.entry_points`, `next_constraints.must_explore` | subfinder, amass, whatweb, theHarvester, nmap |
+| 2 | chiper-network-pentest | intrusion | `findings.entry_points[type!=web]`, `findings.vulnerabilities` | nmap, masscan, nuclei |
+| 3 | chiper-web-sqli | intrusion | `findings.vulnerabilities`, `findings.credentials` | sqlmap, burpsuite |
+| 4 | chiper-post-exploitation | privesc | `findings.lateral_pivots`, `findings.credentials` | linpeas, metasploit, chisel |
+| 5 | chiper-ad-ldap-attack | lateral | `findings.credentials[domain=admin]`, `findings.lateral_pivots` | crackmapexec, bloodhound, impacket |
+| 6 | chiper-data-exfiltration-attack | exfil | `evidence_index`, `decision_log` (close-out) | rsync-over-DNS, exiftool, tar |
+| ✗ | chiper-verification-loop | every phase | `convergence_state.failed_attempts_on_active_path`, `decision_log` | jq, sha256sum |
+| ✗ | chiper-engagement-manager | gates transitions | `phase_history`, `next_constraints.time_budget_remaining_hours` | jq, scenario-runner.sh |
 
 ---
 
@@ -114,7 +114,7 @@ tmp=$(mktemp) && jq '<filter>' "$MEM" > "$tmp" && mv "$tmp" "$MEM"
 > 4. **WRITE** a delta via atomic-write `jq | mv` pattern
 > 5. **CONVERGE** — update `failed_attempts_on_active_path` or switch path
 
-### Phase 1 — Reconnaissance (`recon-osint`)
+### Phase 1 — Reconnaissance (`chiper-recon-osint`)
 
 **READ memory:**
 ```bash
@@ -175,7 +175,7 @@ jq --arg ts "$ts" --arg sn "$sha_nmap" --arg ss "$sha_sub" '
 
 ---
 
-### Phase 2 — Initial Access / Intrusion (`network-pentest` → `web-sqli`)
+### Phase 2 — Initial Access / Intrusion (`chiper-network-pentest` → `chiper-web-sqli`)
 
 **READ memory** (filter for web entry points to drive the intrusion path):
 ```bash
@@ -254,7 +254,7 @@ jq --arg ts "$ts" '
 
 ---
 
-### Phase 3 — Privilege Escalation (`post-exploitation`)
+### Phase 3 — Privilege Escalation (`chiper-post-exploitation`)
 
 **READ memory** for credentials harvested via SQLi:
 ```bash
@@ -293,7 +293,7 @@ jq --arg ts "$ts" --arg sha "$sha_lp" '
 
 ---
 
-### Phase 4 — Lateral Movement (`ad-ldap-attack`)
+### Phase 4 — Lateral Movement (`chiper-ad-ldap-attack`)
 
 **READ memory** for credentials and pivots:
 ```bash
@@ -331,7 +331,7 @@ jq --arg ts "$ts" --arg sha "$sha_bh" '
 
 ---
 
-### Phase 5 — Exfiltration Simulation (`data-exfiltration-attack`)
+### Phase 5 — Exfiltration Simulation (`chiper-data-exfiltration-attack`)
 
 **READ memory** for the highest-tier cred:
 ```bash
@@ -395,13 +395,13 @@ jq -e '
 
 | From | To | Field in memory |
 |------|----|-----------------|
-| recon-osint | network-pentest | `findings.entry_points[]` (all) |
-| network-pentest | web-sqli | `findings.entry_points[type=https]` |
-| web-sqli | post-exploitation | `findings.credentials[source=sqli]` |
-| post-exploitation | ad-ldap-attack | `findings.lateral_pivots[]` |
-| ad-ldap-attack | data-exfiltration-attack | `findings.credentials[domain=EXAMPLE-CORP]` |
-| verification-loop | every phase | `convergence_state.failed_attempts_on_active_path` |
-| engagement-manager | every phase | `phase_history[]`, `next_constraints.time_budget_remaining_hours` |
+| chiper-recon-osint | chiper-network-pentest | `findings.entry_points[]` (all) |
+| chiper-network-pentest | chiper-web-sqli | `findings.entry_points[type=https]` |
+| chiper-web-sqli | chiper-post-exploitation | `findings.credentials[source=sqli]` |
+| chiper-post-exploitation | chiper-ad-ldap-attack | `findings.lateral_pivots[]` |
+| chiper-ad-ldap-attack | chiper-data-exfiltration-attack | `findings.credentials[domain=EXAMPLE-CORP]` |
+| chiper-verification-loop | every phase | `convergence_state.failed_attempts_on_active_path` |
+| chiper-engagement-manager | every phase | `phase_history[]`, `next_constraints.time_budget_remaining_hours` |
 
 Handoff is **deterministic**: each downstream phase starts by `jq`-filtering the relevant field from `engagement-memory.json`. No prose handoff, no out-of-band notes.
 
@@ -448,7 +448,7 @@ v8  exfil:       decision_log += STOP CONDITION
 | lateral | `findings.credentials[domain=admin]` | DC Security logs: 4624 type 3 from non-DC host; BloodHound LDAP queries | `TPL-AD-BLUEHOUND-DETECT` — contain + rotate `svc_backup` |
 | exfil | `evidence_index`, `decision_log` | DNS server: long TXT records, high-entropy queries to one domain | `TPL-DNS-EXFIL-DETECT` — sinkhole + EDR pull |
 
-**Reference the `detection-engineering` skill** for Sigma rules mapping each of the above:
+**Reference the `chiper-detection-engineering` skill** for Sigma rules mapping each of the above:
 - `rules/sigma/sysmon/proc_access_win_linpeas.yml`
 - `rules/sigma/dns/dns_exfil_tunnel.yml`
 - `rules/sigma/azuread/azuread_anomalous_ldap.yml`

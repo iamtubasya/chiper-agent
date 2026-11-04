@@ -20,15 +20,15 @@ Demonstrate a mobile-focused attack chain starting from WiFi interception of mob
 ## Skill Chain
 
 ```
-wifi-pentest → mobile-security → api-security → crypto-attacks
+chiper-wifi-pentest → chiper-mobile-security → chiper-api-security → chiper-crypto-attacks
 ```
 
 | Step | Skill Domain | Key Actions | Tools |
 |------|-------------|-------------|-------|
-| 1 | wifi-pentest | WiFi interception: rogue AP, traffic capture, SSL stripping | aircrack-ng, hostapd-wpe, bettercap |
-| 2 | mobile-security | Mobile app analysis: APK decompilation, certificate pinning bypass, data leakage | apktool, jadx, frida, objection |
-| 3 | api-security | API exploitation: endpoint discovery, auth bypass, parameter tampering | burpsuite, arjun, ffuf |
-| 4 | crypto-attacks | Crypto analysis: weak TLS, hardcoded keys, certificate validation bypass | sslscan, testssl, Frida scripts |
+| 1 | chiper-wifi-pentest | WiFi interception: rogue AP, traffic capture, SSL stripping | aircrack-ng, hostapd-wpe, bettercap |
+| 2 | chiper-mobile-security | Mobile app analysis: APK decompilation, certificate pinning bypass, data leakage | apktool, jadx, frida, objection |
+| 3 | chiper-api-security | API exploitation: endpoint discovery, auth bypass, parameter tampering | burpsuite, arjun, ffuf |
+| 4 | chiper-crypto-attacks | Crypto analysis: weak TLS, hardcoded keys, certificate validation bypass | sslscan, testssl, Frida scripts |
 
 ---
 
@@ -43,7 +43,7 @@ wifi-pentest → mobile-security → api-security → crypto-attacks
 
 ## Execution Steps
 
-### Phase 1: WiFi Interception (wifi-pentest)
+### Phase 1: WiFi Interception (chiper-wifi-pentest)
 
 1. Set up monitoring: `airmon-ng start wlan0`
 2. Capture handshake: `airodump-ng -c 6 --bssid TARGET wlan0mon`
@@ -51,7 +51,7 @@ wifi-pentest → mobile-security → api-security → crypto-attacks
 4. SSL stripping: `bettercap -T target.com -X --proxy`
 5. Capture and analyze mobile application traffic patterns
 
-### Phase 2: Mobile Application Analysis (mobile-security)
+### Phase 2: Mobile Application Analysis (chiper-mobile-security)
 
 1. APK extraction and decompilation: `apktool d target.apk`
 2. Source code review with jadx: `jadx -d output target.apk`
@@ -59,7 +59,7 @@ wifi-pentest → mobile-security → api-security → crypto-attacks
 4. Certificate pinning bypass: `frida -U -f com.target.app -l ssl_bypass.js`
 5. Runtime manipulation: `objection -g com.target.app explore`
 
-### Phase 3: API Security Testing (api-security)
+### Phase 3: API Security Testing (chiper-api-security)
 
 1. Map API endpoints from decompiled code and captured traffic
 2. Authentication testing: missing auth, expired tokens, weak session management
@@ -67,7 +67,7 @@ wifi-pentest → mobile-security → api-security → crypto-attacks
 4. Test for IDOR on user data endpoints
 5. Rate limiting and brute force protection assessment
 
-### Phase 4: Cryptographic Analysis (crypto-attacks)
+### Phase 4: Cryptographic Analysis (chiper-crypto-attacks)
 
 1. TLS configuration check: `testssl https://api.target.com`
 2. Certificate validation analysis from mobile app
@@ -91,7 +91,7 @@ wifi-pentest → mobile-security → api-security → crypto-attacks
 
 | From | To | Data Format |
 |------|----|-------------|
-| wifi-pentest | mobile-security | Captured traffic patterns, API endpoints from network analysis |
-| mobile-security | api-security | API URLs, authentication tokens, endpoint map from APK |
-| mobile-security | crypto-attacks | Hardcoded keys, certificate pinning config, SSL context |
-| api-security | crypto-attacks | JWT tokens, session cookies, encryption parameters |
+| chiper-wifi-pentest | chiper-mobile-security | Captured traffic patterns, API endpoints from network analysis |
+| chiper-mobile-security | chiper-api-security | API URLs, authentication tokens, endpoint map from APK |
+| chiper-mobile-security | chiper-crypto-attacks | Hardcoded keys, certificate pinning config, SSL context |
+| chiper-api-security | chiper-crypto-attacks | JWT tokens, session cookies, encryption parameters |

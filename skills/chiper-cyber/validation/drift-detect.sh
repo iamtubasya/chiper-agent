@@ -35,7 +35,7 @@ generate_snapshot() {
 
         # File listing with sizes
         echo "## files"
-        find "$ROOT_DIR/skills" -type f -name "*.md" | sort | while read -r f; do
+        find "$ROOT_DIR" -type f -name "*.md" | sort | while read -r f; do
             REL="${f#$ROOT_DIR/}"
             SIZE=$(wc -w < "$f" | tr -d ' ')
             echo "$REL|$SIZE"
@@ -43,14 +43,14 @@ generate_snapshot() {
 
         echo ""
         echo "## directories"
-        find "$ROOT_DIR/skills" -type d | sort | while read -r d; do
+        find "$ROOT_DIR" -type d | sort | while read -r d; do
             REL="${d#$ROOT_DIR/}"
             echo "$REL"
         done
 
         echo ""
         echo "## skill_key_sections"
-        for skill_dir in "$ROOT_DIR"/skills/*/; do
+        for skill_dir in "$ROOT_DIR"/*/; do
             skill_name=$(basename "$skill_dir")
             skill_md="$skill_dir/SKILL.md"
             if [ -f "$skill_md" ]; then
@@ -66,7 +66,7 @@ generate_snapshot() {
 if [ "$ACTION" = "update" ]; then
     echo "Creating/updating baseline snapshot..."
     generate_snapshot "$BASELINE_FILE"
-    FILE_COUNT=$(grep -c "^skills/" "$BASELINE_FILE" 2>/dev/null || echo "0")
+    FILE_COUNT=$(grep -c "^" "$BASELINE_FILE" 2>/dev/null || echo "0")
     echo "  Baseline: $BASELINE_FILE"
     echo "  Files tracked: $FILE_COUNT"
     echo "Done."
@@ -89,8 +89,8 @@ CURRENT_FILE="$EVIDENCE_DIR/current-snapshot.txt"
 generate_snapshot "$CURRENT_FILE"
 
 # Compare files section
-BASELINE_FILES=$(grep "^skills/" "$BASELINE_FILE" | cut -d'|' -f1 | sort)
-CURRENT_FILES=$(grep "^skills/" "$CURRENT_FILE" | cut -d'|' -f1 | sort)
+BASELINE_FILES=$(grep "^" "$BASELINE_FILE" | cut -d'|' -f1 | sort)
+CURRENT_FILES=$(grep "^" "$CURRENT_FILE" | cut -d'|' -f1 | sort)
 
 ADDED=0
 REMOVED=0
@@ -143,7 +143,7 @@ while IFS='|' read -r file words; do
             TOTAL_DRIFT=$((TOTAL_DRIFT + 1))
         fi
     fi
-done < <(grep "^skills/" "$CURRENT_FILE")
+done < <(grep "^" "$CURRENT_FILE")
 
 [ "$WORD_DRIFT" -eq 0 ] && echo "  (none)"
 
@@ -163,7 +163,7 @@ while IFS='|' read -r skill sections; do
         SECTION_DRIFT=$((SECTION_DRIFT + 1))
         TOTAL_DRIFT=$((TOTAL_DRIFT + 1))
     fi
-done < <(grep "^skills/.*|" "$CURRENT_FILE" | grep "skill_key_sections" -A 100 || true)
+done < <(grep "^.*|" "$CURRENT_FILE" | grep "skill_key_sections" -A 100 || true)
 
 [ "$SECTION_DRIFT" -eq 0 ] && echo "  (none)"
 

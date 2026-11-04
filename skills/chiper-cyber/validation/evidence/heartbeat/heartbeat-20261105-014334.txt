@@ -1,0 +1,22 @@
+# Heartbeat Report — 2026-11-04T17:43:30Z
+Issues: 0 | Fixes: 0 | Skills: 140 | Guides: 749
+
+PASS|SOUL.md|exists and non-empty
+PASS|AGENTS.md|exists and non-empty
+PASS|IDENTITY.md|exists and non-empty
+PASS|USER.md|exists and non-empty
+PASS|MEMORY.md|exists and non-empty
+PASS|TOOLS.md|exists and non-empty
+PASS|HEARTBEAT.md|exists and non-empty
+PASS|TEMPLATE.md|exists and non-empty
+PASS|VERSION|exists and non-empty
+PASS|CHANGELOG.md|exists and non-empty
+PASS|README.md|exists and non-empty
+PASS|CLAUDE.md|exists and non-empty
+PASS|VERSION matches README|0.3.5
+PASS|Skill domains|140 directories found
+PASS|All skills have required files|
+PASS|No __pycache__ artifacts|
+WARN|Guide key sections|551/749 guides missing sections
+WARN|bak/ directory missing|
+PASS|MEMORY.md freshness|0d old

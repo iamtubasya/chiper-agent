@@ -20,16 +20,16 @@ Execute a purple team exercise focusing on the defensive perspective: assess vul
 ## Skill Chain
 
 ```
-vulnerability-assessment → security-review → security-misconfiguration → logging-monitoring → container-security
+chiper-vulnerability-assessment → chiper-security-review → chiper-security-misconfiguration → chiper-logging-monitoring → chiper-container-security
 ```
 
 | Step | Skill Domain | Key Actions | Tools |
 |------|-------------|-------------|-------|
-| 1 | vulnerability-assessment | Automated + manual vulnerability assessment, risk rating | openvas, nuclei, nikto |
-| 2 | security-review | OWASP Top 10 code audit, secrets detection, dependency scan | semgrep, sonarqube, trufflehog |
-| 3 | security-misconfiguration | Hardening: default credentials, verbose errors, CORS, headers | nikto, nuclei, testssl |
-| 4 | logging-monitoring | Deploy monitoring: log collection, alert rules, SIEM integration | ELK stack, auditd, ossec |
-| 5 | container-security | Container hardening: image scanning, runtime policy, RBAC | trivy, falco, kube-bench |
+| 1 | chiper-vulnerability-assessment | Automated + manual vulnerability assessment, risk rating | openvas, nuclei, nikto |
+| 2 | chiper-security-review | OWASP Top 10 code audit, secrets detection, dependency scan | semgrep, sonarqube, trufflehog |
+| 3 | chiper-security-misconfiguration | Hardening: default credentials, verbose errors, CORS, headers | nikto, nuclei, testssl |
+| 4 | chiper-logging-monitoring | Deploy monitoring: log collection, alert rules, SIEM integration | ELK stack, auditd, ossec |
+| 5 | chiper-container-security | Container hardening: image scanning, runtime policy, RBAC | trivy, falco, kube-bench |
 
 ---
 
@@ -44,7 +44,7 @@ vulnerability-assessment → security-review → security-misconfiguration → l
 
 ## Execution Steps
 
-### Phase 1: Vulnerability Assessment (vulnerability-assessment)
+### Phase 1: Vulnerability Assessment (chiper-vulnerability-assessment)
 
 1. Automated scan: `nuclei -u https://target.com -t cves/,vulnerabilities/`
 2. Infrastructure scan: `openvas -q -T html -o report.html target_ip`
@@ -52,7 +52,7 @@ vulnerability-assessment → security-review → security-misconfiguration → l
 4. Risk-rate all findings using CVSS: document severity, exploitability, impact
 5. Prioritize remediation by risk score
 
-### Phase 2: Security Review (security-review)
+### Phase 2: Security Review (chiper-security-review)
 
 1. Source code audit: `semgrep --config auto src/`
 2. Dependency vulnerability scan: `safety check` / `npm audit`
@@ -60,7 +60,7 @@ vulnerability-assessment → security-review → security-misconfiguration → l
 4. OWASP Top 10 checklist review
 5. Document code-level vulnerabilities with remediation guidance
 
-### Phase 3: Security Hardening (security-misconfiguration)
+### Phase 3: Security Hardening (chiper-security-misconfiguration)
 
 1. Fix default credentials on all services
 2. Remove verbose error messages and stack traces
@@ -68,7 +68,7 @@ vulnerability-assessment → security-review → security-misconfiguration → l
 4. Fix CORS misconfigurations
 5. TLS hardening: remove weak ciphers, enable HSTS
 
-### Phase 4: Monitoring Deployment (logging-monitoring)
+### Phase 4: Monitoring Deployment (chiper-logging-monitoring)
 
 1. Configure application logging (access logs, error logs, audit logs)
 2. Set up centralized log collection (ELK/Graylog)
@@ -76,7 +76,7 @@ vulnerability-assessment → security-review → security-misconfiguration → l
 4. Configure log retention and rotation
 5. Test alert pipeline with simulated attack traffic
 
-### Phase 5: Container Security (container-security)
+### Phase 5: Container Security (chiper-container-security)
 
 1. Base image scanning: `trivy image app:latest`
 2. Runtime security policy: configure Falco rules
@@ -100,10 +100,10 @@ vulnerability-assessment → security-review → security-misconfiguration → l
 
 | From | To | Data Format |
 |------|----|-------------|
-| vulnerability-assessment | security-review | Vulnerability list with locations and severity |
-| security-review | security-misconfiguration | Code findings requiring config changes |
-| security-misconfiguration | logging-monitoring | Hardened config → what to monitor |
-| logging-monitoring | container-security | Log infrastructure ready → container log integration |
+| chiper-vulnerability-assessment | chiper-security-review | Vulnerability list with locations and severity |
+| chiper-security-review | chiper-security-misconfiguration | Code findings requiring config changes |
+| chiper-security-misconfiguration | chiper-logging-monitoring | Hardened config → what to monitor |
+| chiper-logging-monitoring | chiper-container-security | Log infrastructure ready → container log integration |
 
 ---
 

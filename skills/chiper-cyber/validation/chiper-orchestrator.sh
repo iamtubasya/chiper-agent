@@ -43,11 +43,11 @@ PHASE_NAMES=("Reconnaissance" "Scanning" "Enumeration" "Vulnerability Discovery"
 PHASE_SKILLS=(
     "chiper-recon-osint"
     "chiper-network-pentest"
-    "network-pentest api-security"
-    "vulnerability-assessment web-xss web-sqli web-auth-bypass web-ssrf web-access-control"
-    "web-xss web-sqli web-auth-bypass post-exploitation"
-    "post-exploitation password-attack"
-    "article-writing"
+    "chiper-network-pentest chiper-api-security"
+    "chiper-vulnerability-assessment chiper-web-xss chiper-web-sqli chiper-web-auth-bypass chiper-web-ssrf chiper-web-access-control"
+    "chiper-web-xss chiper-web-sqli chiper-web-auth-bypass chiper-post-exploitation"
+    "chiper-post-exploitation chiper-password-attack"
+    "chiper-article-writing"
 )
 
 PHASE_TOOLS=(
@@ -81,16 +81,16 @@ fi
 # Adjust phases by target type
 case "$TARGET_TYPE" in
     cloud)
-        PHASE_SKILLS[0]="recon-osint cloud-security"
-        PHASE_SKILLS[3]="cloud-security container-security api-security vulnerability-assessment"
+        PHASE_SKILLS[0]="chiper-recon-osint chiper-cloud-security"
+        PHASE_SKILLS[3]="chiper-cloud-security chiper-container-security chiper-api-security chiper-vulnerability-assessment"
         ;;
     network)
-        PHASE_SKILLS[0]="recon-osint network-pentest"
-        PHASE_SKILLS[3]="network-pentest vulnerability-assessment"
+        PHASE_SKILLS[0]="chiper-recon-osint chiper-network-pentest"
+        PHASE_SKILLS[3]="chiper-network-pentest chiper-vulnerability-assessment"
         ;;
     mobile)
-        PHASE_SKILLS[0]="recon-osint mobile-security"
-        PHASE_SKILLS[3]="mobile-security vulnerability-assessment"
+        PHASE_SKILLS[0]="chiper-recon-osint chiper-mobile-security"
+        PHASE_SKILLS[3]="chiper-mobile-security chiper-vulnerability-assessment"
         ;;
 esac
 

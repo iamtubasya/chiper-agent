@@ -27,17 +27,17 @@ This scenario is chiper-cyber's first step toward **external benchmark calibrati
 ## Skill Chain
 
 ```
-binary-reverse → reverse-engineering-advanced → exploit-development → ai-fuzzing → verification-loop → detection-engineering
+chiper-binary-reverse → chiper-reverse-engineering-advanced → chiper-exploit-development → chiper-ai-fuzzing → chiper-verification-loop → chiper-detection-engineering
 ```
 
 | Step | Skill Domain | Key Actions | Tools |
 |------|-------------|-------------|-------|
-| 1 | binary-reverse | Decompile vulnerable + patched binaries, locate patched function | ghidra, bindiff, radare2 |
-| 2 | reverse-engineering-advanced | Trace data flow from public entry to sink, reconstruct types | ghidra, angr |
-| 3 | exploit-development | Craft targeted input or build fuzzer harness | pwntools, AFL++, libFuzzer |
-| 4 | ai-fuzzing | Seed-guided fuzzing of the suspect function with sanitizer feedback | AFL++, libFuzzer, ASan/UBSan |
-| 5 | verification-loop | Differential verification — same input on both versions, compare | bash, jq, asan-symbolize |
-| 6 | detection-engineering | Author YARA + Sigma rules, test against both versions | yara, sigma-cli, loki |
+| 1 | chiper-binary-reverse | Decompile vulnerable + patched binaries, locate patched function | ghidra, bindiff, radare2 |
+| 2 | chiper-reverse-engineering-advanced | Trace data flow from public entry to sink, reconstruct types | ghidra, angr |
+| 3 | chiper-exploit-development | Craft targeted input or build fuzzer harness | pwntools, AFL++, libFuzzer |
+| 4 | chiper-ai-fuzzing | Seed-guided fuzzing of the suspect function with sanitizer feedback | AFL++, libFuzzer, ASan/UBSan |
+| 5 | chiper-verification-loop | Differential verification — same input on both versions, compare | bash, jq, asan-symbolize |
+| 6 | chiper-detection-engineering | Author YARA + Sigma rules, test against both versions | yara, sigma-cli, loki |
 
 ---
 
@@ -325,12 +325,12 @@ sigma convert -t splunk /work/rules/CVE-2023-4863-sigma.yml
 
 | From | To | Data Format |
 |------|----|-------------|
-| binary-reverse | reverse-engineering-advanced | Decompiled CFG + BinDiff "changed functions" |
-| reverse-engineering-advanced | exploit-development | Call chain entry → sink + input shape |
-| exploit-development | ai-fuzzing | Seed corpus + harness binary + initial crash |
-| ai-fuzzing | verification-loop | Minimized PoC input + ASan trace |
-| verification-loop | detection-engineering | Confirmed PoC + verified root cause |
-| detection-engineering | (output) | YARA + Sigma rules, tested both sides |
+| chiper-binary-reverse | chiper-reverse-engineering-advanced | Decompiled CFG + BinDiff "changed functions" |
+| chiper-reverse-engineering-advanced | chiper-exploit-development | Call chain entry → sink + input shape |
+| chiper-exploit-development | chiper-ai-fuzzing | Seed corpus + harness binary + initial crash |
+| chiper-ai-fuzzing | chiper-verification-loop | Minimized PoC input + ASan trace |
+| chiper-verification-loop | chiper-detection-engineering | Confirmed PoC + verified root cause |
+| chiper-detection-engineering | (output) | YARA + Sigma rules, tested both sides |
 
 ---
 
@@ -385,9 +385,9 @@ grype sbom:/work/sbom.json --only-fixed | grep libwebp
 
 ### Skill cross-references
 
-- **supply-chain-security** — SBOM-driven vulnerability management across the software factory
-- **ci-cd-supply-chain-attack** — embedding ASan/UBSan gates in CI (would have caught this CVE)
-- **detection-engineering** — YARA/Sigma authoring patterns
+- **chiper-supply-chain-security** — SBOM-driven vulnerability management across the software factory
+- **chiper-ci-cd-supply-chain-attack** — embedding ASan/UBSan gates in CI (would have caught this CVE)
+- **chiper-detection-engineering** — YARA/Sigma authoring patterns
 
 ---
 

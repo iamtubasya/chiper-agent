@@ -82,7 +82,7 @@ fi
 echo "" >&2
 echo "── Skill Domain Completeness ──" >&2
 
-SKILL_COUNT=$(find "$ROOT_DIR/skills" -maxdepth 1 -mindepth 1 -type d | wc -l | tr -d ' ')
+SKILL_COUNT=$(find "$ROOT_DIR" -maxdepth 1 -mindepth 1 -type d -name "chiper-*" | wc -l | tr -d ' ')
 EXPECTED_SKILLS=74  # 74 v0.1.22 + Distinguished sprint v0.1.23
 
 if [ "$SKILL_COUNT" -ge 69 ]; then
@@ -93,7 +93,7 @@ fi
 
 # Check each skill has required files
 INCOMPLETE=0
-for skill_dir in "$ROOT_DIR"/skills/*/; do
+for skill_dir in "$ROOT_DIR"/chiper-*/; do
     skill_name=$(basename "$skill_dir")
     missing=""
     [ ! -f "$skill_dir/SKILL.md" ] && missing="SKILL.md "
@@ -115,14 +115,14 @@ fi
 echo "" >&2
 echo "── Artifact Detection ──" >&2
 
-PYCACHE_COUNT=$(find "$ROOT_DIR/skills" -type d -name "__pycache__" 2>/dev/null | wc -l | tr -d ' ')
+PYCACHE_COUNT=$(find "$ROOT_DIR" -type d -name "__pycache__" 2>/dev/null | wc -l | tr -d ' ')
 
 if [ "$PYCACHE_COUNT" -eq 0 ]; then
     check_pass "No __pycache__ artifacts" ""
 else
     check_fail "__pycache__ found" "$PYCACHE_COUNT directories"
     if [ "$FIX_MODE" = true ]; then
-        find "$ROOT_DIR/skills" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+        find "$ROOT_DIR" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
         FIXES=$((FIXES + PYCACHE_COUNT))
         echo "    Fixed: removed $PYCACHE_COUNT __pycache__ directories" >&2
     fi
@@ -136,7 +136,7 @@ echo "── Guide Key Sections (spot check) ──" >&2
 MISSING_SECTIONS=0
 CHECKED=0
 
-for guide in "$ROOT_DIR"/skills/*/guides/*.md; do
+for guide in "$ROOT_DIR"/chiper-*/guides/*.md; do
     [ -f "$guide" ] || continue
     CHECKED=$((CHECKED + 1))
     has_intro=$(grep -cl "## Introduction\|## Objective" "$guide" 2>/dev/null || echo "")
@@ -183,7 +183,7 @@ echo "── Memory Staleness ──" >&2
 
 MEMORY_FILE="$ROOT_DIR/MEMORY.md"
 if [ -f "$MEMORY_FILE" ]; then
-    MEMORY_AGE=$(( $(date +%s) - $(stat -f %m "$MEMORY_FILE" 2>/dev/null || stat -c %Y "$MEMORY_FILE" 2>/dev/null || echo 0) ))
+    MEMORY_AGE=$(( $(date +%s) - $(stat -c %Y "$MEMORY_FILE" 2>/dev/null || stat -f %m "$MEMORY_FILE" 2>/dev/null || echo 0) ))
     MEMORY_DAYS=$(( MEMORY_AGE / 86400 ))
     if [ "$MEMORY_DAYS" -le 14 ]; then
         check_pass "MEMORY.md freshness" "${MEMORY_DAYS}d old"

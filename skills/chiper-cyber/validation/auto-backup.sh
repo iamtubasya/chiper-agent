@@ -83,7 +83,7 @@ BACKUP_PATH="$BAK_DIR/$BACKUP_NAME"
 # Create backup
 tar -czf "$BACKUP_PATH" \
     -C "$ROOT_DIR" \
-    skills/ \
+     \
     memory/ \
     chronicle/ \
     MEMORY.md \

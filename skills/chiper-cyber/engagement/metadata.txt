@@ -1,0 +1,6 @@
+# Engagement Metadata
+target_name=Example Corp
+target_type=web
+target_scope=example.com,www.example.com,api.example.com,192.168.1.0/24
+start_time=2026-11-04T17:42:11Z
+target_file=validation/engagement-template/targets.json.example

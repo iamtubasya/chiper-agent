@@ -26,21 +26,21 @@ All agents read/write the **same** memory file using the atomic-write + version-
 ## Skill Chain
 
 ```
-binary-reverse → reverse-engineering-advanced → exploit-development
-              → ai-fuzzing → verification-loop → multi-agent-collaboration
+chiper-binary-reverse → chiper-reverse-engineering-advanced → chiper-exploit-development
+              → chiper-ai-fuzzing → chiper-verification-loop → chiper-multi-agent-collaboration
 ```
 
-Plus `council` invoked at each sync point for cross-agent delta review.
+Plus `chiper-council` invoked at each sync point for cross-agent delta review.
 
 | Step | Skill Domain | Role in Scenario | Key Tools |
 |------|-------------|------------------|-----------|
-| 1 | `binary-reverse` | Static analysis of vulnerable binary; identify interesting functions | `radare2`, `ghidra`, `objdump` |
-| 2 | `reverse-engineering-advanced` | BinDiff between vulnerable/patched; symbolic execution with angr | `bindiff`, `angr`, `z3` |
-| 3 | `exploit-development` | PoC construction from confirmed hypothesis | `pwntools`, `python3` |
-| 4 | `ai-fuzzing` | AFL++/libFuzzer harness, corpus minimization | `afl-fuzz`, `libFuzzer`, `afl-cmin` |
-| 5 | `verification-loop` | Differential verification (vulnerable vs patched, ASan) | custom runner, `asan_symbolize` |
-| 6 | `multi-agent-collaboration` | Coordinator dispatches paths, aggregates hypotheses, detects convergence | `jq`, `flock`, scenario-runner |
-| sync | `council` | Every N iterations, all agents review each other's deltas | council skill prompt template |
+| 1 | `chiper-binary-reverse` | Static analysis of vulnerable binary; identify interesting functions | `radare2`, `ghidra`, `objdump` |
+| 2 | `chiper-reverse-engineering-advanced` | BinDiff between vulnerable/patched; symbolic execution with angr | `bindiff`, `angr`, `z3` |
+| 3 | `chiper-exploit-development` | PoC construction from confirmed hypothesis | `pwntools`, `python3` |
+| 4 | `chiper-ai-fuzzing` | AFL++/libFuzzer harness, corpus minimization | `afl-fuzz`, `libFuzzer`, `afl-cmin` |
+| 5 | `chiper-verification-loop` | Differential verification (vulnerable vs patched, ASan) | custom runner, `asan_symbolize` |
+| 6 | `chiper-multi-agent-collaboration` | Coordinator dispatches paths, aggregates hypotheses, detects convergence | `jq`, `flock`, scenario-runner |
+| sync | `chiper-council` | Every N iterations, all agents review each other's deltas | chiper-council skill prompt template |
 
 ---
 
@@ -177,15 +177,15 @@ EVIDENCE='["BinDiff: function png_read_row changed in 1.6.38",
 
 ### Phase 3 — Periodic sync point (every 5 iterations per agent)
 
-Every N iterations, each agent pauses and invokes the **`council`** skill to review the deltas produced by the OTHER two agents. Council's job here is **convergence detection**: did two agents independently arrive at the same hypothesis?
+Every N iterations, each agent pauses and invokes the **`chiper-council`** skill to review the deltas produced by the OTHER two agents. Council's job here is **convergence detection**: did two agents independently arrive at the same hypothesis?
 
 ```bash
 # Council invocation — coordinator triggers this at each sync point
-# council reads the memory, looks at hypotheses[].path for intersections
+# chiper-council reads the memory, looks at hypotheses[].path for intersections
 jq '[.vulnerability_hypotheses[] | select(.status != "INVALIDATED") | .path]'
    /runs/SCEN-007/mem/exploit-attempt-memory.json
 
-# Convergence rule (council applies this):
+# Convergence rule (chiper-council applies this):
 # If 2+ hypotheses point at the same source path AND have different claimed_by,
 # promote both to CONFIRMED and merge into a single canonical hypothesis.
 ```
@@ -299,20 +299,20 @@ Every iteration MUST do exactly one of:
 | Stuck (no new evidence, 3rd attempt) | `failed_attempts += [...]`, switch path |
 | Convergence with another agent | Both hypotheses → `CONFIRMED`, log to `decision_log` |
 
-### Convergence check (council skill, every sync point)
+### Convergence check (chiper-council skill, every sync point)
 
 ```text
-council input:
+chiper-council input:
   - H-A-001: heap-buffer-overflow in png_read_row() @ pngpread.c:412  (claimed_by A)
   - H-B-001: AFL++ crash in png_read_row() @ pngpread.c:412           (claimed_by B)
 
-council output:
+chiper-council output:
   - VERDICT: hypotheses converge — same path, independent evidence vectors
   - ACTION: promote both to CONFIRMED, merge into canonical H-CONV-001
   - LOG: decision_log += "convergence: A∩B agree on pngpread.c:412"
 ```
 
-### PoC generation + differential verification (verification-loop skill)
+### PoC generation + differential verification (chiper-verification-loop skill)
 
 ```bash
 # 1. Generate PoC from confirmed hypothesis (use Agent A's angr-discovered input
@@ -381,7 +381,7 @@ ASAN_OPTIONS=detect_leaks=0 /targets/libpng-1.6.38/build/png_read_asan < /runs/S
 
 ### Hook 2 — Convergence event (t=25min)
 
-Triggered by council at sync point #3. Council detects `H-A-001.path == H-B-001.path` (`pngpread.c:412`) with independent evidence vectors.
+Triggered by chiper-council at sync point #3. Council detects `H-A-001.path == H-B-001.path` (`pngpread.c:412`) with independent evidence vectors.
 
 ```bash
 # Convergence merge — coordinator executes this once, under flock
@@ -403,7 +403,7 @@ Triggered by council at sync point #3. Council detects `H-A-001.path == H-B-001.
         "status": "PENDING_VERIFICATION"
       }]
     | .memory_lock.version += 1
-    | .decision_log += [{"at": $now, "by": "council",
+    | .decision_log += [{"at": $now, "by": "chiper-council",
         "decision": "CONVERGENCE: H-A-001 ∩ H-B-001 on pngpread.c:412 → both CONFIRMED, PoC-001 queued"}]' \
     /runs/SCEN-007/mem/exploit-attempt-memory.json > "$tmp"
   mv "$tmp" /runs/SCEN-007/mem/exploit-attempt-memory.json
@@ -453,7 +453,7 @@ write_memory() {
 | 10 min | A finishes BinDiff, writes **H-A-001** "heap-buffer-overflow in `png_read_row()` @ pngpread.c:412" | 4 | A |
 | 15 min | C runs ASan corpus, captures crash, writes **H-C-001-pre** (still localizing) | 5 | C |
 | 20 min | B's AFL++ finds first crash, symbolizes → writes **H-B-001** also pointing to `png_read_row()` @ pngpread.c:412 | 6 | B |
-| 25 min | **CONVERGENCE** — council at sync point #3 detects `H-A-001.path == H-B-001.path`, promotes both to CONFIRMED, queues PoC-001 | 7 | council |
+| 25 min | **CONVERGENCE** — chiper-council at sync point #3 detects `H-A-001.path == H-B-001.path`, promotes both to CONFIRMED, queues PoC-001 | 7 | chiper-council |
 | 30 min | C finishes ASan symbolization, writes **H-C-001** with `evidence_for = ["ASan trace: pngpread.c:412 heap-buffer-overflow"]`, status CONFIRMED — 3rd independent confirmation, confidence → 0.95 | 8 | C |
 | 35 min | Coordinator generates PoC via `afl-tmin` on B's crash, runs differential verification | — | coord |
 | 40 min | Differential result: vulnerable → ASan heap-buffer-overflow exit 1; patched → clean exit 0. `candidate_pocs[0].status = CONFIRMED`, `convergence_state.stop_condition_met = true` | 9 | coord |
@@ -479,7 +479,7 @@ write_memory() {
 The multi-agent pattern has a **detectable footprint** that a SOC should catch — multiple shells spawning in tight succession, atomic file writes to a shared memory file, parallel fuzzer processes, and cross-process `flock` contention.
 
 ```spl
-# Splunk/SPL — detect the multi-agent exploitation pattern (detection-engineering skill)
+# Splunk/SPL — detect the multi-agent exploitation pattern (chiper-detection-engineering skill)
 index=endpoint sourcetype=bash_history
   ( "afl-fuzz" OR "libFuzzer" OR "bindiff" OR "angr" OR "asan_symbolize" )
   OR ( process_name=mv AND file_path="*exploit-attempt-memory.json" )
@@ -496,10 +496,10 @@ detection:
   condition: selection | count() by host > 5 in 1m
 ```
 
-**Reference**: `detection-engineering` skill — the multi-agent footprint itself (multiple `afl-fuzz` instances, shared JSON writes, `flock` contention) is a high-fidelity signal that an offensive tool is running. Defenders should alert on the **coordination artifacts**, not just the individual tool invocations.
+**Reference**: `chiper-detection-engineering` skill — the multi-agent footprint itself (multiple `afl-fuzz` instances, shared JSON writes, `flock` contention) is a high-fidelity signal that an offensive tool is running. Defenders should alert on the **coordination artifacts**, not just the individual tool invocations.
 
 ### What the defender takes away
 
-1. The same shared-memory pattern that makes the offensive team fast (3 agents in 45 min) creates a noisy footprint. Lean into detection-engineering on the **coordination layer**, not just the exploit layer.
+1. The same shared-memory pattern that makes the offensive team fast (3 agents in 45 min) creates a noisy footprint. Lean into chiper-detection-engineering on the **coordination layer**, not just the exploit layer.
 2. Compiler hardening (`_FORTIFY_SOURCE=3`, ASan in staging) is the cheapest win — it converts this from a 0-day into an abort.
 3. Patch-diff attack is fast because maintainers' fixes are public oracles; defenders should assume any released patch will be reverse-engineered into a PoC within hours and pre-stage detections.
