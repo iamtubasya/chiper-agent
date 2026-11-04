@@ -4,7 +4,7 @@
 # Dipanggil oleh setup-chiper.sh saat proses setup
 # ============================================================================
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CHIPER_HOME="${CHIPER_HOME:-$HOME/.chiper}"
 TARGET_CYBER_DIR="$CHIPER_HOME/skills/chiper-cyber"
 SOURCE_CYBER_DIR="$SCRIPT_DIR/skills/chiper-cyber"
@@ -50,22 +50,34 @@ case "$CYBER_CHOICE" in
         echo -e "${CYAN}→${NC} Menginstal Full Cyber Security Suite (140 domains)..."
         mkdir -p "$TARGET_CYBER_DIR"
         cp -rf "$SOURCE_CYBER_DIR/"* "$TARGET_CYBER_DIR/" 2>/dev/null
-        echo -e "${GREEN}✓ Full Cyber Suite berhasil dipasang di $TARGET_CYBER_DIR${NC}"
+        # Pasang SOUL.md ke root CHIPER_HOME agar otomatis di-load oleh prompt_builder.py
+        if [ -f "$SOURCE_CYBER_DIR/SOUL.md" ]; then
+            cp -f "$SOURCE_CYBER_DIR/SOUL.md" "$CHIPER_HOME/SOUL.md"
+        fi
+        if [ -f "$SOURCE_CYBER_DIR/TOOLS.md" ]; then
+            cp -f "$SOURCE_CYBER_DIR/TOOLS.md" "$CHIPER_HOME/TOOLS.md"
+        fi
+        echo -e "${GREEN}✓ Full Cyber Suite + SOUL.md & TOOLS.md berhasil dipasang di $CHIPER_HOME${NC}"
         ;;
     2)
         echo ""
         echo -e "${CYAN}→${NC} Menginstal Bug Bounty Hunter Edition (28 domains)..."
+        rm -rf "$TARGET_CYBER_DIR"
         mkdir -p "$TARGET_CYBER_DIR"
         
         # Salin file meta utama, docs, dan validation tools
-        for meta in README.md SKILL.md SOUL.md TOOLS.md HEARTBEAT.md AGENTS.md IDENTITY.md CHIPER_TOOLS_BASELINE_2026_07.md CHIPER_TOOLS_BASELINE_2026_08.md CHIPER_TOOLS_BASELINE_2026_09.md; do
+        for meta in README.md SKILL.md SOUL.md TOOLS.md HEARTBEAT.md AGENTS.md IDENTITY.md MEMORY.md TEMPLATE.md CHIPER_TOOLS_BASELINE_2026_07.md CHIPER_TOOLS_BASELINE_2026_08.md CHIPER_TOOLS_BASELINE_2026_09.md; do
             [ -f "$SOURCE_CYBER_DIR/$meta" ] && cp -f "$SOURCE_CYBER_DIR/$meta" "$TARGET_CYBER_DIR/"
         done
         for mdir in docs validation; do
             [ -d "$SOURCE_CYBER_DIR/$mdir" ] && cp -rf "$SOURCE_CYBER_DIR/$mdir" "$TARGET_CYBER_DIR/"
         done
         
-        # Daftar 28 skill bug bounty terpilih
+        # Pasang SOUL.md & TOOLS.md ke root CHIPER_HOME agar aktif saat eksekusi Bug Bounty
+        [ -f "$SOURCE_CYBER_DIR/SOUL.md" ] && cp -f "$SOURCE_CYBER_DIR/SOUL.md" "$CHIPER_HOME/SOUL.md"
+        [ -f "$SOURCE_CYBER_DIR/TOOLS.md" ] && cp -f "$SOURCE_CYBER_DIR/TOOLS.md" "$CHIPER_HOME/TOOLS.md"
+        
+        # Daftar 28 skill bug bounty terpilih (termasuk chiper-tool-mastery untuk TOOLS.md)
         BB_SKILLS=(
             "chiper-security-bounty-hunter"
             "chiper-recon-osint"
@@ -93,20 +105,22 @@ case "$CYBER_CHOICE" in
             "chiper-pentest-reporting"
             "chiper-darkweb-intel"
             "chiper-blockchain-web3"
+            "chiper-tool-mastery"
             "chiper-bootstrap"
-                    )
+        )
         
         installed_count=0
         for skill in "${BB_SKILLS[@]}"; do
             if [ -d "$SOURCE_CYBER_DIR/$skill" ]; then
-                cp -r "$SOURCE_CYBER_DIR/$skill" "$TARGET_CYBER_DIR/"
+                cp -rf "$SOURCE_CYBER_DIR/$skill" "$TARGET_CYBER_DIR/"
                 installed_count=$((installed_count + 1))
             fi
         done
-        echo -e "${GREEN}✓ Berhasil memasang $installed_count skills Bug Bounty di $TARGET_CYBER_DIR${NC}"
+        echo -e "${GREEN}✓ Berhasil memasang $installed_count skills Bug Bounty + SOUL.md & TOOLS.md di $CHIPER_HOME${NC}"
         ;;
     3)
         echo ""
+        rm -rf "$TARGET_CYBER_DIR"
         echo -e "${YELLOW}→${NC} Instalasi skills cyber dilewati. Anda bisa memasangnya nanti via skrip."
         ;;
     *)
