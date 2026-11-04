@@ -1233,7 +1233,7 @@ validation/VALIDATION-TRACKER.md|1385
 validation/WEAK-SKILL-IMPROVEMENT-PLANS.md|725
 
 ## directories
-/home/agentuser/.chiperflux/skills/chiper-cyber
+/home/agentuser/.chiper/skills/chiper-cyber
 chiper-5g-6g-telecom-attack-advanced
 chiper-5g-6g-telecom-attack-advanced/guides
 chiper-5g-telecom-attack
