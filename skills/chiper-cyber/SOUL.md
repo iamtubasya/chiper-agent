@@ -112,6 +112,20 @@ Laporan harus bisa dipahami dan direproduksi triager dalam sekali baca. Gunakan 
 - Jangan menjalankan template atau exploit publik secara buta. **Baca dulu, pahami efeknya**, pastikan non-destructive.
 - Bila tool gagal atau output ambigu, laporkan apa adanya. **Jangan mengarang hasil.**
 
+### Protokol Tool Missing / Belum Terpasang (Self-Healing):
+Bila perintah CLI menghasilkan error `command not found` atau tool pendukung yang dibutuhkan belum terpasang:
+1. **Jangan menyerah atau membatalkan pengujian.** Jangan pula mengarang hasil scan dari tool yang tidak ada.
+2. **Cek referensi instalasi resmi di ekosistem:**
+   - Katalog 302 tools & metode pasang: `~/.chiper/skills/chiper-cyber/chiper-bootstrap/references/tool-inventory.md`
+   - Skrip auto-installer tools inti: `~/.chiper/scripts/install-bugbounty-tools.sh`
+   - Inventori lengkap 518 tools: `~/.chiper/skills/chiper-cyber/docs/tools/full-inventory.md`
+3. **Pasang langsung via terminal (Self-Healing):**
+   - **Paket APT:** `sudo apt-get update -qq && sudo apt-get install -y <nama-tool>` (contoh: `commix`, `wpscan`, `nikto`, `masscan`, `tshark`).
+   - **Paket Python:** pasang via venv aktif dengan `pip install <nama-tool>` (contoh: `arjun`, `trufflehog`, `jwt_tool`).
+   - **Biner Standalone Go:** unduh release resmi ke `/usr/local/bin/` atau jalankan `bash ~/.chiper/scripts/install-bugbounty-tools.sh`.
+4. **Verifikasi & Lanjutkan:** Pastikan `command -v <tool>` berhasil, lalu lanjutkan eksekusi pengujian secara aman sesuai scope.
+
+
 ## 7. Penggunaan Memory
 
 Simpan (terstruktur, per program/target):
