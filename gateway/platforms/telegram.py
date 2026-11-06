@@ -459,6 +459,7 @@ class TelegramAdapter(BasePlatformAdapter):
         )
         self._pending_text_batches: Dict[str, MessageEvent] = {}
         self._pending_text_batch_tasks: Dict[str, asyncio.Task] = {}
+        self._pending_soul_prompt: Dict[str, Any] = {}
         self._polling_error_task: Optional[asyncio.Task] = None
         self._polling_conflict_count: int = 0
         self._polling_network_error_count: int = 0
@@ -3409,6 +3410,226 @@ class TelegramAdapter(BasePlatformAdapter):
             logger.warning("[%s] send_clarify failed: %s", self.name, e)
             return SendResult(success=False, error=str(e))
 
+    def _build_soul_keyboard(self) -> Any:
+        """Build inline keyboard for soul/persona selection."""
+        try:
+            from agent.soul_manager import list_souls, get_active_soul
+            souls = list_souls()
+            active = get_active_soul()
+            active_id = active.get("id", "")
+
+            rows = []
+            for s in souls:
+                is_active = (s["id"] == active_id)
+                status_mark = " ✅" if is_active else ""
+                label = f"{s['icon']} {s['name']}{status_mark}"
+                rows.append([InlineKeyboardButton(label, callback_data=f"soul:set:{s['id']}")])
+
+            rows.append([
+                InlineKeyboardButton("➕ Add your SOUL.md", callback_data="soul:add"),
+                InlineKeyboardButton("❌ Tutup", callback_data="soul:cancel"),
+            ])
+            return InlineKeyboardMarkup(rows)
+        except Exception as e:
+            logger.error("[%s] _build_soul_keyboard failed: %s", self.name, e)
+            return None
+
+    async def send_soul_picker(
+        self,
+        chat_id: str,
+        session_key: str = "",
+        header: str = "",
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> SendResult:
+        """Send an interactive inline-keyboard soul/persona picker."""
+        if not self._bot:
+            return SendResult(success=False, error="Not connected")
+
+        try:
+            from agent.soul_manager import get_active_soul
+            active = get_active_soul()
+            keyboard = self._build_soul_keyboard()
+            if not keyboard:
+                return SendResult(success=False, error="Could not build keyboard")
+
+            prefix = header if header else "✨ *Sesi Baru Dimulai\\!*\n\n"
+            text = self.format_message(
+                f"{prefix}🎭 *Pilih Jiwa / Otak Agent:*\n"
+                f"Jiwa saat ini: {active['icon']} *{active['name']}*\n\n"
+                f"Pilih mode identitas dan cara berpikir agent untuk sesi ini:"
+            )
+
+            thread_id = metadata.get("thread_id") if metadata else None
+            reply_to_id = self._reply_to_message_id_for_send(None, metadata, reply_to_mode=self._reply_to_mode)
+            msg = await self._send_message_with_thread_fallback(
+                chat_id=int(chat_id),
+                text=text,
+                parse_mode=ParseMode.MARKDOWN_V2,
+                reply_markup=keyboard,
+                reply_to_message_id=reply_to_id,
+                **self._thread_kwargs_for_send(
+                    chat_id,
+                    thread_id,
+                    metadata,
+                    reply_to_message_id=reply_to_id,
+                    reply_to_mode=self._reply_to_mode
+                ),
+                **self._link_preview_kwargs(),
+            )
+            return SendResult(success=True, message_id=str(msg.message_id) if msg else None)
+        except Exception as e:
+            logger.error("[%s] send_soul_picker failed: %s", self.name, e, exc_info=True)
+            return SendResult(success=False, error=str(e))
+
+    async def _handle_soul_callback(self, query: Any, data: str) -> None:
+        """Handle soul picker inline keyboard button clicks."""
+        try:
+            from agent.soul_manager import switch_soul, list_souls, get_active_soul
+            if data.startswith("soul:set:"):
+                soul_id = data[len("soul:set:"):]
+                success, msg, soul = switch_soul(soul_id)
+                if success:
+                    await query.answer(f"Jiwa diaktifkan: {soul['name']}")
+                    reply_text = self.format_message(
+                        f"🎭 *Jiwa Aktif: {soul['icon']} {soul['name']}*\n\n"
+                        f"_{soul['desc']}_\n\n"
+                        f"✅ *SOUL\\.md berhasil diaktifkan\\!* Agent sekarang beroperasi dengan mode ini\\.\n"
+                        f"_Silakan kirim pesan atau perintah kamu\\._"
+                    )
+                    await query.edit_message_text(
+                        text=reply_text,
+                        parse_mode=ParseMode.MARKDOWN_V2,
+                        reply_markup=InlineKeyboardMarkup([[
+                            InlineKeyboardButton("🔄 Ganti Jiwa Lain", callback_data="soul:menu"),
+                            InlineKeyboardButton("❌ Selesai", callback_data="soul:cancel"),
+                        ]]),
+                    )
+                else:
+                    await query.answer(f"Gagal: {msg}", show_alert=True)
+
+            elif data == "soul:add":
+                await query.answer()
+                chat_id = str(query.message.chat_id) if query.message else None
+                if chat_id:
+                    import time
+                    self._pending_soul_prompt[chat_id] = {
+                        "timestamp": time.time(),
+                        "message_id": query.message.message_id,
+                    }
+                prompt_text = self.format_message(
+                    f"✍️ *Tambah Jiwa / SOUL\\.md Baru*\n\n"
+                    f"Silakan *ketik instruksi / kepribadian jiwa baru* kamu langsung di chat ini\\.\n\n"
+                    f"💡 *Format Bebas & Simpel:*\n"
+                    f"• *Baris 1:* Nama Jiwa \\(contoh: `Chiper-Trader` atau `Analyst-Security`\\)\n"
+                    f"• *Baris 2 dst:* Instruksi karakter, aturan, kepribadian, atau sistem prompt\\-nya\\.\n\n"
+                    f"_Contoh:_\n"
+                    f"```\n"
+                    f"Chiper-Researcher\n"
+                    f"Kamu adalah AI researcher handal yang fokus pada OSINT, investigasi data, dan analisis intelijen...\n"
+                    f"```\n\n"
+                    f"_(Atau kirim file .md / ketik `batal` untuk membatalkan)_"
+                )
+                await query.edit_message_text(
+                    text=prompt_text,
+                    parse_mode=ParseMode.MARKDOWN_V2,
+                    reply_markup=InlineKeyboardMarkup([[
+                        InlineKeyboardButton("❌ Batal", callback_data="soul:cancel_add"),
+                    ]]),
+                )
+
+            elif data == "soul:cancel_add":
+                await query.answer("Dibatalkan")
+                chat_id = str(query.message.chat_id) if query.message else None
+                if chat_id and hasattr(self, "_pending_soul_prompt"):
+                    self._pending_soul_prompt.pop(chat_id, None)
+                active = get_active_soul()
+                keyboard = self._build_soul_keyboard()
+                text = self.format_message(
+                    f"🎭 *Pilih Jiwa / Otak Agent:*\n"
+                    f"Jiwa saat ini: {active['icon']} *{active['name']}*\n\n"
+                    f"Pilih mode identitas dan cara berpikir agent untuk sesi ini:"
+                )
+                await query.edit_message_text(
+                    text=text,
+                    parse_mode=ParseMode.MARKDOWN_V2,
+                    reply_markup=keyboard,
+                )
+
+            elif data == "soul:menu":
+                await query.answer()
+                active = get_active_soul()
+                keyboard = self._build_soul_keyboard()
+                text = self.format_message(
+                    f"🎭 *Pilih Jiwa / Otak Agent:*\n"
+                    f"Jiwa saat ini: {active['icon']} *{active['name']}*\n\n"
+                    f"Pilih mode identitas dan cara berpikir agent untuk sesi ini:"
+                )
+                await query.edit_message_text(
+                    text=text,
+                    parse_mode=ParseMode.MARKDOWN_V2,
+                    reply_markup=keyboard,
+                )
+
+            elif data == "soul:cancel":
+                await query.answer()
+                await query.edit_message_reply_markup(reply_markup=None)
+        except Exception as e:
+            logger.error("[%s] _handle_soul_callback failed: %s", self.name, e, exc_info=True)
+            await query.answer("Terjadi kesalahan.")
+
+    async def _process_text_soul_creation(self, msg: Any, raw_text: str) -> None:
+        """Process incoming chat text as a new custom SOUL.md."""
+        try:
+            from agent.soul_manager import save_custom_soul
+            lines = raw_text.strip().splitlines()
+            first_line = lines[0].strip() if lines else "Custom-Soul"
+
+            if first_line.startswith("#"):
+                name = first_line.lstrip("#").strip()
+                content = raw_text.strip()
+            elif len(lines) > 1:
+                name = first_line
+                content = "\n".join(lines[1:]).strip()
+                if not content.startswith("#"):
+                    content = f"# SOUL.md — {name}\n\n{content}"
+            else:
+                name = first_line
+                content = f"# SOUL.md — {name}\n\nKamu adalah {name}."
+
+            success, res_msg = save_custom_soul(name, content)
+            if success:
+                clean_id = "".join(c if c.isalnum() or c in "-_" else "-" for c in name.lower()).strip("-")
+                reply_text = self.format_message(
+                    f"✨ *Jiwa Baru Berhasil Dibuat & Diaktifkan\\!*\n\n"
+                    f"🎭 *Nama:* {name}\n"
+                    f"📁 *ID:* `{clean_id}`\n\n"
+                    f"✅ *SOUL\\.md telah diaktifkan\\!* Agent sekarang beroperasi dengan jiwa baru ini\\.\n"
+                    f"_Jiwa ini juga otomatis tersimpan di menu pilihan /new dan /soul\\._"
+                )
+                keyboard = InlineKeyboardMarkup([[
+                    InlineKeyboardButton("🔄 Menu Jiwa", callback_data="soul:menu"),
+                    InlineKeyboardButton("❌ Selesai", callback_data="soul:cancel"),
+                ]])
+                await msg.reply_text(
+                    reply_text,
+                    parse_mode=ParseMode.MARKDOWN_V2,
+                    reply_markup=keyboard,
+                )
+            else:
+                reply_text = self.format_message(f"❌ *Gagal menyimpan SOUL\\.md:*\n{res_msg}")
+                keyboard = InlineKeyboardMarkup([[
+                    InlineKeyboardButton("➕ Coba Lagi", callback_data="soul:add"),
+                    InlineKeyboardButton("◀ Kembali", callback_data="soul:menu"),
+                ]])
+                await msg.reply_text(
+                    reply_text,
+                    parse_mode=ParseMode.MARKDOWN_V2,
+                    reply_markup=keyboard,
+                )
+        except Exception as e:
+            logger.error("[%s] _process_text_soul_creation failed: %s", self.name, e, exc_info=True)
+            await msg.reply_text(f"❌ Terjadi kesalahan saat memproses SOUL.md: {e}")
+
     async def send_model_picker(
         self,
         chat_id: str,
@@ -3887,6 +4108,11 @@ class TelegramAdapter(BasePlatformAdapter):
         query_chat_type = getattr(query_chat, "type", None)
         query_thread_id = getattr(query_message, "message_thread_id", None)
         query_user_name = getattr(query.from_user, "first_name", None)
+
+        # --- Soul switcher callbacks ---
+        if data.startswith("soul:"):
+            await self._handle_soul_callback(query, data)
+            return
 
         # --- Model picker callbacks ---
         if data.startswith(("mp:", "mpg:", "mm:", "mc:", "mb", "mx", "mg:")):
@@ -5907,6 +6133,27 @@ class TelegramAdapter(BasePlatformAdapter):
         msg = self._effective_update_message(update)
         if not msg or not msg.text:
             return
+
+        chat_id = str(msg.chat_id)
+        if hasattr(self, "_pending_soul_prompt") and chat_id in self._pending_soul_prompt:
+            entry = self._pending_soul_prompt.get(chat_id)
+            import time
+            if entry and (time.time() - entry.get("timestamp", 0)) < 600:
+                raw_text = msg.text.strip()
+                self._pending_soul_prompt.pop(chat_id, None)
+                if raw_text.lower() in ("batal", "cancel", "/cancel"):
+                    reply_text = self.format_message("❌ *Penambahan SOUL\\.md dibatalkan\\.*")
+                    keyboard = self._build_soul_keyboard()
+                    await msg.reply_text(
+                        reply_text,
+                        parse_mode=ParseMode.MARKDOWN_V2,
+                        reply_markup=keyboard,
+                    )
+                    return
+                await self._process_text_soul_creation(msg, raw_text)
+                return
+            else:
+                self._pending_soul_prompt.pop(chat_id, None)
         if not self._should_process_message(msg):
             if self._should_observe_unmentioned_group_message(msg):
                 self._observe_unmentioned_group_message(msg, MessageType.TEXT, update_id=update.update_id)
@@ -6241,6 +6488,20 @@ class TelegramAdapter(BasePlatformAdapter):
         # Download document files to cache for agent processing
         elif msg.document:
             doc = msg.document
+            chat_id = str(msg.chat_id)
+            if hasattr(self, "_pending_soul_prompt") and chat_id in self._pending_soul_prompt:
+                fn = doc.file_name or ""
+                if fn.lower().endswith((".md", ".txt")):
+                    self._pending_soul_prompt.pop(chat_id, None)
+                    try:
+                        file_obj = await doc.get_file()
+                        file_bytes = await file_obj.download_as_bytearray()
+                        doc_text = bytes(file_bytes).decode("utf-8", errors="replace")
+                        stem = Path(fn).stem
+                        await self._process_text_soul_creation(msg, f"{stem}\n{doc_text}")
+                        return
+                    except Exception as e:
+                        logger.warning("[Telegram] Failed to process soul document: %s", e)
             try:
                 # Determine file extension
                 ext = ""

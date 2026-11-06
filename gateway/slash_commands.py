@@ -224,9 +224,86 @@ class GatewaySlashCommandsMixin:
         except Exception:
             _tip_line = ""
 
+        # Check if platform adapter supports interactive soul picker (e.g. Telegram)
+        adapter = self.adapters.get(source.platform) if getattr(self, "adapters", None) else None
+        if adapter and hasattr(adapter, "send_soul_picker"):
+            try:
+                metadata = self._thread_metadata_for_source(source, self._reply_anchor_for_event(event))
+                picker_res = await adapter.send_soul_picker(
+                    chat_id=source.chat_id,
+                    session_key=session_key,
+                    header=f"{header}\n\n",
+                    metadata=metadata,
+                )
+                if picker_res and picker_res.success:
+                    return None
+            except Exception as e:
+                logger.debug("send_soul_picker failed: %s", e)
+
         if session_info:
             return EphemeralReply(f"{header}\n\n{session_info}{_tip_line}")
         return EphemeralReply(f"{header}{_tip_line}")
+
+    async def _handle_soul_command(self, event: MessageEvent) -> Optional[str]:
+        """Handle /soul command — list, switch, or customize agent soul (SOUL.md)."""
+        from agent.soul_manager import list_souls, get_active_soul, switch_soul, save_custom_soul
+        source = event.source
+        args = event.get_command_args().strip()
+
+        if not args:
+            adapter = self.adapters.get(source.platform) if getattr(self, "adapters", None) else None
+            if adapter and hasattr(adapter, "send_soul_picker"):
+                session_key = self._session_key_for_source(source)
+                metadata = self._thread_metadata_for_source(source, self._reply_anchor_for_event(event))
+                res = await adapter.send_soul_picker(
+                    chat_id=source.chat_id,
+                    session_key=session_key,
+                    header="",
+                    metadata=metadata,
+                )
+                if res and res.success:
+                    return None
+
+            souls = list_souls()
+            active = get_active_soul()
+            lines = [
+                "🎭 *Pilihan Jiwa / Otak Agent (SOUL.md):*",
+                f"Jiwa aktif saat ini: {active['icon']} *{active['name']}*",
+                "",
+            ]
+            for s in souls:
+                mark = " [AKTIF]" if s["id"] == active.get("id") else ""
+                lines.append(f"• {s['icon']} *{s['name']}* (`{s['id']}`){mark} — {s['desc']}")
+            lines.append("")
+            lines.append("Gunakan: `/soul <id>` (contoh `/soul cyber` atau `/soul dev`) untuk berganti jiwa.")
+            lines.append("Atau: `/soul add <nama> <isi instruksi>` untuk menambah jiwa kustom baru.")
+            return "\n".join(lines)
+
+        parts = args.split(maxsplit=2)
+        action = parts[0].lower()
+
+        if action in ("add", "create", "set") and len(parts) >= 3:
+            soul_name = parts[1]
+            soul_content = parts[2]
+            success, msg = save_custom_soul(soul_name, soul_content)
+            return msg
+
+        target_id = args.lower()
+        if target_id == "cyber":
+            target_id = "chiper-cyber"
+        elif target_id in ("dev", "developer"):
+            target_id = "chiper-dev"
+        elif target_id in ("web3", "crypto", "superagent"):
+            target_id = "chiper-web3"
+
+        success, msg, soul = switch_soul(target_id)
+        if success:
+            return (
+                f"🎭 *Jiwa Aktif: {soul['icon']} {soul['name']}*\n\n"
+                f"_{soul['desc']}_\n\n"
+                f"✅ *SOUL.md berhasil diaktifkan!* Agent sekarang beroperasi dengan mode ini."
+            )
+        return f"❌ {msg}"
 
     async def _handle_profile_command(self, event: MessageEvent) -> str:
         """Handle /profile — show active profile name and home directory."""

@@ -131,6 +131,8 @@ COMMAND_REGISTRY: list[CommandDef] = [
     CommandDef("gquota", "Show Google Gemini Code Assist quota usage", "Info",
                cli_only=True),
 
+    CommandDef("soul", "Pilih atau ganti jiwa/otak agent (Chiper-Cyber, Chiper-Dev, atau Custom)", "Configuration",
+               args_hint="[cyber|dev|list|set <name>]", aliases=("persona",)),
     CommandDef("personality", "Set a predefined personality", "Configuration",
                args_hint="[name]"),
     CommandDef("statusbar", "Toggle the context/model status bar", "Configuration",
