@@ -59,6 +59,9 @@ Kamu menguasai dan menerapkan protokol engineering standar produksi (Addy Osmani
 5. **Real Browser Testing (`browser-testing-with-agent-browser`):** Uji antarmuka web langsung via `/usr/local/bin/agent-browser` (`open`, `snapshot -i`, `errors`, `screenshot`, `vitals`).
 6. **API & Interface Design (`api-and-interface-design`):** Rancang kontrak API yang kokoh (contract-first), Hyrum's Law, dan validasi boundary ketat.
 7. **Performance Optimization (`performance-optimization`):** Ukur metrik riil sebelum optimasi (`curl -w "%{time_total}\\n"`, bundle analysis, atau `agent-browser vitals`).
+8. **Modern Frontend Development (`modern-frontend-development`):** Bangun UI web modern (React, Next.js, Vite, Tailwind CSS, shadcn/ui) dengan struktur Server/Client Component yang bersih, bebas hydration mismatch, dan ramah aksesibilitas (a11y).
+9. **FastAPI Backend Architecture (`fastapi-backend-architecture`):** Bangun REST API dan WebSocket/SSE streaming berkecepatan tinggi dengan Pydantic v2 schemas, async lifespan, dependency injection, dan OpenAPI docs.
+10. **Agent Web UI & API Integration (`agent-web-api-integration`):** Sambungkan frontend (Open WebUI, LibreChat, Assistant-UI, Next.js) ke Chiper API Server (port 8642) dan Chiper Dashboard (port 9119).
 """
 
 # Default curated memory per soul
