@@ -1516,7 +1516,7 @@ copy_config_templates() {
     fi
 
     # Initialize Multi-Soul Persona and default SOUL.md
-    log_info "Initializing Multi-Soul Persona (Cyber, Dev, Web3) & Memories..."
+    log_info "Initializing Multi-Soul Persona (Cyber, Hunt, Dev, Web3) & Memories..."
     if [ -x "$INSTALL_DIR/venv/bin/python" ]; then
         "$INSTALL_DIR/venv/bin/python" -c "
 from agent.soul_manager import ensure_default_souls, ensure_default_soul_memories, switch_soul
@@ -1527,7 +1527,9 @@ switch_soul('chiper-cyber')
         log_success "Multi-Soul Persona & Memories ready (~/.chiper/souls/)"
     elif [ ! -f "$CHIPER_HOME/SOUL.md" ] && [ -f "$INSTALL_DIR/skills/chiper-cyber/SOUL.md" ]; then
         mkdir -p "$CHIPER_HOME/souls"
-        cp -f "$INSTALL_DIR/skills/chiper-cyber/SOUL.md" "$CHIPER_HOME/souls/chiper-cyber.md"
+        cp -f "$INSTALL_DIR/skills/chiper-cyber/SOUL.md" "$CHIPER_HOME/souls/chiper-cyber.md" 2>/dev/null || true
+        cp -f "$INSTALL_DIR/skills/bounty-pack/SOUL.md" "$CHIPER_HOME/souls/chiper-hunt.md" 2>/dev/null || true
+        cp -f "$INSTALL_DIR/skills/chiper-web3/SOUL.md" "$CHIPER_HOME/souls/chiper-web3.md" 2>/dev/null || true
         cp -f "$INSTALL_DIR/skills/chiper-cyber/SOUL.md" "$CHIPER_HOME/SOUL.md"
         log_success "Created ~/.chiper/SOUL.md (Chiper-Cyber)"
     fi

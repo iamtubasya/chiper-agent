@@ -437,7 +437,7 @@ fi
 # Inisialisasi Multi-Soul Architecture & Isolated Memories
 # ============================================================================
 echo ""
-echo "Menginisialisasi Multi-Soul Persona (Cyber, Dev, Web3) & Memories..."
+echo "Menginisialisasi Multi-Soul Persona (Cyber, Hunt, Dev, Web3) & Memories..."
 "$SCRIPT_DIR/venv/bin/python" -c "
 from agent.soul_manager import ensure_default_souls, ensure_default_soul_memories, switch_soul
 ensure_default_souls()
