@@ -3493,7 +3493,7 @@ class TelegramAdapter(BasePlatformAdapter):
                     reply_text = self.format_message(
                         f"🎭 *Jiwa Aktif: {soul['icon']} {soul['name']}*\n\n"
                         f"_{soul['desc']}_\n\n"
-                        f"✅ *SOUL\\.md berhasil diaktifkan\\!* Agent sekarang beroperasi dengan mode ini\\.\n"
+                        f"✅ *SOUL\\.md aktif\\!* Memori kerja otomatis terisolasi untuk jiwa ini\\.\n"
                         f"_Silakan kirim pesan atau perintah kamu\\._"
                     )
                     await query.edit_message_text(

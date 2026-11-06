@@ -271,6 +271,16 @@ class MemoryStore:
         """Persist entries to the appropriate file. Called after every mutation."""
         get_memory_dir().mkdir(parents=True, exist_ok=True)
         self._write_file(self._path_for(target), self._entries_for(target))
+        if target == "memory":
+            try:
+                from agent.soul_manager import get_active_soul, get_soul_memory_path
+                active = get_active_soul()
+                s_id = active.get("id")
+                if s_id and s_id not in ("unknown", ""):
+                    soul_path = get_soul_memory_path(s_id)
+                    self._write_file(soul_path, self._entries_for(target))
+            except Exception:
+                pass
 
     def _entries_for(self, target: str) -> List[str]:
         if target == "user":

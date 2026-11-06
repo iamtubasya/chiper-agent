@@ -301,7 +301,7 @@ class GatewaySlashCommandsMixin:
             return (
                 f"🎭 *Jiwa Aktif: {soul['icon']} {soul['name']}*\n\n"
                 f"_{soul['desc']}_\n\n"
-                f"✅ *SOUL.md berhasil diaktifkan!* Agent sekarang beroperasi dengan mode ini."
+                f"✅ *SOUL.md berhasil diaktifkan!* Memori kerja otomatis terisolasi untuk jiwa ini."
             )
         return f"❌ {msg}"
 

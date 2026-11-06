@@ -51,12 +51,97 @@ Kamu berpikir seperti principal engineer: **pragmatis, teliti, efisien, dan sela
 - Tampilkan diff atau perintah yang relevan dengan jelas.
 """
 
+# Default curated memory per soul
+DEFAULT_SOUL_MEMORIES: Dict[str, str] = {
+    "chiper-cyber": """User maintains Chiper agent repo /home/agentuser/chiper (github.com/iamtubasya/chiper-agent). Runtime home ~/.chiper (no .chiperflux). 140-domain chiper-cyber suite + core CLI tools (nmap, sqlmap, subfinder, httpx, nuclei, ffuf, gobuster, hydra, whatweb, wafw00f) di /usr/bin & /usr/local/bin.
+§
+Akun test chiperflux15@gmail.com VALID (2FA Google Auth + SMS ending 89, butuh OTP user). Email ini terhubung himalaya CLI (IMAP/SMTP) → bisa baca/kirim kode verifikasi. KYC tak perlu utk API-key/IDOR.
+§
+Sesi utama "AGENT-CHIPER-SECURITY" tersimpan permanen di state.db + ~/.chiper/sessions/AGENT-CHIPER-SECURITY.json (setup chiper-cyber, 140 skills, 10 core tools, SOUL.md self-healing).
+§
+Engagement aktif: odin.ai (Mozilla 0DIN) GenAI bounty — $500-15k, self-hosted, 0din@mozilla.com. Alur: submit abstract dulu → 3 hari kerja jawab in-scope+range. Scope: Prompt Extraction/Guardrail+Interpreter Jailbreak/Content Manipulation/Weights Disclosure + app bugs (prompt injection→Read/Write/Execute). Butuh akun+KYC utk payout. Intel ~/workspace/odin-ai/target-intel.md. garak 0.17.1+promptfoo di ~/workspace/odin-ai/venv (--no-deps, hindari torch). Blocker: belum ada API key LLM.
+§
+Browser: agent-browser + Chrome 157 terinstall di ~/.agent-browser.
+§
+User sering minta aksi grey/black (farm API key, scrape key bocor di X, bypass auth) — pola berulang.""",
+
+    "chiper-dev": """User maintains independent ChiperRouter instance at `/home/agentuser/chiperrouter` (fork of 9router). State & SQLite DB located at `~/.chiperrouter`, CLI binary `chiperrouter`, running on port 20130 via `chiperrouter.service` (coexists with 9router on 20128). Exposed via Cloudflare tunnel as https://router.chiper.site. Web UI styled in Neon Cyan Cyber Obsidian.
+§
+User maintains Chiper agent repo at `/home/agentuser/chiper` (github.com/iamtubasya/chiper-agent) on branch main. Backup mirror repository at `iamtubasya/chiper-agent-backup`. Runtime home ~/.chiper.
+§
+Browser: agent-browser + Chrome 157 terinstall di ~/.agent-browser.
+§
+Test container `chiper-installer-test` active (Ubuntu 24.04, --network host, repo :ro, bot @dilaagent_bot). Mode test: jangan git push. Multi-soul switcher: /new & /soul trigger buttons (Chiper-Cyber, Chiper-Dev, Chiper-Web3). Sub-skills standardized under chiper-*.""",
+
+    "chiper-web3": """Solana/SBF: Rust 1.99.1, Agave 4.3.2, cargo-build-sbf 4.4.0. Pin time 0.3.36. Metaplex: on-chain only, repo ~/workspace/metaplex.
+§
+Akun test chiperflux15@gmail.com VALID (2FA Google Auth + SMS ending 89, butuh OTP user). Email ini terhubung himalaya CLI (IMAP/SMTP) → bisa baca/kirim kode verifikasi. KYC tak perlu utk API-key/IDOR.
+§
+Chiper-Web3 suite & Hermes crypto engine (H1-H10) di `~/.chiper/skills/chiper-web3/`. RPC fallback: Ethereum (eth.llamarpc.com), Base (mainnet.base.org), Arbitrum, Polygon, Optimism, Solana. Spend Governor circuit breaker: max $500/tx, $2000/day, max slippage 5%, require simulation. CTF solvers di tools/ctf/."""
+}
+
 
 def get_souls_dir() -> Path:
     """Return the souls storage directory (~/.chiper/souls)."""
     souls_dir = get_chiper_home() / "souls"
     souls_dir.mkdir(parents=True, exist_ok=True)
     return souls_dir
+
+
+def get_soul_memory_dir() -> Path:
+    """Return the soul-isolated memories directory (~/.chiper/memories/souls)."""
+    mem_dir = get_chiper_home() / "memories" / "souls"
+    mem_dir.mkdir(parents=True, exist_ok=True)
+    return mem_dir
+
+
+def get_soul_memory_path(soul_id: str) -> Path:
+    """Return path to a specific soul's memory file."""
+    clean_id = soul_id.lower().strip()
+    return get_soul_memory_dir() / f"{clean_id}.md"
+
+
+def ensure_default_soul_memories() -> None:
+    """Ensure default soul memory files exist in ~/.chiper/memories/souls/."""
+    souls_mem_dir = get_soul_memory_dir()
+    for s_id, default_content in DEFAULT_SOUL_MEMORIES.items():
+        mem_path = souls_mem_dir / f"{s_id}.md"
+        if not mem_path.exists():
+            try:
+                mem_path.write_text(default_content.strip(), encoding="utf-8")
+            except Exception as e:
+                logger.warning("Failed to initialize soul memory for %s: %s", s_id, e)
+
+
+def sync_soul_memory_on_switch(from_soul_id: Optional[str], to_soul_id: str) -> None:
+    """Sync active MEMORY.md to previous soul file and activate target soul memory."""
+    ensure_default_soul_memories()
+    chiper_home = get_chiper_home()
+    memories_dir = chiper_home / "memories"
+    memories_dir.mkdir(parents=True, exist_ok=True)
+    active_mem = memories_dir / "MEMORY.md"
+
+    # 1. Save current memory state to from_soul_id
+    if from_soul_id and from_soul_id not in ("unknown", ""):
+        from_path = get_soul_memory_path(from_soul_id)
+        if active_mem.exists():
+            try:
+                content = active_mem.read_text(encoding="utf-8").strip()
+                if content:
+                    from_path.write_text(content, encoding="utf-8")
+            except Exception as e:
+                logger.warning("Failed to save memory for %s: %s", from_soul_id, e)
+
+    # 2. Load target soul memory into active MEMORY.md
+    to_path = get_soul_memory_path(to_soul_id)
+    if not to_path.exists():
+        init_content = DEFAULT_SOUL_MEMORIES.get(to_soul_id.lower(), "")
+        to_path.write_text(init_content, encoding="utf-8")
+
+    try:
+        shutil.copy2(to_path, active_mem)
+    except Exception as e:
+        logger.error("Failed to copy target soul memory to MEMORY.md: %s", e)
 
 
 def ensure_default_souls() -> None:
@@ -242,11 +327,12 @@ def get_active_soul() -> Dict[str, Any]:
 
 
 def switch_soul(soul_id: str) -> Tuple[bool, str, Dict[str, Any]]:
-    """Switch active SOUL.md to the specified soul_id.
+    """Switch active SOUL.md to the specified soul_id and swap isolated memory.
     
     Returns (success, message, soul_dict).
     """
     ensure_default_souls()
+    ensure_default_soul_memories()
     souls_dir = get_souls_dir()
     target_path = souls_dir / f"{soul_id.lower()}.md"
 
@@ -261,9 +347,14 @@ def switch_soul(soul_id: str) -> Tuple[bool, str, Dict[str, Any]]:
     if not target_path.exists():
         return False, f"Soul '{soul_id}' tidak ditemukan di ~/.chiper/souls/", {}
 
+    prev_soul = get_active_soul()
+    prev_id = prev_soul.get("id")
+
     dest_path = get_chiper_home() / "SOUL.md"
     try:
         shutil.copy2(target_path, dest_path)
+        # Sync isolated memory on switch
+        sync_soul_memory_on_switch(prev_id, soul_id)
         souls = list_souls()
         active = next((s for s in souls if s["id"] == soul_id), {
             "id": soul_id,
@@ -271,7 +362,7 @@ def switch_soul(soul_id: str) -> Tuple[bool, str, Dict[str, Any]]:
             "icon": "🎭",
             "desc": "Active Soul",
         })
-        return True, f"Berhasil mengaktifkan jiwa {active['icon']} *{active['name']}*", active
+        return True, f"Berhasil mengaktifkan jiwa {active['icon']} *{active['name']}* dengan memori terisolasi", active
     except Exception as e:
         logger.error("Failed to switch soul to %s: %s", soul_id, e)
         return False, f"Gagal mengaktifkan jiwa: {e}", {}
