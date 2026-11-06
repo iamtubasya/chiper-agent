@@ -149,6 +149,17 @@ class MemoryStore:
         """
         mem_dir = get_memory_dir()
         mem_dir.mkdir(parents=True, exist_ok=True)
+        if not (mem_dir / "MEMORY.md").exists():
+            try:
+                from agent.soul_manager import ensure_default_soul_memories, get_active_soul, get_soul_memory_path
+                ensure_default_soul_memories()
+                active = get_active_soul()
+                s_id = active.get("id", "chiper-cyber")
+                s_path = get_soul_memory_path(s_id)
+                if s_path.exists():
+                    shutil.copy2(s_path, mem_dir / "MEMORY.md")
+            except Exception:
+                pass
 
         self.memory_entries = self._read_file(mem_dir / "MEMORY.md")
         self.user_entries = self._read_file(mem_dir / "USER.md")

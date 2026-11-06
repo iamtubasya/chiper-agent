@@ -1515,26 +1515,21 @@ copy_config_templates() {
         log_info "~/.chiper/config.yaml already exists, keeping it"
     fi
 
-    # Create SOUL.md if it doesn't exist (global persona file)
-    if [ ! -f "$CHIPER_HOME/SOUL.md" ]; then
-        cat > "$CHIPER_HOME/SOUL.md" << 'SOUL_EOF'
-# Chiper Agent Persona
-
-<!--
-This file defines the agent's personality and tone.
-The agent will embody whatever you write here.
-Edit this to customize how Chiper communicates with you.
-
-Examples:
-  - "You are a warm, playful assistant who uses kaomoji occasionally."
-  - "You are a concise technical expert. No fluff, just facts."
-  - "You speak like a friendly coworker who happens to know everything."
-
-This file is loaded fresh each message -- no restart needed.
-Delete the contents (or this file) to use the default personality.
--->
-SOUL_EOF
-        log_success "Created ~/.chiper/SOUL.md (edit to customize personality)"
+    # Initialize Multi-Soul Persona and default SOUL.md
+    log_info "Initializing Multi-Soul Persona (Cyber, Dev, Web3) & Memories..."
+    if [ -x "$INSTALL_DIR/venv/bin/python" ]; then
+        "$INSTALL_DIR/venv/bin/python" -c "
+from agent.soul_manager import ensure_default_souls, ensure_default_soul_memories, switch_soul
+ensure_default_souls()
+ensure_default_soul_memories()
+switch_soul('chiper-cyber')
+" 2>/dev/null || true
+        log_success "Multi-Soul Persona & Memories ready (~/.chiper/souls/)"
+    elif [ ! -f "$CHIPER_HOME/SOUL.md" ] && [ -f "$INSTALL_DIR/skills/chiper-cyber/SOUL.md" ]; then
+        mkdir -p "$CHIPER_HOME/souls"
+        cp -f "$INSTALL_DIR/skills/chiper-cyber/SOUL.md" "$CHIPER_HOME/souls/chiper-cyber.md"
+        cp -f "$INSTALL_DIR/skills/chiper-cyber/SOUL.md" "$CHIPER_HOME/SOUL.md"
+        log_success "Created ~/.chiper/SOUL.md (Chiper-Cyber)"
     fi
 
     log_success "Configuration directory ready: ~/.chiper/"

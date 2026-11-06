@@ -1635,6 +1635,13 @@ def load_soul_md(context_length: Optional[int] = None) -> Optional[str]:
 
     soul_path = get_chiper_home() / "SOUL.md"
     if not soul_path.exists():
+        try:
+            from agent.soul_manager import ensure_default_souls, switch_soul
+            ensure_default_souls()
+            switch_soul("chiper-cyber")
+        except Exception:
+            pass
+    if not soul_path.exists():
         return None
     try:
         content = soul_path.read_text(encoding="utf-8").strip()
