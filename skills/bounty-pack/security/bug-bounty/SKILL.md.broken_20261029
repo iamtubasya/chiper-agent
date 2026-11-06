@@ -1,0 +1,41 @@
+---
+name: bug-bounty
+author: RESEARCHER_NAME
+description: "Use when hunting bug bounties or authorized testing. UNIFIED: covers web/API, smart contracts, DeFi, SaaS, LLM red-teaming, all platforms."
+metadata:
+  hermes:
+    tags: [bug-bounty, security, web, api, blockchain, defi, saas, redteam, audit]
+version: 4.0.0
+---
+
+# Bug Bounty — ROUTER
+
+> **This SKILL.md is a lightweight router.** Content lives in split files below.
+> Agent MUST load the correct split file per phase.
+> 
+> **⚠️ NEVER load all skills at once.** Use the phased matrix below.
+
+> **Reconciling "use ALL skills and tools" with phased loading.** The operator's standing
+> kickoff is *"pakai semua skill dan tools yg ada, lalu periksa target X, cari dari segala
+> sisi, tanpa kecuali, termasuk bisnis logicnya."* Read that as **full COVERAGE across the
+> whole run**, never as "load every skill simultaneously". The budget table below is
+> absolute: loading everything at once triggers context compression, skills get pruned
+> mid-run, and the audit dies with nothing to show. Full coverage is delivered by working
+> the phased matrix to completion and then publishing the **TOOL-COVERAGE LEDGER** (stop
+> rule 23) that proves every tool ran — coverage is demonstrated by the ledger, not by
+> how many skills were opened. Same reading applies to the sub-skills: load the one that
+> governs the phase you are in, then evict.
+> 
+> **⚡ FEATURE-ABUSE DOCTRINE (operator, 2026-10-29) — 4 hard gates, EVERY audit.** Full text:
+> `redteam-mindset` → **Part 3**; enforced at 0A by `bb-audit-launcher`. Short form:
+> **(1)** start from features that work *as designed* — name the INVARIANT and the *impossible
+> state* you want, never a vuln-class list; **(2)** hunt the interaction, not the feature
+> (create-in-A/change-in-B, low-role→high-role endpoint, cross-tenant identifier, inter-feature
+> race) and re-test every candidate against ≥2 features sharing the object/state; **(3)** symptom
+> → handler → the guard that never ran, then grep that root estate-wide and test EVERY twin
+> (one root = one class = one report); **(4)** status code is not proof — prove with a state diff
+> (re-read, side effects, other actor's view, downstream list/search/export); **(5) compose the Low
+> pool** — label every Low K/A/B/X (Knowledge/Action/Bypass/Amplifier), find the edges, name the
+> terminal sink, prove end-to-end 3x from a clean session, then submit ONE chain report whose severity
+> is what the chain reaches (never the sum of parts, never five separate Lows). Procedure:
+> `chain-to-impact` -> "Multi-Low composition"; doctrine `redteam-mindset` 3.5. Failing any gate = NOT reportable.

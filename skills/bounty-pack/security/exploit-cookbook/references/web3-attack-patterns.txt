@@ -1,0 +1,48 @@
+# Web3 Attack Patterns - Curated from exploit-cookbook
+# Source: web3-exploit-playbooks.md + web3bugs-patterns.md
+
+# Flashloan attack pattern
+# 1. Borrow flashloan (Aave/dYdX/Balancer)
+# 2. Manipulate oracle/price
+# 3. Exploit vulnerability
+# 4. Repay flashloan + profit
+
+# Reentrancy detection
+# Look for: call.value(), send(), transfer() before state update
+# Check: balanceOf, totalSupply, nonces updated after external call
+
+# Access control patterns
+# 1. Missing onlyOwner
+# 2. Missing onlyRole
+# 3. Selfdestruct to claim ownership
+# 4. Constructor vs initialize race
+# 5. Delegatecall to attacker-controlled address
+
+# Bridge exploits
+# 1. Replay attacks across chains
+# 2. Signature verification bypass
+# 3. Nonce manipulation
+# 4. Validator set compromise
+
+# AMM exploits
+# 1. Flashloan price manipulation
+# 2. Sandwich attack (front-run + back-run)
+# 3. Oracle manipulation via low-liquidity pair
+# 4. LP token minting exploit
+
+# Governance exploits
+# 1. Flashloan governance attack
+# 2. Proposal spam
+# 3. Delegation manipulation
+
+# Common Solidity bugs
+# 1. tx.origin for auth
+# 2. floating pragma
+# 3. delegatecall to user input
+# 4. selfdestruct without access control
+# 5. unchecked low-level calls
+# 6. reentrancy (cross-function, cross-contract, read-only)
+# 7. integer overflow/underflow (pre-0.8)
+# 8. missing return value check
+# 9. frontrunning vulnerability
+# 10. doS with block gas limit

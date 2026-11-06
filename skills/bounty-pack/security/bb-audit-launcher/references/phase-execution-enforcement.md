@@ -1,0 +1,157 @@
+# ⛔ PHASE EXECUTION ENFORCEMENT — ZERO SKIP PROTOCOL
+
+## PERATURAN UTAMA
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  SETIAP FILE WAJIB:                                         ║
+║  1. Dibaca (read_file / skill_view)                         ║
+║  2. Dieksekusi (jalankan isi / payload / curl / command)     ║
+║  3. Didokumentasi (tracker update)                           ║
+║  4. Diverifikasi (ada hasil response?)                       ║
+║                                                              ║
+║  TIDAK BOLEH:                                                ║
+║  ✗ Skip karena timeout                                      ║
+║  ✗ Skip karena "udah tau"                                   ║
+║  ✗ Skip karena context penuh                                ║
+║  ✗ Skip karena "gak applicable" tanpa cek dulu              ║
+║  ✗ Prune / remove dari pipeline                              ║
+║  ✗ Load tapi gak execute isinya                              ║
+║  ✗ Claim COMPLETE ada file belum executed                    ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+## PER-FILE ENFORCEMENT RULE
+
+```
+UNTUK SETIAP FILE YANG DIPANGGIL:
+
+Step 1: read_file() / skill_view()
+        → Output masuk context
+
+Step 2: IDENTIFIKASI executable content
+        → code blocks, curl commands, payloads, scripts
+        → List semua test cases dari file
+
+Step 3: EXECUTE SATU PER SATU
+        → curl -v ... → document response
+        → sqlmap --batch ... → document output
+        → ffuf -w ... → document results
+        → python3 exploit.py → document output
+
+Step 4: UPDATE TRACKER
+        → File: [filename]
+        → Status: ✅ EXECUTED
+        → Tests run: X/Y
+        → Results: [summary]
+
+Step 5: BARU BOLEH pindah ke file berikutnya
+```
+
+## TIMEOUT HANDLING — TIDAK BOLEH SKIP
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  TIMEOUT = TIDAK BISA SKIP. WAJIB RETRY.                    ║
+║                                                              ║
+║  Method 1: Jalankan ulang dengan timeout lebih panjang       ║
+║  Method 2: Split jadi batch lebih kecil                     ║
+║  Method 3: Jalankan di background + cek nanti               ║
+║  Method 4: Manual execution (1 per 1, bukan batch)          ║
+║                                                              ║
+║  SKIP = VIOLATION. Harus STOP + FIX dulu.                   ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+## CONTEXT OVERFLOW HANDLING — TIDAK BOLEH PRUNE
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  CONTEXT HAMPIR PENUH = TIDAK BOLEH PRUNE FILE.             ║
+║                                                              ║
+║  Yang BOLEH di-evict:                                        ║
+║  ✓ Recon output (sudah disave ke file)                      ║
+║  ✓ Tool output (sudah disave ke file)                       ║
+║  ✓ Summary sebelumnya (sudah disave ke PHASE_LOG.md)        ║
+║                                                              ║
+║  Yang TIDAK BOLEH di-evict:                                  ║
+║  ✗ Reference files (hack-skills, wordlists, playbooks)       ║
+║  ✗ Execution tracker                                        ║
+║  ✗ Phase log                                                ║
+║  ✗ Findings / candidates list                               ║
+║                                                              ║
+║  Kalau context penuh:                                        ║
+║  1. Evict recon output ke file                              ║
+║  2. Evict tool output ke file                               ║
+║  3. JANGAN evict reference files                            ║
+║  4. Lanjutkan execute remaining files                       ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+## VERIFICATION GATE PER PHASE
+
+```
+Phase 0A:
+  □ bb-audit-launcher loaded?
+  □ Target type identified?
+  □ PHASE_LOG.md created?
+  □ All Phase 0A files executed?
+  → BARU boleh proceed ke 0B
+
+Phase 0B:
+  □ security-recon loaded?
+  □ Recon tools executed?
+  □ Results saved to files?
+  □ All Phase 0B files executed?
+  → BARU boleh proceed ke 0C
+
+Phase 0C:
+  □ exploit-cookbook loaded?
+  □ security-web-attacks loaded?
+  □ security-scanners loaded?
+  □ reference-loader.md loaded?
+  □ 6 disclosure refs loaded?
+  □ 33 hack-skills loaded?
+  □ ALL payloads/curls executed?
+  □ ALL 30+ vectors tested?
+  □ Tracker updated per file?
+  □ All Phase 0C files executed?
+  → BARU boleh proceed ke 0F
+
+Phase 0F (Report):
+  □ bug-report-delivery loaded?
+  □ bug-bounty-report loaded?
+  □ PRE-LOAD CHECK passed?
+  □ ALL findings documented?
+  → Report generation
+```
+
+## SELF-CHECK PROTOCOL
+
+```
+SETIAP 10 TOOL CALLS:
+  1. Buka tracker
+  2. Cek: ada file belum executed?
+  3. Kalau YA → execute dulu
+  4. Kalau TIDAK → lanjut
+
+SEBELUM CLAIM "COMPLETE":
+  1. Buka tracker
+  2. Cek: 84/84 exploit-cookbook refs executed?
+  3. Cek: 740/740 bug-bounty refs executed?
+  4. Cek: 33/33 hack-skills executed?
+  5. Cek: 13/13 payload files executed?
+  6. Kalau SEMUA ✅ → claim COMPLETE
+  7. Kalau ada ❌ → JANGAN claim COMPLETE
+```
+
+## CONSEQUENCE TABLE
+
+| Violation | Consequence |
+|-----------|-------------|
+| Skip file tanpa execute | STOP. Execute file itu dulu. |
+| Skip karena timeout | STOP. Retry 4 methods. |
+| Claim COMPLETE ada file belum | STOP. Execute semua dulu. |
+| Prune reference file | STOP. Reload file itu. |
+| Load tapi gak execute | STOP. Execute isinya. |
+| Evict findings | STOP. Reload dari file. |

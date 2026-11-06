@@ -1,0 +1,11 @@
+dnspython==2.2.1
+requests==2.31.0
+asyncwhois==1.1.4
+boto3==1.35.19
+cloudflare==2.9.11
+colorama==0.4.5
+azure-mgmt-dns==8.0.0
+azure-identity==1.10.0
+msrestazure==0.6.4
+google-cloud-dns==0.34.1
+aiohttp

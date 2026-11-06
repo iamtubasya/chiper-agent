@@ -1,0 +1,80 @@
+# Web3 Audit Workflow — DeFi/Blockchain Attack Surface
+
+## Attacker Philosophy
+Web3 = code IS the law. If the contract has a bug, attacker wins. No WAF, no rate limit, no rollback.
+
+## Workflow
+
+### Phase 1: Contract Discovery
+```bash
+# Find contract addresses from website
+curl -s "https://target.com" | grep -oP '0x[a-fA-F0-9]{40}' | sort -u
+
+# Check if verified on Blockscout
+curl -s "https://eth.blockscout.com/api/v2/addresses/{ADDR}" | python3 -c "
+import sys,json
+d=json.load(sys.stdin)
+print(f'Contract: {d.get(\"name\",\"?\")}')
+print(f'Verified: {d.get(\"is_verified\",\"?\")}')
+print(f'Balance: {d.get(\"coin_balance\",\"?\")}')
+"
+
+# Get source code
+curl -s "https://eth.blockscout.com/api/v2/addresses/{ADDR}/source-code"
+```
+
+### Phase 2: Static Analysis
+```bash
+# Slither (comprehensive)
+slither . --print human-summary
+slither . --detect reentrancy-eth,reentrancy-no-eth,reentrancy-unlimited-gas
+
+# Aderyn (Solidity-specific)
+aderyn .
+
+# Mythril (symbolic execution)
+myth analyze contracts/Contract.sol --execution-timeout 90
+```
+
+### Phase 3: Fuzzing
+```bash
+# Echidna (property-based)
+echidna-test . --contract TestContract --test-limit 10000
+
+# Medusa (alternative fuzzer)
+medusa test
+
+# Halmos (symbolic testing)
+halmos --contract TestContract --function testSpecific
+```
+
+### Phase 4: Manual Review Checklist
+```
+□ Reentrancy (external calls before state updates)
+□ Flash loan (price manipulation, governance attack)
+□ Access control (unprotected functions, proxy hijack)
+□ Oracle (single source, manipulable price)
+□ Integer overflow (pre-0.8.0 or unchecked blocks)
+□ Delegatecall (user-controlled target)
+□ Bridge (message validation, validator compromise)
+□ Governance (flashloan voting, snapshot exploit)
+□ Fee-on-transfer (balance calculation errors)
+□ Logic errors (math formulas, rounding)
+```
+
+### Phase 5: Fork Testing
+```bash
+# Fork mainnet and test
+forge fork https://eth-mainnet.g.alchemy.com/v2/KEY
+forge test --match-test testExploit -vvvv
+```
+
+## Common Web3 Exploits
+```
+1. Flash loan → price manipulation → drain funds
+2. Reentrancy → recursive withdrawal → drain funds
+3. Access control → unprotected admin function → steal funds
+4. Oracle manipulation → fake price → exploit lending
+5. Signature replay → reuse old signature → drain funds
+6. Proxy upgrade → hijack proxy → steal funds
+```

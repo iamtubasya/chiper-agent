@@ -1,0 +1,45 @@
+{
+  "_meta": {
+    "usage": "Copy per target -> D:\\data hermes\\bug-bounty\\_progress\\<target>\\target-state.json . Fill during Stage 1.5 (account provisioning). Update after EVERY phase/finding. On context reset: read progress.md + this file -> resume exploitation WITHOUT re-recon and WITHOUT re-registering (account-first-exploitation.md §7).",
+    "companion": "reauth.py lives next to this file (one script, auto-relogs both accounts, refreshes this state file)."
+  },
+  "target": "example.com",
+  "program": "bugcrowd/example",
+  "window_start": "2026-09-10T00:00:00Z",
+  "accounts": {
+    "A": {
+      "email": "acctA@example.com",
+      "user_id": "",
+      "org_id": "",
+      "cookies": { "SESSION": "value" },
+      "bearer": "",
+      "refresh": "",
+      "plan": "free",
+      "object_ids": [],
+      "object_types": []
+    },
+    "B": {
+      "email": "acctB@example.com",
+      "user_id": "",
+      "org_id": "",
+      "cookies": {},
+      "bearer": "",
+      "refresh": "",
+      "plan": "trial",
+      "object_ids": [],
+      "object_types": []
+    }
+  },
+  "endpoints": {
+    "graphql": "",
+    "rest_base": "",
+    "notable_mutations": []
+  },
+  "tokens_needed": [],
+  "blocked_vectors": [
+    { "vector": "", "reason": "", "attempts": 0, "verdict": "pivot/precondition" }
+  ],
+  "findings_live": [
+    { "id": "F1", "status": "needs-verify", "evidence": "", "severity_claim": "" }
+  ]
+}

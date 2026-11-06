@@ -1,0 +1,95 @@
+# Rapyd — Bugcrowd Public Program (engagement: https://bugcrowd.com/engagements/rapyd)
+# Researcher: BC_USERNAME | alias: RESEARCHER_BC_EMAIL | real: RESEARCHER_EMAIL
+# Last Updated brief: 17 Jun 2026 | Scope rating 4/4 | Safe harbor: yes
+#
+# HARD RULES (from brief):
+#  - EVERY request MUST carry header:  X-Bugcrowd: Bugcrowd-BC_USERNAME
+#  - API testing: SANDBOX ONLY (api.rapyd.net sandbox env)
+#  - Rate limit enforced across whole Cloud env — do NOT hammer, do NOT test rate-limit issues
+#  - NO automation against any contact/submission form (ban risk)
+#  - ICS/production mode requires signup with country = Iceland
+#  - Only test accounts you own; never touch other merchants' data / PII / card data
+#  - No DoS; no social engineering; no DNS attacks (cache poisoning/flooding/zone transfer/DNSSEC)
+
+target: rapyd
+platform: bugcrowd
+scale: web2
+payout: paid
+
+# --- scope (from Targets tables on the engagement page) ----------------------
+in_scope:
+  tier3_premium:
+    - api.rapyd.net            # API Testing, NodeJS — SANDBOX ENV ONLY
+  tier2:
+    - dashboard.rapyd.net      # Client Portal (React SPA) — SAML 2.0 promo area
+    - verify.rapyd.net
+    - checkout.rapyd.net       # payment checkout
+  tier1:
+    - "*.rapyd.net"
+    - "*.korta.is"
+    - jointhemoment.net
+    - "*.rapyd.com"
+    - "*.rapyd.org"
+    - "*.kortathjonustan.is"
+out_of_scope:
+  - community.rapyd.net
+  - support.rapyd.net
+  - docs.rapyd.net
+  - sandbox.rapyd.net
+  - ghost.rapyd.net
+  - 3rd party services
+  - "*.neatcommerce.com"
+  - "*.neattest.com"
+  - "*.neat.com.hk"
+  - "*.neat.hk"
+  - "*.neat.wtf"
+  # out-of-scope vuln classes
+  - DNS attacks (cache poisoning, flooding, amplification, fast-flux, zone transfer, missing DNSSEC)
+  - UDP flood, DoS / service disruption
+  - social engineering (phishing/vishing/smishing)
+  - automated scanning against contact/submission forms
+  - clickjacking on non-sensitive pages
+  - CSRF on unauthenticated forms / no sensitive action
+  - MITM or physical access required
+  - known-vulnerable libs without working PoC
+  - CSV injection without demonstrated impact
+  - SSL/TLS best-practice misses
+  - content spoofing / text injection without attack vector
+  - rate limiting / bruteforce on NON-auth endpoints
+  - missing CSP / cookie flag best practices
+  - email best-practice misses
+
+headers:
+  X-Bugcrowd: Bugcrowd-BC_USERNAME
+  X-Bug-Bounty: Bugcrowd-BC_USERNAME
+
+auth_model: single-account          # own merchant account only (no cross-tenant)
+test_accounts_available: true       # self-signup w/ RESEARCHER_BC_EMAIL
+
+# --- SAML 2.0 promo area (the brief's focus) ---------------------------------
+saml:
+  acs_url: https://dashboard.rapyd.net/v1/merchants-portal/users/login/sso/callback
+  entity_id: rapyd_merchants_portal
+  vectors:
+    - assertion replay (single-use enforcement)
+    - signature wrapping XSW
+    - InResponseTo enforcement
+    - ATO via NameID/email spoofing
+    - RelayState open redirect
+    - XXE via SAML payload
+    - privilege escalation via attribute manipulation
+    - tenant isolation bypass
+  out_of_scope:
+    - dummy/permissive IdP (MockSAML etc.)
+    - admin attacking own SAML config
+    - known IDOR on idp_id (already tracked — DO NOT submit)
+
+already_tested: []
+
+notes: |
+  Stack: Cloudflare Bot Management + CloudFront + React SPA + NodeJS backend (AWS).
+  Known top submissions: email-template injection, race condition on refunds,
+  business logic on wallet balance.
+  Prior recon (2026): api.rapyd.net 404/needs auth, api.eu.rapyd.net 403 (CF),
+  dashboard 200 SPA, checkout 200, sandboxdashboard 301, m.dashboard 200.
+  Evidence dir: D:/data hermes/bug-bounty/_progress/rapyd-2026-09-29/

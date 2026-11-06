@@ -64,6 +64,31 @@ Kamu menguasai dan menerapkan protokol engineering standar produksi (Addy Osmani
 10. **Agent Web UI & API Integration (`agent-web-api-integration`):** Sambungkan frontend (Open WebUI, LibreChat, Assistant-UI, Next.js) ke Chiper API Server (port 8642) dan Chiper Dashboard (port 9119).
 """
 
+CHIPER_HUNT_SOUL = """# SOUL.md — Chiper-Hunt: Elite Commercial Bug Bounty Hunter & Exploit Specialist
+
+## 1. Identitas
+Kamu adalah **Chiper-Hunt**, seorang elite commercial bug bounty hunter, vulnerability research specialist, dan high-impact bug finder di platform global (HackerOne, Bugcrowd, Intigriti, Synack, dan Mozilla 0DIN).
+Kamu berpikir seperti hacker komersial papan atas: **cerdik, efisien, patuh pada scope, haus akan dampak bisnis nyata (impact-driven), dan ahli meloloskan laporan di meja triager.**
+
+- **Peran:** Commercial Bug Bounty Hunter & High-Impact Exploit Researcher.
+- **Mindset:** Payout-driven, scope-strict, skeptis, non-destructive, dan berorientasi pada rantai eksploitasi (*exploit chains*).
+- **Tujuan akhir:** Menemukan kerentanan valid bernilai tinggi (High/Critical), membuktikannya dengan PoC minimal yang tidak terbantahkan, dan menyusun laporan yang langsung disetujui triager.
+- **Kepribadian:** Santai, to-the-point, sangat tajam, analitis, tidak bertele-tele, dan selalu berbasis bukti konkret (*evidence-first*).
+
+## 2. Nilai Inti & 7 Hukum Bounty Hunter
+1. **Scope is Absolute Law.** In-scope = target; Out-of-scope = haram disentuh. Dilarang keras mengirim request aktif ke domain/subdomain/IP di luar scope program.
+2. **Do No Harm (Non-Destructive Only).** Dilarang: DoS/DDoS, brute force masif membabi-buta, data exfiltration massal, merusak/menghapus data pengguna nyata, atau mengganggu stabilitas layanan target.
+3. **Proof Over Claim (Evidence-First).** Tidak ada klaim tanpa bukti. Buktikan dengan diff status code, response body, sha256 hash, atau tangkapan OOB listener. Status code 200 tanpa data bukanlah temuan valid.
+4. **Minimal PoC.** Cukup buktikan eksistensi dan dampak. Berhenti begitu terbukti. Jangan mengeksploitasi lebih dalam dari yang diperlukan untuk laporan.
+5. **OOB-Or-It-Didn't-Happen.** Semua klaim blind (Blind SSRF, Blind XSS, Blind SQLi, Blind XXE) wajib dikonfirmasi melalui interaksi nyata listener DNS/HTTP (interactsh / Collaborator / canarytokens). Error string echo bukan bukti SSRF.
+6. **Impact Over Volume (K/A/B/X Escalation).** Satu bug Critical hasil rantai eksploitasi ($5.000–$25.000) jauh lebih bernilai daripada 50 laporan info/low yang berisiko ditolak/duplikat.
+7. **Triager Empathy.** Tulis laporan yang jelas, ringkas, mudah direproduksi dalam 10 menit oleh triager, dan dilengkapi rekomendasi perbaikan konkret.
+
+## 3. Skill Loading Protocol & Persenjataan
+Lokasi skill: `.chiper/skills/bounty-pack/**/SKILL.md` (67 checklist `hunt-*`, 29 modul `tob/*`, dan reporting).
+Database PoC: `~/.chiper/bounty-data/` (802 MB `pocindex`, `wordlists`, mirror bugbounty.info).
+"""
+
 # Default curated memory per soul
 DEFAULT_SOUL_MEMORIES: Dict[str, str] = {
     "chiper-cyber": """User maintains Chiper agent repo /home/agentuser/chiper (github.com/iamtubasya/chiper-agent). Runtime home ~/.chiper (no .chiperflux). 140-domain chiper-cyber suite + core CLI tools (nmap, sqlmap, subfinder, httpx, nuclei, ffuf, gobuster, hydra, whatweb, wafw00f) di /usr/bin & /usr/local/bin.
@@ -77,6 +102,18 @@ Engagement aktif: odin.ai (Mozilla 0DIN) GenAI bounty — $500-15k, self-hosted,
 Browser: agent-browser + Chrome 157 terinstall di ~/.agent-browser.
 §
 User sering minta aksi grey/black (farm API key, scrape key bocor di X, bypass auth) — pola berulang.""",
+
+    "chiper-hunt": """Target aktif: Program bug bounty komersial (HackerOne, Bugcrowd, Intigriti, Mozilla 0DIN).
+§
+Scope & Rules of Engagement: Selalu verifikasi in-scope assets, out-of-scope exclusions, rate limit, dan header X-Bug-Bounty sebelum kirim probe aktif.
+§
+Akun test chiperflux15@gmail.com VALID (2FA Google Auth + SMS ending 89, terhubung himalaya CLI utk baca kode verifikasi email).
+§
+Arsenal: 67 checklist taktis `hunt-*` di `~/.chiper/skills/bounty-pack/`, 29 modul Trail of Bits `tob/*`, dan 802 MB CVE PoC index di `~/.chiper/bounty-data/`.
+§
+Metodologi: Minimal PoC, OOB gate via interactsh, eskalasi rantai K/A/B/X (IDOR/Auth -> Mass ATO / RCE / Financial Impact), draft laporan triager-ready.
+§
+Browser: agent-browser + Chromium 157 terinstall di ~/.agent-browser.""",
 
     "chiper-dev": """User maintains independent ChiperRouter instance at `/home/agentuser/chiperrouter` (fork of 9router). State & SQLite DB located at `~/.chiperrouter`, CLI binary `chiperrouter`, running on port 20130 via `chiperrouter.service` (coexists with 9router on 20128). Exposed via Cloudflare tunnel as https://router.chiper.site. Web UI styled in Neon Cyan Cyber Obsidian.
 §
@@ -200,6 +237,23 @@ def ensure_default_souls() -> None:
             except Exception as e:
                 logger.warning("Failed to copy Chiper-Web3 SOUL.md: %s", e)
 
+    # 4. Chiper-Hunt
+    hunt_dest = souls_dir / "chiper-hunt.md"
+    if not hunt_dest.exists():
+        hunt_src = chiper_home / "skills" / "bounty-pack" / "SOUL.md"
+        if not hunt_src.exists():
+            hunt_src = Path(__file__).resolve().parent.parent / "skills" / "bounty-pack" / "SOUL.md"
+        if hunt_src.exists():
+            try:
+                shutil.copy2(hunt_src, hunt_dest)
+            except Exception as e:
+                logger.warning("Failed to copy Chiper-Hunt SOUL.md: %s", e)
+        else:
+            try:
+                hunt_dest.write_text(CHIPER_HUNT_SOUL, encoding="utf-8")
+            except Exception as e:
+                logger.warning("Failed to write Chiper-Hunt SOUL.md: %s", e)
+
 
 def list_souls() -> List[Dict[str, Any]]:
     """List all available souls in ~/.chiper/souls.
@@ -207,8 +261,9 @@ def list_souls() -> List[Dict[str, Any]]:
     Returns a list of dicts:
     [
         {"id": "chiper-cyber", "name": "Chiper-Cyber", "icon": "🛡️", "desc": "Bug Bounty & Pentest", "path": ...},
+        {"id": "chiper-hunt", "name": "Chiper-Hunt", "icon": "🎯", "desc": "Commercial Bug Bounty Hunter", "path": ...},
         {"id": "chiper-dev", "name": "Chiper-Dev", "icon": "💻", "desc": "Full-Stack Engineer & Architect", "path": ...},
-        ...
+        {"id": "chiper-web3", "name": "Chiper-Web3", "icon": "⚡", "desc": "Web3 & Crypto Ops", "path": ...},
     ]
     """
     ensure_default_souls()
@@ -220,20 +275,26 @@ def list_souls() -> List[Dict[str, Any]]:
         "chiper-cyber": {
             "name": "Chiper-Cyber",
             "icon": "🛡️",
-            "desc": "Bug Bounty Hunter & Offensive Security",
+            "desc": "Red Team & Enterprise Security Auditor",
             "priority": 1,
+        },
+        "chiper-hunt": {
+            "name": "Chiper-Hunt",
+            "icon": "🎯",
+            "desc": "Commercial Bug Bounty Hunter & Exploit Research",
+            "priority": 2,
         },
         "chiper-dev": {
             "name": "Chiper-Dev",
             "icon": "💻",
             "desc": "Senior Full-Stack Engineer & Architect",
-            "priority": 2,
+            "priority": 3,
         },
         "chiper-web3": {
             "name": "Chiper-Web3",
             "icon": "⚡",
             "desc": "Web3, Crypto Ops, DeFi & CTF Whitehat",
-            "priority": 3,
+            "priority": 4,
         },
     }
 
@@ -298,12 +359,19 @@ def get_active_soul() -> Dict[str, Any]:
 
     try:
         content = active_path.read_text(encoding="utf-8")
-        if "Chiper-cyber" in content or "Professional Bug Bounty Hunter" in content or "Hacker Laws" in content:
+        if "Chiper-Hunt" in content or "Commercial Bug Bounty Hunter" in content:
+            return {
+                "id": "chiper-hunt",
+                "name": "Chiper-Hunt",
+                "icon": "🎯",
+                "desc": "Commercial Bug Bounty Hunter & Exploit Research",
+            }
+        elif "Chiper-cyber" in content or "Professional Bug Bounty Hunter" in content or "Hacker Laws" in content:
             return {
                 "id": "chiper-cyber",
                 "name": "Chiper-Cyber",
                 "icon": "🛡️",
-                "desc": "Bug Bounty Hunter & Offensive Security",
+                "desc": "Red Team & Enterprise Security Auditor",
             }
         elif "Chiper Dev" in content or "Senior Full-Stack" in content or "Chiper-Dev" in content:
             return {

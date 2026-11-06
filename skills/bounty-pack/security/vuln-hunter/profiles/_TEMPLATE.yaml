@@ -1,0 +1,42 @@
+# Bug Bounty / Vuln-Research target profile — TEMPLATE
+# Copy to profiles/<target>.yaml and fill in. This file is the ONLY place a target
+# domain may appear. Never hardcode a domain into SKILL.md or the toolkit.
+#
+# Usage:
+#   cp profiles/_TEMPLATE.yaml profiles/<target>.yaml
+#   python toolkit/web2/idor_harness.py setup -c profiles/<target>.yaml
+
+target: <program-name-or-primary-domain>
+platform: hackerone | bugcrowd | immunefi | yeswehack | vdp | none
+scale: web2 | web3 | both
+payout: paid | vdp-only | unknown      # vdp-only => payout gate says SKIP
+
+# --- scope -------------------------------------------------------------------
+in_scope:
+  - example.com
+  - "*.example.com"
+  - api.example.com
+out_of_scope:
+  - blog.example.com
+  - status.example.com
+
+# --- program plumbing --------------------------------------------------------
+headers:                     # only if the program requires a researcher marker
+  X-Bug-Bounty: <handle>
+# example:
+#   X-Bug-Bounty: Bugcrowd-<handle>
+
+# --- auth model: decides whether horizontal IDOR is even testable -------------
+auth_model: none | single-account | two-account
+test_accounts_available: true | false
+# two-account is the ONLY setup that can prove IDOR/BOLA. Without it the ceiling
+# is P3/informational — see the gate section in SKILL.md.
+
+# --- do-not-repeat list: append after EVERY session ---------------------------
+already_tested:
+  - "CORS on all endpoints — properly configured"
+
+# --- free-form recon notes: fill DURING recon, not before ---------------------
+notes: |
+  Stack, CDN, WAF, framework, internal services found in CSP, known infra.
+  Keep the raw evidence under D:\data hermes\bug-bounty\_progress\<target>\.

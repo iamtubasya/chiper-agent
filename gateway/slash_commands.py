@@ -275,7 +275,7 @@ class GatewaySlashCommandsMixin:
                 mark = " [AKTIF]" if s["id"] == active.get("id") else ""
                 lines.append(f"• {s['icon']} *{s['name']}* (`{s['id']}`){mark} — {s['desc']}")
             lines.append("")
-            lines.append("Gunakan: `/soul <id>` (contoh `/soul cyber` atau `/soul dev`) untuk berganti jiwa.")
+            lines.append("Gunakan: `/soul <id>` (contoh `/soul hunt`, `/soul cyber`, `/soul dev`, `/soul web3`) untuk berganti jiwa.")
             lines.append("Atau: `/soul add <nama> <isi instruksi>` untuk menambah jiwa kustom baru.")
             return "\n".join(lines)
 

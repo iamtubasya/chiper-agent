@@ -1,0 +1,103 @@
+# Config Settings & Timeout Values — Bug Bounty Audit
+
+## Context Configuration
+| Setting | Value | Notes |
+|---------|-------|-------|
+| context_length | 512000 | Provider setting (line 5 config.yaml) |
+| ollama_num_ctx | 512000 | Same as context_length |
+| compression.threshold | 0.80 | Compression fires at 80% = 409K tokens |
+| compression.target_ratio | 0.2 | Prune to 20% of overage |
+| max_iterations | 50 | Current — RECOMMEND: 100 |
+| max_tool_calls | 50 | Current — RECOMMEND: 150 |
+
+## Audit Capacity
+```
+1 audit = ~71 iterations, ~88 tools, ~488K tokens
+Compression trigger = 409K tokens (80% of 512K)
+Margin = -19% (compression fires during Phase 0C testing)
+Impact: skills get pruned mid-audit → reload protocol active
+```
+
+## Timeout Values (2x Default)
+
+| Tool | Timeout | Max Retry | Phase |
+|------|---------|-----------|-------|
+| nuclei | 600s (10 min) | 4x | 0C |
+| ffuf | 240s (4 min) | 3x | 0C |
+| sqlmap | 600s (10 min) | 3x | 0C |
+| subfinder | 120s | 2x | 0B |
+| httpx | 180s | 2x | 0B |
+| katana | 240s | 3x | 0B |
+| gau | 180s | 2x | 0B |
+| dalfox | 240s | 3x | 0C |
+| amass | 600s | 2x | 0B |
+| naabu | 180s | 2x | 0B |
+| Manual curl | 30s | 3x | 0C |
+| WSL tools | 360s | 2x | 0C Web3 |
+| Echidna | 600s | 2x | 0C Web3 |
+| Slither | 360s | 2x | 0C Web3 |
+| Mythril | 600s | 2x | 0C Web3 |
+
+## Retry Strategy (4 Methods Before Skip)
+```
+Method 1: Run as-is dengan timeout penuh
+Method 2: Background + long timeout + rate limit
+Method 3: Subset (critical,high only)
+Method 4: Lightweight alternative
+
+Skip HANYA setelah 4 method documented dengan reason
+```
+
+## Wordlist Directory
+```
+D:/data hermes/wordlists/
+├── 0B-recon/
+│   ├── subdomains/    (3 files — subfinder, amass)
+│   ├── directories/   (4 files — ffuf, gobuster)
+│   ├── files/         (3 files — ffuf, gobuster)
+│   └── params/        (1 file — arjun)
+├── 0C-sqli/           (1 file — auth bypass, union, blind)
+├── 0C-xss/            (1 file — polyglots, filter bypass)
+├── 0C-ssrf/           (1 file — cloud metadata, internal IPs)
+├── 0C-nosqli/         (1 file — MongoDB operators)
+├── 0C-cmdi/           (1 file — injection, reverse shell)
+├── 0C-path-traversal/ (1 file — LFI, filter bypass)
+├── 0C-xxe/            (1 file — file read, blind OOB)
+├── 0C-jwt/            (1 file — none alg, confusion)
+├── 0C-graphql/        (1 file — introspection, BOLA)
+├── 0C-waf-bypass/     (1 file — case, encoding, HPP)
+├── 0C-sensitive-files/(1 file — config, admin, backup)
+├── 0C-web3/           (1 file — flashloan, reentrancy)
+├── 0C-passwords/      (1 file — common passwords)
+└── references/        (protocol files)
+```
+
+## Payload Files in exploit-cookbook/references/
+| File | Size | For |
+|------|------|-----|
+| sqli-auth-bypass-payloads.txt | 2.1KB | SQLi |
+| xss-payloads.txt | 2.1KB | XSS |
+| ssrf-payloads.txt | 1.9KB | SSRF |
+| nosqli-payloads.txt | 0.9KB | NoSQLi |
+| cmdi-payloads.txt | 1.1KB | CMDi |
+| path-traversal-payloads.txt | 1.1KB | Path Traversal |
+| xxe-payloads.txt | 1.3KB | XXE |
+| jwt-attack-payloads.txt | 1.0KB | JWT |
+| graphql-payloads.txt | 1.3KB | GraphQL |
+| waf-bypass-payloads.txt | 0.9KB | WAF Bypass |
+| sensitive-files-wordlist.txt | 2.0KB | Info Disclosure |
+| web3-attack-patterns.txt | 1.4KB | Web3 |
+| common-passwords.txt | 0.4KB | Auth Testing |
+
+## Protocol Files
+| File | Purpose |
+|------|---------|
+| execution-discipline-protocol.md | 6 rules enforcement |
+| html-injection-rules.md | HTML injection quality gate |
+| bounty-restructuring-master-plan.md | Full pipeline plan |
+
+## Config File Location
+`C:/Users/WINDOWS10/AppData/Local/hermes/config.yaml`
+- Provider settings: lines 1-10 (context_length, ollama_num_ctx)
+- Compression: lines 142-152 (threshold, target_ratio)
+- Iteration limits: lines 363, 474 (max_iterations, max_tool_calls)

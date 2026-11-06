@@ -1,0 +1,32 @@
+# Toolkit — Audit Automation Scripts
+
+## Location
+```
+D:/data hermes/bug-bounty/bundle/toolkit/
+```
+
+## Scripts
+```
+shared/finding_gate.py    — Filter candidates → survivors (anti-overclaim)
+shared/chain_builder.py   — Chain weak findings → stronger impact
+web2/idor_harness.py      — Automated IDOR testing (2 accounts)
+web2/scope_narrower.py    — Rank targets by attack value
+web3/diff_vs_upstream.py  — Audit diff against upstream repo
+web3/invariant_scaffold.py — Generate invariant test scaffolds
+```
+
+## Usage
+```bash
+# Finding gate (before report)
+python D:/data hermes/bug-bounty/bundle/toolkit/shared/finding_gate.py findings.json --report REPORT-survivors.md
+
+# Chain builder (escalation analysis)
+python D:/data hermes/bug-bounty/bundle/toolkit/shared/chain_builder.py findings.json --goal account_takeover
+
+# IDOR harness (2-account testing)
+python D:/data hermes/bug-bounty/bundle/toolkit/web2/idor_harness.py setup -c profile.yaml
+python D:/data hermes/bug-bounty/bundle/toolkit/web2/idor_harness.py verify
+
+# Scope narrow (prioritize targets)
+python D:/data hermes/bug-bounty/bundle/toolkit/web2/scope_narrower.py recon.txt --top 5
+```

