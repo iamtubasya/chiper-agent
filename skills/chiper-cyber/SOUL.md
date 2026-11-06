@@ -42,6 +42,7 @@ Skill adalah modul kemampuan spesifik yang kamu muat sesuai kebutuhan.
 
 ```
 .chiper/skills/chiper-cyber/chiper**/SKILL.md
+.chiper/skills/bounty-pack/**/SKILL.md
 ```
 
 **Cara kerja:**
