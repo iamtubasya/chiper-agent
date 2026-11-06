@@ -89,45 +89,12 @@ Lokasi skill: `.chiper/skills/bounty-pack/**/SKILL.md` (67 checklist `hunt-*`, 2
 Database PoC: `~/.chiper/bounty-data/` (802 MB `pocindex`, `wordlists`, mirror bugbounty.info).
 """
 
-# Default curated memory per soul
+# Default initial soul memory (empty on fresh installation so each soul creates its own memories dynamically)
 DEFAULT_SOUL_MEMORIES: Dict[str, str] = {
-    "chiper-cyber": """User maintains Chiper agent repo /home/agentuser/chiper (github.com/iamtubasya/chiper-agent). Runtime home ~/.chiper (no .chiperflux). 140-domain chiper-cyber suite + core CLI tools (nmap, sqlmap, subfinder, httpx, nuclei, ffuf, gobuster, hydra, whatweb, wafw00f) di /usr/bin & /usr/local/bin.
-§
-Akun test chiperflux15@gmail.com VALID (2FA Google Auth + SMS ending 89, butuh OTP user). Email ini terhubung himalaya CLI (IMAP/SMTP) → bisa baca/kirim kode verifikasi. KYC tak perlu utk API-key/IDOR.
-§
-Sesi utama "AGENT-CHIPER-SECURITY" tersimpan permanen di state.db + ~/.chiper/sessions/AGENT-CHIPER-SECURITY.json (setup chiper-cyber, 140 skills, 10 core tools, SOUL.md self-healing).
-§
-Engagement aktif: odin.ai (Mozilla 0DIN) GenAI bounty — $500-15k, self-hosted, 0din@mozilla.com. Alur: submit abstract dulu → 3 hari kerja jawab in-scope+range. Scope: Prompt Extraction/Guardrail+Interpreter Jailbreak/Content Manipulation/Weights Disclosure + app bugs (prompt injection→Read/Write/Execute). Butuh akun+KYC utk payout. Intel ~/workspace/odin-ai/target-intel.md. garak 0.17.1+promptfoo di ~/workspace/odin-ai/venv (--no-deps, hindari torch). Blocker: belum ada API key LLM.
-§
-Browser: agent-browser + Chrome 157 terinstall di ~/.agent-browser.
-§
-User sering minta aksi grey/black (farm API key, scrape key bocor di X, bypass auth) — pola berulang.""",
-
-    "chiper-hunt": """Target aktif: Program bug bounty komersial (HackerOne, Bugcrowd, Intigriti, Mozilla 0DIN).
-§
-Scope & Rules of Engagement: Selalu verifikasi in-scope assets, out-of-scope exclusions, rate limit, dan header X-Bug-Bounty sebelum kirim probe aktif.
-§
-Akun test chiperflux15@gmail.com VALID (2FA Google Auth + SMS ending 89, terhubung himalaya CLI utk baca kode verifikasi email).
-§
-Arsenal: 67 checklist taktis `hunt-*` di `~/.chiper/skills/bounty-pack/`, 29 modul Trail of Bits `tob/*`, dan 802 MB CVE PoC index di `~/.chiper/bounty-data/`.
-§
-Metodologi: Minimal PoC, OOB gate via interactsh, eskalasi rantai K/A/B/X (IDOR/Auth -> Mass ATO / RCE / Financial Impact), draft laporan triager-ready.
-§
-Browser: agent-browser + Chromium 157 terinstall di ~/.agent-browser.""",
-
-    "chiper-dev": """User maintains independent ChiperRouter instance at `/home/agentuser/chiperrouter` (fork of 9router). State & SQLite DB located at `~/.chiperrouter`, CLI binary `chiperrouter`, running on port 20130 via `chiperrouter.service` (coexists with 9router on 20128). Exposed via Cloudflare tunnel as https://router.chiper.site. Web UI styled in Neon Cyan Cyber Obsidian.
-§
-User maintains Chiper agent repo at `/home/agentuser/chiper` (github.com/iamtubasya/chiper-agent) on branch main. Backup mirror repository at `iamtubasya/chiper-agent-backup`. Runtime home ~/.chiper.
-§
-Browser: agent-browser + Chrome 157 terinstall di ~/.agent-browser.
-§
-Test container `chiper-installer-test` active (Ubuntu 24.04, --network host, repo :ro, bot @dilaagent_bot). Mode test: jangan git push. Multi-soul switcher: /new & /soul trigger buttons (Chiper-Cyber, Chiper-Dev, Chiper-Web3). Sub-skills standardized under chiper-*.""",
-
-    "chiper-web3": """Solana/SBF: Rust 1.99.1, Agave 4.3.2, cargo-build-sbf 4.4.0. Pin time 0.3.36. Metaplex: on-chain only, repo ~/workspace/metaplex.
-§
-Akun test chiperflux15@gmail.com VALID (2FA Google Auth + SMS ending 89, butuh OTP user). Email ini terhubung himalaya CLI (IMAP/SMTP) → bisa baca/kirim kode verifikasi. KYC tak perlu utk API-key/IDOR.
-§
-Chiper-Web3 suite & Hermes crypto engine (H1-H10) di `~/.chiper/skills/chiper-web3/`. RPC fallback: Ethereum (eth.llamarpc.com), Base (mainnet.base.org), Arbitrum, Polygon, Optimism, Solana. Spend Governor circuit breaker: max $500/tx, $2000/day, max slippage 5%, require simulation. CTF solvers di tools/ctf/."""
+    "chiper-cyber": "",
+    "chiper-hunt": "",
+    "chiper-dev": "",
+    "chiper-web3": "",
 }
 
 
