@@ -312,10 +312,28 @@ def list_souls() -> List[Dict[str, Any]]:
     return souls
 
 
+def get_active_soul_file() -> Path:
+    """Return path to the active_soul tracking file (~/.chiper/active_soul)."""
+    return get_chiper_home() / "active_soul"
+
+
 def get_active_soul() -> Dict[str, Any]:
-    """Detect which soul is currently active in ~/.chiper/SOUL.md."""
+    """Detect which soul is currently active in ~/.chiper/SOUL.md or ~/.chiper/active_soul."""
     chiper_home = get_chiper_home()
     active_path = chiper_home / "SOUL.md"
+    active_soul_file = get_active_soul_file()
+
+    # 1. Check explicit active_soul file first if present
+    if active_soul_file.exists():
+        try:
+            saved_id = active_soul_file.read_text(encoding="utf-8").strip().lower()
+            if saved_id:
+                for s in list_souls():
+                    if s["id"] == saved_id:
+                        return s
+        except Exception as e:
+            logger.debug("Failed to read active_soul file: %s", e)
+
     if not active_path.exists():
         return {
             "id": "unknown",
@@ -401,8 +419,22 @@ def switch_soul(soul_id: str) -> Tuple[bool, str, Dict[str, Any]]:
     dest_path = get_chiper_home() / "SOUL.md"
     try:
         shutil.copy2(target_path, dest_path)
+        # Record active soul ID
+        try:
+            get_active_soul_file().write_text(soul_id.lower().strip(), encoding="utf-8")
+        except Exception as e:
+            logger.debug("Failed to write active_soul tracking file: %s", e)
+
         # Sync isolated memory on switch
         sync_soul_memory_on_switch(prev_id, soul_id)
+
+        # Clear in-process skills prompt cache so new soul's skills are rebuilt immediately
+        try:
+            from agent.prompt_builder import clear_skills_system_prompt_cache
+            clear_skills_system_prompt_cache(clear_snapshot=False)
+        except Exception:
+            pass
+
         souls = list_souls()
         active = next((s for s in souls if s["id"] == soul_id), {
             "id": soul_id,
@@ -436,3 +468,217 @@ def save_custom_soul(soul_id: str, content: str) -> Tuple[bool, str]:
     except Exception as e:
         logger.error("Failed to save custom soul %s: %s", clean_id, e)
         return False, f"Gagal menyimpan custom soul: {e}"
+
+
+# =========================================================================
+# Soul-Scoped Skill Masking Configuration & Logic
+# =========================================================================
+
+SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
+    "chiper-cyber": {
+        "name": "Chiper-Cyber",
+        "allow_categories": [
+            "chiper-cyber",
+            "bounty-pack/tob",
+            "software-development",
+            "devops",
+            "github",
+            "autonomous-ai-agents",
+        ],
+        "allow_skills": [
+            "chiper-agent",
+            "systematic-debugging",
+            "browser-testing-with-agent-browser",
+        ],
+        "deny_categories": [
+            "chiper-web3",
+            "bounty-pack",
+            "creative",
+            "productivity",
+            "media",
+            "smart-home",
+            "social-media",
+            "dogfood",
+            "apple",
+            "yuanbao",
+        ],
+    },
+    "chiper-hunt": {
+        "name": "Chiper-Hunt",
+        "allow_categories": [
+            "bounty-pack",
+            "software-development",
+            "devops",
+            "github",
+            "autonomous-ai-agents",
+        ],
+        "allow_skills": [
+            "chiper-agent",
+            "systematic-debugging",
+            "browser-testing-with-agent-browser",
+        ],
+        "deny_categories": [
+            "chiper-cyber",
+            "chiper-web3",
+            "creative",
+            "productivity",
+            "media",
+            "smart-home",
+            "social-media",
+            "dogfood",
+            "apple",
+            "yuanbao",
+        ],
+    },
+    "chiper-web3": {
+        "name": "Chiper-Web3",
+        "allow_categories": [
+            "chiper-web3",
+            "bounty-pack/tob",
+            "bounty-pack/security/smart-contract-audit",
+            "software-development",
+            "devops",
+            "github",
+            "autonomous-ai-agents",
+        ],
+        "allow_skills": [
+            "chiper-agent",
+            "systematic-debugging",
+            "browser-testing-with-agent-browser",
+        ],
+        "deny_categories": [
+            "chiper-cyber",
+            "bounty-pack",
+            "creative",
+            "productivity",
+            "media",
+            "smart-home",
+            "social-media",
+            "dogfood",
+            "apple",
+            "yuanbao",
+        ],
+    },
+    "chiper-dev": {
+        "name": "Chiper-Dev",
+        "allow_categories": [
+            "software-development",
+            "github",
+            "devops",
+            "mlops",
+            "data-science",
+            "creative",
+            "productivity",
+            "research",
+            "media",
+            "note-taking",
+            "social-media",
+            "autonomous-ai-agents",
+            "dogfood",
+            "smart-home",
+            "yuanbao",
+        ],
+        "allow_skills": [
+            "chiper-agent",
+        ],
+        "deny_categories": [
+            "bounty-pack",
+            "chiper-cyber",
+            "chiper-web3",
+        ],
+    },
+}
+
+
+def is_soul_masking_enabled() -> bool:
+    """Check if soul-scoped skill masking is enabled in config.yaml (default True)."""
+    try:
+        from agent.skill_utils import _load_raw_config
+        cfg = _load_raw_config()
+        if isinstance(cfg, dict):
+            skills_cfg = cfg.get("skills")
+            if isinstance(skills_cfg, dict) and "soul_masking" in skills_cfg:
+                return bool(skills_cfg.get("soul_masking"))
+    except Exception:
+        pass
+    return True
+
+
+def is_skill_allowed_for_soul(
+    soul_id: Optional[str],
+    category: str,
+    skill_name: str,
+    frontmatter_name: Optional[str] = None,
+) -> bool:
+    """Return True if the skill should be visible and active for the specified soul."""
+    if not is_soul_masking_enabled():
+        return True
+
+    if not soul_id or soul_id in ("unknown", "default"):
+        return True
+
+    scope = SOUL_SKILL_SCOPES.get(soul_id.lower().strip())
+    if not scope:
+        # Custom or unpartitioned soul: keep all skills visible
+        return True
+
+    name = skill_name
+    fm_name = frontmatter_name or name
+
+    # 1. Direct whitelist always wins
+    allowed_skills = scope.get("allow_skills") or []
+    if name in allowed_skills or fm_name in allowed_skills:
+        return True
+
+    # 2. Match allow_categories
+    allowed_cats = scope.get("allow_categories") or []
+    cat_allowed = False
+    for ac in allowed_cats:
+        if ac == "*" or category == ac or category.startswith(f"{ac}/"):
+            cat_allowed = True
+            break
+
+    if not cat_allowed:
+        return False
+
+    # 3. Apply deny_categories with specific allowance override
+    denied_cats = scope.get("deny_categories") or []
+    for dc in denied_cats:
+        if category == dc or category.startswith(f"{dc}/"):
+            # Check if an explicit allow_category is more specific
+            overridden = any(
+                ac != dc and (category == ac or category.startswith(f"{ac}/"))
+                for ac in allowed_cats
+            )
+            if not overridden:
+                return False
+
+    return True
+
+
+def get_soul_for_skill(category: Optional[str], skill_name: str) -> Optional[str]:
+    """Return the primary soul ID that owns this skill."""
+    if not category:
+        category = ""
+    top = category.split("/")[0] if category else ""
+    if top == "chiper-cyber" or skill_name.startswith("chiper-"):
+        if top == "chiper-web3":
+            return "chiper-web3"
+        return "chiper-cyber"
+    if top == "bounty-pack":
+        return "chiper-hunt"
+    if top == "chiper-web3":
+        return "chiper-web3"
+    if top in (
+        "software-development",
+        "github",
+        "devops",
+        "mlops",
+        "data-science",
+        "creative",
+        "productivity",
+        "research",
+    ):
+        return "chiper-dev"
+    return None
+

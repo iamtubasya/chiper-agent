@@ -660,6 +660,12 @@ def _find_all_skills(*, skip_disabled: bool = False) -> List[Dict[str, Any]]:
 
                 category = _get_category_from_path(skill_md)
 
+                from agent.soul_manager import get_active_soul, is_skill_allowed_for_soul, is_soul_masking_enabled
+                if is_soul_masking_enabled():
+                    active_soul = get_active_soul()
+                    if not is_skill_allowed_for_soul(active_soul.get("id"), category or "general", skill_dir.name, name):
+                        continue
+
                 seen_names.add(name)
                 skills.append({
                     "name": name,
@@ -1078,6 +1084,42 @@ def skill_view(
                     found_md
                 ):
                     _record(None, found_md)
+
+        # Soul-scoped candidate filtering & disambiguation
+        from agent.soul_manager import get_active_soul, is_skill_allowed_for_soul, get_soul_for_skill, is_soul_masking_enabled
+        if is_soul_masking_enabled() and candidates:
+            active_soul = get_active_soul()
+            active_soul_id = active_soul.get("id")
+            if active_soul_id and active_soul_id not in ("unknown", "default"):
+                scoped_candidates = [
+                    (sd, smd) for sd, smd in candidates
+                    if is_skill_allowed_for_soul(
+                        active_soul_id,
+                        _get_category_from_path(smd) or "general",
+                        smd.parent.name
+                    )
+                ]
+                if scoped_candidates:
+                    candidates = scoped_candidates
+                else:
+                    # Candidates were found on disk, but are masked in the active soul
+                    target_smd = candidates[0][1]
+                    target_cat = _get_category_from_path(target_smd)
+                    owning_soul = get_soul_for_skill(target_cat, target_smd.parent.name) or "jiwa lain"
+                    return json.dumps(
+                        {
+                            "success": False,
+                            "error": (
+                                f"Skill '{name}' terikat pada persona {owning_soul} dan saat ini tersembunyi "
+                                f"di jiwa aktif '{active_soul.get('name', active_soul_id)}'. Beralih jiwa dengan /soul {owning_soul} "
+                                f"untuk mengaksesnya."
+                            ),
+                            "active_soul": active_soul_id,
+                            "required_soul": owning_soul,
+                            "hint": f"Gunakan perintah: /soul {owning_soul}",
+                        },
+                        ensure_ascii=False,
+                    )
 
         if len(candidates) > 1:
             paths = [str(smd) for _, smd in candidates]

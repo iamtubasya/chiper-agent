@@ -1282,7 +1282,15 @@ def build_skills_system_prompt(
         or ""
     )
     disabled = get_disabled_skill_names(_platform_hint or None)
+
+    # Soul-scoped skill masking: resolve active soul
+    from agent.soul_manager import get_active_soul, is_skill_allowed_for_soul, is_soul_masking_enabled
+    active_soul = get_active_soul()
+    active_soul_id = active_soul.get("id", "default")
+    masking_active = is_soul_masking_enabled()
+
     cache_key = (
+        active_soul_id if masking_active else "all",
         str(skills_dir.resolve()),
         tuple(str(d) for d in external_dirs),
         tuple(sorted(str(t) for t in (available_tools or set()))),
@@ -1316,6 +1324,10 @@ def build_skills_system_prompt(
                 continue
             if frontmatter_name in disabled or skill_name in disabled:
                 continue
+            if not is_skill_allowed_for_soul(
+                active_soul_id, category, skill_name, frontmatter_name
+            ):
+                continue
             if not _skill_should_show(
                 entry.get("conditions") or {},
                 available_tools,
@@ -1340,6 +1352,10 @@ def build_skills_system_prompt(
                 continue
             skill_name = entry["skill_name"]
             if entry["frontmatter_name"] in disabled or skill_name in disabled:
+                continue
+            if not is_skill_allowed_for_soul(
+                active_soul_id, entry["category"], skill_name, entry["frontmatter_name"]
+            ):
                 continue
             if not _skill_should_show(
                 extract_skill_conditions(frontmatter),
@@ -1395,6 +1411,10 @@ def build_skills_system_prompt(
                 if frontmatter_name in seen_skill_names:
                     continue
                 if frontmatter_name in disabled or skill_name in disabled:
+                    continue
+                if not is_skill_allowed_for_soul(
+                    active_soul_id, entry["category"], skill_name, frontmatter_name
+                ):
                     continue
                 if not _skill_should_show(
                     extract_skill_conditions(frontmatter),
