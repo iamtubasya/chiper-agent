@@ -139,7 +139,7 @@ force-full-execution.py step 5 never ran` — no matter how much real evidence s
 guard C:\...\bug-bounty\<target>_recon        # RED: no ledgers (your own dir)
 guard C:\...\poc-plans\orchestrator-<target>  # the pipeline's dir — this is the ledger holder
 ```
-So: run the guard against `~/AppData/Local/hermes/poc-plans/orchestrator-<target>/`, and treat "CHECK 7–13
+So: run the guard against `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<target>/`, and treat "CHECK 7–13
 missing" as *in progress* while 0C is still executing (those ledgers appear as `execute-poc-*`,
 `execute-business-logic`, `execute-references`, `asset-coverage --init` finish their passes). A guard that
 is RED only on 7–13 with CHECK 1–6/6b green means **23 tools executed with real evidence and 15/15 vectors
@@ -158,7 +158,7 @@ Verify with `<py314> deep-audit-mode.py --help` (expect `rc 0`) before drawing a
 ## 11. `terminal` runs bash, `execute_code` runs cmd.exe — do not mix idioms
 `subprocess.run(..., shell=True)` inside `execute_code` goes through **cmd.exe**: `cd /c/Users/...` and
 `$_` in a PowerShell one-liner both fail (`The system cannot find the path specified`,
-`C:\Users\WINDOWS10.CommandLine : The term ... is not recognized`), and a failed `cd` silently leaves you in
+`/home/agentuser : The term ... is not recognized`), and a failed `cd` silently leaves you in
 the wrong directory. Use the `terminal` tool for POSIX/bash semantics, and when a PowerShell command needs
 `$_` or nested quotes, write a `.ps1` to `%TEMP%` and run it with `-ExecutionPolicy Bypass -File`.
 
@@ -246,7 +246,7 @@ does **not** read that as a drive path: `Path("/c/Users/x")` becomes the *drive-
 path `\c\Users\x`, so `target_dir.exists()` is False and the gate prints
 
 ```
-❌ Target directory not found: \c\Users\WINDOWS10\AppData\Local\hermes\_progress\<t>
+❌ Target directory not found: \c\Users\WINDOWS10\~/.chiper/_progress\<t>
 ```
 
 for a directory that is sitting right there. A gate that cannot see its own target is
@@ -258,7 +258,7 @@ Fix (shipped 2026-10-30): `scripts/msys_path.py` exposes `norm()` / `path()`, ap
 `aggregate-findings.py`, `clean_urls.py`, `php2shell-verify.py`. Verify with a POSIX path:
 
 ```bash
-T=/c/Users/$USER/AppData/Local/hermes/_progress/<target>
+T=/c/Users/$USER/~/.chiper/skills/bounty-pack/_progress/<target>
 python audit-checkpoint.py "$T" --phase 0A     # must print the phase table, not "not found"
 ```
 

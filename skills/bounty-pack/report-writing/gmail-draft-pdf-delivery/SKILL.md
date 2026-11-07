@@ -53,7 +53,7 @@ raw = base64.urlsafe_b64encode(m.as_bytes()).decode("ascii")
 
 ```python
 import sys
-sys.path.insert(0, r"C:\Users\WINDOWS10\AppData\Local\hermes\scripts")
+sys.path.insert(0, r"~/.chiper/scripts")
 from gmail_ops import pick_service
 label, svc = pick_service("RESEARCHER_USERNAME")   # akun utama
 

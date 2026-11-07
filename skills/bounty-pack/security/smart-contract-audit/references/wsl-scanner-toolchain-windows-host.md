@@ -1,7 +1,7 @@
 # WSL scanner toolchain on a Windows host (slither / aderyn / mythril / echidna)
 
 Use when running the mandatory scanner suite for a Solidity audit on this Windows host, where
-forge/cast live natively (`C:\Users\WINDOWS10\.foundry\bin`) but slither/aderyn/mythril/solc-select
+forge/cast live natively (`/home/agentuser/.foundry/bin`) but slither/aderyn/mythril/solc-select
 live in WSL Ubuntu. Verified 2026-10-23 on the ACE audit (30 contracts, solc 0.8.19, viaIR).
 
 Companion detail: `forge-buildinfo-and-deployed-source-verification.md` covers the forge ≥1.7
@@ -11,12 +11,12 @@ build-info synthesis; this file covers getting each *tool* to run at all.
 
 `forge` remapping resolution silently mangles paths with spaces — symptoms: `Source
 "lib/openzeppelin-contracts/contracts/..." not found. Searched: "/ace-audit"` (drive letter
-stripped). Fix: work in a space-free path (`C:/Users/WINDOWS10/ace-audit`, NOT
+stripped). Fix: work in a space-free path (`/home/agentuser/ace-audit`, NOT
 `D:/data hermes/...`). Copy the project before bootstrapping.
 
 ## 2. ⛔ crytic-compile shells out to bare `forge` — WSL needs a shim
 
-WSL inherits the Windows PATH, so `forge.exe` resolves (`/mnt/c/Users/WINDOWS10/.foundry/bin/forge.exe`)
+WSL inherits the Windows PATH, so `forge.exe` resolves (`/home/agentuser/.foundry/bin/forge.exe`)
 but crytic-compile's foundry platform runs `forge config --json` — the bare name `forge` does not
 exist in WSL and slither dies with `FileNotFoundError: 'forge'`.
 
@@ -24,7 +24,7 @@ Fix — shim at `~/.local/bin/forge`:
 
 ```bash
 #!/bin/bash
-exec /mnt/c/Users/WINDOWS10/.foundry/bin/forge.exe "$@"
+exec /home/agentuser/.foundry/bin/forge.exe "$@"
 ```
 
 ⛔ **Write the shim from the Windows side** (`cat > .../forge-shim.sh <<'EOF'` then
@@ -39,7 +39,7 @@ launching a 15-minute scan.
 ### slither (0.11.6, WSL)
 
 ```bash
-wsl -d Ubuntu -- bash -lc "bash /mnt/c/Users/WINDOWS10/ace-audit/scanners/run-slither.sh"
+wsl -d Ubuntu -- bash -lc "bash /home/agentuser/ace-audit/scanners/run-slither.sh"
 ```
 
 - `--solc-remaps` takes **ONE comma-separated argument**, not space-separated:
@@ -57,7 +57,7 @@ wsl -d Ubuntu -- bash -lc "bash /mnt/c/Users/WINDOWS10/ace-audit/scanners/run-sl
 ### aderyn (WSL)
 
 ```bash
-wsl -d Ubuntu -- bash -lc "cd /mnt/c/Users/WINDOWS10/ace-audit && aderyn . -o scanners/aderyn.md"
+wsl -d Ubuntu -- bash -lc "cd /home/agentuser/ace-audit && aderyn . -o scanners/aderyn.md"
 ```
 
 The Windows npm shim dies with a Node crash; the WSL binary works and produces the full report.

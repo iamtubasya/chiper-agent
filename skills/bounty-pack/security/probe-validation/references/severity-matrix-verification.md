@@ -72,7 +72,7 @@ Real placement, from `run_chain_layer()` / `run_findings_layer()`:
 Correct sequence:
 
 ```bash
-S="$HOME/AppData/Local/hermes/scripts"; T="<target-dir>"
+S="~/.chiper/skills/bounty-pack"; T="<target-dir>"
 python $S/aggregate-findings.py "$T"
 python $S/weaponize-gate.py "$T/findings.json" --out "$T/weaponized-findings.json" \
        --report "$T/WEAPONIZATION.md"

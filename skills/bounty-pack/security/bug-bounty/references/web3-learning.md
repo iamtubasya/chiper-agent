@@ -5,8 +5,8 @@
 **Start date:** 2 September 2026 | **Schedule:** Harian 21:00-00:00 WIB | **Total:** 136 jam
 
 **Reference files:**
-- `C:/Users/WINDOWS10/Downloads/Rencana_Belajar_Bug_Bounty_Web3.xlsx` — 2 sheets: "Rencana Belajar" (12 minggu, 8 kolom) + "Daftar Sumber" (17 sumber)
-- `C:/Users/WINDOWS10/Downloads/Panduan_Teknis_Bug_Bounty_Web3.pdf` — 7 halaman: Ethernaut walkthrough + 6 kerentanan breakdown (reentrancy, oracle, access control, integer overflow, flash loan, front-running/MEV)
+- `/home/agentuser/Downloads/Rencana_Belajar_Bug_Bounty_Web3.xlsx` — 2 sheets: "Rencana Belajar" (12 minggu, 8 kolom) + "Daftar Sumber" (17 sumber)
+- `/home/agentuser/Downloads/Panduan_Teknis_Bug_Bounty_Web3.pdf` — 7 halaman: Ethernaut walkthrough + 6 kerentanan breakdown (reentrancy, oracle, access control, integer overflow, flash loan, front-running/MEV)
 
 **Cron:** `belajar-web3-bounty` (job `dccb52a8275f`) — daily 14:00 UTC (21:00 WIB), delivers topic reminder to origin chat.
 

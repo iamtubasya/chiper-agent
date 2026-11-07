@@ -275,13 +275,13 @@ compilation for slither/echidna/mythril. Three traps make it look broken:
    `binaries.soliditylang.org` / `solc-bin.ethereum.org` is unreachable. You do not have to fix
    hardhat — the exact compiler is usually already on disk, and crytic-compile finds it from
    `foundry.toml`'s `solc = "0.8.20"` (it literally runs `forge config --json`):
-   `C:/Users/<user>/.solc-select/artifacts/solc-0.8.20/solc-0.8.20`. If it is genuinely absent,
+   `/home/agentuser/.solc-select/artifacts/solc-0.8.20/solc-0.8.20`. If it is genuinely absent,
    take the binary from **GitHub releases** (reachable when the soliditylang CDN is not):
    ```bash
    mkdir -p ~/.svm/0.8.20
    curl -sL "https://github.com/ethereum/solidity/releases/download/v0.8.20/solc-windows.exe" \
      -o ~/.svm/0.8.20/solc-0.8.20.exe        # solc-static-linux / solc-macos on those hosts
-   forge build --use "C:/Users/<user>/.svm/0.8.20/solc-0.8.20.exe"
+   forge build --use "/home/agentuser/.svm/0.8.20/solc-0.8.20.exe"
    ```
 3. **Import-path duplication → `Error: Identifier already declared`.** Repos that mix
    `@openzeppelin/contracts/proxy/utils/Initializable.sol` (its own declaration) with the

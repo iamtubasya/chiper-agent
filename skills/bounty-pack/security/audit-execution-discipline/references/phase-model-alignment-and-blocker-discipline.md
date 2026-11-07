@@ -48,7 +48,7 @@ seven `security/*/SKILL.md` (`cex-event-contract-audit`, `crypto-library-audit`,
 Sweep with the launcher's own self-check grep — the launcher mandates it before declaring done:
 
 ```bash
-grep -rn "0A-0D\|0A→0D\|Phase 0D" --include=*.md ~/AppData/Local/hermes/skills/
+grep -rn "0A-0D\|0A→0D\|Phase 0D" --include=*.md ~/.chiper/skills/bounty-pack/skills/
 ```
 
 Classify each hit by intent, not by pattern:

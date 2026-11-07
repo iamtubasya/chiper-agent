@@ -78,9 +78,9 @@ after any change to `finding_gate.py` / the orchestrator's 0E path.
 ## Files
 
 ```
-~/AppData/Local/hermes/scripts/finding_gate.py                 (v2, fail-closed + survivors.json)
-~/AppData/Local/hermes/scripts/audit-pipeline-orchestrator.py  (0E chain; 0F suppress-on-empty)
-~/AppData/Local/hermes/scripts/validate-findings.py            (empty-input guard)
+~/.chiper/skills/bounty-pack/finding_gate.py                 (v2, fail-closed + survivors.json)
+~/.chiper/skills/bounty-pack/audit-pipeline-orchestrator.py  (0E chain; 0F suppress-on-empty)
+~/.chiper/skills/bounty-pack/validate-findings.py            (empty-input guard)
 backups: finding_gate.py.bak_20261007_*, audit-pipeline-orchestrator.py.bak_20261007_*
 ```
 

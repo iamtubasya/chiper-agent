@@ -36,6 +36,7 @@ PATTERNS = [
 SKIP_DIRS = {
     'node_modules', 'vendor', '.git', '__pycache__',
     '.venv', 'venv', 'dist', 'build', '.cache',
+    'skills',
 }
 
 # Files to skip (these tools intentionally reference "chiper" for detection)
@@ -195,14 +196,14 @@ def print_report(violations: list, ci_mode: bool = False):
     """Print the violation report."""
     if not violations:
         if ci_mode:
-            print("✅ BRANDING CHECK PASSED — no 'chiper' references found")
+            print("✅ BRANDING CHECK PASSED — no stale 'hermes' references found")
         else:
             print("✅ Clean — no branding violations found")
         return
 
     print()
     print("=" * 60)
-    print("  BRANDING VIOLATION: 'chiper' found in source files")
+    print("  BRANDING VIOLATION: stale 'hermes' found in source files")
     print("=" * 60)
     print()
 
@@ -219,7 +220,7 @@ def print_report(violations: list, ci_mode: bool = False):
 
     print(f"  Total: {len(violations)} violation(s) in {len(by_file)} file(s)")
     print()
-    print("  Replace 'chiper' with 'chiper' before committing.")
+    print("  Replace 'hermes' with 'chiper' before committing.")
     print("  If intentional, add to ALLOWED_EXCEPTIONS in scripts/branding-lint.py")
     print()
 

@@ -297,7 +297,7 @@ curl -v "https://idp/authorize?client_id=APP&redirect_uri=https://app/cb&respons
 ### Defender: Exact-match `redirect_uri` whitelist
 **Bypass:** Find an open redirect on the whitelisted domain itself, then use that URL as the redirect_uri. The OAuth server validates the registered domain ✓, but the open redirect bounces the code/token to attacker.
 ```
-skills/security/hunt-oauth/references/skill-oauth-oidc-audit.md
+skills/security/hunt-oauth-gateway/references/skill-oauth-oidc-audit.md
 references/cloudflare-access-mcp-oauth.md   # Cloudflare Access / MCP server + DCR test matrix
 ```
 
@@ -316,7 +316,7 @@ references/cloudflare-access-mcp-oauth.md   # Cloudflare Access / MCP server + D
   /registration/<id>` → 404): catat setiap `client_id` yang kamu daftarkan di engagement log.
 
 ```
-skills/security/hunt-oauth/references/skill-oauth-oidc-audit.md
+skills/security/hunt-oauth-gateway/references/skill-oauth-oidc-audit.md
 
 ### Defender: Fragment-only token delivery (`response_type=token`)
 **Bypass:** Fragment isn't sent in `Referer` by browsers, but JavaScript on the callback page may read `window.location.hash` and pass it to analytics or postMessage to a parent frame. Intercept postMessage handlers.

@@ -11,7 +11,7 @@ tags: [bug-bounty, security, execution, discipline, audit, tracker]
 
 **Pipeline reference:** `references/pipeline-phases-and-fresh-run.md` — the CURRENT phase model
 (0A → 0A-SCOPE → 0B → 0C C1..C6b → 0D GATE → 0E FINDINGS → 0E-REVIEW → 0F REPORT), the mandatory
-`--scope` flag, why `--output-dir` is ignored, and how to reset `~/AppData/Local/hermes/trackers/*`
+`--scope` flag, why `--output-dir` is ignored, and how to reset `~/.chiper/skills/bounty-pack/trackers/*`
 so a re-run actually redoes 0A/0B instead of resuming mid-pipeline.
 
 ## ⛔ RULE 0: RULES DON'T FORCE ANYTHING — SCRIPTS DO
@@ -23,7 +23,7 @@ The PERMANENT fix is: **USE THE SCRIPT, NOT THE RULES.**
 
 ```
 PRIMARY METHOD (permanently forces execution):
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-run-all.py <TARGET> --tech "<tech>"
+python ~/.chiper/skills/bounty-pack/audit-run-all.py <TARGET> --tech "<tech>"
 
 This ONE SCRIPT forces all phases (0A→0F) with real tools.
 Every step is disk-verified. Phase-model drift + blocker/operator discipline:
@@ -50,7 +50,7 @@ PART 0 gate) override its content.
 
 **MANDATORY:** Before claiming ANY phase complete, run verification checkpoint:
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-checkpoint.py <target_dir> --phase <phase>
+python ~/.chiper/skills/bounty-pack/audit-checkpoint.py <target_dir> --phase <phase>
 ```
 Only claim COMPLETE if checkpoint returns ALL ✅. If any ❌, that phase was NOT done.
 The checkpoint reads ACTUAL FILES FROM DISK — not self-reported claims.
@@ -68,7 +68,7 @@ If checkpoint shows incomplete → DO NOT GENERATE REPORT. Go back and finish.
 
 **⛔ Auto-save state after every step:**
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-state.py save <target> --phase <X> --step "<what>"
+python ~/.chiper/skills/bounty-pack/audit-state.py save <target> --phase <X> --step "<what>"
 ```
 
 **Prohibited claims:**
@@ -414,7 +414,7 @@ matrix: `references/payment-entitlement-bypass.md`.
 
 BUILD CHECK: `python tool_router.py` prints availability. Test routing WITHOUT running tools (inspect TOOL_PATHS + NUCLEI_TAG), because calling route_and_run actually launches sqlmap/nuclei (slow — will time out a quick test cell).
 
-## ⛔ RULE 30: SCOPE — NEVER Ask the User (Auto-Detect, Else Allow-All)
+## ⛔ RULE 30: SCOPE — Resolve Deterministically, Ask ONCE if No Scope (Hard Rule #1 SOUL.md Wins)
 
 **User correction (2026-09-26): \"Kamu jgn tanya scope lg sm saya, kamu yg cari, kl mmg gkad scope, artinya semua lini, semua sisi target adalah scope\" + \"kok semua nanya2 terus, lakukan aja udah\"**
 
@@ -920,7 +920,7 @@ Never report a write-endpoint finding off the write response alone.
 
 ```
 PRIMARY PIPELINE (one command — full orchestrator, gate + auto-rework built in):
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-pipeline-orchestrator.py <TARGET> --tech "<tech>"
+python ~/.chiper/skills/bounty-pack/audit-pipeline-orchestrator.py <TARGET> --tech "<tech>"
 
 audit-run-all.py is now a THIN WRAPPER — it just re-invokes the orchestrator.
 It is NOT a separate pipeline. Do NOT develop/run two parallel "runners":
@@ -989,13 +989,13 @@ exit code is the single source of truth; a report only exists when the gate exit
 Manual fallback (when orchestrator itself fails):
 ```
 # At audit START
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-exec-tracker.py init <target>
+python ~/.chiper/skills/bounty-pack/audit-exec-tracker.py init <target>
 
 # After EVERY exploit attempt
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-exec-tracker.py log <target> --vector "<name>" --result <result> --evidence <file>
+python ~/.chiper/skills/bounty-pack/audit-exec-tracker.py log <target> --vector "<name>" --result <result> --evidence <file>
 
 # Before claiming phase complete
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-exec-tracker.py gate <target> --phase <0A|0B|0C-Web2|0C-Web3|0D>
+python ~/.chiper/skills/bounty-pack/audit-exec-tracker.py gate <target> --phase <0A|0B|0C-Web2|0C-Web3|0D>
 ```
 
 **⛔ Each log entry MUST include: exploit command + tool output + impact evidence.**
@@ -1093,7 +1093,7 @@ If answer to ALL 4 is "no/tidak signifikan" → it's informational, skip it.
 
 Four-part verification, ALWAYS from disk (never from claims). Run in this order:
 
-**Part 1 — Script integrity.** For every audit script in `C:/Users/WINDOWS10/AppData/Local/hermes/scripts/`:
+**Part 1 — Script integrity.** For every audit script in `~/.chiper/skills/bounty-pack/`:
 - exists, >200B (no empty shell), `python -m py_compile` passes
 - count the real ones: 17 scripts as of 2026-09-24 (orchestrator, force-full-execution, execute-variants, track-poc-execution, execute-poc-variants, verify-tool-usage, validate-findings, report-agent, audit-sequential, audit-checkpoint, audit-state, audit-exec-tracker, aggregate-findings, poc-pipeline, audit-run-all, finding_gate, chain_builder)
 
@@ -1112,7 +1112,7 @@ Four-part verification, ALWAYS from disk (never from claims). Run in this order:
 - FULL sweep: for every manifest entry, `repo_dir / f` must exist (try `\\`→`/` and `/`→`\\` variants — manifest uses backslashes). 2026-09-24 sweep: 61,135 files, found 40 missing across 36 repos → all recovered via raw.githubusercontent.com fetch (`https://raw.githubusercontent.com/{owner}/{repo}/main/{path}`, fallback `master`). Repo name format: `Owner_RepoName` (first `_` splits owner/repo).
 - Zero-file repos (304) are legit empty entries, not data loss — do not "fix" them.
 
-**MSYS pitfall (recurring):** MSYS `/tmp` ≠ Windows `C:\tmp` for native Python; `python "C:\tmp\..."` fails. Copy to `$LOCALAPPDATA/Temp` with native-style `C:/Users/...` paths, or `wslpath -w` to convert.
+**MSYS pitfall (recurring):** MSYS `/tmp` ≠ Windows `C:\tmp` for native Python; `python "C:\tmp\..."` fails. Copy to `$LOCALAPPDATA/Temp` with native-style `/home/agentuser` paths, or `wslpath -w` to convert.
 
 **When a fix is needed:** patch the script, re-run `py_compile`, re-run the failed part of the sweep, report before/after with numbers.
 
@@ -1204,7 +1204,7 @@ if not self._phase_done("0A"):
     self.run_setup()
     self._save_state(completed_phase="0A", current="0B")
 ```
-State file: `~/AppData/Local/hermes/trackers/audit-pipeline-<safe-target>.json`
+State file: `~/.chiper/skills/bounty-pack/trackers/audit-pipeline-<safe-target>.json`
 `{target, tech, completed_phases:[...], current, updated}` — helpers `_state_file()`, `_load_state()`, `_save_state()`, `_phase_done()`.
 
 **Level 2 — per-sub-phase inside 0C (C2..C6b).** The sub-phase scripts write their own usage JSON; on re-run, orchestrator skips any whose output file already exists on disk (>100B):
@@ -1233,7 +1233,7 @@ So if 0C dies at C4, resume continues from C5 — C2/C3 are NOT re-run. This is 
 
 ## ⛔ RULE 21: POC Execution Plan Generation Fix (Windows path resolution)
 
-**Live discovery (2026-09-24):** `track-poc-execution.py`'s `generate_plan()` always returned `None` because it tried to parse `poc-pipeline.py full`'s stdout as JSON — but the script writes a human-readable banner to stdout AND saves machine-readable JSON to `~/AppData/Local/hermes/poc-plans/<target>.json`. Reading stdout failed → `NO_POC_MATCHED` → 0 PoCs executed → Gate C8 (`poc-variant-usage.json empty`) failed repeatedly.
+**Live discovery (2026-09-24):** `track-poc-execution.py`'s `generate_plan()` always returned `None` because it tried to parse `poc-pipeline.py full`'s stdout as JSON — but the script writes a human-readable banner to stdout AND saves machine-readable JSON to `~/.chiper/skills/bounty-pack/poc-plans/<target>.json`. Reading stdout failed → `NO_POC_MATCHED` → 0 PoCs executed → Gate C8 (`poc-variant-usage.json empty`) failed repeatedly.
 
 **The FIX:** Change `generate_plan()` to **read the saved plan file first**, only fall back to stdout parsing if the file is missing.
 
@@ -1252,7 +1252,7 @@ def generate_plan(target, tech_list):
         return None
 
     # Primary: read the JSON plan poc-pipeline saves (OUTPUT_DIR/<target>.json)
-    out_dir = Path(os.path.expanduser("~/AppData/Local/hermes/poc-plans"))
+    out_dir = Path(os.path.expanduser("~/.chiper/skills/bounty-pack/poc-plans"))
     safe = target.replace("https://", "").replace("http://", "").replace("/", "_")
     plan_file = out_dir / f"{safe}.json"
     if plan_file.exists():
@@ -1279,13 +1279,13 @@ Also ensure `--tech` is passed properly (orchestrator used positional arg withou
 
 ## ⛔ RULE 22: Tool Detection on Windows — Use shutil.which + Explicit Paths
 
-**Live discovery (2026-09-24):** `force-full-execution.py` hardcoded Linux bin paths (`/home/windows10/go/bin/`) → tools like `sqlmap`, `dalfox`, `nuclei` showed `NOT_FOUND` even though they were installed under `C:/go/bin` and `C:/Users/WINDOWS10/go/bin`. The gate checked 5 static paths that didn't include Windows locations.
+**Live discovery (2026-09-24):** `force-full-execution.py` hardcoded Linux bin paths (`/home/windows10/go/bin/`) → tools like `sqlmap`, `dalfox`, `nuclei` showed `NOT_FOUND` even though they were installed under `C:/go/bin` and `/home/agentuser/go/bin`. The gate checked 5 static paths that didn't include Windows locations.
 
 **The FIX:** First call `shutil.which(tool)` for standard PATH lookup; if that fails, check explicit Windows dirs:
 - `Path.home() / "go/bin"`
 - `"C:/go/bin"`
-- `Path.home() / "AppData/Local/Programs/Python/Python314/Scripts"`
-- `Path.home() / "AppData/Local/hermes/bin"`
+- `Path.home() / "/usr/local/bin"`
+- `Path.home() / "~/.chiper/skills/bounty-pack/bin"`
 
 Try extensions `.exe` explicitly too (native Python doesn't add it in PATH search). This pattern ensures tools fire reliably across both Unix and Windows environments.
 

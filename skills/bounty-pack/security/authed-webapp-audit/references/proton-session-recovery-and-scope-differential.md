@@ -123,8 +123,8 @@ echo t | gpg --batch --yes --pinentry-mode loopback --passphrase "$PW" \
 # → stderr "signing failed: Bad passphrase"   vs   silence = passphrase correct
 ```
 
-Also: MSYS gpg chokes when `GNUPGHOME` is a Windows-style absolute path (`C:\Users\…`) — it builds
-`<cwd>/C:\Users\…` and reports "no writable keyring found". Use a relative dir (`GNUPGHOME=./gpgtest`)
+Also: MSYS gpg chokes when `GNUPGHOME` is a Windows-style absolute path (`/home/agentuser`) — it builds
+`<cwd>//home/agentuser` and reports "no writable keyring found". Use a relative dir (`GNUPGHOME=./gpgtest`)
 or a `/c/...` path. And a *bare* `--import` of a Proton private key without the matching public key
 fails with "No public key" — fetch the public half (`/api/core/v4/keys/all?Email=`) and concatenate.
 

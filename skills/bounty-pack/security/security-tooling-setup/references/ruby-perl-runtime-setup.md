@@ -161,7 +161,7 @@ The wpscan shim must also prepend the mingw64 runtime dir so libcurl's own deps 
 
 ```bat
 @echo off
-set PATH=C:\Users\<u>\AppData\Local\hermes\git\mingw64\bin;D:\Ruby40\bin;%PATH%
+set PATH=~/.chiper/git/mingw64/bin;D:\Ruby40\bin;%PATH%
 cd /d "D:\Ruby40\bin"
 "D:\Ruby40\bin\ruby.exe" "D:\Ruby40\bin\wpscan" %*
 ```

@@ -64,7 +64,7 @@ the honest answer to "nothing found?".
 ## Step 4 — run the outer gate ON the engagement dir. It is the fastest truth instrument
 
 ```
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/deep-audit-mode.py guard <engagement_dir>
+python ~/.chiper/skills/bounty-pack/deep-audit-mode.py guard <engagement_dir>
 ```
 
 `⛔ BLOCKED … tools-usage.json not found` is a **positive finding about the previous session**, not

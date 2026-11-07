@@ -4,7 +4,7 @@
 
 Four-part verification, ALWAYS from disk (never from claims). Run in this order:
 
-**Part 1 — Script integrity.** For every audit script in `C:/Users/WINDOWS10/AppData/Local/hermes/scripts/`:
+**Part 1 — Script integrity.** For every audit script in `~/.chiper/skills/bounty-pack/`:
 - exists, >200B (no empty shell), `python -m py_compile` passes
 - count the real ones: 17 scripts as of 2026-09-24 (orchestrator, force-full-execution, execute-variants, track-poc-execution, execute-poc-variants, verify-tool-usage, validate-findings, report-agent, audit-sequential, audit-checkpoint, audit-state, audit-exec-tracker, aggregate-findings, poc-pipeline, audit-run-all, finding_gate, chain_builder)
 
@@ -23,7 +23,7 @@ Four-part verification, ALWAYS from disk (never from claims). Run in this order:
 - FULL sweep: for every manifest entry, `repo_dir / f` must exist (try `\\`→`/` and `/`→`\\` variants — manifest uses backslashes). 2026-09-24 sweep: 61,135 files, found 40 missing across 36 repos → all recovered via raw.githubusercontent.com fetch (`https://raw.githubusercontent.com/{owner}/{repo}/main/{path}`, fallback `master`). Repo name format: `Owner_RepoName` (first `_` splits owner/repo).
 - Zero-file repos (304) are legit empty entries, not data loss — do not "fix" them.
 
-**MSYS pitfall (recurring):** MSYS `/tmp` ≠ Windows `C:\tmp` for native Python; `python "C:\tmp\..."` fails. Copy to `$LOCALAPPDATA/Temp` with native-style `C:/Users/...` paths, or `wslpath -w` to convert.
+**MSYS pitfall (recurring):** MSYS `/tmp` ≠ Windows `C:\tmp` for native Python; `python "C:\tmp\..."` fails. Copy to `$LOCALAPPDATA/Temp` with native-style `/home/agentuser` paths, or `wslpath -w` to convert.
 
 **When a fix is needed:** patch the script, re-run `py_compile`, re-run the failed part of the sweep, report before/after with numbers.
 

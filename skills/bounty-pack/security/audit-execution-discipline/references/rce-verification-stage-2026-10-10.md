@@ -28,7 +28,7 @@ The mapping is now `["nuclei", "rce-verify"]`.
 ## Three independent channels
 
 ```bash
-python ~/AppData/Local/hermes/scripts/rce-verify.py <target-dir> <base-url> \
+python ~/.chiper/skills/bounty-pack/rce-verify.py <target-dir> <base-url> \
        [--param q] [--urls-file urls.txt] [--limit 12] [--sleep 5] \
        [--ratio 2.5] [--rounds 3] [--timeout 20] [--insecure]
 ```

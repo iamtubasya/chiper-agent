@@ -60,7 +60,7 @@ MATCH p=shortestPath((n:User)-[*1..]->(m:Group)) WHERE m.name="DOMAIN ADMINS@DOM
 **1. 隐蔽采集**
 _随机化文件名避免检测_
 ```
-SharpHound.exe -c All --LdapUsername user --LdapPassword pass --OutputDirectory C:\Users\Public --RandomizeFilenames
+SharpHound.exe -c All --LdapUsername user --LdapPassword pass --OutputDirectory /tmp --RandomizeFilenames
 ```
 
 **分析：** BloodHound可发现域内的攻击路径，如权限提升路径、会话信息、组关系等。

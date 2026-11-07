@@ -1,6 +1,6 @@
 ## ⛔ RULE 21: POC Execution Plan Generation Fix (Windows path resolution)
 
-**Live discovery (2026-09-24):** `track-poc-execution.py`'s `generate_plan()` always returned `None` because it tried to parse `poc-pipeline.py full`'s stdout as JSON — but the script writes a human-readable banner to stdout AND saves machine-readable JSON to `~/AppData/Local/hermes/poc-plans/<target>.json`. Reading stdout failed → `NO_POC_MATCHED` → 0 PoCs executed → Gate C8 (`poc-variant-usage.json empty`) failed repeatedly.
+**Live discovery (2026-09-24):** `track-poc-execution.py`'s `generate_plan()` always returned `None` because it tried to parse `poc-pipeline.py full`'s stdout as JSON — but the script writes a human-readable banner to stdout AND saves machine-readable JSON to `~/.chiper/skills/bounty-pack/poc-plans/<target>.json`. Reading stdout failed → `NO_POC_MATCHED` → 0 PoCs executed → Gate C8 (`poc-variant-usage.json empty`) failed repeatedly.
 
 **The FIX:** Change `generate_plan()` to **read the saved plan file first**, only fall back to stdout parsing if the file is missing.
 
@@ -19,7 +19,7 @@ def generate_plan(target, tech_list):
         return None
 
     # Primary: read the JSON plan poc-pipeline saves (OUTPUT_DIR/<target>.json)
-    out_dir = Path(os.path.expanduser("~/AppData/Local/hermes/poc-plans"))
+    out_dir = Path(os.path.expanduser("~/.chiper/skills/bounty-pack/poc-plans"))
     safe = target.replace("https://", "").replace("http://", "").replace("/", "_")
     plan_file = out_dir / f"{safe}.json"
     if plan_file.exists():

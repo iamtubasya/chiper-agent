@@ -4,7 +4,7 @@ Lessons from 2026-10-30, when six real gate defects were found and fixed in one 
 of the fixes were themselves destructive. The defects matter less than the **method**, because the
 same traps will be hit again by anyone patching `scripts/*.py` under time pressure.
 
-Read this before editing any script in `AppData/Local/hermes/scripts/`.
+Read this before editing any script in `~/.chiper/skills/bounty-pack/`.
 
 ---
 

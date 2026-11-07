@@ -69,8 +69,8 @@ Some DRF APIs require BOTH `Authorization: Token <key>` AND the cross-origin ses
 
 - The headless shell may be absent while full chromium exists. Launch with an explicit
   `executable_path` pointing at the INSTALLED version:
-  `C:/Users/<user>/AppData/Local/ms-playwright/chromium-<N>/chrome-win64/chrome.exe`
-  (`ls ~/AppData/Local/ms-playwright/` first — playwright's default expected version often
+  `~/.local/share/ms-playwright/chromium-<N>/chrome-win64/chrome.exe`
+  (`ls ~/.cache/ms-playwright/` first — playwright's default expected version often
   does not match what is installed).
 - Long browser flows exceed the 60s foreground tool limit: run them with
   `terminal(background=true, notify_on_complete=true)` and poll.

@@ -20,7 +20,7 @@ find <workspace> -name tools-usage.json -o -name variant-usage.json \
 # -> ALL MISSING
 
 # 2. did the orchestrator ever run for this target
-ls -d ~/AppData/Local/hermes/poc-plans/orchestrator-*<target>*      # -> does not exist
+ls -d ~/.chiper/skills/bounty-pack/poc-plans/orchestrator-*<target>*      # -> does not exist
 ```
 
 Real state: 0A + 0B done properly, 0C manual/partial, **C2/C3/C4/C5 + 0D + 0E + 0F never executed**.

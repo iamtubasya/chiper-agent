@@ -23,7 +23,7 @@ D:/data hermes/bug-bounty/_progress/forexfactory.com-YYYY-MM-DD/
 
 ## 1. Environment facts (Windows / git-bash)
 
-* Python: `C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe`
+* Python: `/usr/bin/python3`
 * Playwright works with `channel="chrome"` (system Chrome). `headless=True` is enough for reads;
   the registration wizard works headless, but be ready to fall back to `headless=False`.
 * Use a **persistent context** so cookies survive between scripts:
@@ -177,11 +177,11 @@ Remaining live leads (unchanged, both need credentials we do not have): one **de
 |---|---|---|
 | dir-bust | `ffuf` | wordlists live in `D:/data hermes/wordlists/<category>/*.txt` (e.g. `0C-sensitive-files/sensitive-files-wordlist.txt`). There is **no `dicc.txt`**. If the `-w` path does not exist, ffuf **prints its help and scans nothing** — always confirm the list exists and that ffuf is not just echoing usage |
 | vuln templates | `nuclei -t "D:/data hermes/nuclei-templates"` | 13 754 templates present. TLS `weak-cipher-suites` hits are the program's excluded TLS class |
-| OOB | `C:/Users/WINDOWS10/go/bin/interactsh-client.exe -o <log> -json` (+ `webhook.site/token` as backup) | kill it when done — the .bat/exe pair survives the shell job |
-| race | `C:/Users/WINDOWS10/AppData/Local/hermes/tools/race-checker.py -u URL --threads N --attempts N` | **no cookie support** → unauthenticated only |
-| GraphQL | `C:/Users/WINDOWS10/AppData/Local/hermes/tools/graphqlmap.bat` | no GraphQL endpoint exists here |
+| OOB | `/home/agentuser/go/bin/interactsh-client.exe -o <log> -json` (+ `webhook.site/token` as backup) | kill it when done — the .bat/exe pair survives the shell job |
+| race | `~/.chiper/skills/bounty-pack/tools/race-checker.py -u URL --threads N --attempts N` | **no cookie support** → unauthenticated only |
+| GraphQL | `~/.chiper/skills/bounty-pack/tools/graphqlmap.bat` | no GraphQL endpoint exists here |
 | param discovery | manual fuzz scripts | `arjun` is broken on this box (`'dict' object has no attribute 'status_code'`) and hangs on this target |
-| JS static analysis / DOM sinks | **`semgrep-core.exe` directly** | the semgrep Python CLI is broken here (dep chain colorama→protobuf→ruamel.yaml→referencing→jsonschema_specifications→httpx→httpx_sse, endless). The engine binary works: `C:/Users/WINDOWS10/AppData/Local/Python/pythoncore-3.14-64/Lib/site-packages/semgrep/bin/semgrep-core.exe -rules rules.yaml -lang javascript -json <single-file>`. `-targets` needs a JSON object list (plain path arrays fail); stdout starts with a "." progress char — strip everything before the first `{` before `json.loads`. Loop it per file (see `recon/run_semgrep_core.py` in the engagement) |
+| JS static analysis / DOM sinks | **`semgrep-core.exe` directly** | the semgrep Python CLI is broken here (dep chain colorama→protobuf→ruamel.yaml→referencing→jsonschema_specifications→httpx→httpx_sse, endless). The engine binary works: `~/.local/share/Python/pythoncore-3.14-64/Lib/site-packages/semgrep/bin/semgrep-core.exe -rules rules.yaml -lang javascript -json <single-file>`. `-targets` needs a JSON object list (plain path arrays fail); stdout starts with a "." progress char — strip everything before the first `{` before `json.loads`. Loop it per file (see `recon/run_semgrep_core.py` in the engagement) |
 | SQLi / XSS | `ghauri -u URL --batch --level=2` / `dalfox file urls.txt --skip-bav --output …` | ghauri rejects `--risk`; dalfox `[G] BUILTIN` grep hits are false positives — verify by fetching the POC URL (27-byte `{"error":"invalid request"}`) and checking a `<svg` variant gets the 5503-byte Cloudflare block page |
 
 ### Soft-404 trap on the sibling sites

@@ -52,9 +52,9 @@ seconds`).
 
 **What worked: drive the real panel form in a real browser.**
 - Playwright + the installed Chromium (on this host:
-  `C:/Users/WINDOWS10/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe` —
+  `~/.local/share/ms-playwright/chromium-1234/chrome-win64/chrome.exe` —
   Playwright's default headless-shell version often does not match the installed browser; pass
-  `executable_path` explicitly, and check `ls ~/AppData/Local/ms-playwright/` for the real
+  `executable_path` explicitly, and check `ls ~/.cache/ms-playwright/` for the real
   version dir). If the SeleniumBase MCP tool errors out, drop to direct Playwright — same result.
 - `--disable-blink-features=AutomationControlled`, a real UA, `locale`, viewport.
 - Navigate to the **actual route** — the panel's registration route was `/create-account`, not
@@ -130,7 +130,7 @@ nested creation — even before a paid product exists.
 - **`execute_code` runs NATIVE Windows Python — MSYS paths are invisible to it.** The git-bash
   `terminal` tool understands `/d/data hermes/...` and `/c/Users/...`, but `execute_code`'s Python
   does NOT: `open('/d/data hermes/x/evidence.txt','w')` → FileNotFoundError. Inside `execute_code`
-  always use native paths (`D:/data hermes/...` or `C:\\Users\\...`); reserve MSYS `/d/...`,`/c/...`
+  always use native paths (`D:/data hermes/...` or `/home/agentuser`); reserve MSYS `/d/...`,`/c/...`
   for the `terminal` tool. (Generalises the old '/tmp is invisible' note — it is ALL MSYS paths, not
   just /tmp.) A path mistake here silently wastes a whole login cycle when the write is the last step
   of an expensive MFA-authenticated capture.

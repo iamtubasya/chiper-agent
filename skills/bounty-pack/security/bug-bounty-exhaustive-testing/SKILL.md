@@ -1025,7 +1025,7 @@ Before starting ANY audit, verify infrastructure integrity. Found bugs: `smart-c
 
 ### Quick Verify (30 seconds)
 ```bash
-SK="$HOME/AppData/Local/hermes/skills/security"
+SK="~/.chiper/skills/bounty-pack/skills/security"
 # 1. Empty files
 find "$SK" -name "*.md" -size -10c 2>/dev/null | head
 # 2. Orphan check (refs not in SKILL.md or reference-loader)
@@ -1428,10 +1428,10 @@ they did *not* write a paragraph.
 → Full worked surface (Supabase/PostgREST/BaaS probe order): `references/baas-backend-attack-surface.md`
 
 ### ⛔ MSYS PATH ISSUE FOR CURL ON WINDOWS (Certinia 2026-09-20)
-When running `curl -o` on Windows via MSYS/Git Bash, the path `/c/Users/...` does NOT work for the output file. Use Windows-style path: `C:/Users/WINDOWS10/AppData/Local/Temp/...` or use `$LOCALAPPDATA/Temp/...`.
+When running `curl -o` on Windows via MSYS/Git Bash, the path `/c/Users/...` does NOT work for the output file. Use Windows-style path: `/tmp/...` or use `$LOCALAPPDATA/Temp/...`.
 
 ### ⛔ MSYS PATH ISSUE FOR CURL ON WINDOWS (Certinia 2026-09-20)
-When running `curl -o` on Windows via MSYS/Git Bash, the path `/c/Users/...` does NOT work for the output file. Use Windows-style path: `C:/Users/WINDOWS10/AppData/Local/Temp/...` or use `$LOCALAPPDATA/Temp/...`.
+When running `curl -o` on Windows via MSYS/Git Bash, the path `/c/Users/...` does NOT work for the output file. Use Windows-style path: `/tmp/...` or use `$LOCALAPPDATA/Temp/...`.
 
 ### ⛔ COVERAGE GATES GREEN ≠ REAL TESTING — CHECK THE HOST'S ROLE FIRST (2026-10-10)
 

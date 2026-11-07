@@ -3,7 +3,7 @@
 
 Prints a report ONLY when the surface changed; prints NOTHING otherwise.
 Run once by hand to establish the baseline, then hand this file to the cron
-tool BY BARE FILENAME (copy it to ~/AppData/Local/hermes/scripts/ first).
+tool BY BARE FILENAME (copy it to ~/.chiper/skills/bounty-pack/ first).
 
 Edit the CONFIG block for the target. Two supported feed shapes:
   * ct_domain      : crt.sh certificate-transparency sweep for a wildcard domain
@@ -11,7 +11,7 @@ Edit the CONFIG block for the target. Two supported feed shapes:
                      (OpenAPI) or its sorted top-level keys.
   * text_feeds     : any text/JSON list endpoint kept as a sorted unique line set.
 
-NOTE (MSYS/git-bash): STATE_PATH must be a NATIVE path (C:/Users/...), not
+NOTE (MSYS/git-bash): STATE_PATH must be a NATIVE path (/home/agentuser), not
 /c/Users/... — Python's open() cannot resolve MSYS paths. Also, at runtime the
 CWD of the cron job is not guaranteed, so STATE_PATH must stay absolute.
 """
@@ -27,7 +27,7 @@ import urllib.request
 # --------------------------------------------------------------------------
 CONFIG = {
     "name": "example-target",
-    "state_path": "C:/Users/REPLACE_ME/AppData/Local/hermes/scripts/surface_monitor_state.json",
+    "state_path": "~/.chiper/skills/bounty-pack/surface_monitor_state.json",
     # crt.sh CT sweep for '%.<domain>'; set to None to skip
     "ct_domain": "example.com",
     # JSON endpoints. extract: "paths" -> OpenAPI path table, "top_keys" -> dict keys

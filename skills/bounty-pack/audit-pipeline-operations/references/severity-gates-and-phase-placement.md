@@ -221,7 +221,7 @@ Run after ANY edit to `weaponize-gate.py`, `finding_gate.py`, `validate-findings
 silently vanishes.
 
 ```bash
-S="$HOME/AppData/Local/hermes/scripts"; T="<target-dir>"
+S="~/.chiper/skills/bounty-pack"; T="<target-dir>"
 python $S/aggregate-findings.py "$T"
 # A+B (2026-11-02): the sidecar weaponized-shipped.json is written by weaponize-gate
 # itself = SHIP + DEEPEN (all non-DROP). Do NOT `cp weaponized-findings.json` over it —
@@ -239,8 +239,8 @@ The **regression harness** (`scripts/severity_gate_regression.py` in THIS skill 
 is the authoritative re-verify — prefer it over hand-driving, because it also asserts the negative
 controls. Run it after ANY edit to the five gate scripts:
 ```bash
-python "$HOME/AppData/Local/hermes/skills/audit-pipeline-operations/scripts/severity_gate_regression.py" \
-       --scripts "$HOME/AppData/Local/hermes/scripts"
+python "~/.chiper/skills/bounty-pack/skills/audit-pipeline-operations/scripts/severity_gate_regression.py" \
+       --scripts "~/.chiper/skills/bounty-pack"
 ```
 
 Expected on the 4-level matrix: `4 SHIP` → `REPORT: 4` → `Validation rate: 100.0%` → `PASS: 4`.
@@ -282,7 +282,7 @@ The same Windows pathlib trap bit six more scripts in this session (see `pipelin
 
 ```python
 import os, re
-S = os.path.expanduser("~/AppData/Local/hermes/scripts")
+S = os.path.expanduser("~/.chiper/skills/bounty-pack")
 for f in sorted(os.listdir(S)):
     if not f.endswith(".py") or ".bak" in f: continue
     s = open(os.path.join(S, f), encoding="utf-8", errors="replace").read()

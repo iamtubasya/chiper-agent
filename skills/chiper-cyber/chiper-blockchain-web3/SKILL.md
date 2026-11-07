@@ -37,6 +37,7 @@ references:
   - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-web3/SKILL.md
   - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-web3/payloads.md
   - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-web3/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-web3/references/self-hosted-web3-bounties.md
   - path: ~/.chiper/skills/chiper-cyber/chiper-blockchain-web3/guides
 ---
 
@@ -45,7 +46,10 @@ references:
 > **Supplementary Files**:
 > - `payloads.md` — Command catalogue for Slither/Mythril/Echidna/Foundry plus exploit PoC code for reentrancy, flash loans, integer overflow, access control bypass, MEV, bridge attacks, oracle manipulation, proxy collisions, and Vyper-specific patterns — 15 sections with real Solidity/Vyper code.
 > - `test-cases.md` — Structured test cases (Slither full run, Mythril symbolic execution, Foundry fuzzing, Echidna invariants, mainnet fork replay, reentrancy PoC, flash loan oracle manipulation PoC, integer overflow PoC, access control bypass, OpenZeppelin integration, multi-sig review, timelock review) — 12 cases across 5 categories.
+> - `references/self-hosted-web3-bounties.md` — Directory and reconnaissance guide for direct, self-hosted Web3 bug bounty programs (Ethereum Foundation, Solana/Anza, Parity/Polkadot, Trezor, Monero, Kraken) without third-party platforms.
+> - `references/solana-program-audit.md` — **Solana/Rust (and Anchor/SBF) program audit methodology.** Load this INSTEAD of the EVM tooling below when the target is a Solana program. Covers the Solana-vs-EVM mental model shift, toolchain (`cargo-build-sbf`, Mollusk SVM, `solana-program-test`), the 10 Solana vuln classes (missing owner/signer, account confusion, PDA bump canonicalization, arbitrary `invoke_signed` CPI, offset/memmove math, lamport accounting, Merkle proof verify, Borsh deser), the mpl-core permission-engine pattern, the real UpdateDelegate `&&`/`||` precedence bug, and Metaplex bounty intel (scope, tiering, mainnet program IDs). Most base-skill tooling (Slither, Mythril, Foundry, reentrancy/flash-loan playbooks) does NOT apply to Solana.
 > - `guides/smart-contract-audit-playbook.md` — End-to-end audit playbook: scoping → recon → static analysis → dynamic testing → fuzzing → PoC → report. Includes pre-audit checklist, SWC ID mapping, Mythril modes, mainnet fork strategy, and report template.
+> - `references/solana-program-audit-playbook.md` — Solana on-chain (Rust/Anchor/SBF) audit: toolchain install, surface recon, Mollusk invariant-fuzzing technique, the `assert_registry_consistent` + `adversarial.rs` attack angle, SBF-vs-Mollusk ELF gotcha, and where bugs actually live.
 
 ## Summary
 
@@ -253,6 +257,7 @@ forge test --match-test test_PoC_FlashLoanDrain -vvvv \
 
 | Scenario | Primary Approach | Alternative |
 |----------|------------------|-------------|
+| **Target is a Solana/Rust program (not EVM)** | **`references/solana-program-audit.md` — account-validation + PDA + CPI review; Mollusk SVM / `solana-program-test` for proof** | Patch-diff recent security commits in the repo |
 | First-pass triage of a new contract | `slither .` + `solhint` | Mythril `--quick-mode` |
 | Suspected reentrancy | Slither `reentrancy-*` detectors + manual review | Echidna invariant: `balances unchanged across withdraw` |
 | Suspected integer overflow (pre-0.8.0 or `unchecked {}`) | Mythril arithmetic module | Manual: trace every arithmetic op |
@@ -536,6 +541,8 @@ external call. Additionally inherit OpenZeppelin's `ReentrancyGuard` and apply
 
 ## Safety Notes
 
+- **Report the absence of a finding honestly.** On heavily-audited targets (dedicated internal security branch, security-tagged commits, fix-commits with regression tests) a first-pass manual review often yields **zero confirmed criticals**. Do not inflate a code-smell into a finding, and do not pad the report. Say "surface mapped, no confirmed vuln," list what was checked and the verdict per area, name the blocker (e.g. toolchain not installed → cannot produce executable proof), and propose the next concrete step (patch-diff recent security commits, fuzz the memmove/offset paths under a harness, downgrade to a smaller tier target). That is a *complete* deliverable, not a failed one.
+- **Triage the target's maturity before deep-diving.** `git log` the repo: a dedicated security branch, `--grep` hits for fix/security/vuln commits, and existing regression tests for past bugs mean the low-hanging fruit is gone. Prefer patch-diffing the security commits (finding the *next* instance of the same bug class) or moving to a smaller/less-audited tier target over re-reviewing hardened core.
 - **Testnet vs mainnet**: never run exploits or PoCs against mainnet contracts without explicit authorization. Use `anvil --fork-url` to replay mainnet state locally — funds drained on a fork are simulated, not real.
 - **Authorization scope**: bug bounty programs (Immunefi, code4rena, Cantina) define what's in scope. Exploiting a contract outside the declared scope — even with no profit intent — is illegal in most jurisdictions.
 - **Economic risk of live testing**: even reading state from mainnet is fine, but *any* transaction broadcast to mainnet (including failed ones) leaks your address and intent. MEV bots watch the public mempool and will frontrun anything profitable.

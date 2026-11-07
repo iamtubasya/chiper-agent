@@ -481,7 +481,7 @@ class MonitorState:
     """Cursor + seen-events store untuk monitoring tasks."""
 
     def __init__(self, db_path: Optional[Path] = None):
-        path = db_path or (Path.home() / ".hermes" / "monitor.db")
+        path = db_path or (Path.home() / ".chiper" / "monitor.db")
         path.parent.mkdir(exist_ok=True, parents=True)
         self.conn = sqlite3.connect(str(path))
         self.conn.executescript("""

@@ -20,7 +20,6 @@ references:
   - path: ~/.chiper/skills/chiper-cyber/CHIPER_TOOLS_BASELINE_2026_09.md
   - path: ~/.chiper/skills/chiper-cyber/docs/tools/full-inventory.md
   - path: ~/.chiper/skills/chiper-cyber/references/upstream-sync-protocol.md
-  - path: ~/.chiper/skills/chiper-cyber/validation
 ---
 
 # chiper-cyber

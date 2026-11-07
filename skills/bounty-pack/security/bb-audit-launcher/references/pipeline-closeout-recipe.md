@@ -8,7 +8,7 @@ work and fails the same way; step out of the loop and close it out by hand with 
 
 | writer | directory |
 |---|---|
-| orchestrator (state + its own ledgers) | `~/AppData/Local/hermes/poc-plans/orchestrator-<host_underscored>/` |
+| orchestrator (state + its own ledgers) | `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host_underscored>/` |
 | `verify-tool-usage.py` / `audit-checkpoint.py` | the directory you PASS as an argument |
 | the operator's evidence + finished ledgers | the engagement dir, e.g. `D:/data hermes/bug-bounty/<target>/` |
 
@@ -19,7 +19,7 @@ green, the gate passes on the engagement evidence:
 
 ```bash
 export AUDIT_ENGAGEMENT_DIR="D:/data hermes/bug-bounty/<target>"
-python "C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-pipeline-orchestrator.py" \
+python "~/.chiper/skills/bounty-pack/audit-pipeline-orchestrator.py" \
   "https://<target>" --tech "<techs>" --scope "<scope>" --resume
 ```
 Without the env var, mirror the finished ledgers **and every evidence path they reference** into the
@@ -31,7 +31,7 @@ so a file copied to the wrong depth reads as missing.
 All take `<TARGET> --target-dir <ENGAGEMENT_DIR>` and write a usage ledger the gate reads:
 
 ```bash
-SP="C:/Users/WINDOWS10/AppData/Local/hermes/scripts"; PY="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
+SP="~/.chiper/skills/bounty-pack"; PY="/usr/bin/python3"
 D="D:/data hermes/bug-bounty/<target>"; T="https://<target>"
 "$PY" "$SP/execute-business-logic.py"  "$T" --target-dir "$D" --rate 1.0          # business-logic-usage.json (15 vectors)
 "$PY" "$SP/track-poc-execution.py"     "$T" --tech "node,express,nextjs,vercel" --target-dir "$D"   # poc-execution.json
@@ -46,7 +46,7 @@ in `references-index.json`, so it never produces web3-corpus hits for a web2 tar
 ## 2. Truthful ledger marking (asset-coverage)
 
 ```bash
-S="C:/Users/WINDOWS10/AppData/Local/hermes/skills/security/audit-execution-discipline/scripts/asset-coverage.py"
+S="~/.chiper/skills/bounty-pack/audit-execution-discipline/scripts/asset-coverage.py"
 "$PY" "$S" "$D" --init                 # seed the mandatory manifest
 "$PY" "$S" "$D" --derive               # populate from the artefacts actually on disk
 "$PY" "$S" "$D" --mark ffuf=USED --evidence evidence/ffuf/account_vana_org_ua.json

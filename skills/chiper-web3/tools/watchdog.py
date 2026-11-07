@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Optional
 
-HEARTBEAT_FILE = Path(os.environ.get("HERMES_BOT_HEARTBEAT", "~/.hermes/bot-heartbeat")).expanduser()
+HEARTBEAT_FILE = Path(os.environ.get("HERMES_BOT_HEARTBEAT", "~/.chiper/bot-heartbeat")).expanduser()
 
 
 @dataclass

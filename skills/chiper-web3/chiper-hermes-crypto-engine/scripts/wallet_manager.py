@@ -36,7 +36,7 @@ class Wallet:
 class WalletManager:
     """Encrypted vault untuk wallet user. Pakai Scrypt KDF + Fernet."""
 
-    DEFAULT_PATH = Path.home() / ".hermes" / "vault.enc"
+    DEFAULT_PATH = Path.home() / ".chiper" / "vault.enc"
 
     def __init__(self, master_password: str, vault_path: Optional[Path] = None):
         self.path = vault_path or self.DEFAULT_PATH

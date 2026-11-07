@@ -17,14 +17,14 @@ metadata:
 
 There are two places a SKILL.md can live:
 
-1. **User-local:** `~/.chiper/skills/<maybe-category>/<name>/SKILL.md` — personal, not shared. Created via `skill_manage(action='create')`.
-2. **In-repo (this skill is about this case):** `/home/agentuser/chiper/skills/<category>/<name>/SKILL.md` — committed, shipped with the package. Use `write_file` + `git add`. `skill_manage(action='create')` does NOT target this tree.
+1. **User-local:** `~/.chiper/skills/<maybe-category>/<name>/SKILL.md` (or legacy `~/.chiperflux/skills/`) — personal, not shared. Created via `skill_manage(action='create')`.
+2. **In-repo (this skill is about this case):** `<repo_root>/skills/<category>/<name>/SKILL.md` (e.g. `/home/agentuser/chiper/skills/...`) — committed, shipped with the package. Use `write_file` + `git add`. `skill_manage(action='create')` does NOT target this tree.
 
 ## When to Use
 
 - User asks you to add a skill "in this branch / repo / commit"
-- You're committing a reusable workflow that should ship with chiper-agent
-- You're editing an existing skill under `/home/agentuser/chiper/skills/` (use `patch` for small edits, `write_file` for rewrites; `skill_manage` still works for patch on in-repo skills, but not for `create`)
+- You're committing a reusable workflow that should ship with chiper
+- You're editing an existing skill under `<repo_root>/skills/` (use `patch` for small edits, `write_file` for rewrites; `skill_manage` still works for patch on in-repo skills, but not for `create`)
 
 ## Required Frontmatter
 
@@ -127,7 +127,7 @@ Pick the closest existing category. Don't invent new top-level categories casual
 
 ## Cross-Referencing Other Skills
 
-`metadata.chiper.related_skills` unions both trees (`skills/` in-repo and `~/.chiper/skills/`) at load time. You CAN reference a user-local skill from an in-repo skill, but it won't resolve for other users who clone the repo fresh. Prefer referencing only in-repo skills from in-repo skills. If a frequently-referenced skill lives only in `~/.chiper/skills/`, consider promoting it to the repo.
+`metadata.chiper.related_skills` unions both trees (`skills/` in-repo and `~/.chiperflux/skills/`) at load time. You CAN reference a user-local skill from an in-repo skill, but it won't resolve for other users who clone the repo fresh. Prefer referencing only in-repo skills from in-repo skills. If a frequently-referenced skill lives only in `~/.chiperflux/skills/`, consider promoting it to the repo.
 
 ## Editing Existing In-Repo Skills
 
@@ -138,9 +138,43 @@ Pick the closest existing category. Don't invent new top-level categories casual
 
 ## Common Pitfalls
 
-1. **Using `skill_manage(action='create')` for an in-repo skill.** It writes to `~/.chiper/skills/`, not the repo tree. Use `write_file` for in-repo creation.
+1. **Using `skill_manage(action='create')` for an in-repo skill.** It writes to user-local skills (`~/.chiper/skills/`), not the repo tree. Use `write_file` for in-repo creation.
 
-2. **Leading whitespace before `---`.** The validator checks `content.startswith("---")`; any leading blank line or BOM fails validation.
+2. **Hardcoding paths across imported skill trees.** When importing bundled skills or multi-domain ecosystems (e.g. `skills/chiper-cyber/`), ensure all internal relative references, guides, payloads, and READMEs strictly resolve against standardized runtime paths (`~/.chiper/skills/<domain-folder>/`) rather than legacy paths (`~/.hermes/`, `~/.chiperflux/`, or inconsistent capitalization like `~/.Chiper/`). Verify folder name matches path expectations exactly.
+
+3. **Inconsistent interactive skill seeding during installation.** If a skill ecosystem is large (e.g. 100+ specialized pentest/bug bounty domains), provide interactive selection tiers in `setup-chiper.sh` / installer helpers (e.g. Full suite vs Curated subset like Bug Bounty vs Skip) so the user is not forced into massive storage overhead on minimal VPS setups.
+
+4. **The Reference Stub Trap (Missing Companion Files).** Never import external skills as 30-line pointer stubs that reference paths outside the repository or assume external workspaces exist. Companion files (`payloads.md`, `test-cases.md`, `guides/`) will be missing, causing `skill_view` file errors. Always bundle full methodology and companion files in-place inside `~/.chiper/skills/<collection>/<skill>/`.
+
+5. **The Markdown vs Binary Tool Gap.** Skills define how to use tools, but cannot execute them if the host OS lacks the binary CLI. When shipping skills that require CLI tools (`nmap`, `sqlmap`, `nuclei`, `subfinder`), pair them with an automated installer script (`scripts/install-bugbounty-tools.sh`) that installs packages via `apt` and pre-compiled release binaries. Resolve GitHub release tags via HTTP `Location:` header redirects rather than the rate-limited `api.github.com` endpoint.
+
+6. **Burying `SOUL.md` inside skills subdirectories.** The agent prompt builder (`agent/prompt_builder.py`) only auto-injects `SOUL.md` into the identity slot if it lives at `$CHIPER_HOME/SOUL.md`. For multi-persona environments, store identities under `$CHIPER_HOME/souls/<soul_id>.md` and mirror the active selection to `$CHIPER_HOME/SOUL.md` on switch. See `references/multi-soul-and-interactive-gateway-ux.md`.
+
+7. **Forcing CLI/server commands in chat for interactive inputs.** When a gateway button invites user input (e.g. `Add your SOUL.md`), never demand that users type complex command syntax (`/soul add ...`) or edit files on the server. Implement a conversational state (`_pending_*_prompt`) in the platform adapter so the user can directly type the instructions or drop a `.md` file in chat.
+
+8. **The Persona-Without-Body Trap (Converting External Agent Workspaces into Souls).** Copying an external agent's `SOUL.md` into `~/.chiper/souls/` without migrating its companion `skills/`, `tools/`, and runtime dependencies creates a persona that claims capabilities it cannot execute. A complete Chiper soul conversion requires the 4-pillar integration: (1) persona template in `~/.chiper/souls/`, (2) skills suite under `~/.chiper/skills/<ecosystem>/`, (3) executable scripts and Python venv dependencies, and (4) registering soul metadata in `agent/soul_manager.py`. See `references/converting-external-agent-workspaces-to-souls.md`.
+
+9. **Cryptic Flat File Naming in Imported Skill Ecosystems.** When converting external or community skill packs that use numbered files (`m1.md`, `m31.md`, `x1.md`), do not leave them as a flat soup of cryptic markdown files. Reorganize them into clean, self-contained subdirectories named after their specific domain with a standard `chiper-` prefix (`chiper-airdrop-intelligence/SKILL.md`, `chiper-web3-onchain-ops/SKILL.md`) matching standard YAML frontmatter (`name: chiper-<slug>`, `description: ...`), while creating relative symlinks in `skills/` (`m31.md -> ../chiper-airdrop-intelligence/SKILL.md`) to preserve backward compatibility for legacy scripts.
+
+10. **Clean Persona Display Names vs Raw Markdown Headers.** The first line of `SOUL.md` should cleanly state the persona name (`# Chiper-Web3`), avoiding long verbose descriptions or prefixes like `# SOUL.md — ...`, so that automated parsers and gateway inline keyboards render clean, readable buttons (`⚡ Chiper-Web3`) without overflowing or displaying fallback icons (`🧠`).
+
+11. **Python 3.11 f-String Backslash Syntax Errors.** Backslashes inside f-string `{...}` expressions (e.g. inline raw regex defaults `r'flag\{.*\}'`) fail with `SyntaxError` on Python 3.11 (PEP 701 backslash support is Python 3.12+). Always extract regex literals to local variables before string interpolation.
+
+12. **Monolithic Memory in Multi-Soul Systems (The 95%+ Budget Trap).** Do not force all agent personas to share a single global `MEMORY.md`. High-information workloads (bounties, contracts) quickly exhaust character limits and contaminate reasoning context. Isolate long-term notes under `~/.chiper/memories/souls/<soul_id>.md`, swap them on persona switch via `sync_soul_memory_on_switch()`, and auto-mirror live memory tool writes while keeping `USER.md` global. See `references/isolated-soul-memory-architecture.md`.
+
+13. **Vague Verification and AI Rationalization.** Models tend to rationalize skipping verification or test steps when under token/turn pressure. Every production skill should define explicit "When NOT to Use" boundaries, an Anti-Rationalization table (mapping common AI excuses to firm rebuttals), and a hard Verification Gate requiring real tool execution proof before declaring completion.
+
+14. **The MCP Dependency Hallucination Trap.** When porting external skills designed for proprietary or editor-specific MCP servers (e.g. Chrome DevTools MCP, Figma MCP), do not copy the tool instructions verbatim without verifying the host runtime. Porting an MCP skill requires bridging it to installed local CLI tools (e.g. `agent-browser` + Chromium 157) with concrete executable syntax (`agent-browser open`, `snapshot -i`, `errors`, `screenshot`). An unadapted MCP skill causes the agent to hallucinate tool capabilities it cannot execute. See `references/integrating-production-engineering-skills.md`.
+
+15. **The Clean-Install Multi-Soul and Memory Void.** When architecting Multi-Soul personas (`~/.chiper/souls/`) and isolated soul memories (`~/.chiper/memories/souls/`), never rely solely on lazy initialization triggered by user slash commands (`/soul`). A fresh installation via `setup-chiper.sh` or `scripts/install.sh` must explicitly execute `ensure_default_souls()` and `ensure_default_soul_memories()` during setup so the default persona (`chiper-cyber.md`) and memory stores are populated out-of-the-box. Furthermore, runtime loaders (`load_soul_md()` and `load_from_disk()`) must incorporate self-healing fallbacks that auto-regenerate default souls and memories if the files are ever manually deleted. See `references/clean-install-multi-soul-verification.md`.
+
+16. **The Contaminated Default Memory on Fresh Install (Clean-Slate Soul Memory Isolation).** When configuring multi-soul systems with isolated per-persona memories (`DEFAULT_SOUL_MEMORIES`), never pre-populate default memory templates with developer-specific credentials, email addresses, personal IPs, or target intel. In clean repository builds, `DEFAULT_SOUL_MEMORIES` must default to empty strings `""` for all souls (`chiper-cyber`, `chiper-hunt`, `chiper-dev`, `chiper-web3`). This ensures fresh installations on new servers start with a pristine blank slate, enabling each persona to dynamically build, record, and maintain its own context without inheriting stale or sensitive historical state.
+
+17. **Disclosed Security Reports vs GitHub Push Protection (GH013).** When bundling bug bounty reference materials, CVE writeups, or disclosed report archives into a skill repository, sample payloads and redacted HTTP dumps frequently contain tokens that match GitHub secret scanning signatures (npm `_authToken=...`, Salesforce `sid=00D...`, Facebook Graph API `EAA...`). Merely pushing a patch commit on top will fail because Git history retains the blocked commit. The required recovery protocol: (1) `git reset HEAD~1` to keep modifications unstaged, (2) run an automated regex sanitization script over all markdown, json, and text files, and (3) re-stage and commit cleanly.
+
+18. **Soul Separation over Domain Collision (Generalist vs Specialist Personas).** When integrating specialized vulnerability packages (e.g. 67 `hunt-*` commercial bug bounty checklists) alongside an enterprise offensive suite (`chiper-web-*`), avoid overloading a single persona with duplicate skill categories. Architect distinct souls with clear operational boundaries: `🛡️ Chiper-Cyber` for enterprise infrastructure, Active Directory, telecom, and defensive standards; and `🎯 Chiper-Hunt` for commercial payout-driven bounty hunting. This eliminates LLM confusion on which skill to call, optimizes token consumption, and isolates target records in dedicated soul memory. See `references/clean-slate-soul-memory-and-push-protection.md`.
+
+9. **Leading whitespace before `---`.** The validator checks `content.startswith("---")`; any leading blank line or BOM fails validation.
 
 3. **Description too generic.** Peer descriptions start with "Use when ..." and describe the *trigger class*, not the one task. "Use when debugging X" > "Debug X".
 
@@ -154,7 +188,7 @@ Pick the closest existing category. Don't invent new top-level categories casual
 
 ## Verification Checklist
 
-- [ ] File is at `skills/<category>/<name>/SKILL.md` (not in `~/.chiper/skills/`)
+- [ ] File is at `skills/<category>/<name>/SKILL.md` (not in `~/.chiperflux/skills/`)
 - [ ] Frontmatter starts at byte 0 with `---`, closes with `\n---\n`
 - [ ] `name`, `description`, `version`, `author`, `license`, `metadata.chiper.{tags, related_skills}` all present
 - [ ] Name ≤ 64 chars, lowercase + hyphens

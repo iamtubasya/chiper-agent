@@ -27,7 +27,7 @@ if command -v gh &>/dev/null && gh auth status &>/dev/null; then
 else
   AUTH="git"
   if [ -z "$GITHUB_TOKEN" ]; then
-    if _chiper_env="${CHIPER_HOME:-$HOME/.chiper}/.env"; [ -f "$_chiper_env" ] && grep -q "^GITHUB_TOKEN=" "$_chiper_env"; then
+    if _chiper_env="${CHIPER_HOME:-$HOME/.chiperflux}/.env"; [ -f "$_chiper_env" ] && grep -q "^GITHUB_TOKEN=" "$_chiper_env"; then
       GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_chiper_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
     elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
       GITHUB_TOKEN=$(grep "github.com" ~/.git-credentials 2>/dev/null | head -1 | sed 's|https://[^:]*:\([^@]*\)@.*|\1|')
@@ -101,7 +101,7 @@ cd /path/to/existing/project
 gh repo create my-project --source . --public --push
 ```
 
-**With git + curl:**
+**With git + curl / Python:**
 
 ```bash
 # Create the remote repo via API
@@ -112,8 +112,7 @@ curl -s -X POST \
     "name": "my-new-project",
     "description": "A useful tool",
     "private": false,
-    "auto_init": true,
-    "license_template": "mit"
+    "auto_init": false
   }'
 
 # Clone it
@@ -125,8 +124,37 @@ cd /path/to/existing/project
 git init
 git add .
 git commit -m "Initial commit"
+git branch -M main
 git remote add origin https://github.com/$GH_USER/my-new-project.git
-git push -u origin main
+
+# Secure push without leaking token in .git/config:
+# Passing token directly to the push command preserves clean remote URLs in .git/config
+git push -u "https://x-access-token:${GITHUB_TOKEN}@github.com/${GH_USER}/my-new-project.git" main
+```
+
+**Python creation script (when curl/gh unavailable or handling secrets in code):**
+```python
+import urllib.request, json
+
+payload = json.dumps({
+    "name": "my-new-project",
+    "description": "Project description",
+    "private": False,
+    "has_issues": True
+}).encode()
+
+req = urllib.request.Request(
+    "https://api.github.com/user/repos",
+    data=payload,
+    headers={
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "User-Agent": "ChiperAgent",
+        "Content-Type": "application/json"
+    }
+)
+with urllib.request.urlopen(req) as resp:
+    res = json.loads(resp.read().decode())
+    print("Created:", res.get("html_url"))
 ```
 
 To create under an organization:
@@ -501,6 +529,103 @@ for g in json.load(sys.stdin):
     print(f\"  {g['id']}  {g['description'] or '(no desc)':40}  {files}\")"
 ```
 
+## 11. Deleting Repositories
+
+Deleting a repository requires the `delete_repo` OAuth scope on the GitHub Personal Access Token (PAT).
+
+**With gh:**
+```bash
+gh repo delete owner/repo-name --yes
+```
+
+**With Python / REST API (Standard Fallback without `gh` CLI):**
+```python
+import urllib.request
+
+token = "<GITHUB_TOKEN>"
+owner = "<OWNER>"
+repo = "<REPO>"
+
+url = f"https://api.github.com/repos/{owner}/{repo}"
+req = urllib.request.Request(
+    url,
+    headers={
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github.v3+json",
+        "User-Agent": "ChiperAgent"
+    },
+    method="DELETE"
+)
+
+try:
+    with urllib.request.urlopen(req) as resp:
+        if resp.status == 204:
+            print(f"✓ Repo {owner}/{repo} successfully deleted.")
+except urllib.error.HTTPError as e:
+    print(f"✗ Failed to delete repo: {e.code} - {e.read().decode()}")
+```
+
+> **Safety Pitfall:** Always perform a full mirror backup (`git clone --mirror https://github.com/<owner>/<repo>.git` and compress to `.tar.gz`) locally before triggering a deletion API call, as remote repository deletion is immediate and irreversible. Verify with a subsequent `GET` expecting a 404 response.
+
+## 12. Backing Up Repositories (Full Remote Mirroring & Migration)
+
+Before pushing major rewrites, experimental features, or structural refactors to an active repository, back up the complete remote repository (all branches, history, and tags) to a dedicated backup repository (e.g. `<repo>-backup`).
+
+### 1. Create the Backup Repo (via API or gh)
+
+**With gh:**
+```bash
+gh repo create my-repo-backup --private --description "Backup of my-repo before refactor"
+```
+
+**With Python / curl:**
+```python
+import urllib.request, json
+
+payload = json.dumps({
+    "name": "my-repo-backup",
+    "description": "Full backup mirror before major updates",
+    "private": True
+}).encode()
+
+req = urllib.request.Request(
+    "https://api.github.com/user/repos",
+    data=payload,
+    headers={
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+        "User-Agent": "ChiperAgent"
+    }
+)
+with urllib.request.urlopen(req) as resp:
+    res = json.loads(resp.read().decode())
+    print("Created backup repo:", res["html_url"])
+```
+
+### 2. Push Full Mirror Without Failing on Read-Only Refs
+
+> **Critical GitHub Pitfall (`refs/pull/*` Rejection):**
+> When cloning a GitHub repository with `git clone --mirror` and attempting `git push --mirror <backup_url>`, GitHub will fail and abort with:
+> `! [remote rejected] refs/pull/1/head -> refs/pull/1/head (deny updating a hidden ref)`
+> This occurs because GitHub's internal pull-request references (`refs/pull/*`) are strictly read-only and immutable.
+> 
+> **The Safe Solution:**
+> Push all branch heads and tags explicitly rather than using bare `--mirror`:
+> ```bash
+> git clone --mirror https://x-access-token:${GITHUB_TOKEN}@github.com/${OWNER}/${REPO}.git /tmp/${REPO}-mirror.git
+> cd /tmp/${REPO}-mirror.git
+> git push https://x-access-token:${GITHUB_TOKEN}@github.com/${OWNER}/${REPO}-backup.git "refs/heads/*:refs/heads/*" --tags
+> rm -rf /tmp/${REPO}-mirror.git
+> ```
+
+### 3. Verification Step
+Always verify that the latest commit SHA on `refs/heads/main` (or default branch) matches between original and backup via API before pushing new commits to the primary repo:
+```bash
+SRC_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/${OWNER}/${REPO}/commits/main | jq -r .sha)
+BAK_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/${OWNER}/${REPO}-backup/commits/main | jq -r .sha)
+[ "$SRC_SHA" = "$BAK_SHA" ] && echo "✓ Backup verified exact match: $SRC_SHA"
+
 ## Quick Reference Table
 
 | Action | gh | git + curl |
@@ -514,3 +639,4 @@ for g in json.load(sys.stdin):
 | List workflows | `gh workflow list` | `curl GET /repos/o/r/actions/workflows` |
 | Rerun CI | `gh run rerun ID` | `curl POST /repos/o/r/actions/runs/ID/rerun` |
 | Set secret | `gh secret set KEY` | `curl PUT /repos/o/r/actions/secrets/KEY` (+ encryption) |
+| Backup/Mirror | `gh repo create o/r-bak --private` | `curl POST /user/repos` + `git push bak "refs/heads/*:refs/heads/*" --tags` |

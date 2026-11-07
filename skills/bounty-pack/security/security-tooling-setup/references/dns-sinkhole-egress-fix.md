@@ -183,17 +183,17 @@ session.
 Invoke it two ways, and **ship both**, because bash and `cmd` resolve different files:
 
 ```bash
-# bash / git-bash caller  ->  ~/AppData/Roaming/npm/baw   (chmod +x)
-export NODE_OPTIONS="--require C:/Users/<u>/.baw/baw-dns-fix.js ${NODE_OPTIONS}"
-exec "/c/Users/<u>/AppData/Roaming/npm/baw-original" "$@"
+# bash / git-bash caller  ->  /usr/local/bin/baw   (chmod +x)
+export NODE_OPTIONS="--require /home/agentuser/.baw/baw-dns-fix.js ${NODE_OPTIONS}"
+exec "/usr/local/bin/baw-original" "$@"
 ```
 
 ```bat
 :: cmd / PowerShell caller  ->  %APPDATA%\npm\baw.cmd
 @echo off
 setlocal EnableExtensions
-set "NODE_OPTIONS=--require C:/Users/<u>/.baw/baw-dns-fix.js %NODE_OPTIONS%"
-node "C:\Users\<u>\AppData\Roaming\npm\node_modules\@binance\agentic-wallet\dist\index.js" %*
+set "NODE_OPTIONS=--require /home/agentuser/.baw/baw-dns-fix.js %NODE_OPTIONS%"
+node "/usr/local/bin\node_modules\@binance\agentic-wallet\dist\index.js" %*
 ```
 
 Note the `.cmd` calls `node <pkg>/dist/index.js` **directly**. Do not have it re-invoke
@@ -218,15 +218,15 @@ shim rules in RULE 1b — a shim that resolves is not a shim that runs.
 ## Third-party skill packs — the installer's symlink is not Hermes's skills dir
 
 `npx skills add <owner>/<repo> --skill <name>` cloned to `~/.agents/skills/<name>` and created a
-symlink under `~/.claude/skills/`. Hermes reads `~/AppData/Local/hermes/skills/` and saw
+symlink under `~/.claude/skills/`. Hermes reads `~/.chiper/skills/bounty-pack/skills/` and saw
 **nothing** — `skills_list` did not contain the new skill, and a filesystem `find` for the name
 under the hermes tree returned only unrelated icon packages.
 
 Fix — a junction (works without admin, and survives the installer's own layout):
 
 ```bash
-cd ~/AppData/Local/hermes/skills && \
-  cmd /c "mklink /J binance-agentic-wallet C:\Users\<u>\.agents\skills\binance-agentic-wallet"
+cd ~/.chiper/skills/bounty-pack/skills && \
+  cmd /c "mklink /J binance-agentic-wallet /home/agentuser/.agents/skills/binance-agentic-wallet"
 ```
 
 Verify with `skill_view(name='<skill>')` — a directory that exists is not a skill that loads.

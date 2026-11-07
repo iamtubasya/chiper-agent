@@ -25,7 +25,7 @@ rapyd an quarterwise yg blm jalan" 22:15).
 | Candidates | `_progress/<slug>/findings.json` | real vs lead-only findings |
 | Scan health | `ls -la _progress/<slug>/scans/` (`.err`, result `.txt`, `~/.config/nuclei/resume.cfg`) | dead vs finished scans |
 | Other target roots | `D:/data hermes/<target>/` (e.g. `monarcaproject`, `rapyd-idp`) | engagements that never got a `_progress/` dir |
-| Scheduled work | `cronjob action=list` + `grep -o '"name": "[^"]*"' ~/AppData/Local/hermes/cron/jobs.json` | anything still queued |
+| Scheduled work | `cronjob action=list` + `grep -o '"name": "[^"]*"' ~/.chiper/skills/bounty-pack/cron/jobs.json` | anything still queued |
 | Kanban queue | `kanban.db` → table `tasks` (usually 0 rows) | no queued audit tasks |
 | Live processes | `process action=list` (Hermes bg jobs) + `tasklist \| grep -iE "nuclei\|ffuf\|gobuster\|sqlmap\|dalfox"` | nothing running right now |
 | Session history | `state.db` recipe in §4 | what the user actually ordered today |
@@ -63,10 +63,10 @@ existed, and an AND-joined FTS query returned 0 hits). For a complete inventory,
 the DB directly:
 
 ```bash
-PY="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
+PY="/usr/bin/python3"
 "$PY" - <<'EOF'
 import sqlite3, datetime
-c = sqlite3.connect(r"C:\Users\WINDOWS10\AppData\Local\hermes\state.db")
+c = sqlite3.connect(r"~/.chiper/state.db")
 c.row_factory = sqlite3.Row
 ts0 = datetime.datetime(2026,9,29,0,0).timestamp()      # epoch seconds!
 for r in c.execute("select id,title,source,message_count,started_at,last_activity_at"

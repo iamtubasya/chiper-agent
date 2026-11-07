@@ -10,7 +10,7 @@ Measured on one full web run (0A→0C), 2026-10-14.
 - **No `--help`.** The first positional arg must be the target URL; `--help` is parsed as a
   target and dies with `target tidak dikenali tipe-nya`. Read the `add_argument`/usage block
   from the script source instead (`grep -n "add_argument" audit-pipeline-orchestrator.py`).
-- State persists per-target under `~/AppData/Local/hermes/poc-plans/orchestrator-<slug>/`;
+- State persists per-target under `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<slug>/`;
   a failed invocation still writes state, and re-running the fixed command resumes cleanly.
 
 ## 1. Background the orchestrator with a timeout that fits a real run
@@ -122,10 +122,10 @@ wrong; **12 runs had completed**. Never answer "is this job done?" from a direct
 
 Authoritative completion evidence, in order:
 
-1. `~/AppData/Local/hermes/trackers/force-state-<slug>.json` → `"status": "complete"` = the C1
+1. `~/.chiper/skills/bounty-pack/trackers/force-state-<slug>.json` → `"status": "complete"` = the C1
    (force-full-execution) completion marker. It is hardened: `_force_state_complete()` cross-checks
    the marker against `tool-evidence/`, so a marker whose evidence was quarantined no longer counts.
-2. `~/AppData/Local/hermes/trackers/phase-watch-state.json` → per run
+2. `~/.chiper/skills/bounty-pack/trackers/phase-watch-state.json` → per run
    `"orchestrator-<slug>": { "phase": "0A"…"0F", "complete": bool, "last_heartbeat_ts": … }`.
    `phase == "0C"` + `complete: false` is the *normal* mid-run state. `last_heartbeat_ts`
    (`ls -l --time-style=full-iso` on the run dir, newest mtime) is the liveness signal.
@@ -212,7 +212,7 @@ runner moved on and invoked the tool again, so the orphaned one is provably not 
 Unblock (the sanctioned lever, never a code change):
 
 ```bash
-python ~/AppData/Local/hermes/scripts/toolguard.py unblock --pid <wrapper-pid>
+python ~/.chiper/skills/bounty-pack/toolguard.py unblock --pid <wrapper-pid>
 # equivalent: taskkill /F /T /PID <wrapper-pid>
 ```
 
@@ -241,7 +241,7 @@ dead (killed by RAM pressure days ago), so the real work is making sure it **sta
 | mechanism | how to check | what it means |
 |---|---|---|
 | Scheduled Task | `Get-ScheduledTask` filtered on `audit\|pipeline\|orchestr\|bounty` + `Actions.Execute -match 'audit-pipeline\|orchestrator'` | self-healing relauncher; needs `Disable-ScheduledTask` |
-| hermes cron — **watchdogs** | read `~/AppData/Local/hermes/cron/jobs.json`, inspect each `prompt`/`script` | **monitors that ALERT, they do not relaunch the pipeline** |
+| hermes cron — **watchdogs** | read `~/.chiper/skills/bounty-pack/cron/jobs.json`, inspect each `prompt`/`script` | **monitors that ALERT, they do not relaunch the pipeline** |
 | deep-audit arm | `python scripts/deep-audit-mode.py status` | an armed job keeps getting nagged until gated; `disarm <url>` to stop |
 
 Measured 2026-10-15: the three recurring pipeline-related cron jobs on this host are

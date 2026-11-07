@@ -29,7 +29,7 @@
 > that path produced `labelIds: ['DRAFT']` first time, every time (uid-visible, PDF sha256 matched).
 >
 > Before declaring the REST token dead, actually try `Credentials.refresh(Request())`. On this host the
-> token at `~/AppData/Local/hermes/google_token.json` carried `gmail.modify` + `gmail.send` and
+> token at `~/.chiper/skills/bounty-pack/google_token.json` carried `gmail.modify` + `gmail.send` and
 > refreshed cleanly on 2026-10-25 despite a long-standing note that it was revoked; a stale note sent
 > the whole engagement down the IMAP path for three findings. The wrong token is also easy to pick:
 > `~/.hermes/google_token.json` is **calendar-only**, while `token_path()` resolves the AppData one

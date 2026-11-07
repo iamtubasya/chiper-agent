@@ -1,9 +1,9 @@
 # Audit pipeline: the current phase model and how to force a genuinely fresh run
 
 Applies to `audit-pipeline-orchestrator.py` / `audit-run-all.py` in
-`~/AppData/Local/hermes/scripts/` — **the LIVE toolkit, which is the source of truth.**
+`~/.chiper/skills/bounty-pack/` — **the LIVE toolkit, which is the source of truth.**
 The `bundle-src/...` tree is a synced *copy* for shipping; keep them equal with
-`python ~/AppData/Local/hermes/scripts/bundle-sync.py sync` (drift check: `... check`).
+`python ~/.chiper/skills/bounty-pack/bundle-sync.py sync` (drift check: `... check`).
 
 ## 1. The phase model is 0A → 0F (not 0A → 0D)
 
@@ -52,7 +52,7 @@ python <bundle>/toolkit/scripts/audit-pipeline-orchestrator.py \
 - `--scope` is **mandatory**: without it the 0A-SCOPE gate aborts with
   `"❌ SCOPE GATE: --scope WAJIB diisi ... Pipeline ditolak sebelum menembak request apa pun."`
 - `--output-dir` is NOT honoured by the orchestrator (it derives the dir from the target:
-  `~/AppData/Local/hermes/poc-plans/orchestrator-<target-with-underscores>`). `audit-run-all.py`
+  `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<target-with-underscores>`). `audit-run-all.py`
   forwards some flags, but the orchestrator itself only parses `--tech/--scope/--exclude`.
 - Run it in the background with notify: it is long, and it can die mid-0C without a non-zero exit that
   you would otherwise notice.
@@ -61,7 +61,7 @@ python <bundle>/toolkit/scripts/audit-pipeline-orchestrator.py \
 
 Even after moving the poc-plans output dir aside, the orchestrator printed
 `RESUME MODE: already completed ['0A', '0B'] — skip those` and jumped straight into 0C. The phase state
-lives OUTSIDE the output dir, in `~/AppData/Local/hermes/trackers/`:
+lives OUTSIDE the output dir, in `~/.chiper/skills/bounty-pack/trackers/`:
 
 | File | Role |
 |---|---|
@@ -72,7 +72,7 @@ lives OUTSIDE the output dir, in `~/AppData/Local/hermes/trackers/`:
 Reset procedure (archive, never delete — the operator's rule is "don't delete state without asking"):
 
 ```bash
-cd ~/AppData/Local/hermes/trackers
+cd ~/.chiper/skills/bounty-pack/trackers
 for f in "audit-pipeline-https___target.example.json" \
          "force-state-https___target.example.json" "https___target.example.json"; do
   [ -f "$f" ] && mv "$f" "$f.bak_$(date +%Y%m%d_%H%M)"
@@ -102,7 +102,7 @@ A full reset (§3) throws away 40 minutes of 0A–0C for nothing; no reset at al
 ```python
 # keep the expensive upstream phases, re-run only 0E onward
 import json
-f = r"~/AppData/Local/hermes/trackers/audit-pipeline-https___<target>.json"
+f = r"~/.chiper/skills/bounty-pack/trackers/audit-pipeline-https___<target>.json"
 d = json.load(open(f, encoding="utf-8"))
 KEEP = ("0A", "0B", "0C", "0D")          # phases you did NOT touch
 d["completed_phases"] = [p for p in d["completed_phases"] if p in KEEP]

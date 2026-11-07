@@ -4,7 +4,7 @@
 
 **MANDATORY:** Before claiming ANY phase complete, run verification checkpoint:
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-checkpoint.py <target_dir> --phase <phase>
+python ~/.chiper/skills/bounty-pack/audit-checkpoint.py <target_dir> --phase <phase>
 ```
 Only claim COMPLETE if checkpoint returns ALL ✅. If any ❌, that phase was NOT done.
 The checkpoint reads ACTUAL FILES FROM DISK — not self-reported claims.
@@ -22,7 +22,7 @@ If checkpoint shows incomplete → DO NOT GENERATE REPORT. Go back and finish.
 
 **⛔ Auto-save state after every step:**
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-state.py save <target> --phase <X> --step "<what>"
+python ~/.chiper/skills/bounty-pack/audit-state.py save <target> --phase <X> --step "<what>"
 ```
 
 **Prohibited claims:**

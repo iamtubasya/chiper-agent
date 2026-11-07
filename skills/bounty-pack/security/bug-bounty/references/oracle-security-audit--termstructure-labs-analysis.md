@@ -76,5 +76,5 @@ When returns false, `getPrice()` reverts with `OracleIsNotWorking`. This is DoS,
 - **Admin:** 0x8409a9C1A911CED491892c5694E43994c9d47E8f
 
 ## Files
-- PoC: `~/AppData/Local/Temp/PoC_Oracle_Timelock_Bypass.t.sol`
-- Report: `~/AppData/Local/Temp/termstructure-bounty-final-report.md`
+- PoC: `/tmp/PoC_Oracle_Timelock_Bypass.t.sol`
+- Report: `/tmp/termstructure-bounty-final-report.md`

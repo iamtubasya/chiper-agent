@@ -8,10 +8,10 @@
 # directory is gone would make --resume skip 0A/0B whose artifacts no longer exist (§15.1).
 set -u
 
-PY="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
-SCRIPTS="C:/Users/WINDOWS10/AppData/Local/hermes/scripts"
-PLANS="C:/Users/WINDOWS10/AppData/Local/hermes/poc-plans"
-TRACK="C:/Users/WINDOWS10/AppData/Local/hermes/trackers"
+PY="/usr/bin/python3"
+SCRIPTS="~/.chiper/skills/bounty-pack"
+PLANS="~/.chiper/skills/bounty-pack/poc-plans"
+TRACK="~/.chiper/skills/bounty-pack/trackers"
 LOGDIR="$PLANS/_rerun-queue"
 mkdir -p "$LOGDIR"
 
@@ -90,7 +90,7 @@ echo "QUEUE DONE $(date '+%Y-%m-%d %H:%M:%S')"
 echo "--- final phase state (authoritative: trackers/phase-watch-state.json, §10) ---"
 "$PY" - <<'PYEOF'
 import json
-p = r"C:\Users\WINDOWS10\AppData\Local\hermes\trackers\phase-watch-state.json"
+p = r"~/.chiper/trackers/phase-watch-state.json"
 try:
     s = json.load(open(p, encoding="utf-8"))
 except Exception as e:

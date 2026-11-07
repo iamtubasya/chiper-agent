@@ -35,7 +35,7 @@ the shell-token redaction already documented in this skill. Workaround — extra
 string ops and `chr(34)` so no secret-shaped literal is ever written:
 ```python
 Q = chr(34)
-for ln in open("C:/Users/WINDOWS10/check_basabasi_email.py").read().splitlines():
+for ln in open("/home/agentuser/check_basabasi_email.py").read().splitlines():
     s = ln.strip()
     if s.startswith("APP_PASSWORD"): pw = s[s.find(Q)+1:s.rfind(Q)]
     elif s.startswith("EMAIL"):       em = s[s.find(Q)+1:s.rfind(Q)]

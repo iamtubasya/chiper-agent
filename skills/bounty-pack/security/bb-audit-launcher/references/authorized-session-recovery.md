@@ -35,7 +35,7 @@ Copy the profile, delete `Default/Network/Cookies-journal`, `lockfile`, `Singlet
 a throwaway Chrome:
 
 ```
-chrome.exe --user-data-dir="C:\Users\<u>\qw_probe_0" --remote-debugging-port=9340 \
+chrome.exe --user-data-dir="/home/agentuser/qw_probe_0" --remote-debugging-port=9340 \
            --remote-allow-origins=* --no-first-run --no-default-browser-check --headless=new
 ```
 

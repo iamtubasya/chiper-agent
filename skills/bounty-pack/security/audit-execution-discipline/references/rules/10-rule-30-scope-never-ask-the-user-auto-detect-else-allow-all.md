@@ -1,4 +1,4 @@
-## ⛔ RULE 30: SCOPE — NEVER Ask the User (Auto-Detect, Else Allow-All)
+## ⛔ RULE 30: SCOPE — Resolve Deterministically, Ask ONCE if No Scope (Hard Rule #1 SOUL.md Wins)
 
 **User correction (2026-09-26): \"Kamu jgn tanya scope lg sm saya, kamu yg cari, kl mmg gkad scope, artinya semua lini, semua sisi target adalah scope\" + \"kok semua nanya2 terus, lakukan aja udah\"**
 

@@ -292,8 +292,8 @@ so the bug looks intermittent. The system resolver is DHCP-configured, so you
 **cannot** fix it by editing DNS settings.
 
 ```bash
-PY314="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
-"$PY314" ~/AppData/Local/hermes/scripts/dnsfix.py     # prints HIJACKED / ok per host
+PY314="/usr/bin/python3"
+"$PY314" ~/.chiper/skills/bounty-pack/dnsfix.py     # prints HIJACKED / ok per host
 ```
 
 `scripts/dnsfix.py` resolves the DoH truth (cloudflare-dns.com / dns.google) and
@@ -311,9 +311,9 @@ for `SNI=example.com` against `20.43.161.105` returned `CN=*.duckduckgo.com`.
 The certificate followed the **SNI**, not the IP — that is the tell.
 
 ```bash
-PY314="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
-"$PY314" ~/AppData/Local/hermes/scripts/dnsfix.py            # layer 1 only
-"$PY314" ~/AppData/Local/hermes/scripts/dnsfix.py --full     # layers 1+2 + verdict
+PY314="/usr/bin/python3"
+"$PY314" ~/.chiper/skills/bounty-pack/dnsfix.py            # layer 1 only
+"$PY314" ~/.chiper/skills/bounty-pack/dnsfix.py --full     # layers 1+2 + verdict
 ```
 
 Exit codes: `0` clean · `1` DNS hijack only · `2` hijack **+** TCP interception.
@@ -369,8 +369,8 @@ with its own DNS bypass:
   single premium worker for the hardest targets.
 
 ```bash
-PY314="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
-cd ~/AppData/Local/hermes/scripts
+PY314="/usr/bin/python3"
+cd ~/.chiper/skills/bounty-pack
 "$PY314" dork-pool.py --target target.com                     # auto workers from free RAM
 "$PY314" dork-pool.py --target target.com --workers 3 --premium
 "$PY314" dork-pool.py --target target.com --queries dorks.txt --out ./dp
@@ -387,8 +387,8 @@ The flat dork list is replaced by **11 categories**, so an agent can hand the
 operator a clean per-category worklist instead of one soup of 300 queries:
 
 ```bash
-PY314="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
-cd ~/AppData/Local/hermes/scripts
+PY314="/usr/bin/python3"
+cd ~/.chiper/skills/bounty-pack
 "$PY314" dorkgen.py --list-cats                                  # 11 cats, 61 dorks
 "$PY314" dorkgen.py --target target.com --format md              # human list
 "$PY314" dorkgen.py --target target.com --format json --out d.json
@@ -406,7 +406,7 @@ The contracts get audited; the money leaks from the infra around them. Container
 **free** tooling (no Shodan/FOFA/ZoomEye key needed, so it works on this box):
 
 ```bash
-"$PY314" ~/AppData/Local/hermes/scripts/web3-infra-recon.py \
+"$PY314" ~/.chiper/skills/bounty-pack/web3-infra-recon.py \
     --target project.xyz --out ./web3-recon
 "$PY314" web3-infra-recon.py --target project.xyz --rpc https://rpc.project.xyz
 ```

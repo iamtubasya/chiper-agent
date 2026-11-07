@@ -33,7 +33,7 @@ import sys
 import textwrap
 from pathlib import Path
 
-DEFAULT_ORCH = Path.home() / "AppData/Local/hermes/scripts/audit-pipeline-orchestrator.py"
+DEFAULT_ORCH = Path.home() / "~/.chiper/skills/bounty-pack/audit-pipeline-orchestrator.py"
 
 
 def extract_reaper_block(src: str) -> str:

@@ -29,7 +29,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-HERMES = Path(os.environ.get("LOCALAPPDATA", str(Path.home() / "AppData/Local"))) / "hermes"
+HERMES = Path(os.environ.get("CHIPER_HOME", str(Path.home() / ".chiper")))
 
 
 def ps_csv(ps_cmd: str):

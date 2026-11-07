@@ -113,7 +113,7 @@ Use Etherscan **V2**, not the per-chain V1 host — V1 is retired and answers
 which is easy to misread as "no source published":
 
 ```bash
-KEY=$(cat ~/AppData/Local/hermes/secrets/etherscan.key)
+KEY=$(cat ~/.chiper/skills/bounty-pack/secrets/etherscan.key)
 curl -sS "https://api.etherscan.io/v2/api?chainid=8453&module=contract&action=getsourcecode&address=$A&apikey=$KEY"
 # fields: SourceCode ('' = unverified), ContractName, Proxy ('1'/'0'), Implementation
 ```
@@ -521,7 +521,7 @@ the orphaned `solc`/`forge` children (they survive the parent) so you don't leav
 - `Wsl/Service/CreateInstance/CreateVm/ERROR_TIMEOUT` on a specific distro is transient: loop
   `wsl --terminate Ubuntu; sleep 6; wsl -d Ubuntu -- true` up to 5× before delegating work. Other distros
   (e.g. a bare `Ubuntu-26.04`) boot fine but have no tooling installed — do not assume they are usable.
-- `write_file` to `/tmp/x.py` on Windows lands in `C:/Users/<u>/AppData/Local/Temp`, but a *program*
+- `write_file` to `/tmp/x.py` on Windows lands in `~/.local/share/Temp`, but a *program*
   running with cwd on `D:` resolves `/tmp/x.py` to `D:/tmp/x.py`. Pass absolute Windows paths to python.
 - `MSYS_NO_PATHCONV=1` + `<<'PY'` heredocs mangle backslashes inside regexes; write the script to a file
   and run it instead.

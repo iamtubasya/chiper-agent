@@ -103,7 +103,7 @@ in this session the 400 became a clean `403 Missing permission: X`, i.e. no bug.
 
 - The bash installer fails under MSYS (`OS name could not be detected: UName = MINGW64_NT-...`). Use the
   PowerShell one:
-  `powershell -File dotnet-install.ps1 -Channel 8.0 -InstallDir C:\Users\<u>\.dotnet`
+  `powershell -File dotnet-install.ps1 -Channel 8.0 -InstallDir /home/agentuser/.dotnet`
   (and `-Channel 6.0 -Runtime dotnet` if a tool needs the older runtime).
 - **Export `DOTNET_ROOT`** or tool shims fail with `You must install .NET to run this application`
   / `Failed to resolve hostfxr.dll`.

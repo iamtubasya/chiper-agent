@@ -10366,12 +10366,12 @@ On viewing source code of main page, got this.
 On decoding base64 one of the payload got `{"target":"203.0.113.213","hash":"5aa9b5a497e3918c0e1900b2a2228c38"}`
 So same as previous challenge? but do not have any obvious thing that we control, so I started cracking the salt of hash( Using host computer for cracking, we should never use VM for cracking)
 ```
-PS C:\Users\Shubham Zodape\Downloads\hashcat-6.1.1> [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("eyJ0YXJnZXQiOiIyMDMuMC4xMTMuMjEzIiwiaGFzaCI6IjVhYTliNWE0OTdlMzkxOGMwZTE5MDBiMmEyMjI4YzM4In0="))
+PS /home/agentuser Zodape\Downloads\hashcat-6.1.1> [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("eyJ0YXJnZXQiOiIyMDMuMC4xMTMuMjEzIiwiaGFzaCI6IjVhYTliNWE0OTdlMzkxOGMwZTE5MDBiMmEyMjI4YzM4In0="))
 {"target":"203.0.113.213","hash":"5aa9b5a497e3918c0e1900b2a2228c38"}
-PS C:\Users\Shubham Zodape\Downloads\hashcat-6.1.1> echo "5aa9b5a497e3918c0e1900b2a2228c38:203.0.113.213" > ip.hash
-PS C:\Users\Shubham Zodape\Downloads\hashcat-6.1.1> gc ip.hash
+PS /home/agentuser Zodape\Downloads\hashcat-6.1.1> echo "5aa9b5a497e3918c0e1900b2a2228c38:203.0.113.213" > ip.hash
+PS /home/agentuser Zodape\Downloads\hashcat-6.1.1> gc ip.hash
 5aa9b5a497e3918c0e1900b2a2228c38:203.0.113.213
-PS C:\Users\Shubham Zodape\Downloads\hashcat-6.1.1>.\hashcat.exe -m 10 .\ip.hash .\rockyou.txt
+PS /home/agentuser Zodape\Downloads\hashcat-6.1.1>.\hashcat.exe -m 10 .\ip.hash .\rockyou.txt
 5aa9b5a497e3918c0e1900b2a2228c38:203.0.113.213:mrgrinch463
 ```
 Got the salt as `mrgrinch463`, the hash is calculated by `md5(salt+ip)`.

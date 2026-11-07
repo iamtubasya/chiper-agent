@@ -146,13 +146,13 @@ page = ctx.pages[0]
 r = await page.request.get("https://yandex.com/bugbounty/llms.txt")
 text = await r.text()   # clean plain text, no <html> wrapper
 ```
-Profile dir: `~/AppData/Local/hermes/browser-profiles/yandex`. See `bot-protected-target-testing`
+Profile dir: `~/.chiper/skills/bounty-pack/browser-profiles/yandex`. See `bot-protected-target-testing`
 for the general anti-bot doctrine.
 
 ## 8. Command (PowerShell, ready to run)
 
 ```powershell
-$env:BB_GENTLE="1"; python C:\Users\WINDOWS10\AppData\Local\hermes\scripts\audit-pipeline-orchestrator.py "https://yandex.ru" --scope "*.yandex.ru,*.yandex.com,*.yandex.com.tr,*.yandex.kz,*.yandex.by,*.yandex.st,*.yandex.net,*.ya.ru,*.yandex-bank.net,*.kinopoisk.ru,*.edadeal.ru,*.bookmate.ru,*.band.link"
+$env:BB_GENTLE="1"; python ~/.chiper/skills/bounty-pack/audit-pipeline-orchestrator.py "https://yandex.ru" --scope "*.yandex.ru,*.yandex.com,*.yandex.com.tr,*.yandex.kz,*.yandex.by,*.yandex.st,*.yandex.net,*.ya.ru,*.yandex-bank.net,*.kinopoisk.ru,*.edadeal.ru,*.bookmate.ru,*.band.link"
 ```
 
 Suggested highest-value surface per reward table: (A) Yandex ID / Mail auth — ATO $36k / IDOR $6k;

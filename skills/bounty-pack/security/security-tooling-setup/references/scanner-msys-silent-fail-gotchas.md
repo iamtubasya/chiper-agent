@@ -8,19 +8,19 @@ never ran". All three are MSYS-vs-native-path / flag-name traps, not tool defect
 ## 1. `~` is NEVER translated for native Go binaries (nuclei, ffuf, httpx, subfinder, dnsx, gau, katana)
 
 In git-bash `~` expands, but the Go binary does not resolve `~/wordlists/x.txt` or `-o ~/foo.json`.
-Pass **native Windows paths** (`C:/Users/WINDOWS10/...`):
+Pass **native Windows paths** (`/home/agentuser/...`):
 
 ```bash
 # WRONG — writes nothing, exit 0
 ffuf -u https://app/FUZZ -w ~/wordlists/api-endpoints.txt -o ~/ffuf.json
 # RIGHT
-ffuf -u "https://app/FUZZ" -w "C:/Users/WINDOWS10/wordlists/api-endpoints.txt" \
-     -o "C:/Users/WINDOWS10/bounty/web2-50/glia/ffuf.json"
+ffuf -u "https://app/FUZZ" -w "/home/agentuser/wordlists/api-endpoints.txt" \
+     -o "/home/agentuser/bounty/web2-50/glia/ffuf.json"
 ```
 
-`nuclei -t` is the same: it needs the **native** template dir (`C:/Users/WINDOWS10/nuclei-templates/...`),
+`nuclei -t` is the same: it needs the **native** template dir (`/home/agentuser/nuclei-templates/...`),
 and the bash `~` form gets from-defaulted-away ("Could not find template"). Verify the template dir
-exists first (`find C:/Users/WINDOWS10/nuclei-templates -name '*.yaml' | wc -l` → 14k+).
+exists first (`find /home/agentuser/nuclei-templates -name '*.yaml' | wc -l` → 14k+).
 
 ## 2. `httpx` this build uses `-threads`, NOT `-c`
 
@@ -35,7 +35,7 @@ every row and "no templates provided / no results". Normalize to host-only befor
 
 ```bash
 awk '{print $1}' httpx_live.txt | tr -d '\r' | sed 's/[[:space:]]//g' | sort -u > live_clean.txt
-nuclei -l live_clean.txt -t "C:/Users/WINDOWS10/nuclei-templates/http/exposures/" \
+nuclei -l live_clean.txt -t "/home/agentuser/nuclei-templates/http/exposures/" \
        -rl 5 -c 2 -timeout 12 -silent -o nuclei_out.txt
 ```
 

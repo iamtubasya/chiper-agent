@@ -1,12 +1,12 @@
 # 0D/0E/0F gate pitfalls + the fixes that actually unblocked it (vana, 2026-10-12)
 
 Operator rule for this toolchain: **additive only, back up first, keep the `.bak` files, never delete.**
-(`<scripts>` = `C:/Users/<u>/AppData/Local/hermes/scripts`)
+(`<scripts>` = `~/.chiper/skills/bounty-pack`)
 
 ## Pitfalls (all observed live)
 
 1. **The orchestrator gates on ITS OWN directory, not yours.** `audit-pipeline-orchestrator.py` writes and
-   verifies in `~/AppData/Local/hermes/poc-plans/orchestrator-<host_with_underscores>/`, while hand-built
+   verifies in `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host_with_underscores>/`, while hand-built
    evidence, ledgers and `--mark` edits live in the engagement dir. Consequence: you can make
    `verify-tool-usage.py <engagement>` return `ALL 13 CHECKS PASSED` and the orchestrator still prints
    `GATE FAILED … asset-coverage FAIL for phase(s): ['0C']` + `skills loaded but NOT applied: [...]`,

@@ -62,10 +62,10 @@ OOS: automated scanner findings WITHOUT working PoC; social eng; DoS; physical; 
 - Stripe `pk_test_51Q...` in bundle `032fmyyxoxc4a.js` (test key, Low/info).
 
 ## Test accounts (self-provisioned)
-- mail.tm inbox `burnadqbx2b2yn7@fldubai.com` (creds `~/AppData/Local/hermes/burna_acct/mailtm.json`).
+- mail.tm inbox `burnadqbx2b2yn7@fldubai.com` (creds `~/.chiper/skills/bounty-pack/burna_acct/mailtm.json`).
 - Account A: owner "burnadqbx2b2yn7's Workspace" orgId `01a1a587-5bc1-79d6-aa7a-edaa4d3b3a6a`,
   userId `01a1a587-5bb8-7d78-9f77-fbc1c7af1bc9`, session token `1BY9hWqqSNJA8l0XCXVTgim1Jukf9o1F`.
-- Browser profile `~/AppData/Local/hermes/browser-profiles/burna`.
+- Browser profile `~/.chiper/skills/bounty-pack/browser-profiles/burna`.
 
 ## OPEN LEADS (unproven)
 1. `impersonatedBy:null` → admin impersonation endpoint? (ATO/critical)

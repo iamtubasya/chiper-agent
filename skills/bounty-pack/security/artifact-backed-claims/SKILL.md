@@ -255,7 +255,7 @@ The check costs one call and belongs in 0A, before the first request:
 
 ```
 session_search(query='<target> audit findings', sort='newest', limit=5)
-ls -d "D:/data hermes/_progress/"*<target>*  "$HOME/AppData/Local/hermes/poc-plans/"*<target>* 2>/dev/null
+ls -d "D:/data hermes/_progress/"*<target>*  "~/.chiper/skills/bounty-pack/poc-plans/"*<target>* 2>/dev/null
 ```
 
 Answer three things and write them into `SCOPE-<target>.md`:

@@ -33,7 +33,7 @@ afterwards: every origin path gone, protected side intact (354 SKILL.md, bundles
 | item | reported | reality | resolution |
 |---|---|---|---|
 | `poc-plans/orchestrator-yandex_fr_` | FAIL WinError 32 | move **completed** (116f in quarantine); only an empty husk remained, locked by the gateway's handle on `poc-plans/` | husk rmdir'd on a later pass |
-| `C:/Users/WINDOWS10/audit` (carbon-ms, 9,930f) | FAIL WinError 5 on `.git/objects` | copy **completed** (9,930f incl. deepest `.git/objects/pack/*`); the delete stage was locked | mirror-nuke origin after read-test passed |
+| `/home/agentuser/audit` (carbon-ms, 9,930f) | FAIL WinError 5 on `.git/objects` | copy **completed** (9,930f incl. deepest `.git/objects/pack/*`); the delete stage was locked | mirror-nuke origin after read-test passed |
 
 ## Mistakes made (why the new pitfalls exist)
 

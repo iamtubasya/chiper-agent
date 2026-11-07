@@ -28,7 +28,7 @@ Same dir, same artefacts, one `--derive` → PASS. The rework had really run the
 **Fix applied (additive, in `audit-pipeline-orchestrator.py` → `run_step5_tools()`):** after a
 successful re-run, re-derive before returning:
 ```python
-cov = Path(r"C:\Users\<u>\AppData\Local\hermes\skills\security"
+cov = Path(r"~/.chiper/skills/security"
            r"\audit-execution-discipline\scripts\asset-coverage.py")
 if cov.exists():
     _sp.run(["python", str(cov), str(self.output_dir), "--derive"], capture_output=True)
@@ -153,7 +153,7 @@ linkfinder, secretfinder, cloud_enum, kube-hunter` = all `FUZZ_ONLY` under a pas
 `force-full-execution` + the orchestrator locate tools with `shutil.which`. On Windows:
 
 * **`shutil.which` needs an extension.** A bare bash script named `linkfinder` may resolve from
-  bash but not from Python. Create **both** wrappers in a PATH dir (`C:\Users\<u>\go\bin`):
+  bash but not from Python. Create **both** wrappers in a PATH dir (`/home/agentuser/go/bin`):
   a shebang script *and* a `<name>.cmd` that calls the real script
   (`@echo off` + `python "<repo>\linkfinder.py" %*`). Verify from **bash-launched** Python
   (same env the pipeline uses): `python -c "import shutil;print([t for t in TOOLS if not shutil.which(t)])"`.
@@ -240,7 +240,7 @@ hand-running tools + hand-editing the ledger.
 
 ## 4. Canonical dir vs engagement dir — a PARTIAL copy fails the guard
 
-The orchestrator writes to `~/AppData/Local/hermes/poc-plans/orchestrator-<host>_<...>`; the gate
+The orchestrator writes to `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host>_<...>`; the gate
 you call reads **whatever dir you pass**. Copying only `*.json` + `tool-evidence/` into the
 engagement dir produces exactly three guard failures:
 

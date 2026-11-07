@@ -69,7 +69,7 @@ NOTE: the block above is the MANUAL/skill pipeline. The AUTOMATED pipeline
 0E-REVIEW = candidates 3x check (only survivors reach the report), 0F = report.
 Read audit-execution-discipline skills/security/audit-execution-discipline/references/audit-pipeline-phases-and-fresh-run.md
 before invoking it (full-URL + --scope required; stale resume state lives in
-~/AppData/Local/hermes/trackers/, not only in poc-plans).
+~/.chiper/skills/bounty-pack/trackers/, not only in poc-plans).
 
 ⚠️ BUDGET: peak cumulative WITH eviction = 120KB (under 162KB threshold)
 ⚠️ WITHOUT eviction = 249KB → compression fires → skills pruned → audit dies
@@ -256,14 +256,14 @@ before invoking it (full-URL + --scope required; stale resume state lives in
 | Tool | Path | Purpose | Phase |
 |------|------|---------|-------|
 | `subfinder` | ~/go/bin/ | Subdomain enumeration | RECON |
-| `httpx` | ~/AppData/Local/Programs/Python/ | HTTP probing + tech detect | RECON+TESTING |
+| `httpx` | /usr/bin/ | HTTP probing + tech detect | RECON+TESTING |
 | `nuclei` | ~/go/bin/ | Template-based vuln scanner | RECON+TESTING |
 | `katana` | ~/go/bin/ | JS-aware web crawler | RECON |
 | `gau` | ~/go/bin/ | Archive.org + Common Crawl URLs | RECON |
 | `waybackurls` | ~/go/bin/ | Wayback Machine URLs | RECON |
 | `ffuf` | ~/go/bin/ | Directory/parameter fuzzing | RECON+TESTING |
-| `arjun` | ~/AppData/Local/Programs/Python/ | Hidden parameter discovery | RECON |
-| `sqlmap` | ~/AppData/Local/Programs/Python/ | SQL injection automation | TESTING |
+| `arjun` | /usr/bin/ | Hidden parameter discovery | RECON |
+| `sqlmap` | /usr/bin/ | SQL injection automation | TESTING |
 | `dalfox` | ~/go/bin/ | XSS scanner + param analysis | TESTING |
 | `kxss` | ~/go/bin/ | XSS reflection finder | TESTING |
 | `gobuster` | ~/go/bin/ | Dir/DNS/VHost brute force | TESTING |

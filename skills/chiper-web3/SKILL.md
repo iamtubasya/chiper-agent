@@ -77,3 +77,18 @@ Semua modul skill diorganisir menggunakan standar prefix **`chiper-*`** yang ser
 ## Cara Memuat Skill
 - Baca langsung file: `read_file("~/.chiper/skills/chiper-web3/chiper-<nama>/SKILL.md")`
 - Atau via skill tool: `skill_view("chiper-<nama>")`
+
+## Arsitektur Isolated Soul Memory
+
+Chiper mengisolasi memori jangka panjang per jiwa (`~/.chiper/memories/souls/chiper-web3.md`):
+- **Memori Khusus Chiper-Web3:** Mencakup catatan Solana/SBF, RPC endpoints, Spend Governor limits, portofolio airdrop, dan CTF solvers.
+- **Auto-Sync:** Perubahan runtime pada `MEMORY.md` otomatis di-mirror ke file soul terkait saat switch maupun saat eksekusi tool `memory`.
+- **Profil Global:** `USER.md` tetap dibagikan secara global lintas semua jiwa (preferensi santai bahasa Indonesia, Termius/Tailscale, root access).
+
+## Konvensi Format & UI (User Enforced)
+- **Penamaan Tombol & Persona:** Wajib ringkas dan menggunakan ikon resmi (`[ ⚡ Chiper-Web3 ]`, `[ 🛡️ Chiper-Cyber ]`, `[ 💻 Chiper-Dev ]`), dilarang memunculkan raw title markdown seperti `# SOUL.md — ...`.
+- **Standar Sub-Skill:** Seluruh sub-skill wajib memakai direktori ber-prefix `chiper-*` dengan nama semantik yang jelas (contoh: `chiper-airdrop-intelligence`, bukan `m31`).
+
+## Pitfalls & Best Practices
+- **Python 3.11 F-Strings:** Hindari backslash `\` di dalam ekspresi f-string `{...}` (misal `f"{chal.get('flag', r'flag\{.*\}')}"` menyebabkan `SyntaxError` di Python 3.11). Definisikan variabel regex di luar f-string.
+- **Integritas `SKILLS.lock`:** Setelah restrukturisasi atau penambahan sub-skill baru, jalankan `python3 tools/skill_integrity.py generate` agar verifikasi integritas tetap lolos 100%.

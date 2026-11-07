@@ -13,7 +13,7 @@ Total sections: 51. Original archived at `_full-archive.md`.
 | 7 | ⛔ RULE 2: Loading ≠ Executing | `07-rule-2-loading-executing.md` | 190 |
 | 8 | ⛔ RULE 2b: Use the RIGHT tool — not just curl | `08-rule-2b-use-the-right-tool-not-just-curl.md` | 6771 |
 | 9 | Pipeline change checklist — run this after EVERY edit to a pipeline sc | `09-pipeline-change-checklist-run-this-after-every-edit-to-a-pip.md` | 15651 |
-| 10 | ⛔ RULE 30: SCOPE — NEVER Ask the User (Auto-Detect, Else Allow-All) | `10-rule-30-scope-never-ask-the-user-auto-detect-else-allow-all.md` | 1170 |
+| 10 | ⛔ RULE 30: SCOPE — Resolve Deterministically, Ask ONCE if No Scope | `10-rule-30-scope-never-ask-the-user-auto-detect-else-allow-all.md` | 1170 |
 | 11 | ⛔ RULE 31: Patch-Verify Loop — Never Trust a Patch "Succeeded" | `11-rule-31-patch-verify-loop-never-trust-a-patch-succeeded.md` | 706 |
 | 12 | ⛔ RULE 32: Multi-Topic Parallel Audits — Isolation & the "Other Topic  | `12-rule-32-multi-topic-parallel-audits-isolation-the-other-topi.md` | 1122 |
 | 13 | ⛔ RULE 2f: LONG SCANS GO TO THE BACKGROUND — NOT INTO SUBAGENTS | `13-rule-2f-long-scans-go-to-the-background-not-into-subagents.md` | 2788 |

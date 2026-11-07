@@ -4,8 +4,8 @@
 Use when an engagement needs authenticated access and the operator either does not
 remember the password or only has a still-logged-in browser profile lying around.
 
-    python chrome_profile_creds.py --profile-dir "C:/Users/X/AppData/Local/Google/Chrome/User Data" --match quarterwise
-    python chrome_profile_creds.py --profile-dir "C:/Users/X/qw_chrome_cdp_b3" --cookie-name qw_session
+    python chrome_profile_creds.py --profile-dir "~/.local/share/Google/Chrome/User Data" --match quarterwise
+    python chrome_profile_creds.py --profile-dir "/home/agentuser/qw_chrome_cdp_b3" --cookie-name qw_session
 
 Two extraction paths, both from the SAME user-data-dir:
 

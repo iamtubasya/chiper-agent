@@ -7,11 +7,11 @@ fire them at any target. This file is the build + fire recipe.
 ## Build the index (once, ~8 min for 2223 repos)
 
 ```bash
-PY="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
-$PY C:/Users/WINDOWS10/AppData/Local/hermes/scripts/poc-techniques-index.py --limit 2223
+PY="/usr/bin/python3"
+$PY ~/.chiper/skills/bounty-pack/poc-techniques-index.py --limit 2223
 ```
 
-Output: `~/AppData/Local/hermes/poc-plans/poc-techniques-index.json`
+Output: `~/.chiper/skills/bounty-pack/poc-plans/poc-techniques-index.json`
 
 Measured result (2026-09-26):
 ```

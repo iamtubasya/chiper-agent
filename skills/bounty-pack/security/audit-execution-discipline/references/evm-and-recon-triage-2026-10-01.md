@@ -25,7 +25,7 @@ Obstacles hit, in order:
 3. Get the bytecode that actually matters — the DEPLOYED one:
 
 ```bash
-export PATH="$PATH:/c/Users/WINDOWS10/.foundry/bin"
+export PATH="$PATH:/home/agentuser/.foundry/bin"
 RPC=https://ethereum-rpc.publicnode.com
 # EIP-1967 implementation slot behind a proxy
 cast storage <PROXY> 0xREDACTED_******** --rpc-url $RPC

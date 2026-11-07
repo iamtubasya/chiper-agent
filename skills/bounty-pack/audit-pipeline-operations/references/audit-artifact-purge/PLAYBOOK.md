@@ -43,11 +43,11 @@ with a manifest → verify both the deletion **and** that the protected side sur
 
 | DELETE (audit RESULTS) | NEVER TOUCH (capability) |
 |---|---|
-| `<target>-recon/`, `<target>-audit/`, e.g. `nasa-*`, `nykaa_audit`, `tv_recon`, `fireblocks-bounty`, `crowdproof-protocol` | every skill folder (`~/AppData/Local/hermes/skills/**`, bundle `skills/**`) |
+| `<target>-recon/`, `<target>-audit/`, e.g. `nasa-*`, `nykaa_audit`, `tv_recon`, `fireblocks-bounty`, `crowdproof-protocol` | every skill folder (`~/.chiper/skills/bounty-pack/skills/**`, bundle `skills/**`) |
 | `D:\data hermes\bug-bounty\_progress\<target>\` | `BUG-BOUNTY-BUNDLE-v1.zip` + `.sha256`, `bundle/`, `_toolkit-v2/`, `HUNTING-TOOLKIT-v2.zip` |
 | PoC / evidence output: `poc_*.json`, `poc_*.txt`, `*_results.json`, `*_scan_results.json`, `*_output.txt` | `_accounts/`, `_skill-backup-*/` (skill backups — the user keeps these), `rpc/`, `kebersihan-sumatra/` |
 | report PDFs / report markdown for that target + report generators | KB `.md` (`PLAYBOOK-HUNTING-v2.md`, skill `references/*.md`), usage DB (`usageDaily`) |
-| loose scripts in `C:\Users\<u>\` (`scan_*.py`, `*_source.json`, `*_subs.txt`, `*_poc.html`, `*_tabid*.txt`) | target **profiles** (`skills/vuln-hunter/profiles/<target>.yaml`) unless the operator says otherwise |
+| loose scripts in `/home/agentuser/` (`scan_*.py`, `*_source.json`, `*_subs.txt`, `*_poc.html`, `*_tabid*.txt`) | target **profiles** (`skills/vuln-hunter/profiles/<target>.yaml`) unless the operator says otherwise |
 | residual `%LOCALAPPDATA%\Temp\*<target-pattern>*` (browser dumps, cloned repos, screenshots) | non-audit Temp content — never an unpatterned `rm -rf *` in Temp |
 | per-engagement **browser profiles the hunt created** (`~/<target>_profile`, `~/<tgt>_pro_profile`, `~/<tgt>_probe_*`, `~/<tgt>_mfa_probe`) — 130–190 MB each | the operator's **pre-existing** profiles (`~/<tgt>_chrome_cdp*`) and any **pending Gmail draft** for the target — a staged draft is a deliverable he has not sent yet — **UNLESS** the delete instruction explicitly covers all results ("hapus semua hasil auditny", coderpad 2026-10-17: staged drafts included, deleted via Gmail API = trash-recoverable, draft count verified back to baseline) |
 | per-engagement tool state under `~/.<tool>/<target>` (`.ghauri/<target>`) and loose session files (`_<tgt>_sessions.json`, `_<tgt>_cred.json`) | shared credential/helper scripts (`check_*_email.py`) — used by every engagement |
@@ -125,7 +125,7 @@ Rule of thumb: **delete outputs, keep every tool, profile, skill and backup.**
    If the daemon is down you get
    `failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine` — that is
    the *safe* state (nothing is locked), but you must start the daemon to enumerate; on this
-   host it lives at `AppData\Local\Programs\DockerDesktop\Docker Desktop.exe`.
+   host it lives at `/usr/bin/docker` (Linux) / `/Applications/Docker.app` (macOS).
 
    Classify before proposing: **target env** (audit artifact — delete) vs **vuln lab**
    (`vulhub/*`, `vulnerables/web-dvwa` — reusable test scaffolding, not target output) vs
@@ -174,7 +174,7 @@ Rule of thumb: **delete outputs, keep every tool, profile, skill and backup.**
   ask *"defi-exploit-forensics td terhapus gk, aduh, ini kan skill audit"*. The **skill** was
   untouched — `skills/security/defi-exploit-forensics/` is a different tree entirely and a
   file-level purge of `_progress/` can never reach it. Two rules:
-  - Never widen a purge into `AppData\Local\hermes\skills\` to "be thorough" — the skill and the
+  - Never widen a purge into `~/.chiper/skills\` to "be thorough" — the skill and the
     output are different objects that happen to share a name.
   - When the operator raises this fear, **prove it rather than reassure**: run
     `skill_view(name)` (or `find <skills-dir> -iname "*<name>*"`) and show the skill's files
@@ -350,7 +350,7 @@ python scripts/quarantine_restore.py "$Q" --restore-exact nuclei-index.json vrt.
 ```
 
 It decodes the flattened quarantine names (`c__Users__WINDOWS10__ps3_x.html` →
-`C:/Users/WINDOWS10/ps3_x.html`), **never overwrites** an existing original
+`/home/agentuser/ps3_x.html`), **never overwrites** an existing original
 (`EXISTS` + skip), refuses directories unless `--restore-dir`, and logs
 `RESTORED|` per item. Also handy for the "you swept a skill-adjacent file" panic: point it at
 the quarantine, `--list` the name, and prove the item is still recoverable.
@@ -375,8 +375,8 @@ clean; budget for that shape instead of trying to be exhaustive in one script:
    `~/Downloads/<Target>-C1-*.pdf` report PDFs, `repair/*.pdf`.
 5. **RESTORE passes** interleaved the moment a restore candidate is identified (§3b).
 6. **Residue verification sweep last**, and it is the only one allowed to declare "clean":
-   walk `C:\Users\<u>` and `D:\` to depth 3 with a regex of every target shorthand, skipping
-   `AppData|node_modules|.git|$RECYCLE.BIN|System Volume Information|Program Files`, and write
+   walk `/home/agentuser` and `D:\` to depth 3 with a regex of every target shorthand, skipping
+   `node_modules|.git|System|Trash Volume Information|Program Files`, and write
    hits to a file. Expect it to keep returning 3–9 hits of legitimate knowledge
    (`wordlists/<target>-paths.txt`, competitor spreadsheets, `bbskills-extract-*.zip`) — those
    are *allowed residue*, say so explicitly rather than sweeping them to reach a clean count.
@@ -502,18 +502,18 @@ mobile APKs during target testing?" — **wrong**. A real inventory found:
 
 | consumer | size |
 |---|---|
-| `AppData/Local/wsl/{guid}/ext4.vhdx` (Ubuntu) | **34.2 GB** ← the actual cause |
-| `AppData/Local/Temp` | 9.0 GB |
-| `AppData/Local/Google` (Chrome user data) | 8.7 GB |
-| `AppData/Local/Programs` | 7.7 GB |
+| `WSL ext4 disk` (Ubuntu) | **34.2 GB** ← the actual cause |
+| `/tmp` | 9.0 GB |
+| `/home/agentuser/.config/google-chrome` (Chrome user data) | 8.7 GB |
+| `/usr/local` | 7.7 GB |
 | `.gradle` | 845 MB (tooling — keep) |
 
 Only two APKs existed in Temp (`yarbo.apk` 198 MB, `mailcom.apk` tiny). So: **measure before
 theorising.** The sweep to run first is
-`find /c/Users/<u>/AppData/Local -maxdepth 5 -name "*.vhdx" -exec ls -la {} \;` — a vhdx is a
+`find /home/agentuser/.local/share -maxdepth 5 -name "*.vhdx" -exec ls -la {} \;` — a vhdx is a
 single opaque file, invisible to any per-directory `du` that skips it.
 
-A `du -sm` over all of `AppData/Local` **times out** (measured, >240 s). Do it per-subtree, in a
+A `du -sm` over all of `~/.local/share` **times out** (measured, >240 s). Do it per-subtree, in a
 script, with output to a file — and cap each entry with a wall-clock guard so one huge tree cannot
 stall the whole listing.
 

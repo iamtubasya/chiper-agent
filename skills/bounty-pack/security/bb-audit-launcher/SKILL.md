@@ -62,7 +62,7 @@ Step 1: CREATE PHASE_LOG.md
 Step 2: LOAD bb-audit-launcher (Phase 0A). Read ALL rules.
 
 Step 3: PRE-AUDIT VERIFICATION (30 seconds)
-  Run: find $HOME/AppData/Local/hermes/skills/security -name "*.md" -size -10c
+  Run: find ~/.chiper/skills/bounty-pack/skills/security -name "*.md" -size -10c
   Expected: 0 empty files. If found → FIX before proceeding.
   Check: every ref in references/ has read_file() in SKILL.md
   Check: bb-audit-launcher lists this skill in correct phase
@@ -254,7 +254,7 @@ the engagement-dir gate is green. Do not fight it — run its own scripts in the
 
 ```bash
 cd "<engagement dir>"
-PY="C:/Users/<u>/AppData/Local/Programs/Python/Python314/python.exe"; SP="C:/Users/<u>/AppData/Local/hermes/scripts"
+PY="/usr/bin/python3"; SP="~/.chiper/skills/bounty-pack"
 "$PY" "$SP/finding_gate.py" findings-gate-input.json --out gated.json \
       --report REPORT-survivors.md --survivors survivors.json
 "$PY" "$SP/triage_gate.py" survivors.json                 # -> passed-findings.json + TRIAGE.md
@@ -276,7 +276,7 @@ operator needs to see.
 falls back to the engagement dir and passes on that evidence ("Tool usage GATE PASSED in the engagement dir"):
 ```bash
 AUDIT_ENGAGEMENT_DIR="D:/data hermes/bug-bounty/<target>" \
-  python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-pipeline-orchestrator.py <url> \
+  python ~/.chiper/skills/bounty-pack/audit-pipeline-orchestrator.py <url> \
   --tech "…" --scope "…" --resume
 ```
 Without it you re-run 0C rework three times and land in the same HARD BLOCK. When the orchestrator still will
@@ -305,7 +305,7 @@ layer is blocked and that is a GAP, not a negative. API hosts in the same estate
 **⛔ The 0D gate reads artifacts RELATIVE to the engagement dir — mirror the orchestrator's tree first.**
 `verify-tool-usage.py <engagement_dir>` resolves every `evidence_file` path in `tools-usage.json` against
 the directory you pass, but the orchestrator writes into
-`~/AppData/Local/hermes/poc-plans/orchestrator-<host>/`. Run the gate without mirroring and you get
+`~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host>/`. Run the gate without mirroring and you get
 `Evidence files missing for: ['subfinder','httpx','amass',…]` even though every file exists one tree over
 (verified 2026-10-12: 9 failures → 7 purely from path placement, and `variants 15/15 · 244 requests` went
 green the moment `recon-evidence/`, `tool-evidence/`, `variants/` sat at the engagement root). Copy the
@@ -342,7 +342,7 @@ is set, MSYS-style paths (`/d/data hermes/...`, `/tmp/...`, `$HOME/...`) are **n
 for *native* binaries. Result: `rg` dies with `IO error ... cannot find the path specified`, native
 `python` opens `/d/...` → `FileNotFoundError`, `git -C /d/...` → `cannot change to ...`, and `go`
 reads a mangled `GOMODCACHE`. Rule: hand **native** tools **native** paths (`D:/data hermes/...`,
-`C:/Users/...`) and reserve POSIX paths for bash builtins; `cd` into a repo instead of `git -C`.
+`/home/agentuser`) and reserve POSIX paths for bash builtins; `cd` into a repo instead of `git -C`.
 Also write helper scripts with `write_file`, not a shell heredoc — a heredoc whose body merely
 *contains* a blocklisted word (e.g. the plain word "shutdown" in a scope note) gets the whole
 command rejected as a hardline block.
@@ -350,10 +350,10 @@ command rejected as a hardline block.
 **⛔ Two MORE traps that manufacture fake coverage (verified 2026-10-08, quarterwise v5):**
 
 1. **`MSYS_NO_PATHCONV=1` suppresses translation of the SCRIPT PATH too, not just arguments.**
-   `MSYS_NO_PATHCONV=1 python ~/AppData/Local/hermes/scripts/x.py` resolves the script to
+   `MSYS_NO_PATHCONV=1 python ~/.chiper/skills/bounty-pack/x.py` resolves the script to
    `D:\c\Users\...\x.py` -> `can't open file ... [Errno 2] No such file or directory`. The export
    you added to protect tool *arguments* also breaks the launcher itself. Pass the script in native
-   form as well: `python "C:/Users/<user>/AppData/Local/hermes/scripts/x.py"`.
+   form as well: `python "~/.chiper/skills/bounty-pack/x.py"`.
    (Same class: `curl -o "recon/_well-known_security.txt"` — a leading `/` in the derived filename
    becomes `.`; check the directory listing rather than assuming the file landed.)
 
@@ -382,7 +382,7 @@ command rejected as a hardline block.
 ```
 ⛔⛔⛔ MANDATORY: Run verification checkpoint BEFORE every phase transition ⛔⛔⛔
 
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-checkpoint.py <target_dir> --phase <next_phase>
+python ~/.chiper/skills/bounty-pack/audit-checkpoint.py <target_dir> --phase <next_phase>
 
 IF phase shows ❌ → STOP. Fix. Do NOT proceed.
 IF phase shows ✅ all → proceed.
@@ -466,7 +466,7 @@ always read the evidence BODY before believing a status.
 
 ```
 ONE COMMAND — ALL PHASES — NO SKIPPING:
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-run-all.py <TARGET> --tech "<tech>"
+python ~/.chiper/skills/bounty-pack/audit-run-all.py <TARGET> --tech "<tech>"
 
 RULE: AUDIT = EXPLOIT EVERYTHING. Surface finding ≠ done.
 FLOW: Load → Recon → EXPLOIT ALL → chain → THEN report.
@@ -527,7 +527,7 @@ Verified 2026-10-12 (spectrocoin): the warn fired at 902s while evidence files w
 graphqlmap 00:30) and the next real log line `✅ Force execution COMPLETE` appeared at 00:30.
 
 - **Do NOT kill running scanners on the strength of a stall-warn.** Read evidence mtimes instead:
-  `find ~/AppData/Local/hermes/poc-plans/orchestrator-<host> -type f -newermt "-5 minutes" -printf "%TT %8s %p\n" | sort`.
+  `find ~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host> -type f -newermt "-5 minutes" -printf "%TT %8s %p\n" | sort`.
   New files inside the window = the step is alive; the warn is cosmetic. Killing live tools on a false alarm destroys
   real coverage and can orphan the step.
 - The background `tee` block-buffers stdout when it is not a TTY, so `process(action=log)` returns empty and the log file
@@ -549,19 +549,19 @@ terminal tool rejects shell-level backgrounding; use `terminal(background=true)`
 
 ## ⛔ AUTO-RESUME (ON RECONNECT)
 If session breaks (provider error, timeout, context limit):
-1. Check: `python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-state.py list`
+1. Check: `python ~/.chiper/skills/bounty-pack/audit-state.py list`
 2. Find in-progress state → Resume from last phase/step
 3. Continue — do NOT restart from beginning
 
 Save state after EVERY phase/step:
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-state.py save <target> --phase 0C --step "running sqlmap" --note "vector 4 of 30"
+python ~/.chiper/skills/bounty-pack/audit-state.py save <target> --phase 0C --step "running sqlmap" --note "vector 4 of 30"
 ```
 
 ## ⛔ AUTO-STATE SAVING (EVERY STEP)
 After EVERY action in audit, save state immediately:
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-state.py save <target> --phase <X> --step "<what>"
+python ~/.chiper/skills/bounty-pack/audit-state.py save <target> --phase <X> --step "<what>"
 ```
 This ensures: (1) resume works if session breaks (2) progress visible (3) no work lost.
 
@@ -790,7 +790,7 @@ Phase 0F: bug-report-delivery (30KB) + bug-bounty-report (9KB) ⛔ ABSOLUTE LAST
 ║   find <workspace> -name 'tools-usage.json' -o -name 'variant-usage.json' ║
 ║     -o -name 'business-logic-usage.json' -o -name 'poc-execution.json'    ║
 ║     -o -name 'poc-variant-usage.json' -o -name 'validated-findings.json'  ║
-║   ls -d ~/AppData/Local/hermes/poc-plans/orchestrator-*<target>*          ║
+║   ls -d ~/.chiper/skills/bounty-pack/poc-plans/orchestrator-*<target>*          ║
 ║   → ALL MISSING = 0C..0F never ran. Say so; do not narrate around it.     ║
 ║                                                                          ║
 ║ Tool coverage: diff `command -v <tool>` against <workspace>/tool-evidence/.║
@@ -819,7 +819,7 @@ only stands once those tools ran for real (recipe: `references/pipeline-defects-
 
 | side | path |
 |---|---|
-| orchestrator / `audit-run-all.py` **writes** its artifacts (`tools-usage.json`, `variant-usage.json`, `poc-execution.json`, `reference-usage.json`, …) | `~/AppData/Local/hermes/poc-plans/orchestrator-<host>_<...>/` |
+| orchestrator / `audit-run-all.py` **writes** its artifacts (`tools-usage.json`, `variant-usage.json`, `poc-execution.json`, `reference-usage.json`, …) | `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host>_<...>/` |
 | `audit-checkpoint.py <target_dir> --phase all` **reads** them | `D:/data hermes/bug-bounty/<target>/` |
 
 Observed: after a full `audit-run-all.py https://www.sunshine.ch` run the checkpoint printed
@@ -827,7 +827,7 @@ Observed: after a full `audit-run-all.py https://www.sunshine.ch` run the checkp
 `bug-bounty/sunshine_ch/` while the orchestrator had written everything under
 `poc-plans/orchestrator-www_sunshine_ch/`. Read the gate as **"are the artifacts in the dir the
 checker reads"**, not as "the pipeline didn't run"; before reporting a phase as PENDING, `ls -t
-~/AppData/Local/hermes/poc-plans/` and confirm which dir actually holds the artifacts. Bridge the
+~/.chiper/skills/bounty-pack/poc-plans/` and confirm which dir actually holds the artifacts. Bridge the
 mismatch by copying/symlinking the orchestrator output into the `<target_dir>` the gate reads — do
 not narrate a 1/25 as "nothing ran".
 
@@ -848,7 +848,7 @@ Answer the question mechanically, in this order:
 1. **Prove which phases ran, from the artifact set** (absence of a file = that phase did NOT run):
    `tools-usage.json` (0C-C1) · `variant-usage.json` (C2) · `business-logic-usage.json` (C3) ·
    `poc-execution.json` (C4) · `poc-variant-usage.json` (C5) · `findings.json` + `validated-findings.json`
-   + `review-candidates.json` (0E) · the 0F report. Also `ls -d ~/AppData/Local/hermes/poc-plans/orchestrator-*<target>*`
+   + `review-candidates.json` (0E) · the 0F report. Also `ls -d ~/.chiper/skills/bounty-pack/poc-plans/orchestrator-*<target>*`
    — no orchestrator dir means the pipeline never ran for that target, whatever else happened.
 2. **Enumerate the tool universe** (`command -v <tool>` over the whole list), then diff INSTALLED against
    the tools that actually left evidence on disk. Three honest classes: NOT-INSTALLED (N-A on this host),
@@ -1051,7 +1051,7 @@ THEN: skill_view('bug-bounty-exhaustive-testing') AFTER first testing batch
 ⛔ CONSULT (every audit, no skip): skill_view('bugbounty-playbook', file_path='references/attack-surface/<track>/<class>.md')
    for the active track, and references/chains/ when a low-impact finding needs escalating to real impact.
 ⛔ PHASE 0C-C7 — AGGREGATE + CHAIN (closes 0C; runs AFTER C1..C6b, BEFORE 0D):
-   $S = C:/Users/WINDOWS10/AppData/Local/hermes/scripts
+   $S = ~/.chiper/skills/bounty-pack
    python $S/aggregate-findings.py <target_dir>                                   → findings.json
    python $S/weaponize-gate.py <target_dir>/findings.json \
           --out <target_dir>/weaponized-findings.json --report <target_dir>/WEAPONIZATION.md
@@ -1077,7 +1077,7 @@ THEN: skill_view('bug-bounty-exhaustive-testing') AFTER first testing batch
 > Canonical mapping: **0D = GATE, 0E = FINDINGS, 0F = REPORT.**
 > Verify with the rule below; every surviving `Phase 0D` hit must legitimately mean the gate.
 ```
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/verify-tool-usage.py <target_dir>
+python ~/.chiper/skills/bounty-pack/verify-tool-usage.py <target_dir>
 → 13 checks against disk (CHECK 1-5 core tools, 6 variants, 7 PoC repos, 8 PoC variants,
   9 business-logic, 10 references, 11 PoC techniques, 12 asset-coverage, 13 skill-usage).
   FAILED_USAGE blocks. Auto-rework ×3 inside orchestrator. An empty ledger is legitimate
@@ -1086,7 +1086,7 @@ python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/verify-tool-usage.py <tar
 
 ### Phase 0E: FINDINGS (pure filter + validate — NO aggregate, NO chain_builder)
 ```
-$S = C:/Users/WINDOWS10/AppData/Local/hermes/scripts
+$S = ~/.chiper/skills/bounty-pack
 
 E4  python $S/finding_gate.py <input> --out <t>/gated.json \
         --survivors <t>/survivors.json --report <t>/REPORT-survivors.md
@@ -1190,16 +1190,16 @@ ffuf -u https://TARGET/FUZZ -w /path/to/wordlist -mc 200,301,302,403
 
 ```
 STEP 3a: Generate attack plan (BEFORE any testing)
-  python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/poc-pipeline.py full <TARGET> --tech "<recon_tech>"
+  python ~/.chiper/skills/bounty-pack/poc-pipeline.py full <TARGET> --tech "<recon_tech>"
   → plan.json = mandatory test checklist
 
 STEP 3b: Run ALL 30 vectors (single command, ~30-60 seconds)
-  python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/_deprecated/audit-sequential.py <TARGET> --tech "<recon_tech>"
+  python ~/.chiper/skills/bounty-pack/_deprecated/audit-sequential.py <TARGET> --tech "<recon_tech>"
   → runs all 30 vectors with ref files + payloads
   → outputs: 30 structured markdown files + nuclei scan + poc results
 
 STEP 3c: Aggregate findings
-  python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/aggregate-findings.py <output-dir> --output findings.json
+  python ~/.chiper/skills/bounty-pack/aggregate-findings.py <output-dir> --output findings.json
 
 STEP 3d: Weaponize → chain → gate (ORDER MATTERS — see Phase 0C-C7)
   python .../weaponize-gate.py findings.json --out weaponized-findings.json --report WEAPONIZATION.md
@@ -1214,7 +1214,7 @@ STEP 3e: Run nuclei in background (longer than vector tests)
   nuclei -u <TARGET> -severity critical,high -rl 50 -o nuclei-results.txt (terminal background=true)
 
 STEP 3f: Run PoC pipeline (matched repos)
-  python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/poc-pipeline.py full <TARGET> --tech "<recon_tech>"
+  python ~/.chiper/skills/bounty-pack/poc-pipeline.py full <TARGET> --tech "<recon_tech>"
   → extract + adapt + execute matched PoC repos
 ```
 
@@ -1243,7 +1243,7 @@ STEP 3f: Run PoC pipeline (matched repos)
 1. `read_file()` the Ref File column — READ THE PLAYBOOK FIRST
 2. `read_file()` the Payload column — LOAD THE PAYLOADS
 3. Run the Tool/Command column — EXECUTE AGAINST TARGET
-4. Log: `python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-exec-tracker.py log <target> --vector "<Vector>" --result <result> --evidence <output>`
+4. Log: `python ~/.chiper/skills/bounty-pack/audit-exec-tracker.py log <target> --vector "<Vector>" --result <result> --evidence <output>`
 5. Only THEN move to next row
 
 **⛔ IF you run curl without reading ref first → that test DOES NOT COUNT. Redo.**

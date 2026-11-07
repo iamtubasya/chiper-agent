@@ -63,7 +63,7 @@ non-obvious logic flaws that survive once the real crypto lands.
   native `D:/...` paths. Same MSYS trap for `rg`/`python`/`gosec` when `MSYS_NO_PATHCONV=1` is set:
   hand them **Windows-style** paths (`D:/data/...`), not `/d/data/...`.
 - **`go install`/govulncheck/gosec "GOMODCACHE entry is relative":** set
-  `export GOPATH='C:/Users/<u>/go'; export GOMODCACHE='C:/Users/<u>/go/pkg/mod'` (forward-slash
+  `export GOPATH='/home/agentuser/go'; export GOMODCACHE='/home/agentuser/go/pkg/mod'` (forward-slash
   Windows form). A TLS-timeout during `go install` is transient — plain retry succeeds.
 - **`gosec ./...` is impractically slow** on a repo with many `examples/` (compiles every package,
   50+ min). Scope it: `gosec -fmt=json -out=x.json -exclude-dir=examples,tck,testing ./sdk/...`.

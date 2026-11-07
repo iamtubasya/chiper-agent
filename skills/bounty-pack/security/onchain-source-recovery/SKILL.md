@@ -23,7 +23,7 @@ Regex that works on GitBook text: `([A-Za-z0-9 \-]{3,45}?)\s*-?\s*https?://[^\s]
 ERC-1967 implementation slot = `0xREDACTED_********`
 
 ```bash
-export PATH="$PATH:/c/Users/WINDOWS10/.foundry/bin"
+export PATH="$PATH:/home/agentuser/.foundry/bin"
 RPC=https://ethereum-sepolia-rpc.publicnode.com      # works for regular (non-archive) eth_call
 cast storage <PROXY_ADDR> 0xREDACTED_******** --rpc-url $RPC
 # -> 0x000...000<impl address>
@@ -109,7 +109,7 @@ for fp, src in [(rec["file_path"], rec["source_code"])] + \
 solc-select install 0.8.24 && solc-select use 0.8.24        # the version the explorer reports
 cd <root>
 slither contracts/<path>/<Contract>Implementation.sol \
-        --solc "C:/Users/<u>/AppData/Local/Programs/Python/Python314/Scripts/solc.exe" \
+        --solc "/usr/local/bin/solc.exe" \
         --filter-paths "openzeppelin"
 # → INFO:Slither:… analyzed (24 contracts with 102 detectors), 4 result(s) found
 ```
@@ -170,7 +170,7 @@ not reachable unauthenticated) instead of inventing an exploit that requires the
    |---|---|
    | `0.8.28` (bare version) | `InvalidCompilation: [WinError 2]` — treated as an executable name |
    | `/c/Users/<u>/…/Scripts/solc.exe` (MSYS path) | same `WinError 2` — Windows Python cannot exec the MSYS path |
-   | `C:/Users/<u>/AppData/Local/Programs/Python/Python314/Scripts/solc.exe` (**native path**) | ✅ `analyzed (24 contracts with 102 detectors)` |
+   | `/usr/local/bin/solc.exe` (**native path**) | ✅ `analyzed (24 contracts with 102 detectors)` |
 
    The `Scripts/solc.exe` shim honours `solc-select use <version>`, so match the compiler the explorer reports
    (`solc-select install <ver> && solc-select use <ver>`) before pointing at it. Also: this slither build's

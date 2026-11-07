@@ -137,7 +137,7 @@ the exact traps:
 ### Gmail API (OAuth) variant — build the RFC822 message yourself (2026-10-17)
 
 When staging via the Gmail API (`google_token.json` at
-`~/AppData/Local/hermes/google_token.json`, refresh with the stored `refresh_token` +
+`~/.chiper/skills/bounty-pack/google_token.json`, refresh with the stored `refresh_token` +
 `client_id`/`client_secret`; 401 → refresh → retry), **do not use the multipart/related
 `drafts.update` stitcher** — `PUT /gmail/v1/users/me/drafts/<id>` with
 `Content-Type: multipart/related` (JSON metadata part + base64 attachment parts) returns
@@ -169,7 +169,7 @@ The stored `refresh_token` can die with `{"error":"invalid_grant"}` (Google pass
 manual revoke under Security → Third-party access, ~6 months unused, or a competing OAuth
 flow). Staging then 400s and it is NOT a code bug. Working recovery, end to end:
 
-1. Delete the stale `~/AppData/Local/hermes/google_oauth_pending.json` (old state/verifier).
+1. Delete the stale `~/.chiper/skills/bounty-pack/google_oauth_pending.json` (old state/verifier).
 2. `python skills/productivity/google-workspace/scripts/setup.py --auth-url` → prints the
    consent URL and writes a fresh pending state (`state`, `code_verifier`,
    `redirect_uri=http://localhost:1`).

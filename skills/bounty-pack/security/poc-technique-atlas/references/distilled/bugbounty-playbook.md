@@ -1,6 +1,6 @@
 # Distilled techniques — bugbounty-playbook
 
-Source: `C:/Users/WINDOWS10/AppData/Local/hermes/skills\bugbounty-playbook\references`  (187 files)
+Source: `~/.chiper/skills/bounty-pack/skills/bugbounty-playbook/references`  (187 files)
 
 One card per file: title, section headings, technique bullets.
 

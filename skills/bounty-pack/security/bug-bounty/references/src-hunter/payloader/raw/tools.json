@@ -2210,7 +2210,7 @@
         "syntaxBreakdown": []
       },
       {
-        "command": "SharpHound.exe -c All --RandomizeFilenames --OutputDirectory C:\\Users\\Public",
+        "command": "SharpHound.exe -c All --RandomizeFilenames --OutputDirectory /tmp",
         "description": "随机文件名隐蔽采集",
         "platform": "windows",
         "syntaxBreakdown": []

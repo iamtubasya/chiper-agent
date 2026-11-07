@@ -31,8 +31,8 @@ This blocks the WHOLE pipeline before any tool runs. The repo ships a deliberate
 wordlist (17 entries, 404 bytes) — must be replaced with a real list. **Fix BOTH locations**
 or a sync/restore step overwrites the first:
 
-- `~/AppData/Local/hermes/skills/security/exploit-cookbook/references/common-passwords.txt`
-- `~/AppData/Local/hermes/bundle-src/audit-pipeline-bundle-v1/skills/exploit-cookbook/references/common-passwords.txt`
+- `~/.chiper/skills/bounty-pack/exploit-cookbook/references/common-passwords.txt`
+- `~/.chiper/skills/bounty-pack/bundle-src/audit-pipeline-bundle-v1/skills/exploit-cookbook/references/common-passwords.txt`
 
 Source: SecLists 10k-most-common (~73KB):
 `curl -sL https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10k-most-common.txt`
@@ -76,7 +76,7 @@ results:
 ## 6. A "fresh" run is NOT fresh unless you clear the TRACKER, not just the output dir
 
 `audit-pipeline-orchestrator.py` keeps phase state in
-`~/AppData/Local/hermes/trackers/audit-pipeline-<url-encoded-target>.json` (+ siblings
+`~/.chiper/skills/bounty-pack/trackers/audit-pipeline-<url-encoded-target>.json` (+ siblings
 `force-state-<target>.json` and `<target>.json`). Deleting/renaming only the poc-plans output dir leaves
 the tracker claiming `completed_phases: ["0A","0B"]`, so the next launch prints
 `RESUME MODE: already completed ['0A','0B'] — skip those` and **skips recon entirely** — you then test a
@@ -133,9 +133,9 @@ A PHASE_LOG that stops at 0D (or calling the pipeline "0A→0D") is wrong — th
 - Target MUST be a full URL: `audit-pipeline-orchestrator.py https://host --tech "a,b" --scope "host,*.host"`.
   A bare domain makes every tool skip ("target is not a URL"); `--scope` is a hard gate that refuses to
   fire a single request without it.
-- Output dir is derived from the target (`~/AppData/Local/hermes/poc-plans/orchestrator-<host>`);
+- Output dir is derived from the target (`~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host>`);
   `audit-run-all.py --output-dir` is NOT forwarded.
-- RESUME state lives in `~/AppData/Local/hermes/trackers/`: `audit-pipeline-<url-key>.json`,
+- RESUME state lives in `~/.chiper/skills/bounty-pack/trackers/`: `audit-pipeline-<url-key>.json`,
   `force-state-<url-key>.json`, `<url-key>.json`. If they still list completed phases the run prints
   "RESUME MODE: already completed [...]" and SKIPS recon, so you test a stale surface. To start clean,
   ARCHIVE them (`mv X X.bak_<date>`) — never delete. Same for the poc-plans output dir.

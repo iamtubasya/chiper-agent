@@ -10,7 +10,7 @@ concluding "the gate is broken" or "the run failed".
 `verify-tool-usage.py <engagement dir>` can report `ALL 13 CHECKS PASSED ✅` while the orchestrator prints
 `GATE FAILED — asset-coverage FAIL for phase(s): ['0C']` + `skills loaded but NOT applied: [...]` on the very
 same run, because the orchestrator verifies its OWN state directory
-(`~/AppData/Local/hermes/poc-plans/orchestrator-<host_with_underscores>/`).
+(`~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host_with_underscores>/`).
 
 **Permanent fix (applied): opt-in env var.** The orchestrator now honours `AUDIT_ENGAGEMENT_DIR` — if its own
 state-dir gate fails and the engagement dir is green, the gate passes on the engagement-dir evidence:
@@ -108,7 +108,7 @@ the status to EXECUTED — that is fabrication.** Make the tool actually run, th
    `evidence_file`, `output_bytes`, and a `note` naming why the first attempt failed. Back the file up
    first (`tools-usage.json.bak_gatefix_<ts>`).
 4. **`asset-coverage.py --derive <STATE_DIR>`** to clear CHECK 12. The script lives in this skill's
-   `scripts/` directory, **not** in `~/AppData/Local/hermes/scripts/` — invoking the latter 404s and
+   `scripts/` directory, **not** in `~/.chiper/skills/bounty-pack/` — invoking the latter 404s and
    reads like a missing tool.
 5. Re-run `verify-tool-usage.py <ABS_STATE_DIR>` → expect `ALL 13 CHECKS PASSED ✅`.
 6. Resume: `AUDIT_ENGAGEMENT_DIR=<engagement dir> audit-pipeline-orchestrator.py <url> --resume`. It then
@@ -230,7 +230,7 @@ re-executed for real, its real output captured, and the entry corrected to match
    (from the file just written), and the real story in `note` (OOM / 429).
    `cp tools-usage.json tools-usage.json.bak_gatefix_<ts>` first.
 4. **`asset-coverage.py --derive`** — the script lives in the SKILL's `scripts/`, NOT `~/…/scripts/`:
-   `~/AppData/Local/hermes/skills/security/audit-execution-discipline/scripts/asset-coverage.py <dir> --derive`.
+   `~/.chiper/skills/bounty-pack/audit-execution-discipline/scripts/asset-coverage.py <dir> --derive`.
 5. **Verify before resuming**: `verify-tool-usage.py <ABSOLUTE dir>` → expect `ALL 13 CHECKS PASSED`.
 6. **Resume**: `AUDIT_ENGAGEMENT_DIR=<engagement dir> audit-pipeline-orchestrator.py <url> … --resume` (§1).
 
@@ -241,7 +241,7 @@ Measured result: `CHECK 2b PASS` → `ALL 13 CHECKS PASSED` → resume → `0E/0
 | script | argument | cwd |
 |---|---|---|
 | `verify-tool-usage.py` | **ABSOLUTE** dir | anywhere |
-| `audit-checkpoint.py` | **RELATIVE** target name (`<host_underscores>`) | `~/AppData/Local/hermes/scripts` |
+| `audit-checkpoint.py` | **RELATIVE** target name (`<host_underscores>`) | `~/.chiper/skills/bounty-pack` |
 | `asset-coverage.py` | target dir, lives in the SKILL's `scripts/` | anywhere |
 
 `audit-checkpoint.py --phase all` without the positional arg → argparse error; with the wrong form →

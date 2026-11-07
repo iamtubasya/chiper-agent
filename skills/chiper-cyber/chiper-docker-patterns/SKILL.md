@@ -278,6 +278,18 @@ services:
       - ./test-results:/results
 ```
 
+## Pattern 6: Isolated Installer & Repo Test Container (Non-Destructive)
+
+Safely test agent/tool installers, environment setup scripts (`setup-chiper.sh`, `install-bugbounty-tools.sh`), and uncommitted local code without altering host venvs, PATH, or packages.
+
+### Key Architecture:
+1. **Host Mount as Read-Only (`:ro`)**: Mount host repo into container `/repo-src:ro`. The container physically cannot modify host files.
+2. **Internal Workspace Sync**: `rsync -av --exclude='.venv' --exclude='venv' --exclude='__pycache__' /repo-src/ ~/workspace/`.
+3. **UID/GID Alignment**: In Ubuntu 24.04, `ubuntu` user has UID 1000. Align with host UID/GID (`groupmod -g $HOST_GID ubuntu && usermod -u $HOST_UID -g $HOST_GID ubuntu`) to prevent permission denied errors on mounted volumes.
+4. **Local Git Hygiene**: Add local test container paths to `.git/info/exclude` instead of `.gitignore` so no untracked file or git diff is introduced on the host.
+
+See `references/isolated-installer-testing-container.md` for full Dockerfile, sync scripts, and pitfalls.
+
 ## Safety Rules
 
 1. **Bind to localhost only** — All port mappings use `127.0.0.1:port:container_port`

@@ -42,7 +42,7 @@ class WalletRef:
 # ─────────────────────────── STATE ───────────────────────────
 
 class RunState:
-    def __init__(self, db_path: Path = Path.home() / ".hermes" / "runs.db"):
+    def __init__(self, db_path: Path = Path.home() / ".chiper" / "runs.db"):
         db_path.parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(str(db_path))
         self.conn.execute("""CREATE TABLE IF NOT EXISTS runs (

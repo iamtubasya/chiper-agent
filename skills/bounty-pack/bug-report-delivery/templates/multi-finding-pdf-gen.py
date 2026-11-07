@@ -14,7 +14,7 @@ Output:
 
 Dependencies: Pillow, reportlab
 Python: Use correct path on Windows:
-    /c/Users/WINDOWS10/AppData/Local/Python/bin/python.exe
+    ~/.local/share/Python/bin/python.exe
 """
 
 from reportlab.lib.pagesizes import A4
@@ -28,7 +28,7 @@ from reportlab.platypus import (
 from PIL import Image as PILImage
 import os, textwrap
 
-BASE = r"C:\Users\WINDOWS10\fireblocks-bounty"
+BASE = r"/home/agentuser/fireblocks-bounty"
 W, H = A4  # unpack for width reference only — pagesize=A4 (tuple) in doc
 
 SEV_COLORS = {

@@ -439,7 +439,7 @@ There you will see following sensitive data .
 $(document).ready(function() {
 			// Your web app's Firebase configuration
 			var firebaseConfig = {
-				apiKey: "AIzaSyCRrABG3_Sc7xHar70hFyjHjEOJ071rbJ4",
+				apiKey: "AIzaSy[REDACTED_API_KEY]",
 				authDomain: "mtn-pulse-uganda.firebaseapp.com",
 				databaseURL: "https://mtn-pulse-uganda.firebaseio.com",
 				projectId: "mtn-pulse-uganda",

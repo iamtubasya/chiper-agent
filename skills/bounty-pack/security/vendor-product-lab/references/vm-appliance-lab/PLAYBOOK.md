@@ -101,7 +101,7 @@ Then **see** and **type** through the monitor with `scripts/qemu_monitor.py`
   the incremental-search buffer accumulates; a slow send lets the buffer reset and lands you on
   the wrong entry — verify the highlighted name on screen before Enter.
 - **MSYS vs Windows paths:** a shell (`curl`/`sed`) writes `/tmp/x` fine, but Python `open()`
-  can't find it. Use a native `C:/Users/.../Temp/x` path inside Python scripts.
+  can't find it. Use a native `/home/agentuser/Temp/x` path inside Python scripts.
 - **Content filter mangles URLs in `write_file`** (e.g. `https://host` → `https:/***`). Build
   URLs at runtime from fragments (`"ht"+"tps://"+"acc"+"ount..."`) or write the file via a
   `cat > file << 'EOF'` heredoc instead of `write_file`.

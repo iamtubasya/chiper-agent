@@ -7,7 +7,7 @@ The PERMANENT fix is: **USE THE SCRIPT, NOT THE RULES.**
 
 ```
 PRIMARY METHOD (permanently forces execution):
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-run-all.py <TARGET> --tech "<tech>"
+python ~/.chiper/skills/bounty-pack/audit-run-all.py <TARGET> --tech "<tech>"
 
 This ONE SCRIPT forces all phases (0A→0F) with real tools.
 Every step is disk-verified. Phase-model drift + blocker/operator discipline:

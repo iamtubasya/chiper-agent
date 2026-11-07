@@ -129,8 +129,8 @@ Measured output — four detections in eight minutes, each one a write being swe
 ```
 RealTimeProtectionEnabled : True
 InitialDetectionTime     ThreatID    Resources
-10/11/2026 2:04:23 PM    2147794255  file:_C:\Users\...\AppData\Local\Temp\nikto_recovered.pl
-10/11/2026 2:03:37 PM    2147794255  file:_C:\Users\...\AppData\Local\Temp\nikto.pl
+10/11/2026 2:04:23 PM    2147794255  file:_/tmp/nikto_recovered.pl
+10/11/2026 2:03:37 PM    2147794255  file:_/tmp/nikto.pl
 10/11/2026 1:56:37 PM    2147794255  file:_D:\data hermes\tools\web2\nikto\program\nikto.pl
 10/11/2026 1:56:18 PM    2147794255  file:_D:\data hermes\tools\web2\nikto\program\nikto.pl
 ```

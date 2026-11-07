@@ -162,7 +162,7 @@ Useful keys on that object (all present, no HTML parsing needed): `maxBounty`, `
 (KYC terms, payment token, aggregate pool cap, repeatable-attack and prior-audit exclusions).
 
 Two gotchas: Python on Windows resolves `/tmp/...` against the *current drive*, so write scratch files
-to a relative path (or a real `C:/Users/<u>/AppData/Local/Temp` path) when the working directory is on
+to a relative path (or a real `~/.local/share/Temp` path) when the working directory is on
 `D:`. And `tr -d '\000\014'` extracted text before grepping it — stray control bytes make `grep` call a
 plain-text file "binary" and silently skip the matches you are looking for.
 

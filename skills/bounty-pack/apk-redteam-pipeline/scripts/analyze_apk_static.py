@@ -38,7 +38,8 @@ def _p(*frag):                          # fragments -> compiled bytes regex
     return re.compile("".join(frag).encode())
 
 
-TOKEN_PATTERNS=***    "google_api":  _p("AI", "za", "[0-9A-Za-z_-]{35}"),
+TOKEN_PATTERNS = {
+    "google_api":  _p("AI", "za", "[0-9A-Za-z_-]{35}"),
     "aws_access":  _p("A", "KIA", "[0-9A-Z]{16}"),
     "jwt":         _p("ey", "J[A-Za-z0-9_-]{10,}", r"\.ey", "J[A-Za-z0-9_-]{10,}",
                       r"\.[A-Za-z0-9_-]{10,}"),

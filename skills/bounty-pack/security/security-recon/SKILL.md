@@ -495,7 +495,7 @@ inflated to Critical by association with what it helped you find.
 ### Step 3c: Dork recon (Camoufox+DDG -> Wayback -> Google)
 
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/dork-recon.py --target <domain> --out <target_dir>/dork-recon
+python ~/.chiper/skills/bounty-pack/dork-recon.py --target <domain> --out <target_dir>/dork-recon
 ```
 - Layer 1 **Camoufox + DuckDuckGo** (bulk, no CAPTCHA) -> layer 2 **Wayback CDX** (volume/history) -> layer 3 **Google** (thin spots only, human-paced).
 - Outputs `dork-urls.txt` / `dork-results.json` / `dork-report.md` -> feed into httpx -> katana -> nuclei, and into the classifier.
@@ -847,7 +847,7 @@ Context receives ONLY the summary. NEVER display full file contents.
 ## ⛔ VERIFICATION
 Before claiming recon complete, run:
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-checkpoint.py <target_dir> --phase 0B
+python ~/.chiper/skills/bounty-pack/audit-checkpoint.py <target_dir> --phase 0B
 ```
 Checkpoint reads actual files from disk (subs.txt, live.txt, urls.txt).
 

@@ -176,7 +176,7 @@ Diagnose BEFORE declaring a tool missing (three probes, in order):
 Fix (persistent, one-time):
 ```powershell
 $cur = [Environment]::GetEnvironmentVariable('Path','User')
-if ($cur -notlike '*C:\go\bin*') { $cur += ';C:\go\bin;C:\Users\WINDOWS10\go\bin' }
+if ($cur -notlike '*C:\go\bin*') { $cur += ';C:\go\bin;/home/agentuser/go/bin' }
 [Environment]::SetEnvironmentVariable('Path', $cur, 'User')
 # then broadcast WM_SETTINGCHANGE ('Environment') so already-open shells/Explorer pick it up
 ```
@@ -192,7 +192,7 @@ Two adjacent facts that will otherwise mislead the same hunt: `graphql-cop` is *
 
 ```python
 import ast, glob, os, shutil, subprocess, sys
-S = os.path.expanduser("~/AppData/Local/hermes/scripts")
+S = os.path.expanduser("~/.chiper/skills/bounty-pack")
 # 1. every phase script: exists + compiles
 for f in sorted(glob.glob(S + "/*.py")):
     try: ast.parse(open(f, encoding="utf-8", errors="replace").read())
@@ -282,10 +282,10 @@ rather than an error:
 
 ```bash
 # git-bash resolves this; Windows Python's pathlib does NOT
-python execute-poc-variants.py https://target --target-dir "/c/Users/WINDOWS10/.../orchestrator-x"
+python execute-poc-variants.py https://target --target-dir "/home/agentuser/.../orchestrator-x"
 #   -> "Matched repos: 0"     (exit 0, no error, writes [])
 # correct:
-python execute-poc-variants.py https://target --target-dir "C:/Users/WINDOWS10/.../orchestrator-x"
+python execute-poc-variants.py https://target --target-dir "/home/agentuser/.../orchestrator-x"
 ```
 
 The script does `Path(target_dir) / "poc-execution.json"`, gets a nonexistent path, finds zero repos and
@@ -354,12 +354,12 @@ Typical culprits: `0C:payload:poc-variants(C5)`, `0C:payload:poc-techniques(C6b)
 `0C:shelf:poc-technique-atlas`. Fix by **actually running the producers in order** — never by hand-editing
 the ledger:
 ```bash
-O="<target-dir>"; S="$HOME/AppData/Local/hermes/scripts"
+O="<target-dir>"; S="~/.chiper/skills/bounty-pack"
 python "$S/track-poc-execution.py" <target-url> --target-dir "$O"        # → NO_PLAN / NO_POC_MATCHED
 python "$S/rce-verify.py" "$O" <target-url> --urls-file urls.txt           # → rce-verification.json (0C:tools:rce-verify NOT_RUN)
 python "$S/execute-poc-variants.py"   <target-url> --target-dir "$O" --max-payloads 20
 python "$S/execute-poc-techniques.py" <target-url> --target-dir "$O" --max-payloads 20
-python "$HOME/AppData/Local/hermes/skills/security/audit-execution-discipline/scripts/asset-coverage.py" --derive "$O"
+python "~/.chiper/skills/bounty-pack/audit-execution-discipline/scripts/asset-coverage.py" --derive "$O"
 ```
 `rce-verify.py` takes the target dir **and** base URL positionally (`rce-verify.py <target_dir> <base_url>`);
 its ledger `rce-verification.json` is what flips `0C:tools:rce-verify` from `NOT_RUN`.
@@ -401,7 +401,7 @@ artefacts that by design cannot exist yet:
 
 Fix with the sanctioned marker, never by editing the JSON:
 ```bash
-AC="$HOME/AppData/Local/hermes/skills/security/audit-execution-discipline/scripts/asset-coverage.py"
+AC="~/.chiper/skills/bounty-pack/audit-execution-discipline/scripts/asset-coverage.py"
 python "$AC" --mark "ready-candidates.json=N/A" --evidence "validated-findings.json (valid_count=0); passed-findings.json ([])" \
   --reason "0 of N candidates survived validate-findings; triage_gate has no ready candidate to emit — absence is the CORRECT negative-audit outcome" "$O"
 python "$AC" --mark "AUDIT-REPORT.md=N/A" --evidence "pipeline log <ts> (0F-pre gate precedes report generation)" \
@@ -420,7 +420,7 @@ Green end state (measured): `USED 59 · N/A 24 · NOT_RUN 0` → pipeline comple
 > **A+B regression harness (2026-11-02):** the gate contract is exercised by
 > `scripts/severity_gate_regression.py` **inside this skill dir** (NOT `~/scripts/`) — the same
 > place `asset-coverage.py` lives. Run it as
-> `python skills/audit-pipeline-operations/scripts/severity_gate_regression.py --scripts ~/AppData/Local/hermes/scripts`.
+> `python skills/audit-pipeline-operations/scripts/severity_gate_regression.py --scripts ~/.chiper/skills/bounty-pack`.
 > It drives the REAL chain (aggregate → weaponize → finding_gate → validate → triage) on a 4-positive +
 > 5-negative fixture matrix and exits 0 only when 4/4 positives survive and 5/5 negatives are rejected.
 > After the 2026-11-02 A+B change (`weaponize-gate` verdict became **SHIP / DEEPEN / DROP** instead of
@@ -488,7 +488,7 @@ operator asked for it *"dalam bentuk file MD aj y, biar sy bisa liatnya lebih ra
 architecture explanation is a **document deliverable**, not a chat message — it gets re-read beside
 the code, scrolled through, and referenced later; chat prose does not.
 
-- Write it to a stable path the operator can open: `~/AppData/Local/hermes/WORKFLOW-PIPELINE-MAP.md`.
+- Write it to a stable path the operator can open: `~/.chiper/skills/bounty-pack/WORKFLOW-PIPELINE-MAP.md`.
 - Sections that earn their place: per-phase detail (script → artefact → skill → reference), a
   **SKILL map**, a **TOOL map**, the **skill↔tool contract** (skill without tool = opinion; tool
   without skill = spray; gate without either = blind), the **phase-to-phase data contract**, gate
@@ -552,7 +552,7 @@ That is exactly "a lead that should have been examined deeper died mid-pipeline"
 
 **Durable principle (reinforces §2g):** a live *primitive name* and a *dead-marker word* can be the same text. Any regex that classifies dead/unverified via a bare adjective will, at some point, DELETE a valid finding with that adjective in its name. Dead markers must be phrases about the STATUS of the finding — never adjectives applied to the whole blob/title. And **every attempt must carry a fixture** (a known-good primitive in the matrix so a silent drop is caught instantly), same as `check_chain_builder_fixture.py` per `chain-to-impact`.
 
-> **Regression guard for these three cases:** `scripts/silent_drop_regression.py --scripts ~/AppData/Local/hermes/scripts` — builds the minimal fixtures, runs the REAL `finding_gate.py` / `aggregate-findings.py` / `triage_gate.py` / `validate-findings.py`, and asserts both directions (valid finding survives; genuine junk still drops). Exit 1 names the case that regressed. Distinct from `scripts/severity_gate_regression.py`, which covers the severity *chain* but NOT these lexical-collision silent-drops. Run it after any edit to `finding_gate.py`'s `DEAD_CHAIN` or `aggregate-findings.py`'s title-skip / severity parser.
+> **Regression guard for these three cases:** `scripts/silent_drop_regression.py --scripts ~/.chiper/skills/bounty-pack` — builds the minimal fixtures, runs the REAL `finding_gate.py` / `aggregate-findings.py` / `triage_gate.py` / `validate-findings.py`, and asserts both directions (valid finding survives; genuine junk still drops). Exit 1 names the case that regressed. Distinct from `scripts/severity_gate_regression.py`, which covers the severity *chain* but NOT these lexical-collision silent-drops. Run it after any edit to `finding_gate.py`'s `DEAD_CHAIN` or `aggregate-findings.py`'s title-skip / severity parser.
 
 **Four more silent-drop defects found & fixed 2026-11-02 (same session, `triage_gate.py` + `validate-findings.py`):**
 
@@ -586,13 +586,13 @@ The gate `0B` requires `asset-coverage.json`, so the natural move is
 The conclusion "the script was deleted" is wrong. It lives under the discipline skill:
 
 ```bash
-AC="$HOME/AppData/Local/hermes/skills/security/audit-execution-discipline/scripts/asset-coverage.py"
+AC="~/.chiper/skills/bounty-pack/audit-execution-discipline/scripts/asset-coverage.py"
 python "$AC" --init  "<target-dir>"      # seeds assets
 python "$AC" --derive "<target-dir>"     # fills from real artefacts (positional, no --target-dir)
 ```
 `--init` on a 45-host target seeded **83 assets**; `--derive` then resolved them from the artefacts
 actually on disk. Before reporting any pipeline script as missing, resolve it by name across both
-trees: `find "$HOME/AppData/Local/hermes" -name '<script>.py' -not -path '*/cache/*'`.
+trees: `find "~/.chiper/skills/bounty-pack" -name '<script>.py' -not -path '*/cache/*'`.
 
 **W2. Restoring from a backup by glob order restores an EIGHT-DAY-OLD file.** After an indentation
 break, `sorted(glob(bak_*))[-1]` picked `...bak_triage_20261010_085815` — the alphabetically last

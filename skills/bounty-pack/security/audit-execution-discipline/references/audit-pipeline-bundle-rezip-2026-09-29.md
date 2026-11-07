@@ -7,14 +7,14 @@ handoff ships the old code.
 
 ## Layout / paths
 
-- Bundle source tree: `C:\Users\WINDOWS10\AppData\Local\hermes\bundle-src\audit-pipeline-bundle-v1`
+- Bundle source tree: `~/.chiper/bundle-src/audit-pipeline-bundle-v1`
   (toolkit/scripts, toolkit/tools, skills/, data/, MANIFEST.md, LOAD.md, INDEX.md, _gen_index.py, verify.sh)
 - Ship ZIP: `D:\data hermes\audit-pipeline-bundle-v1.zip` — top-level folder inside = `audit-pipeline-bundle-v1/`
 - Measured (2026-09-29): 1,720 files, 29.2 MB, compresslevel 6, `testzip()` OK.
 
 ## Full update flow (do all six, in order)
 
-1. **Patch the LIVE scripts first** (`C:/Users/WINDOWS10/AppData/Local/hermes/scripts/*.py`).
+1. **Patch the LIVE scripts first** (`~/.chiper/skills/bounty-pack/*.py`).
    Live is primary; the bundle copy is a mirror (user rule: fixes live on the live system).
 2. **Sync live → bundle** (automated): `python <hermes>/scripts/bundle-sync.py sync` — syncs every
    bundle target from the live toolkit and verifies md5; `bundle-sync.py check` reports drift
@@ -29,7 +29,7 @@ handoff ships the old code.
    ```python
    import zipfile
    from pathlib import Path
-   src_root = Path(r"C:\Users\WINDOWS10\AppData\Local\hermes\bundle-src\audit-pipeline-bundle-v1")
+   src_root = Path(r"~/.chiper/bundle-src/audit-pipeline-bundle-v1")
    out = Path(r"D:\data hermes\audit-pipeline-bundle-v1.zip")
    if out.exists(): out.rename(out.with_suffix(".zip.bak-<date>"))   # backup old zip first
    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as z:

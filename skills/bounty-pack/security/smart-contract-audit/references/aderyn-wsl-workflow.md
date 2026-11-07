@@ -6,7 +6,7 @@ Aderyn is a Rust-based Solidity static analyzer. Official releases only provide 
 - `aarch64-apple-darwin` (Apple Silicon)
 - `x86_64-apple-darwin` (Intel Mac)
 
-**No native Windows binary exists.** Attempting to run aderyn.exe on Windows produces: "This version of C:\Users\...\aderyn.exe is not compatible with the version of Windows you're running."
+**No native Windows binary exists.** Attempting to run aderyn.exe on Windows produces: "This version of /home/agentuser/aderyn.exe is not compatible with the version of Windows you're running."
 
 ## Solution: Run Aderyn Inside WSL Ubuntu
 
@@ -44,16 +44,16 @@ cmd = f'wsl -d Ubuntu -- bash -c "PATH=/home/windows10/.local/bin:/usr/local/bin
 - Always call WSL **directly**, NOT the wrapper `~/go/bin/myth` (myth itself also has recursive issues)
 - Set **explicit PATH** (do NOT inherit Windows PATH — `C:\Program Files\...` breaks bash quoting)
 - Pass the **DIRECTORY (project root)**, not a single file — aderyn scans all contracts in the root
-- Path conversion must handle backslashes correctly (`C:\Users\...` → `/mnt/c/Users/...`)
+- Path conversion must handle backslashes correctly (`/home/agentuser` → `/mnt/c/Users/...`)
 
 ### Full Command Example
 
 ```bash
 # From Windows command line:
-"C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe" -c "..."
+"/usr/bin/python3" -c "..."
 
 # Which calls internally:
-wsl -d Ubuntu -- bash -c "PATH=/home/windows10/.local/bin:/usr/local/bin:/usr/bin:/bin /home/windows10/.local/bin/aderyn /mnt/c/Users/WINDOWS10/AppData/Local/Temp/sc-test"
+wsl -d Ubuntu -- bash -c "PATH=/home/windows10/.local/bin:/usr/local/bin:/usr/bin:/bin /home/windows10/.local/bin/aderyn /tmp/sc-test"
 ```
 
 ### Evidence Format

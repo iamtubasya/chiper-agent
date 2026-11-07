@@ -33,7 +33,7 @@ Jangan tanya, jangan tunggu aba-aba, jalankan.
 ### A. Deep-dive itu PROAKTIF dan digerakkan PERAN HOST — bukan daftar URL hardcoded
 
 ```bash
-python ~/AppData/Local/hermes/scripts/deep-endpoints.py <target_dir> <base_url>
+python ~/.chiper/skills/bounty-pack/deep-endpoints.py <target_dir> <base_url>
 ```
 Menetapkan **peran** host dari perilakunya sendiri (`signed-redirector` / `cdn-origin` / `app` /
 `api` / `static-site` / `redirector`), lalu mengenumerasi endpoint **NYATA** dari robots, sitemap,
@@ -49,9 +49,9 @@ jadi 15 varian payload + 15 vektor business-logic + 11 reference menembak ke din
 ### B. TIGA verifikasi independen dari awal — untuk KANDIDAT **dan** KESIMPULAN
 
 ```bash
-python ~/AppData/Local/hermes/scripts/reverify.py http  <dir> <name> <url>   # kandidat, 3 putaran
-python ~/AppData/Local/hermes/scripts/reverify.py probe <dir> <name> -- <cmd> # artefak, 3 putaran
-python ~/AppData/Local/hermes/scripts/reverify.py sweep <dir> <base_url>      # kesimpulan, 3 sapuan
+python ~/.chiper/skills/bounty-pack/reverify.py http  <dir> <name> <url>   # kandidat, 3 putaran
+python ~/.chiper/skills/bounty-pack/reverify.py probe <dir> <name> -- <cmd> # artefak, 3 putaran
+python ~/.chiper/skills/bounty-pack/reverify.py sweep <dir> <base_url>      # kesimpulan, 3 sapuan
 ```
 * putaran **terpisah** (berjeda), tiap putaran dieksekusi independen, **bertimestamp, tersimpan di disk**
   — rantai bukti harus menunjukkan **tiga** observasi, bukan satu klaim diulang.
@@ -87,8 +87,8 @@ Operator, 2026-10-10: *"draft gmail yg lengkap poc pdf nya, dgn hasil yg benar2 
 demonstrated impact dalam poc nya ... bukan berhenti di teoritis, krn wajib dibuktikan"*.
 
 ```bash
-python ~/AppData/Local/hermes/scripts/final-deliverable.py check <target_dir>   # kelayakan saja
-python ~/AppData/Local/hermes/scripts/final-deliverable.py build <target_dir> --to <vendor>
+python ~/.chiper/skills/bounty-pack/final-deliverable.py check <target_dir>   # kelayakan saja
+python ~/.chiper/skills/bounty-pack/final-deliverable.py build <target_dir> --to <vendor>
 ```
 
 **Uji kelayakan 4-syarat — SEMUA harus lulus, kalau tidak → EXCLUDED dan alasannya DITULIS:**
@@ -120,8 +120,8 @@ Operator: *"kerjakan tiap properti satu per satu serta diulang masing2 minimal 3
 ada sisi attack surface dan deepdive yg terlewatkan"*.
 
 ```bash
-python ~/AppData/Local/hermes/scripts/property-sweep.py run   <property> --rounds 3
-python ~/AppData/Local/hermes/scripts/property-sweep.py queue <queue_file> --rounds 3
+python ~/.chiper/skills/bounty-pack/property-sweep.py run   <property> --rounds 3
+python ~/.chiper/skills/bounty-pack/property-sweep.py queue <queue_file> --rounds 3
 ```
 
 Tiga putaran menjawab tiga pertanyaan berbeda — keluarannya **bukan** "sudah dijalankan 3×":
@@ -265,7 +265,7 @@ pemicu supaya kamu tahu kapan harus membuka.
 | `references/rules-body/body-05.md` | 19,136 char | aturan rinci lanjutan |
 
 ### references/rules-body/body-01.md
-- ## ⚡ GLOBAL MANDATE (operator, 2026-10-07) — tiap target, ta
+- ## ⚡ ALUR EKSEKUSI (setelah otorisasi jelas) (operator, 2026-10-07) — tiap target, ta
 - ## ⛔ RULE DEEP-AUDIT MODE (operator, 2026-10-10) — OUTER GAT
 - ### WAJIB: setiap fase (KHUSUS 0C EXPLOIT) meninjau ULANG & 
 - ### Siklus temuan (WAJIB)
@@ -279,7 +279,7 @@ pemicu supaya kamu tahu kapan harus membuka.
 - ## ⛔ RULE 0B: Don't Skip, Don't Delete — Complete Missing It
 - ## ⛔ RULE 1: Exploit-First Mindset
 - ## ⛔ RULE 2: Loading ≠ Executing
-- ## ⛔ RULE 30: SCOPE — NEVER Ask the User (Auto-Detect, Else 
+- ## ⛔ RULE 30: SCOPE — Resolve Deterministically, Ask ONCE if No Scope (Hard Rule #1 SOUL.md Wins)
 - ### ⛔ RULE 30b: a policy that bans automated tools does NOT 
 - ## ⛔ RULE 31: Patch-Verify Loop — Never Trust a Patch "Succe
 - ### RULE 31b — two silent-failure traps that bit 40-file edi
@@ -315,7 +315,7 @@ pemicu supaya kamu tahu kapan harus membuka.
 - ## ➕ Additive companion — `autonomous-exploration` (optional
 - ## ➕ Runtime execution policy (2026-10-10)
 - ## ➕ The "failure that pretends to be a result" family — IND
-- ## ⚡ GLOBAL MANDATE (operator, 2026-10-07) — tiap target, ta
+- ## ⚡ ALUR EKSEKUSI (setelah otorisasi jelas) (operator, 2026-10-07) — tiap target, ta
 - ## ⛔ RULE DEEP-AUDIT MODE (operator, 2026-10-10) — OUTER GAT
 - ### WAJIB: setiap fase (KHUSUS 0C EXPLOIT) meninjau ULANG & 
 - ### Siklus temuan (WAJIB)
@@ -329,7 +329,7 @@ pemicu supaya kamu tahu kapan harus membuka.
 - ## ⛔ RULE 0B: Don't Skip, Don't Delete — Complete Missing It
 - ## ⛔ RULE 1: Exploit-First Mindset
 - ## ⛔ RULE 2: Loading ≠ Executing
-- ## ⛔ RULE 30: SCOPE — NEVER Ask the User (Auto-Detect, Else 
+- ## ⛔ RULE 30: SCOPE — Resolve Deterministically, Ask ONCE if No Scope (Hard Rule #1 SOUL.md Wins)
 - ### ⛔ RULE 30b: a policy that bans automated tools does NOT 
 - ## ⛔ RULE 31: Patch-Verify Loop — Never Trust a Patch "Succe
 
@@ -446,7 +446,7 @@ Setiap aturan yang tidak inline di bawah tersimpan di sini. **0C WAJIB memuat ul
 | `07-rule-2-loading-executing.md` | ⛔ RULE 2: Loading ≠ Executing |
 | `08-rule-2b-use-the-right-tool-not-just-curl.md` | ⛔ RULE 2b: Use the RIGHT tool — not just curl |
 | `09-pipeline-change-checklist-run-this-after-every-edit-to-a-pip.md` | Pipeline change checklist — run this after EVERY edit to a pipelin |
-| `10-rule-30-scope-never-ask-the-user-auto-detect-else-allow-all.md` | ⛔ RULE 30: SCOPE — NEVER Ask the User (Auto-Detect, Else Allow-All |
+| `10-rule-30-scope-never-ask-the-user-auto-detect-else-allow-all.md` | ⛔ RULE 30: SCOPE — Resolve Deterministically — Ask ONCE if No Scope Allow-All |
 | `11-rule-31-patch-verify-loop-never-trust-a-patch-succeeded.md` | ⛔ RULE 31: Patch-Verify Loop — Never Trust a Patch "Succeeded" |
 | `12-rule-32-multi-topic-parallel-audits-isolation-the-other-topi.md` | ⛔ RULE 32: Multi-Topic Parallel Audits — Isolation & the "Other To |
 | `13-rule-2f-long-scans-go-to-the-background-not-into-subagents.md` | ⛔ RULE 2f: LONG SCANS GO TO THE BACKGROUND — NOT INTO SUBAGENTS |
@@ -571,7 +571,7 @@ Setiap aturan yang tidak inline di bawah tersimpan di sini. **0C WAJIB memuat ul
 | `07-rule-2-loading-executing.md` | ⛔ RULE 2: Loading ≠ Executing |
 | `08-rule-2b-use-the-right-tool-not-just-curl.md` | ⛔ RULE 2b: Use the RIGHT tool — not just curl |
 | `09-pipeline-change-checklist-run-this-after-every-edit-to-a-pip.md` | Pipeline change checklist — run this after EVERY edit to a pipelin |
-| `10-rule-30-scope-never-ask-the-user-auto-detect-else-allow-all.md` | ⛔ RULE 30: SCOPE — NEVER Ask the User (Auto-Detect, Else Allow-All |
+| `10-rule-30-scope-never-ask-the-user-auto-detect-else-allow-all.md` | ⛔ RULE 30: SCOPE — Resolve Deterministically — Ask ONCE if No Scope Allow-All |
 | `11-rule-31-patch-verify-loop-never-trust-a-patch-succeeded.md` | ⛔ RULE 31: Patch-Verify Loop — Never Trust a Patch "Succeeded" |
 | `12-rule-32-multi-topic-parallel-audits-isolation-the-other-topi.md` | ⛔ RULE 32: Multi-Topic Parallel Audits — Isolation & the "Other To |
 | `13-rule-2f-long-scans-go-to-the-background-not-into-subagents.md` | ⛔ RULE 2f: LONG SCANS GO TO THE BACKGROUND — NOT INTO SUBAGENTS |

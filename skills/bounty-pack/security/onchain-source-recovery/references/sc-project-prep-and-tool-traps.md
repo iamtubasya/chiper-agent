@@ -54,11 +54,11 @@ solady/=solady/
 
 **The targets MUST be RELATIVE, not absolute.** This was wrong here until
 2026-10-08 and it silently breaks half the tool chain: slither/echidna run on
-Windows (they would accept `C:/Users/…/<root>/@openzeppelin/`) but aderyn/myth run
+Windows (they would accept `/home/agentuser/<root>/@openzeppelin/`) but aderyn/myth run
 inside WSL, where that path is meaningless —
 
 ```
-Compilation Error: Source "C:/Users/…/sol-source/@openzeppelin/contracts/…" not found
+Compilation Error: Source "/home/agentuser/sol-source/@openzeppelin/contracts/…" not found
 ```
 
 and `/mnt/c/…` fails the other way round for the Windows tools. A root-relative

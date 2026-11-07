@@ -39,7 +39,7 @@ from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from cryptography.hazmat.backends import default_backend
 
 Kind = Literal["openai", "anthropic"]
-DEFAULT_DB = Path(os.environ.get("HERMES_MODELS_DB", "~/.hermes/models.db")).expanduser()
+DEFAULT_DB = Path(os.environ.get("HERMES_MODELS_DB", "~/.chiper/models.db")).expanduser()
 
 
 @dataclass

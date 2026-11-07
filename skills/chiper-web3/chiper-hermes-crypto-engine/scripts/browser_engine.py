@@ -33,7 +33,7 @@ except Exception:  # belum terinstall — template tetap bisa di-review
     Page = BrowserContext = object  # type: ignore
 
 
-DEFAULT_PROFILE = Path(os.environ.get("HERMES_BROWSER_PROFILE", "~/.hermes/browser-profile")).expanduser()
+DEFAULT_PROFILE = Path(os.environ.get("HERMES_BROWSER_PROFILE", "~/.chiper/browser-profile")).expanduser()
 WC_URI_RE = re.compile(r"wc:[0-9a-fA-F-]+@\d+\?[^\s\"'<>]+")
 
 

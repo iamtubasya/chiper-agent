@@ -23,7 +23,7 @@ Last verified: 27 Aug 2026
 Echidna ships a Windows binary. curl often fails on GitHub release URLs from MSYS; use PowerShell instead:
 
 ```powershell
-powershell.exe -Command "Invoke-WebRequest -Uri 'https://github.com/crytic/echidna/releases/download/v2.3.3/echidna-2.3.3-x86_64-windows.zip' -OutFile 'C:\Users\WINDOWS10\.foundry\bin\echidna.zip'"
+powershell.exe -Command "Invoke-WebRequest -Uri 'https://github.com/crytic/echidna/releases/download/v2.3.3/echidna-2.3.3-x86_64-windows.zip' -OutFile '/home/agentuser/.foundry/bin/echidna.zip'"
 cd ~/.foundry/bin && unzip -o echidna.zip && rm echidna.zip
 ```
 

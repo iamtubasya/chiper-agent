@@ -34,7 +34,7 @@ starved (swap-thrashing), so engine calls time out rather than error.
 ## Fix (worked twice, ~4 min to API-ready)
 
 ```bash
-export PATH="/c/Users/WINDOWS10/AppData/Local/Programs/DockerDesktop/resources/bin:$PATH"
+export PATH="~/.local/share/Programs/DockerDesktop/resources/bin:$PATH"
 wsl.exe --shutdown                 # stops the docker-desktop VM (and any other WSL distro)
 # wait ~25 s; Docker Desktop restarts its VM on demand
 timeout 120 docker ps -a --format "{{.Names}}|{{.Status}}"

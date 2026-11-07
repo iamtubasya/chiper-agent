@@ -75,7 +75,7 @@ The entitlement logic is the business core → where BOLA/entitlement bugs pay.
   `admins[]`, `tenantSuperAdmins[]`, `subscriptionOwner`, `subscriptionId`.
   Contrast: sibling endpoints 401. Read-only; mass-assignment (isUserPremium=true)
   is ignored. Severity filed Medium (CVSS ~5.3). Email drafted+staged in Gmail
-  (RESEARCHER_EMAIL), user sent it. Artifacts in `C:/Users/WINDOWS10/witivio/`.
+  (RESEARCHER_EMAIL), user sent it. Artifacts in `/home/agentuser/witivio/`.
 - **WIT-2 (LEAD, needs auth): `/api/v1/graphtoken?scopesStr=` scope escalation** —
   client-controlled Graph token scope; if not validated server-side → request
   `Files.ReadWrite.All` on a User.Read-only app = privesc. Untested (no token).

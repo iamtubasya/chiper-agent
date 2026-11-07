@@ -15,7 +15,7 @@ Usage
     python vendor_reply_watch.py --domain telekom.de --to bugbounty@telekom.de --days 7
     python vendor_reply_watch.py --domain example.com --seed      # absorb current, no alert
 
-State lives in ~/AppData/Local/hermes/trackers/<slug>-reply-seen.json so restarts do not
+State lives in ~/.chiper/skills/bounty-pack/trackers/<slug>-reply-seen.json so restarts do not
 re-alert on the same message.
 
 Exit codes: 0 = ok (silent or alert emitted), 1 = auth/API error.
@@ -33,7 +33,7 @@ except ImportError:
     print("requests not installed", file=sys.stderr)
     sys.exit(1)
 
-HOME = Path(os.path.expanduser("~/AppData/Local/hermes"))
+HOME = Path(os.path.expanduser("~/.chiper/skills/bounty-pack"))
 TOKEN_PATH = HOME / "google_token.json"
 TRACKER_DIR = HOME / "trackers"
 

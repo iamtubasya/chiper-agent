@@ -6,7 +6,7 @@ probe). This file is the concrete recipe per tool: the source that works, the so
 
 Verified end-to-end 2026-10-07: matrix went **27 present / 54 missing → 75 / 7**.
 Re-run the matrix any time with `scripts/tool-coverage-matrix.py` (deployed copy at
-`~/AppData/Local/hermes/scripts/web2-tool-matrix.py`).
+`~/.chiper/skills/bounty-pack/web2-tool-matrix.py`).
 
 ## Batch by METHOD, in this order
 
@@ -114,8 +114,8 @@ before declaring success — `curl -o` happily saves a 404 HTML body.
 This box has **two** 3.14 interpreters:
 
 ```
-C:\Users\<u>\AppData\Local\Programs\Python\Python314\python.exe     <- where `pip` usually targets
-C:\Users\<u>\AppData\Local\Python\pythoncore-3.14-64\python.exe     <- what a tool's .exe launcher may use
+/usr/bin/python3     <- where `pip` usually targets
+python3 exe     <- what a tool's .exe launcher may use
 ```
 
 Installing a dependency into the wrong one produces *"No module named X"* **after** a

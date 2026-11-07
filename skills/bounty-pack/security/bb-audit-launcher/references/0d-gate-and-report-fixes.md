@@ -9,7 +9,7 @@ All edits are additive — nothing was deleted.
 ## 1. `audit-pipeline-orchestrator.py` — the gate must be able to read the engagement dir
 
 Why: `verify_tool_usage()` runs `verify-tool-usage.py str(self.output_dir)`, i.e. only
-`~/AppData/Local/hermes/poc-plans/orchestrator-<host>/`. Hand-finalised ledgers in the engagement dir are
+`~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host>/`. Hand-finalised ledgers in the engagement dir are
 invisible to it, so the pipeline prints `GATE FAILED … asset-coverage FAIL for phase(s): ['0C']` +
 `skills loaded but NOT applied: [...]` while the same gate on the engagement dir returns
 `ALL 13 CHECKS PASSED`. It then hard-blocks after 3 rework attempts.

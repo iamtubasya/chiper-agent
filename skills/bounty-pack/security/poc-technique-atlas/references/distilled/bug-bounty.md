@@ -1,6 +1,6 @@
 # Distilled techniques — security/bug-bounty
 
-Source: `C:/Users/WINDOWS10/AppData/Local/hermes/skills\security/bug-bounty\references`  (730 files)
+Source: `~/.chiper/skills/bounty-pack/skills/security/bug-bounty/references`  (730 files)
 
 One card per file: title, section headings, technique bullets.
 
@@ -112,7 +112,7 @@ One card per file: title, section headings, technique bullets.
   - Prefill engineering is the most reliable single technique** (pattern-compliance priming; ephemeral). Amplifier with system prompts.
   - Reproduce **≥3x** (5x for report-grade), clean state, minimal payload.
   - Watermark/PII scan** on every screenshot (pixel + text detect) before PDF; remove operator-side secrets from evidence (never leak your own keys/wallets in PoC shots).
-  - `python3` missing → use `"C:\Users\<user>\AppData\Local\Python\bin\python.exe"` (has reportlab+Pillow) or `execute_code`. Hermes venv 3.11 also has reportlab.
+  - `python3` missing → use `"/usr/bin/python3"` (has reportlab+Pillow) or `execute_code`. Hermes venv 3.11 also has reportlab.
   - Python can't see MSYS `/c/...` paths → use `C:/...` or `os.path.expanduser('~')`.
   - IMPACT** — prove real impact, not just a code flaw. Must answer: apa yang dicuri? apa yang rusak? siapa yang dirugikan? berapa maximum loss? apakah exploit realistis?
 

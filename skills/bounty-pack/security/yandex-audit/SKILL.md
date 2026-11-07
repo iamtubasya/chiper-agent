@@ -106,12 +106,12 @@ For `*.yandex.net` / `*.yandex.st`: rewards server-side class vulns ONLY.
 `yandex.com` puts Yandex **SmartCaptcha** in front of the bounty pages and many services; headless +
 browser-use get redirected to `/showcaptcha`. Bypass path that worked: **Playwright + headed real
 Chrome + persistent profile** (`--disable-blink-features=AutomationControlled`), click the checkbox.
-Profile dir: `~/AppData/Local/hermes/browser-profiles/yandex`. Script: `scripts/yandex_scope_headed.py`.
+Profile dir: `~/.chiper/skills/bounty-pack/browser-profiles/yandex`. Script: `scripts/yandex_scope_headed.py`.
 
 ## Command (PowerShell, GENTLE + full scope)
 
 ```powershell
-$env:BB_GENTLE="1"; python C:\Users\WINDOWS10\AppData\Local\hermes\scripts\audit-pipeline-orchestrator.py "https://yandex.ru" --scope "*.yandex.ru,*.yandex.com,*.yandex.com.tr,*.yandex.kz,*.yandex.by,*.yandex.st,*.yandex.net,*.ya.ru,*.yandex-bank.net,*.kinopoisk.ru,*.edadeal.ru,*.bookmate.ru,*.band.link"
+$env:BB_GENTLE="1"; python ~/.chiper/skills/bounty-pack/audit-pipeline-orchestrator.py "https://yandex.ru" --scope "*.yandex.ru,*.yandex.com,*.yandex.com.tr,*.yandex.kz,*.yandex.by,*.yandex.st,*.yandex.net,*.ya.ru,*.yandex-bank.net,*.kinopoisk.ru,*.edadeal.ru,*.bookmate.ru,*.band.link"
 ```
 
 ## Strategy — highest value, lowest noise

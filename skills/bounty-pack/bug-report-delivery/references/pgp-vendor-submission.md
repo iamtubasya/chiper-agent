@@ -117,7 +117,7 @@ The never-send rule in SKILL.md is absolute; this only stages.
 - **`setup.py --auth-code` takes no `--format`** — passing it aborts on argument parsing *before*
   consuming the code (so the code survives and can be retried immediately). Invoke it bare.
 - **Two token files may exist.** `~/.hermes/google_token.json` was stale/revoked while
-  `$HERMES_HOME/google_token.json` (`…/AppData/Local/hermes/`) was the live one. Always resolve via
+  `$HERMES_HOME/google_token.json` (`…/~/.chiper/skills/bounty-pack/`) was the live one. Always resolve via
   `HERMES_HOME`, not `~/.hermes`.
 - **The output-masking tripwire corrupts strings in files you WRITE**, not just those displayed:
   a literal `"Authorization: Bearer " + token` (and similar auth-header shapes) can be replaced by

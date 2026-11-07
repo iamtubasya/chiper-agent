@@ -25,10 +25,25 @@ This skill installs all 302 tools referenced across 145 `chiper-*` skills:
 ## Quick Start
 
 ```bash
-# One-liner: run the full installer
+# Opsi 1: Core Bug Bounty Suite (~250MB, Cepat & Ringan — Disarankan)
+bash ~/.chiper/scripts/install-bugbounty-tools.sh
+
+# Opsi 2: Full Security Suite (302 tools, ~12GB — Seluruh Domain)
 chmod +x ~/.chiper/skills/chiper-cyber/chiper-bootstrap/scripts/install.sh
 ~/.chiper/skills/chiper-cyber/chiper-bootstrap/scripts/install.sh
 ```
+
+---
+
+## Self-Healing Protocol (Missing Tools Saat Pentest)
+
+Jika saat eksekusi pengujian muncul error `command not found` atau tool belum terpasang:
+1. **Dilarang menyerah atau mengarang hasil scan.**
+2. **Cek referensi paket di:** `references/tool-inventory.md` atau `~/.chiper/scripts/install-bugbounty-tools.sh`.
+3. **Pasang langsung secara on-the-fly:**
+   - APT: `sudo apt-get update -qq && sudo apt-get install -y <nama-tool>` (misal `nmap`, `sqlmap`, `hydra`, `whatweb`, `wafw00f`).
+   - Standalone Go release: unduh release binary resmi tanpa golang dependency via HTTP location redirect header (hindari rate limit GitHub API).
+4. Verifikasi dengan `command -v <tool>` lalu lanjutkan pengujian target.
 
 ---
 
@@ -98,8 +113,11 @@ Run `chiper-verify` to confirm all tools are installed.
 1. **Kali repo on Ubuntu** — Can break `apt upgrade`. Use pinned preferences.
 2. **pip as root** — Always use virtualenv to avoid system conflicts.
 3. **Go PATH** — Ensure `~/go/bin` is in `$PATH`.
-4. **Disk space** — Full install needs ~8-15GB. Check with `df -h`.
+4. **Disk space** — Full install needs ~8-15GB. Gunakan `scripts/install-bugbounty-tools.sh` (~250MB) untuk instalasi hemat dan cepat.
 5. **Network** — Some downloads are large. Use stable connection.
+6. **Reference Stubs vs Self-Contained Packaging** — Jangan gunakan file stub/pointer tipis yang merujuk ke path eksternal. Setiap skill wajib self-contained memuat `SKILL.md`, `payloads.md`, `test-cases.md`, dan `guides/` agar tidak terjadi error missing files saat di-load agent.
+7. **GitHub API Rate Limits** — Jangan mengandalkan `api.github.com/repos/...` tanpa token pada installer otomatis. Ekstrak release tag terbaru menggunakan redirect header `curl -fsSIL https://github.com/<repo>/releases/latest` agar bebas rate limit.
+8. **Mega.nz Cloud Storage Downloads & Telegram 20MB Cap** — Saat mengunduh arsip besar dari link Mega.nz (seperti `bounty-pack.zip` atau wordlist), jangan gunakan `curl`/`wget` biasa atau library `mega.py` (yang crash di Python 3.11+ karena dependensi `asyncio.coroutine`). Pasang dan gunakan paket CLI biner `megatools` (`megadl '<url>'`) yang mendukung dekripsi native Mega secara cepat. Jika Telegram bot menolak dokumen > 20 MB ("The document is too large. Maximum: 20 MB"), gunakan download via `megadl` atau direct SFTP Termius ke server.
 
 ---
 

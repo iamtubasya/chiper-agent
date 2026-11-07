@@ -57,7 +57,7 @@ MSYS rewrites arguments that look like POSIX paths.
   for **URL-path** arguments.
 - But that same env var keeps a literal `/c/Users/...` intact, so Python's `Path("/c/Users/...")`
   resolves to `C:\c\Users\...` — a different, empty tree. For **filesystem** arguments
-  (`--target-dir`, `-o`) always pass the native `C:/Users/...` form.
+  (`--target-dir`, `-o`) always pass the native `/home/agentuser` form.
   Verify by listing both before trusting a run.
 
 ## Compact skeleton

@@ -143,18 +143,18 @@ D:\data hermes\bugbounty\<target>\
 ```
 
 ### Rules
-1. **PDF output path:** ALWAYS `D:/data hermes/bugbounty/<target>/<name>.pdf` — never relative path, never cwd, never `C:\Users\WINDOWS10\`.
+1. **PDF output path:** ALWAYS `D:/data hermes/bugbounty/<target>/<name>.pdf` — never relative path, never cwd, never `/home/agentuser/`.
 2. **Recon data:** subdomain lists, endpoint dumps, JS analysis → `D:/data hermes/bugbounty/<target>/recon/`.
 3. **Before generating ANY file:** `mkdir -p "/d/data hermes/bugbounty/<target>"` first.
 4. **reportlab call:** `SimpleDocTemplate("D:/data hermes/bugbounty/<target>/<report>.pdf", ...)` — pass ABSOLUTE D: path.
 5. **MEDIA delivery still works from D:** — Telegram can attach `MEDIA:/d/data hermes/bugbounty/...` normally.
 6. **Exception:** skill/knowledge files stay on C: drive. Only DATA (PDF, evidence, recon, reports) goes to D:.
 
-**Why:** C: drive is OS drive — user's global rule stores all bug bounty & Kebersihan Sumatra data on D:. PDFs landing in `C:\Users\WINDOWS10\` or `%APPDATA%` = RULE VIOLATION.
+**Why:** C: drive is OS drive — user's global rule stores all bug bounty & Kebersihan Sumatra data on D:. PDFs landing in `/home/agentuser/` or `%APPDATA%` = RULE VIOLATION.
 
 ### Self-check before finishing any session
 - [ ] `find "/d/data hermes/bugbounty/<target>" -type f` shows the PDF
-- [ ] No PDF/evidence files created in `C:\Users\WINDOWS10\` root or cwd
+- [ ] No PDF/evidence files created in `/home/agentuser/` root or cwd
 - [ ] If any file landed on C: → move it to D: immediately (`mv`), then relink MEDIA path
 
 ---

@@ -66,7 +66,7 @@ This vulnerability can be reliably reproduced in a local Windows environment.
 
 2.  **[Setup Step 2] Prepare Target Files and Directories:**
     *   Create a file to be moved in the test user's home directory:
-        `echo. > C:\Users\testuser\file_to_move.txt`
+        `echo. > /home/agentuser/file_to_move.txt`
     *   Create the target directory for the attack:
         `mkdir C:\tmp\attack_target`
     *   Grant the test user permissions on the target directory:
@@ -122,7 +122,7 @@ This vulnerability can be reliably reproduced in a local Windows environment.
 
 5.  **[Verification Step 5] Verify the Exploit:**
     *   Check the contents of the target directory: `dir C:\tmp\attack_target`
-    *   **Result:** The file **`SUCCESS.txt`** will be present in the directory, proving that the `rename` operation successfully traversed out of the user's home directory (`C:\Users\testuser`) and wrote to `C:\tmp\attack_target`.
+    *   **Result:** The file **`SUCCESS.txt`** will be present in the directory, proving that the `rename` operation successfully traversed out of the user's home directory (`/home/agentuser`) and wrote to `C:\tmp\attack_target`.
 
 #### Supporting Material/References:
 The vulnerability is in the function `Curl_get_pathname` in the file `lib/vssh/curl_path.c`. The function copies the user-provided path from a `QUOTE` command into the output buffer without validating or sanitizing `../` sequences, leading to the path traversal vulnerability.

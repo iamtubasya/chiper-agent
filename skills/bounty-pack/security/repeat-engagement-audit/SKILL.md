@@ -58,9 +58,9 @@ either.
 Then on disk, in this order — prior runs often survive in one of these even when another is gone:
 
 ```bash
-ls -d ~/AppData/Local/hermes/poc-plans/*<target>* 2>/dev/null
+ls -d ~/.chiper/skills/bounty-pack/poc-plans/*<target>* 2>/dev/null
 ls -d "/d/data hermes"/*<target>* 2>/dev/null
-ls -d ~/AppData/Local/hermes/_progress/*<target>* 2>/dev/null
+ls -d ~/.chiper/skills/bounty-pack/_progress/*<target>* 2>/dev/null
 find /c/Users/$USER "/d/data hermes" -maxdepth 5 -name "findings.json" -path "*<target>*" 2>/dev/null
 find /c/Users/$USER "/d/data hermes" -maxdepth 6 -type d -name "COVERAGE*" -path "*<target>*" 2>/dev/null
 ```
@@ -218,7 +218,7 @@ Write the round number and what changed. The next session reads this first:
 ### The prior scripts may be gone while the conclusions are not
 
 Do not rebuild tooling that already exists. Before writing a probe script, check
-`~/AppData/Local/hermes/scripts/` **and** every skill's `scripts/` dir. This session nearly
+`~/.chiper/skills/bounty-pack/` **and** every skill's `scripts/` dir. This session nearly
 re-wrote an asset-coverage generator that already existed at
 `skills/security/audit-execution-discipline/scripts/asset-coverage.py` — it was looked for only in
 `scripts/`, not found there, and briefly reported to the operator as "missing".

@@ -16,7 +16,7 @@
 **1. Run键持久化**  _[windows]_
 _添加Run键实现开机自启_
 ```
-reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v Backdoor /t REG_SZ /d "C:\Users\Public\backdoor.exe" /f
+reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v Backdoor /t REG_SZ /d "/tmp/backdoor.exe" /f
 ```
 
 **2. RunOnce键**  _[windows]_

@@ -12,9 +12,9 @@ skill says so.
 The durable rule is: **probe, then use whatever answers.**
 
 ```bash
-P="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
+P="/usr/bin/python3"
 "$P" -c "import reportlab, pypdf; print('reportlab', reportlab.Version)"
-# also fine historically: C:\Users\WINDOWS10\AppData\Local\Python\bin\python.exe
+# also fine historically: /usr/bin/python3
 # and the Hermes venv python (3.11)
 ```
 
@@ -166,11 +166,11 @@ def build_finding_pdf(output_path, title, severity, summary, steps, poc, impact,
 
 ### ⚠️ Windows MSYS Path Pitfall
 
-On Windows with MSYS/Git Bash, Python does NOT recognize MSYS-style paths like `/c/Users/WINDOWS10/...`. This causes `FileNotFoundError` or silent failures when writing files.
+On Windows with MSYS/Git Bash, Python does NOT recognize MSYS-style paths like `/home/agentuser/...`. This causes `FileNotFoundError` or silent failures when writing files.
 
 **WRONG — MSYS path:**
 ```python
-output_path = '/c/Users/WINDOWS10/project/report.pdf'  # FAILS in Python
+output_path = '/home/agentuser/project/report.pdf'  # FAILS in Python
 ```
 
 **CORRECT — use expanduser or raw Windows path:**
@@ -178,7 +178,7 @@ output_path = '/c/Users/WINDOWS10/project/report.pdf'  # FAILS in Python
 import os
 output_path = os.path.join(os.path.expanduser('~'), 'project', 'report.pdf')
 # OR hardcoded Windows path:
-output_path = 'C:/Users/WINDOWS10/project/report.pdf'
+output_path = '/home/agentuser/project/report.pdf'
 ```
 
 **In `execute_code` context:** The `terminal()` tool resolves MSYS paths fine, but `write_file()` and Python `open()` do not. When building Python scripts that write files, always use `os.path.expanduser('~')` for the home directory.

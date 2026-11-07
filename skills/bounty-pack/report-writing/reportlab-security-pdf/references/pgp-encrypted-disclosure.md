@@ -28,7 +28,7 @@ Reassemble: `BEGIN` + headers + **one blank line** + body + `END`.
 ## 2. Import — GNUPGHOME must be an MSYS path
 
 On Windows the terminal gpg is the Git/MSYS gpg (`/usr/bin/gpg`). A Windows-style `GNUPGHOME`
-(e.g. `C:/Users/…/gnupg`) is treated as a *relative* path → `no writable keyring found`. Use the
+(e.g. `/home/agentuser/gnupg`) is treated as a *relative* path → `no writable keyring found`. Use the
 MSYS form:
 
 ```bash

@@ -242,7 +242,7 @@ ownership discipline for buckets/CNAMEs, and mobile manifest/ATS static review. 
 ## ⛔ VERIFICATION
 Before claiming testing complete, run:
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-checkpoint.py <target_dir> --phase 0C
+python ~/.chiper/skills/bounty-pack/audit-checkpoint.py <target_dir> --phase 0C
 ```
 Checkpoint reads actual vector output files from disk.
 

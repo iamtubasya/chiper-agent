@@ -63,7 +63,7 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
 TOKEN = os.path.join(os.environ.get("HERMES_HOME", os.path.expanduser("~/.hermes")),
-                     "google_token.json")          # HERMES_HOME wins on Windows
+                     "google_token.json")          # CHIPER_HOME wins on Windows
 creds = Credentials.from_authorized_user_file(TOKEN)
 if not creds.valid and creds.expired and creds.refresh_token:
     creds.refresh(Request()); open(TOKEN, "w").write(creds.to_json())

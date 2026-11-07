@@ -14,7 +14,7 @@ selesai**, dan seluruh pipeline sekuensial menunggu di belakangnya.
    tak bertambah = **tool muter**.
 3. **Tool itu nulis ke mana?** Cek `poc-plans/orchestrator-<slug>/tool-evidence/<vector>-<tool>.txt`.
    Ukuran naik lambat (puluhan byte/menit) atau macet total = beku, bukan "jalan lama".
-4. **Cadence terakhir?** `~/AppData/Local/hermes/trackers/autofix-journal.jsonl` — tiap baris =
+4. **Cadence terakhir?** `~/.chiper/skills/bounty-pack/trackers/autofix-journal.jsonl` — tiap baris =
    satu **attempt** sebuah vektor (`{ts, tool, attempt, rc}`). Baris terakhir yg tua = vektor itu
    belum lepas.
 
@@ -233,7 +233,7 @@ Prosedur:
    manifest):
    ```python
    from pathlib import Path; import shutil, json, time
-   D = Path.home()/"AppData/Local/hermes/poc-plans/orchestrator-<slug>"   # hitung DI DALAM Python
+   D = Path.home()/"~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<slug>"   # hitung DI DALAM Python
    Q = D/"_QUARANTINE"; Q.mkdir(exist_ok=True)
    ts = time.strftime("%Y%m%d_%H%M%S")
    shutil.move(str(D/"business-logic-usage.json"), str(Q/f"business-logic-usage.json.corrupt_{ts}"))
@@ -289,7 +289,7 @@ mati**. Cek dulu: `tasklist /FI "PID eq <orchestrator_pid>"`. Kalau hilang, ini 
 run-nya sudah berakhir, dan teruskan = **relaunch**.
 
 **Resume itu gratis dan berbasis FILE, bukan memori.** Orchestrator menyimpan state per-fase di
-`~/AppData/Local/hermes/trackers/audit-pipeline-<safe_target>.json` (`completed_phases`, `current`),
+`~/.chiper/skills/bounty-pack/trackers/audit-pipeline-<safe_target>.json` (`completed_phases`, `current`),
 dan tiap sub-fase di-skip kalau artefaknya ada di disk:
 
 | file penanda | sub-fase |

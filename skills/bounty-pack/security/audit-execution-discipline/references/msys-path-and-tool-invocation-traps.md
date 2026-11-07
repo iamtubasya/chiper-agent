@@ -30,7 +30,7 @@ A script that passes POSIX paths to native binaries:
 ffuf     -> CreateFile D:\d\data hermes\wordlists\0B-recon\directories\common.txt: cannot find the path
 gobuster -> wordlist file "/d/data hermes/…/common.txt" does not exist
 nuclei   -> Could not run nuclei: no templates provided for scan
-sqlmap   -> can't open file 'D:\c\Users\WINDOWS10\…\Scripts\sqlmap.py'
+sqlmap   -> can't open file '/home/agentuser/.../Scripts/sqlmap.py'
 ```
 
 Every one of those returned `rc=0` and wrote a non-empty evidence file. A size-based or
@@ -67,7 +67,7 @@ a literal TAB. The shim then fails with
 
 ```
 The filename, directory name, or volume label syntax is incorrect.
-python.exe: can't open file 'D:\data hermes<TAB>ools\...': [Errno 22] Invalid argument
+python.exe: can't open file '/data<RUN>ools/...': [Errno 22] Invalid argument
 ```
 
 `cat -A shim.bat` shows `^I` where the `\t` should be; `od -c` shows `\t` directly.
@@ -118,22 +118,22 @@ Windows-host script by piping a heredoc into Python and interpolating a bash pat
 ```bash
 "$PY" - <<EOF
 import pathlib
-td = pathlib.Path(r"$HOME/AppData/Local/hermes/poc-plans/$RUN")
+td = pathlib.Path(r"~/.chiper/skills/bounty-pack/poc-plans/$RUN")
 print("ada:", (td/"run-meta.json").exists())     # -> ada: False
 EOF
 ```
 
 `$HOME` is expanded by bash to `/c/Users/WINDOWS10`, so Windows Python is handed
-`/c/Users/WINDOWS10/AppData/...`, which does not exist — **plus** the unquoted
+`/home/agentuser/C:/Windows/...`, which does not exist — **plus** the unquoted
 heredoc makes bash mangle anything that looks like a path.
 
 Seen for real 2026-10-08: this printed `_is_web3(td) = False` and looked like a
 freshly-written track-detection bug. It was not. The same call with
-`C:\Users\WINDOWS10\AppData\...` returned `True` immediately. A debugging cycle
+`/home/agentuser/.chiper/...` returned `True` immediately. A debugging cycle
 was spent on a test that never asked the right question.
 
 Rules:
-- In a probe, build Windows paths **literally** (`r"C:\Users\WINDOWS10\..."`) or via
+- In a probe, build Windows paths **literally** (`r"/home/agentuser/..."`) or via
   `pathlib.Path.home()` **inside** the Python process — never from `$HOME`.
 - Prefer a quoted heredoc (`<<'EOF'`) so bash interpolates nothing, and pass values
   through argv/env instead.
@@ -147,7 +147,7 @@ anything — a "fix" applied to a phantom bug is how real bugs get introduced.
 Same trap, other surfaces seen the same day:
 - `wsl -d Ubuntu -- bash -c "PATH=/usr/local/bin:/usr/bin:/bin aderyn …"` — MSYS
   rewrote the WSL PATH into Windows fragments
-  (`C:UsersWINDOWS10AppDataLocalhermesgitusrlocalbin: command not found`).
+  (`C:UsersWINDOWS10git-usr-local-bin: command not found`).
   Prefix the whole command with `MSYS_NO_PATHCONV=1`.
 - `cd /d "D:\..."` inside a `.bat` or a `cmd /c` string — `/d` is converted to a
   path. `MSYS_NO_PATHCONV=1` again.
@@ -169,8 +169,8 @@ POSIX path you hand to a *native* consumer is passed through verbatim and the na
 it against the current drive:
 
 ```
-$ MSYS_NO_PATHCONV=1 python.exe ~/AppData/Local/hermes/scripts/audit-pipeline-orchestrator.py ...
-python.exe: can't open file 'D:\c\Users\WINDOWS10\AppData\Local\hermes\scripts\...': [Errno 2]
+$ MSYS_NO_PATHCONV=1 python.exe ~/.chiper/skills/bounty-pack/audit-pipeline-orchestrator.py ...
+python.exe: can't open file '/home/agentuser\~/.chiper/scripts/...': [Errno 2]
 ```
 
 Note the `D:\c\...` — the `/c/...` prefix survived as a literal path segment under the CWD drive.
@@ -182,10 +182,10 @@ Rule: **the flag and the path style travel together.**
 | state | paths you must pass |
 |---|---|
 | `MSYS_NO_PATHCONV` unset | POSIX (`/c/...`) or MSYS `~` — MSYS converts them for the native consumer |
-| `MSYS_NO_PATHCONV=1` exported | **native only** (`C:/Users/...`, `D:/data hermes/...`) for every argument handed to `python.exe`, `nuclei`, `ffuf`, etc. |
+| `MSYS_NO_PATHCONV=1` exported | **native only** (`/home/agentuser`, `D:/data hermes/...`) for every argument handed to `python.exe`, `nuclei`, `ffuf`, etc. |
 
 Also: `~` is a **bash** expansion. A native consumer never expands it — always let bash expand it
-(unquoted, outside the flag's reach) or write the literal `C:/Users/<user>/...`. When a command mixes
+(unquoted, outside the flag's reach) or write the literal `/home/agentuser/...`. When a command mixes
 both styles, split it: `cd` in bash with a POSIX path, then pass native paths to the tool.
 
 ## Symptom H — a `terminal` command carrying an auth header gets mangled into a bash syntax error
@@ -211,7 +211,7 @@ Two run-lifecycle traps on the orchestrator family:
    dies with `❌ PIPELINE FAILED: target tidak dikenali tipe-nya: '--help'`. Read the `sys.argv`
    loop in the script instead (it accepts `--tech`, `--scope`, `--exclude`).
 2. **A stale tracker makes a fresh run lie.** With a leftover
-   `~/AppData/Local/hermes/trackers/audit-pipeline-<host>.json`, the next start prints
+   `~/.chiper/skills/bounty-pack/trackers/audit-pipeline-<host>.json`, the next start prints
    `RESUME MODE: already completed ['0A','0B'] — skip those` and **skips recon entirely** — the run
    looks like it started but never enumerated anything.
 
@@ -411,7 +411,7 @@ The offending shape:
 
 ```bash
 for p in /api/2/login /wp-json/... ; do
-  curl -s "https://$h$p" -o /tmp/x -w "$p -> %{http_code}\n"     # $p prints as C:/Users/.../git/api/...
+  curl -s "https://$h$p" -o /tmp/x -w "$p -> %{http_code}\n"     # $p prints as /home/agentuser/git/api/...
 done
 ```
 

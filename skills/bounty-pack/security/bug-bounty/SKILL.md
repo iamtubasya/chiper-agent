@@ -100,7 +100,7 @@ NOTE: the block above is the MANUAL/skill pipeline. The AUTOMATED pipeline
 0E-REVIEW = candidates 3x check (only survivors reach the report), 0F = report.
 Read audit-execution-discipline skills/security/audit-execution-discipline/references/audit-pipeline-phases-and-fresh-run.md
 before invoking it (full-URL + --scope required; stale resume state lives in
-~/AppData/Local/hermes/trackers/, not only in poc-plans).
+~/.chiper/skills/bounty-pack/trackers/, not only in poc-plans).
 
 ⚠️ BUDGET: peak cumulative WITH eviction = 120KB (under 162KB threshold)
 ⚠️ WITHOUT eviction = 249KB → compression fires → skills pruned → audit dies
@@ -136,7 +136,7 @@ before invoking it (full-URL + --scope required; stale resume state lives in
 
 ```
 session_search(query='<target> audit findings', sort='newest', limit=5)
-ls -d "D:/data hermes/_progress/*<target>*" "$HOME/AppData/Local/hermes/poc-plans/"*<target>* 2>/dev/null
+ls -d "D:/data hermes/_progress/*<target>*" "~/.chiper/skills/bounty-pack/poc-plans/"*<target>* 2>/dev/null
 ```
 
 Answer three questions and write them into `SCOPE-<target>.md`:

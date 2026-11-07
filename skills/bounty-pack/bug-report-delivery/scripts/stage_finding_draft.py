@@ -20,7 +20,7 @@ Two environment gotchas this encodes:
    literals **inside files you write** (a literal `"Authorization: Bearer " + k` can come back as
    `***`, producing a SyntaxError the lint step flags). Fragment the filename and the header name /
    scheme the same way, as done below.
-2. The live OAuth token is under $HERMES_HOME (`~/AppData/Local/hermes/`), NOT `~/.hermes/`.
+2. The live OAuth token is under $HERMES_HOME (`~/.chiper/skills/bounty-pack/`), NOT `~/.hermes/`.
    A stale/revoked token in `~/.hermes/` is a real trap -- resolve via the env var when set.
 
 If the token is revoked you cannot fix it alone: run the workspace `setup.py --auth-url`, give the
@@ -144,7 +144,7 @@ def build_pdf(src_md, out_pdf, title):
 
 
 def token_path():
-    home = os.environ.get("HERMES_HOME") or os.path.expanduser("~/AppData/Local/hermes")
+    home = os.environ.get("HERMES_HOME") or os.path.expanduser("~/.chiper/skills/bounty-pack")
     return os.path.join(home, TOKEN_FILENAME)
 
 

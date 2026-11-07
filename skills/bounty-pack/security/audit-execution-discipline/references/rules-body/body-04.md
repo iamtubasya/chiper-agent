@@ -183,7 +183,7 @@ If ALL 5 fail → THEN you may claim "blocked" — but document each attempt.
 
 ```
 PRIMARY PIPELINE (one command — full orchestrator, gate + auto-rework built in):
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-pipeline-orchestrator.py <TARGET> --tech "<tech>"
+python ~/.chiper/skills/bounty-pack/audit-pipeline-orchestrator.py <TARGET> --tech "<tech>"
 
 audit-run-all.py is now a THIN WRAPPER — it just re-invokes the orchestrator.
 It is NOT a separate pipeline. Do NOT develop/run two parallel "runners":
@@ -287,13 +287,13 @@ exit code is the single source of truth; a report only exists when the gate exit
 Manual fallback (when orchestrator itself fails):
 ```
 # At audit START
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-exec-tracker.py init <target>
+python ~/.chiper/skills/bounty-pack/audit-exec-tracker.py init <target>
 
 # After EVERY exploit attempt
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-exec-tracker.py log <target> --vector "<name>" --result <result> --evidence <file>
+python ~/.chiper/skills/bounty-pack/audit-exec-tracker.py log <target> --vector "<name>" --result <result> --evidence <file>
 
 # Before claiming phase complete
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-exec-tracker.py gate <target> --phase <0A|0B|0C-Web2|0C-Web3|0D>
+python ~/.chiper/skills/bounty-pack/audit-exec-tracker.py gate <target> --phase <0A|0B|0C-Web2|0C-Web3|0D>
 ```
 
 **⛔ Each log entry MUST include: exploit command + tool output + impact evidence.**

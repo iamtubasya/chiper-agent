@@ -15,7 +15,7 @@ Gmail access tokens expire in ~1h. Refresh before the first call, or every query
 import json, urllib.parse, urllib.request
 from pathlib import Path
 
-TOK = Path.home()/"AppData/Local/hermes/google_token.json"
+TOK = Path.home()/"~/.chiper/skills/bounty-pack/google_token.json"
 d = json.loads(TOK.read_text(encoding="utf-8"))
 data = urllib.parse.urlencode({
     "client_id": d["client_id"], "client_secret": d["client_secret"],
@@ -27,7 +27,7 @@ TOK.write_text(json.dumps(d), encoding="utf-8")
 
 Confirm the scope includes `gmail.modify` (or at least `gmail.readonly`). A
 `calendar`-only token will 403 here — use the token under
-`~/AppData/Local/hermes/google_token.json`, not `~/.hermes/`.
+`~/.chiper/skills/bounty-pack/google_token.json`, not `~/.hermes/`.
 
 ## 2. Three queries, metadata only
 

@@ -34,6 +34,7 @@ references:
 > **Supplementary Files**:
 > - `payloads.md` — Search query templates, OSINT operator quick-reference, and data-extraction commands organized by research scenario
 > - `test-cases.md` — Structured test cases covering threat intelligence research, vulnerability analysis, attack technique investigation, and adversary profiling with severity levels and summary tables
+> - `references/search-engine-fallbacks.md` — Search-engine bot-block escalation chain (DuckDuckGo CAPTCHA → Bing curl/HTML parse → browser DOM query → direct source fetch) and the delegate-task web-search caveat
 > - `guides/iterative-search-patterns.md` — Query expansion and contraction patterns, parallel search fan-out, search log discipline
 > - `guides/continuous-monitoring.md` — Ongoing intelligence collection, polling cadence, change detection triggers
 > - `guides/intelligence-correlation.md` — Entity linking, IOC cross-referencing, MITRE ATT&CK mapping, confidence scoring

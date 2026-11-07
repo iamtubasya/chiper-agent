@@ -22,8 +22,8 @@ Wilayah yang didukung: `eu` / `europe` · `asia` · `americas` · `apac`
 ## B. Cara panggil dari terminal (langsung, tanpa agent)
 
 ```bash
-PY314="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
-cd ~/AppData/Local/hermes/scripts
+PY314="/usr/bin/python3"
+cd ~/.chiper/skills/bounty-pack
 
 # lihat isi
 pool.py stats                                   # jumlah per kategori + per state

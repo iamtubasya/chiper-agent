@@ -22,7 +22,7 @@ Workflow used to build the 15 `articles-*-playbook.md` (v3.1.0). Follow it for a
 
 ## Pitfalls
 - `search_files` with pattern `*` (or any bare repetition operator) → rg error "repetition operator missing expression". Use `terminal` ls/find/grep for file enumeration, or a valid regex.
-- Skill playbook location is `C:\Users\WINDOWS10\AppData\Local\hermes\skills\security\bug-bounty\references\` — a `D:\data hermes\bug-bounty\skill\` mirror does NOT exist. Only bug-bounty DATA lives on D: (global rule); skill/knowledge files stay on C:.
+- Skill playbook location is `~/.chiper/skills/bounty-pack/bug-bounty/references\` — a `D:\data hermes\bug-bounty\skill\` mirror does NOT exist. Only bug-bounty DATA lives on D: (global rule); skill/knowledge files stay on C:.
 - SKILL.md is >100KB: never full-read before patching; use grep for anchors + targeted `read_file` windows, then `patch` (replace mode) — write_file would require a full read and risks clobbering.
 - `grep -cE '^## '` counts 6 not 7 when the footer isn't a `##` — footer is a `>` blockquote by design; don't "fix" it.
 - Path conventions inside playbooks: extracts `D:\data hermes\bug-bounty\_portswigger-extracts\articles\`, index `articles-index.json`.

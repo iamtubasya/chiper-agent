@@ -159,7 +159,7 @@ documented reason (skip-no-param, tool-not-installed, web2 track), none NOT_RUN.
 5. **Resume from 0D** — tracker edit, keep the expensive upstream phases:
    ```python
    import json
-   p = "~/AppData/Local/hermes/trackers/audit-pipeline-https___<target>.json"
+   p = "~/.chiper/skills/bounty-pack/trackers/audit-pipeline-https___<target>.json"
    d = json.load(open(p, encoding="utf-8"))
    d["completed_phases"] = [x for x in d["completed_phases"] if x in ("0A","0B","0C")]
    d["current"] = "0C"

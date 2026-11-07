@@ -20,7 +20,7 @@ If `browser_navigate`/the managed browser cannot reach the target (or Camofox is
 
 ```bash
 chrome.exe --remote-debugging-port=9222 --remote-allow-origins=* \
-  --user-data-dir="C:/Users/<u>/AppData/Local/Temp/<eng>-chrome-profile" \
+  --user-data-dir="/tmp/<eng>-chrome-profile" \
   --no-first-run --no-default-browser-check --disable-blink-features=AutomationControlled about:blank
 curl -s http://127.0.0.1:9222/json/version     # verify, then drive via browser_cdp / CDP client
 ```

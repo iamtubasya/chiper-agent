@@ -47,17 +47,17 @@
 # subfinder
 curl -sL https://github.com/projectdiscovery/subfinder/releases/download/v2.6.7/subfinder_2.6.7_windows_amd64.zip -o subfinder.zip
 unzip -o subfinder.zip -d subfinder_tmp
-cp subfinder_tmp/subfinder.exe /c/Users/WINDOWS10/AppData/Local/hermes/hermes-agent/venv/Scripts/
+cp subfinder_tmp/subfinder.exe ~/.chiper/skills/bounty-pack/hermes-agent/venv/Scripts/
 
 # nuclei
 curl -sL https://github.com/projectdiscovery/nuclei/releases/download/v3.3.7/nuclei_3.3.7_windows_amd64.zip -o nuclei.zip
 unzip -o nuclei.zip -d nuclei_tmp
-cp nuclei_tmp/nuclei.exe /c/Users/WINDOWS10/AppData/Local/hermes/hermes-agent/venv/Scripts/
+cp nuclei_tmp/nuclei.exe ~/.chiper/skills/bounty-pack/hermes-agent/venv/Scripts/
 
 # httpx (projectdiscovery) - naming conflict with Python httpx
 curl -sL https://github.com/projectdiscovery/httpx/releases/download/v1.6.10/httpx_1.6.10_windows_amd64.zip -o httpx.zip
 unzip -o httpx.zip -d httpx_tmp
-cp httpx_tmp/httpx.exe /c/Users/WINDOWS10/AppData/Local/hermes/hermes-agent/venv/Scripts/httpx-pd.exe
+cp httpx_tmp/httpx.exe ~/.chiper/skills/bounty-pack/hermes-agent/venv/Scripts/httpx-pd.exe
 # NOTE: Use 'httpx-pd' to avoid conflict with Python httpx package
 ```
 

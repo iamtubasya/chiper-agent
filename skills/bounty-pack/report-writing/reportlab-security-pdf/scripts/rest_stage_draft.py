@@ -20,7 +20,7 @@ after the first line becomes the body. One finding = one call = one PDF = one dr
 Preconditions and traps this encodes:
 
 1. **Do not assume the token is dead.** The skill's own history claimed the token at
-   ~/AppData/Local/hermes/google_token.json was revoked; on 2026-10-25 it refreshed
+   ~/.chiper/skills/bounty-pack/google_token.json was revoked; on 2026-10-25 it refreshed
    cleanly (`gmail.modify` + `gmail.send`). Call `Credentials.refresh(Request())` and see
    what happens before falling back to IMAP. The OTHER token, ~/.hermes/google_token.json,
    is calendar-only — picking it gives a 403 that looks like a revoked token.
@@ -48,7 +48,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
 # Resolve the token the same way the workspace skill does; never hardcode a username path.
-HERMES_HOME = Path(os.environ.get("HERMES_HOME", Path.home() / "AppData/Local/hermes"))
+HERMES_HOME = Path(os.environ.get("HERMES_HOME", Path.home() / "~/.chiper/skills/bounty-pack"))
 CRED_FILE = HERMES_HOME.joinpath("google_" + "token" + ".json")
 SENDER = "RESEARCHER_EMAIL"
 DRAFT_LABEL = "DRAFT"

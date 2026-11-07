@@ -29,7 +29,7 @@ never the bare domain root.
 
 ## Quarantine (reversible) — never hard-delete pool entries
 
-Recipe (template: `~/AppData/Local/Temp/quarantine_stale_ew.py`, edit `BAD`/stale keys):
+Recipe (template: `/tmp/quarantine_stale_ew.py`, edit `BAD`/stale keys):
 
 1. Select to purge by RE-PROBING program age (not by name blind): run `wayback_first` +
    `securitytxt_expires` + `fresh_within_2m` on each EW entry; purge those proven old.

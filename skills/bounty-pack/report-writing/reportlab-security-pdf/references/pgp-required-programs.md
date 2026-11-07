@@ -97,8 +97,8 @@ Per-draft, as a list of OK/FAIL (not one aggregate):
 ## Tooling traps (Windows / Git-bash MSYS)
 
 - **`GNUPGHOME` must be an MSYS path** (`/c/Users/...`) when using the MSYS `gpg` (`/usr/bin/gpg`).
-  A Windows path (`C:/Users/...`) is treated as **relative** and you get
-  `keyblock resource '/c/Users/<user>/C:/Users/.../pubring.kbx': No such file or directory`.
+  A Windows path (`/home/agentuser`) is treated as **relative** and you get
+  `keyblock resource '/c/Users/<user>//home/agentuser/pubring.kbx': No such file or directory`.
 - **Long `cat > file <<'EOF'` heredocs can be truncated** by the terminal wrapper, leaving the
   heredoc unterminated → `/usr/bin/bash: -c: line N: unexpected EOF while looking for matching quote`.
   Symptom is a parse error at *parse* time, so earlier commands in the same block (e.g. `mkdir -p`)

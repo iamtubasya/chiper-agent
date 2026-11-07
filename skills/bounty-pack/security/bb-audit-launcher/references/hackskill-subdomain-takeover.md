@@ -16,8 +16,8 @@ description: >-
 - [ssrf-server-side-request-forgery](../ssrf-server-side-request-forgery/SKILL.md) when a subdomain takeover is used to bypass SSRF allowlists trusting `*.target.com`
 - [cors-cross-origin-misconfiguration](../cors-cross-origin-misconfiguration/SKILL.md) when CORS trusts `*.target.com` — takeover → full cross-origin read
 - [xss-cross-site-scripting](../xss-cross-site-scripting/SKILL.md) takeover gives you script execution under target origin (cookie theft, OAuth redirect abuse)
-- [http-host-header-attacks](../http-host-header-attacks/SKILL.md) when Host routing leads to subdomain-scoped cache or auth issues
-- [web-cache-deception](../web-cache-deception/SKILL.md) when a taken-over subdomain shares cache with the main domain
+- [http-host-header-attacks](../../hunt-host-header/SKILL.md) when Host routing leads to subdomain-scoped cache or auth issues
+- [web-cache-deception](../../hunt-cache-poison/SKILL.md) when a taken-over subdomain shares cache with the main domain
 
 ---
 

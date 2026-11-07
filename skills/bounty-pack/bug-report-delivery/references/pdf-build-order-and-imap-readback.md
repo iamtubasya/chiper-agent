@@ -59,7 +59,7 @@ with the report:
 What worked first try: **write the report as markdown, then generate.**
 
 ```bash
-python ~/AppData/Local/hermes/skills/report-writing/reportlab-security-pdf/scripts/md_to_report_pdf.py \
+python ~/.chiper/skills/bounty-pack/skills/report-writing/reportlab-security-pdf/scripts/md_to_report_pdf.py \
     F1.md djangoeurope-F1-Medium-domain-claim.pdf \
     --header-left "djangoeurope.com - Finding F1" --header-right "Medium" --footer-right "F1"
 # PDF: ... pages: 6

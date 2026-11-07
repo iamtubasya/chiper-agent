@@ -57,9 +57,9 @@ https://github.com/{owner}/{repo}` into a temp dir, copy only the missing files 
 
 ## MSYS/Windows path gotchas (recurring in this env)
 
-- MSYS `/tmp` is `C:\Users\<user>\AppData\Local\Temp`, but native Python does NOT resolve
+- MSYS `/tmp` is `/tmp` on MSYS, but native Python does NOT resolve
   `/tmp/...` — `python "C:\tmp\x.py"` fails with "can't open file". Copy scripts to
-  `$LOCALAPPDATA/Temp` and use `C:/Users/...` style paths.
+  `$LOCALAPPDATA/Temp` and use `/home/agentuser` style paths.
 - `wslpath -w /msys/path` converts to native when needed.
 - `execute_code` kernel: file writes may not persist to host disk — verify via `terminal`
   or use the write_file tool.

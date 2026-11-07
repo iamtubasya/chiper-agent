@@ -47,7 +47,7 @@ unconditional-success endpoint is a whitelist, and quoting it as "mass assignmen
   dalfox-google-api via built-in grepping"}`) — verify by fetching the POC URL yourself; here the
   response was a 27-byte `{"error":"invalid request"}`, the parameter (`page_id`) was never consumed,
   and the `<svg onload>` variant returned the 5503-byte Cloudflare block page ⇒ FP.
-- **dalfox can grep a *fake* API key.** It printed `AIza2W1vTOD6ordI0yDLEeVN9aMZJ85jfE2z_E8`, which
+- **dalfox can grep a *fake* API key.** It printed `AIzaSy[REDACTED_FAKE_KEY]`, which
   appears nowhere in any fetched page/JS/API response, and one benign Google API call answered
   `The provided API key is invalid`. Before an "API key exposure" ever reaches a report: (1) grep the
   key across the pages/JS you already saved, (2) make one call to see whether it is even live,

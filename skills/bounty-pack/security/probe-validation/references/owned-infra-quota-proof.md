@@ -170,7 +170,7 @@ for i in 1 2 3; do curl -s -o /dev/null -w "%{http_code}\n" "$URL/"; sleep 4; do
   Match the leaf binary (`pkill yes`) or use `docker exec -d` to add workers instead.
 - **`docker stats` CPU% on a starved VM is an instrument artifact** — 32% for an unlimited
   container on a 2-core Docker Desktop VM. Never present it as evidence of a cap or its absence.
-- **git-bash rewrites `/sys/fs/cgroup/...`** into `C:/Users/.../git/sys/...`. Prefix
+- **git-bash rewrites `/sys/fs/cgroup/...`** into `/home/agentuser/git/sys/...`. Prefix
   `MSYS_NO_PATHCONV=1` on every `docker exec` that names an absolute Linux path.
 - **The terminal tool refuses foreground commands containing `&`** ("uses '&' backgrounding").
   Use `docker exec -d sh -c '...'` or a script file instead of inlining `cmd &`.

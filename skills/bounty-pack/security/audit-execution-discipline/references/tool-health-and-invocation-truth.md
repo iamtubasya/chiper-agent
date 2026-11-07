@@ -40,7 +40,7 @@ writes findings to `-o`, so "ran, found nothing" is legitimately small. Do **not
 ## 2. `tool-health-probe.py` — probe every tool once, persist the verdict
 
 Run once per host (or whenever a tool's behaviour is in doubt). Writes
-`~/AppData/Local/hermes/tools-registry.json`:
+`~/.chiper/skills/bounty-pack/tools-registry.json`:
 
 ```json
 { "summary": { "WORKS": [...], "RAN": [...], "SILENT": [...], "TIMEOUT": [...], "BROKEN": [...] },
@@ -103,17 +103,17 @@ tr.TOOL_PATHS["nikto"]     # -> ...\Python314\Scripts\nikto.bat   (use THIS)
 
 Symptom (two different wordings, same cause):
 ```
-go: GOPATH entry is relative; must be absolute path: "/c/Users/WINDOWS10/go".
+go: GOPATH entry is relative; must be absolute path: "/home/agentuser/go".
 go: GOMODCACHE entry is relative; must be absolute path: "\\c\\Users\\WINDOWS10\\go\\pkg\\mod"
 ```
 Fix — set **native** absolute paths in the child env (and persist with `go env -w`):
 
 ```python
 env = dict(os.environ)
-env["GOPATH"]     = r"C:\Users\<user>\go"
-env["GOMODCACHE"] = r"C:\Users\<user>\go\pkg\mod"
-env["GOCACHE"]    = r"C:\Users\<user>\go\cache\build"
-env["GOBIN"]      = r"C:\Users\<user>\go\bin"
+env["GOPATH"]     = r"/home/agentuser/go"
+env["GOMODCACHE"] = r"/home/agentuser/go/pkg/mod"
+env["GOCACHE"]    = r"/home/agentuser/go/cache/build"
+env["GOBIN"]      = r"/home/agentuser/go/bin"
 subprocess.run("go install <mod>@latest", shell=True, env=env)
 ```
 A `.bat` wrapper with `set GOPATH=...` works equally well when you must run it from a shell.

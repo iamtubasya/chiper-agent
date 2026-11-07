@@ -115,7 +115,7 @@ rather than challenged.
 - **`/tmp` does not exist** in this git-bash. `curl -o /tmp/body.txt` silently writes nothing and
   the follow-up `head` fails with *cannot open*. Use `$LOCALAPPDATA/Temp` or a relative path.
 - **Native Windows programs do not get MSYS path translation.** `python script.py` reading
-  `C:/Users/...` works; `node /tmp/a.js` does not. Pass forward-slash native paths.
+  `/home/agentuser` works; `node /tmp/a.js` does not. Pass forward-slash native paths.
 - **`urllib`/`requests` with `context` tweaks still fail** where `curl --resolve` succeeds, because
   the failure is the resolved IP, not the TLS stack. Reach for `--resolve` before rewriting the
   client.

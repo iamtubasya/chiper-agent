@@ -18,7 +18,7 @@ NOT cover:
   3. aggregate-findings severity regex not consuming markdown-bold ("**Severity:** Critical")
 
 Usage:
-  python silent_drop_regression.py --scripts C:/Users/WINDOWS10/AppData/Local/hermes/scripts
+  python silent_drop_regression.py --scripts ~/.chiper/skills/bounty-pack
 """
 import argparse, json, re, subprocess, sys, tempfile, os, shutil
 from pathlib import Path
@@ -128,7 +128,7 @@ def case_aggregate_severity_bold(scripts):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--scripts", required=True,
-                    help="path to ~/AppData/Local/hermes/scripts")
+                    help="path to ~/.chiper/skills/bounty-pack")
     args = ap.parse_args()
     scripts = Path(args.scripts)
 

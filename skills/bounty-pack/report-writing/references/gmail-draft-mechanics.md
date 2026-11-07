@@ -5,12 +5,12 @@ rediscover them.
 
 ## Preferred path — Gmail API
 
-`~/AppData/Local/hermes/google_token.json` holds `gmail.modify` + `gmail.send` and a `refresh_token`.
+`~/.chiper/skills/bounty-pack/google_token.json` holds `gmail.modify` + `gmail.send` and a `refresh_token`.
 Check liveness **first**, in one call:
 
 ```python
 import json, os, requests
-t = json.load(open(os.path.expanduser("~/AppData/Local/hermes/google_token.json")))
+t = json.load(open(os.path.expanduser("~/.chiper/skills/bounty-pack/google_token.json")))
 r = requests.get("https://gmail.googleapis.com/gmail/v1/users/me/profile",
                  headers={"Authorization": "Bearer " + t["token"]}, timeout=20)
 print(r.status_code)     # 401 -> try the refresh grant below
@@ -34,7 +34,7 @@ The app password is already on disk. Recover it the same way the helper script d
 ```python
 import re, imaplib, time
 from email.message import EmailMessage
-src = open(r"C:\Users\WINDOWS10\check_basabasi_email.py", encoding="utf-8", errors="replace").read()
+src = open(r"/home/agentuser/check_basabasi_email.py", encoding="utf-8", errors="replace").read()
 APP = (re.search(r"APP_PASSWORD\s*=\s*re\.\w+\([^,]+,\s*['\"]([^'\"]+)['\"]", src)
        or re.search(r"APP_PASSWORD\s*=\s*['\"]([^'\"]+)['\"]", src)).group(1)
 

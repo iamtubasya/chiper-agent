@@ -18,7 +18,7 @@ Helper: `scripts/txguard.py` (stdlib Python 3, read-only, never signs). Exit 0 =
 
 ## 0. Setup and wallets (Windows host — ADAPTED)
 - `baw` is a **Windows npm shim**, NOT a bare binary. In Python `subprocess` always call
-  `C:/Users/WINDOWS10/AppData/Roaming/npm/baw.cmd` — a bare `baw` fails with WinError 2.
+  `/usr/local/bin/baw.cmd` — a bare `baw` fails with WinError 2.
 - Default session / main wallet: BSC `0xEa6a67dB6B6d595Da60111C39b72C74028FF7C62`, Agent ID `BC_USERNAME.ai`.
 - Session check (read-only): `baw.cmd wallet status --json`. If UNCONNECTED, tell the user;
   re-pairing (`auth signin --json`, then `auth verify`) needs them to approve in Binance app.
@@ -26,7 +26,7 @@ Helper: `scripts/txguard.py` (stdlib Python 3, read-only, never signs). Exit 0 =
 - Balances: `baw.cmd wallet balance --json` (add `--tokenAddress 0x..` for dust/tokens).
 - Only touch wallets the user named. Copy addresses from config, never retype from memory.
   Full-string compare (not first/last 4) before every preview.
-- txguard.py is stdlib-only → run with `C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe`
+- txguard.py is stdlib-only → run with `/usr/bin/python3`
   (or the project python); no deps needed.
 
 ## 1. Mint

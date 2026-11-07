@@ -1203,7 +1203,7 @@ checker. And a changed PDF makes the staged draft stale: delete the old draft **
 and re-run all four gates.
 
 ## Tooling notes
-- reportlab + PIL exist in BOTH `C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe` and `C:/Users/WINDOWS10/AppData/Local/Python/bin/python.exe` and the Hermes venv.
+- reportlab + PIL exist in BOTH `/usr/bin/python3` and `~/.local/share/Python/bin/python.exe` and the Hermes venv.
 - On Windows, use native Windows paths in Python (MSYS `/c/...` paths break `open()`); write the generator with write_file and run via terminal (avoid execute_code for long reportlab scripts — escape/quote traps).
 - **When `write_file` is not in the toolset, build the generator with `cat > gen.py <<'EOF'` in
   CHUNKS, not one long heredoc.** A single heredoc past ~110-120 lines silently truncates and the

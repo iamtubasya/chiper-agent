@@ -71,7 +71,7 @@ tak pernah dibuat; `audit-checkpoint` tetap menuntutnya (check `REPORT-survivors
 **Fix (read-only terhadap hasil, tidak mengubah verdict):**
 ```bash
 cd <target-dir>
-python "C:/Users/WINDOWS10/AppData/Local/hermes/scripts/finding_gate.py" findings.json \
+python "~/.chiper/skills/bounty-pack/finding_gate.py" findings.json \
        --out gated.json --report REPORT-survivors.md --survivors survivors.json
 # rc=0 walau 0 survivor → file tetap ditulis berisi "Survivors: N of M"
 ```

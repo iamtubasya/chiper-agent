@@ -104,7 +104,7 @@ validate first, then one self-contained draft+PDF per finding.)
 
 1. **FORMAT:** Always use skill reporting format (references/reporting.md from bug-bounty skill). Structure: Title → Summary → Severity/CVSS → Steps to Reproduce → Proof of Concept → Impact → Remediation → Supporting Material.
 
-2. **SAVE LOCALLY:** Save PDF to working directory (e.g., `/c/Users/WINDOWS10/arlo-bounty/` or project dir). Always use clear, descriptive filenames.
+2. **SAVE LOCALLY:** Save PDF to working directory (e.g., `/home/agentuser/arlo-bounty/` or project dir). Always use clear, descriptive filenames.
 
 3. **DELIVER TO CHAT:** After generating the PDF, MUST deliver it to the SAME chat/topic where the request was made using `MEDIA:<absolute_path>` format. This means:
    - If user asks in Telegram topic X → send MEDIA: to topic X
@@ -836,9 +836,9 @@ skill says so.
 The durable rule is: **probe, then use whatever answers.**
 
 ```bash
-P="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
+P="/usr/bin/python3"
 "$P" -c "import reportlab, pypdf; print('reportlab', reportlab.Version)"
-# also fine historically: C:\Users\WINDOWS10\AppData\Local\Python\bin\python.exe
+# also fine historically: /usr/bin/python3
 # and the Hermes venv python (3.11)
 ```
 
@@ -990,11 +990,11 @@ def build_finding_pdf(output_path, title, severity, summary, steps, poc, impact,
 
 ### ⚠️ Windows MSYS Path Pitfall
 
-On Windows with MSYS/Git Bash, Python does NOT recognize MSYS-style paths like `/c/Users/WINDOWS10/...`. This causes `FileNotFoundError` or silent failures when writing files.
+On Windows with MSYS/Git Bash, Python does NOT recognize MSYS-style paths like `/home/agentuser/...`. This causes `FileNotFoundError` or silent failures when writing files.
 
 **WRONG — MSYS path:**
 ```python
-output_path = '/c/Users/WINDOWS10/project/report.pdf'  # FAILS in Python
+output_path = '/home/agentuser/project/report.pdf'  # FAILS in Python
 ```
 
 **CORRECT — use expanduser or raw Windows path:**
@@ -1002,7 +1002,7 @@ output_path = '/c/Users/WINDOWS10/project/report.pdf'  # FAILS in Python
 import os
 output_path = os.path.join(os.path.expanduser('~'), 'project', 'report.pdf')
 # OR hardcoded Windows path:
-output_path = 'C:/Users/WINDOWS10/project/report.pdf'
+output_path = '/home/agentuser/project/report.pdf'
 ```
 
 **In `execute_code` context:** The `terminal()` tool resolves MSYS paths fine, but `write_file()` and Python `open()` do not. When building Python scripts that write files, always use `os.path.expanduser('~')` for the home directory.
@@ -1350,7 +1350,7 @@ lines = poc_text.split('\n')
 write_file(path="~/project/gen_pdf.py", content=script_content)
 
 # Step 2: Run it
-terminal(command="/c/Users/WINDOWS10/AppData/Local/Python/bin/python.exe gen_pdf.py",
+terminal(command="~/.local/share/Python/bin/python.exe gen_pdf.py",
          workdir="~/project")
 ```
 

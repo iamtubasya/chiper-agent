@@ -19,7 +19,7 @@ negative by construction**, not a statement that the target is safe.
 ## The stage
 
 ```bash
-python ~/AppData/Local/hermes/scripts/dom-xss-test.py <target-dir> <base-url> \
+python ~/.chiper/skills/bounty-pack/dom-xss-test.py <target-dir> <base-url> \
        [--urls-file urls.txt] [--limit 25] [--timeout 12] [--headful]
 ```
 

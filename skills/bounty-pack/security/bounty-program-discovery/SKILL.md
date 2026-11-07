@@ -21,7 +21,7 @@ metadata:
 
 ## The architecture (5 layers, cheapest→dearest)
 
-Where it lives: `C:/Users/WINDOWS10/AppData/Local/hermes/early-warning/`.
+Where it lives: `~/.chiper/skills/bounty-pack/early-warning/`.
 Cron job (no_agent, `*/15 * * * *`) runs `scripts/early_warning_run.py` → `ew_run.py`.
 
 | layer | script | what it finds | cost |
@@ -110,7 +110,7 @@ winget install Microsoft.Sysinternals.Whois --silent   # Sysinternals whois
 winget install ISC.Bind --silent                        # brings dig.exe + nslookup
 ```
 WinGet installs land under
-`C:/Users/<u>/AppData/Local/Microsoft/WinGet/Packages/<Id>_.../`. `dig +short <domain> MX`
+`~/.local/share/Microsoft/WinGet/Packages/<Id>_.../`. `dig +short <domain> MX`
 is the email-validity gate (empty MX = domain can't receive mail, skip `security@` guesses).
 `whois` (Sysinternals) emits registrant/creation lines for RDAP fallback.
 
@@ -137,7 +137,7 @@ website resolver and the email clean pass.
   discovery currently relies on platform-feed keyword regex + the pool's `web3_*` category, not
   those API endpoints.
 - Read-before-write: `pool.py` and the discovery scripts live under
-  `~/AppData/Local/hermes/scripts/` and `~/early-warning/` — verify paths exist before a run
+  `~/.chiper/skills/bounty-pack/` and `~/early-warning/` — verify paths exist before a run
   (the scripts dir has vanished once before).
 
 ## "Basi" vs "baru launch" — the whole point of the filter (2026-11-02)

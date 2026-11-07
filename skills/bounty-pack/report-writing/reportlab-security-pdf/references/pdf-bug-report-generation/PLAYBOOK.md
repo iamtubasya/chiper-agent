@@ -174,12 +174,12 @@ drop the trailing quote or rephrase the final line.
 ### The layout gate needs a NATIVE path on Windows — a `~/…` expansion looks like a missing script
 
 ```bash
-PY="C:/Users/<u>/AppData/Local/Programs/Python/Python314/python.exe"
-QA="C:/Users/<u>/AppData/Local/hermes/skills/security/pdf-bug-report-generation/scripts/qa_pdf_layout.py"
+PY="/usr/bin/python3"
+QA="~/.chiper/skills/bounty-pack/pdf-bug-report-generation/scripts/qa_pdf_layout.py"
 "$PY" "$QA" out.pdf --margin-mm 14.8
 ```
 
-Invoking it as `"$PY" "$(echo ~/AppData/…/qa_pdf_layout.py)"` under `MSYS_NO_PATHCONV=1` hands Windows
+Invoking it as `"$PY" "$(echo ~/qa_pdf_layout.py)"` under `MSYS_NO_PATHCONV=1` hands Windows
 Python `D:\c\Users\…` and it fails with `can't open file` — which reads like the gate is missing instead
 of mis-invoked.
 
@@ -348,7 +348,7 @@ Use for every section: `keep("Negative Tests", neg_table([...]))`. Long sections
 - Close nested tags inner-first: `</b></font>`, never `</font></b>` (reportlab XML parser).
 - Convert Pillow images to RGB before embedding (`if img.mode != 'RGB': img.convert('RGB')`) — RGBA PNG crashes reportlab.
 - Windows file lock: build to temp path then `os.replace`; or save `-v2.pdf`.
-- Generate PDF scripts via `write_file` + run with the reportlab-having Python (`C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe`), NOT execute_code (escape-sequence landmines with long XML/curl strings).
+- Generate PDF scripts via `write_file` + run with the reportlab-having Python (`/usr/bin/python3`), NOT execute_code (escape-sequence landmines with long XML/curl strings).
 - **Nested triple-quotes inside the generator: use `'''`, not `"""`, for code blocks.** Generators
   wrap code as `C("""…""")`. If that block itself contains a double quote (e.g.
   `curl -H "Content-Type: text/xml"`), Python tokenises the string wrong and the file dies with

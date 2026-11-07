@@ -9,7 +9,7 @@
 
 ### Step 1: Audit — Check What's Installed
 ```bash
-export PATH="/c/go/bin:/c/Users/WINDOWS10/go/bin:$PATH"
+export PATH="/c/go/bin:/home/agentuser/go/bin:$PATH"
 echo "--- Go Tools ---"
 for tool in subfinder nuclei katana ffuf gobuster gau medusa trufflehog; do
   command -v $tool &>/dev/null && echo "✅ $tool" || echo "❌ $tool"
@@ -34,7 +34,7 @@ command -v hardhat &>/dev/null && echo "✅ hardhat" || echo "❌ hardhat (check
 curl -L -o /d/data\ hermes/go.zip "https://go.dev/dl/go1.24.6.windows-amd64.zip"
 powershell -Command "Expand-Archive -Path 'D:\data hermes\go.zip' -DestinationPath 'C:\' -Force"
 echo 'export PATH="/c/go/bin:$HOME/go/bin:$PATH"' >> ~/.bashrc
-echo 'export GOPATH="/c/Users/WINDOWS10/go"' >> ~/.bashrc
+echo 'export GOPATH="/home/agentuser/go"' >> ~/.bashrc
 ```
 
 #### Phase B: Go Tools (ProjectDiscovery + others)
@@ -63,7 +63,7 @@ unzip /d/data\ hermes/nuclei.zip -d /c/go/bin/ && rm /d/data\ hermes/nuclei.zip
 
 #### Phase C: Python Tools
 ```bash
-PIP="/c/Users/WINDOWS10/AppData/Local/Python/bin/pip.exe"
+PIP="~/.local/share/Python/bin/pip.exe"
 $PIP install sqlmap
 
 # theHarvester: pip package is v0.0.1 (outdated). Must git clone + editable install:
@@ -74,7 +74,7 @@ cd theHarvester && $PIP install -e .
 cat > /c/go/bin/theharvester << 'WRAPPER'
 #!/bin/bash
 cd "/d/data hermes/theHarvester"
-/c/Users/WINDOWS10/AppData/Local/Python/bin/python.exe -m theHarvester "$@"
+~/.local/share/Python/bin/python.exe -m theHarvester "$@"
 WRAPPER
 chmod +x /c/go/bin/theharvester
 ```
@@ -184,7 +184,7 @@ Verified 2026-10 on Windows 10 during the Octopus Deploy audit (Octopus Server /
 Tentacle are closed-source .NET; the Tentacle source is public).
 
 1. Install the SDK user-local (no admin):
-   `powershell -ExecutionPolicy Bypass -File dotnet-install.ps1 -Channel 8.0 -InstallDir C:\Users\<u>\.dotnet`
+   `powershell -ExecutionPolicy Bypass -File dotnet-install.ps1 -Channel 8.0 -InstallDir /home/agentuser/.dotnet`
    (fetch https://dot.net/v1/dotnet-install.ps1)
    - The bash `dotnet-install.sh` FAILS under git-bash:
      `OS name could not be detected: UName = MINGW64_NT-10.0-19045`. Use the .ps1.
@@ -194,7 +194,7 @@ Tentacle are closed-source .NET; the Tentacle source is public).
 2. ilspycmd: the CURRENT package fails with
    `Settings file 'DotnetToolSettings.xml' was not found in the package`.
    Pin a version that ships it and add the runtime it wants:
-     `dotnet-install.ps1 -Channel 6.0 -Runtime dotnet -InstallDir C:\Users\<u>\.dotnet`
+     `dotnet-install.ps1 -Channel 6.0 -Runtime dotnet -InstallDir /home/agentuser/.dotnet`
      `dotnet tool install -g ilspycmd --version 8.2.0.7535`
    Without DOTNET_ROOT+PATH set, the tool reports `You must install or update .NET`
    or `Failed to resolve hostfxr.dll`.

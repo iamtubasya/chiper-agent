@@ -157,7 +157,7 @@ report draft staged through it silently ships text-only, which is a rule-0a-2 re
 deliverables and go straight to the raw-MIME path above. Minimal working shape (verified 2026-10-29):
 
 ```python
-d = json.load(open(os.path.expanduser("~/AppData/Local/hermes/google_token.json")))  # NOT ~/.hermes/
+d = json.load(open(os.path.expanduser("~/.chiper/skills/bounty-pack/google_token.json")))  # NOT ~/.hermes/
 tok = requests.post(d["token_uri"], data={"client_id": d["client_id"],
         "client_secret": d["client_secret"], "refresh_token": d["refresh_token"],
         "grant_type": "refresh_token"}, timeout=30).json()["access_token"]
@@ -174,7 +174,7 @@ requests.post("https://gmail.googleapis.com/gmail/v1/users/me/drafts",
 ```
 
 **Multi-account mailbox: pick the account by LABEL, never `accts[0]`.** When the operator keeps
-several Gmail tokens in `~/AppData/Local/hermes/gmail_accounts/`, `bounty_mail.account_files()`
+several Gmail tokens in `~/.chiper/skills/bounty-pack/gmail_accounts/`, `bounty_mail.account_files()`
 returns them in filesystem order and index 0 is NOT the bounty mailbox (convention: bounty drafts
 go from **RESEARCHER_USERNAME**). Select explicitly, then build the draft through that account's service
 (verified 2026-10-30, DedSec CCTV):
@@ -182,7 +182,7 @@ go from **RESEARCHER_USERNAME**). Select explicitly, then build the draft throug
 ```python
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path.home() / "AppData/Local/hermes/scripts"))
+sys.path.insert(0, str(Path.home() / "~/.chiper/skills/bounty-pack"))
 from bounty_mail import account_files, gmail_service
 
 accts = dict(account_files())
@@ -263,7 +263,7 @@ ban. Drafts staged ≠ cleared to send; the operator decides, with the scope ris
   Symptom tells: a stray `***` inside a `$(...)` or a `[Command timed out]` right after a
   token-extraction line. Fix: put the whole probe in a Python script file and run that, never a
   token-shaped shell one-liner.
-- Prefer forward slashes in file paths written through the shell (`C:/Users/...`) so a stripped
+- Prefer forward slashes in file paths written through the shell (`/home/agentuser`) so a stripped
   backslash cannot silently corrupt the path.
 - WSL `/tmp` is VOLATILE across tool calls (the distro stops between calls) - keep evidence under
   `/mnt/c/...`. Also kill orphaned `chrome-headless` processes between screenshot runs and use a fresh
@@ -354,7 +354,7 @@ if isinstance(d.get("expiry"), (int, float)):
   computation, warm the route with `curl` (~5s), THEN screenshot (instant load). A timed-out
   `--screenshot` call may still have written the PNG - check the file before re-running.
 - **Windows Python cannot resolve MSYS paths** (`/c/Users/...`) when a script opens skill files -
-  use native `C:/Users/...` inside Python; MSYS form only in bare shell commands.
+  use native `/home/agentuser` inside Python; MSYS form only in bare shell commands.
 - **Two servers can hold the same port on Windows** (SO_REUSEADDR): after killing a background
   evidence server, `netstat -ano | grep <port>` and taskkill EVERY listener PID, or the stale
   instance keeps serving old code and your patch appears to have had no effect.
@@ -399,7 +399,7 @@ if isinstance(d.get("expiry"), (int, float)):
   concluding outage/rate-limit — and keep the invalid-input 500 as an honest footnote, not as the
   finding.
 - **Windows python3 does not resolve MSYS paths.** `open('/c/Users/...')` raises FileNotFoundError
-  inside python even though bash accepts it; use native `C:/Users/...` in all Python code (shell
+  inside python even though bash accepts it; use native `/home/agentuser` in all Python code (shell
   commands may use either).
 - **Scope-clause gate immediately before staging.** Re-read the program's out-of-scope list and map
   each finding clause-by-clause; drop whatever maps instead of staging and hoping. Live example: a
@@ -589,7 +589,7 @@ when **all four** hold; fail any one and it is EXCLUDED with its reason written 
 | 3 | that record **re-verified CONFIRMED 3x** (`reverify.py`) | a finding that does not reproduce is not a finding |
 | 4 | an impact statement saying what the observed output **proves** | `"impact: potential"` is not an impact |
 
-Enforced by `scripts/final-deliverable.py` (lives in `~/AppData/Local/hermes/scripts/`):
+Enforced by `scripts/final-deliverable.py` (lives in `~/.chiper/skills/bounty-pack/`):
 
 ```bash
 python .../final-deliverable.py check <target_dir>          # reportability only, writes nothing
@@ -754,7 +754,7 @@ root cause" means in practice.
 
 1. **FORMAT:** Always use skill reporting format (references/reporting.md from bug-bounty skill). Structure: Title → Summary → Severity/CVSS → Steps to Reproduce → Proof of Concept → Impact → Remediation → Supporting Material.
 
-2. **SAVE LOCALLY:** Save PDF to working directory (e.g., `/c/Users/WINDOWS10/arlo-bounty/` or project dir). Always use clear, descriptive filenames.
+2. **SAVE LOCALLY:** Save PDF to working directory (e.g., `/home/agentuser/arlo-bounty/` or project dir). Always use clear, descriptive filenames.
 
 3. **DELIVER TO CHAT:** After generating the PDF, MUST deliver it to the SAME chat/topic where the request was made using `MEDIA:<absolute_path>` format. This means:
    - If user asks in Telegram topic X → send MEDIA: to topic X

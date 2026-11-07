@@ -230,7 +230,7 @@ negative, with evidence.
 ### 5d. Automation pitfalls that cost real hours
 
 - **`/tmp` is not shared** between `terminal` and `execute_code` on Windows. Write and read via
-  `C:\Users\<user>\...` absolute paths on both sides, or the file vanishes mid-run.
+  `/home/agentuser/...` absolute paths on both sides, or the file vanishes mid-run.
 - **Secret redaction mangles literals** — a password written literally into a generated script
   can come back as `***`, and the script then fails to parse. Build such constants from codes
   (`"".join(chr(c) for c in [64,66,108,...])`) or load them from a JSON file.

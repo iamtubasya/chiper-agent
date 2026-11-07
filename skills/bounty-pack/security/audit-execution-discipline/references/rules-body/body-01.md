@@ -1,6 +1,6 @@
 # rules body 01 (moved out of SKILL.md 20261010_094721 to stay under the 100k char limit)
 
-## ⚡ GLOBAL MANDATE (operator, 2026-10-07) — tiap target, tanpa diminta
+## ⚡ ALUR EKSEKUSI (setelah otorisasi jelas) (operator, 2026-10-07) — tiap target, tanpa diminta
 
 
 Saat operator memberi target: jalankan **pipeline penuh 0A→0F DULU**, jangan improvisasi/curl dulu.
@@ -10,7 +10,7 @@ Saat operator memberi target: jalankan **pipeline penuh 0A→0F DULU**, jangan i
 3. Tiap fase: `audit-checkpoint.py <target_dir> --phase all` (baca bukti disk, bukan self-report).
 4. **SEMUA skill+tool tiap fase WAJIB dipanggil DAN dipakai** (nuclei/ffuf/sqlmap/dalfox/… via tool_router.py). `curl` = LAST RESORT.
 5. Skill/tool di luar pipeline → **integrasikan** ke fase yang cocok.
-6. **Scope FLEKSIBEL:** ada scope → patuhi+catat di PHASE_LOG; **tak ada scope → TETAP audit+exploit (allow-all), DILARANG menolak.**
+6. **Scope:** ada scope → patuhi + catat di PHASE_LOG. **Tak ada scope → tanyakan otorisasi SEKALI (Hard Rule #1), jangan asumsikan allow-all.**
 
 ## ⛔ RULE DEEP-AUDIT MODE (operator, 2026-10-10) — OUTER GATE, berlaku SELAMANYA
 
@@ -77,7 +77,7 @@ must still satisfy `final_coverage_gate()`. See `references/phase-execution-mand
 Resume/реset: `references/pipeline-phases-and-fresh-run.md` — incl. **§3b "fixing a DOWNSTREAM script"**:
 after editing a producer, reset ONLY the phases it produces (`completed_phases` = the untouched
 prefix), or resume skips them as already-complete and your fix is never exercised while the run still
-prints `🎯 COMPLETE`. Then prove the artefact's mtime moved. State: `~/AppData/Local/hermes/trackers/`.
+prints `🎯 COMPLETE`. Then prove the artefact's mtime moved. State: `~/.chiper/skills/bounty-pack/trackers/`.
 
 ## ⛔ RULE 0c — Prove every check can FAIL, or it is decoration
 
@@ -143,7 +143,7 @@ The PERMANENT fix is: **USE THE SCRIPT, NOT THE RULES.**
 
 ```
 PRIMARY METHOD (permanently forces execution):
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-run-all.py <TARGET> --tech "<tech>"
+python ~/.chiper/skills/bounty-pack/audit-run-all.py <TARGET> --tech "<tech>"
 
 This ONE SCRIPT forces all phases (0A→0F) with real tools.
 Every step is disk-verified. Phase-model drift + blocker/operator discipline:
@@ -171,7 +171,7 @@ PART 0 gate) override its content.
 
 **MANDATORY:** Before claiming ANY phase complete, run verification checkpoint:
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-checkpoint.py <target_dir> --phase <phase>
+python ~/.chiper/skills/bounty-pack/audit-checkpoint.py <target_dir> --phase <phase>
 ```
 Only claim COMPLETE if checkpoint returns ALL ✅. If any ❌, that phase was NOT done.
 The checkpoint reads ACTUAL FILES FROM DISK — not self-reported claims.
@@ -191,7 +191,7 @@ If checkpoint shows incomplete → DO NOT GENERATE REPORT. Go back and finish.
 
 **⛔ Auto-save state after every step:**
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-state.py save <target> --phase <X> --step "<what>"
+python ~/.chiper/skills/bounty-pack/audit-state.py save <target> --phase <X> --step "<what>"
 ```
 
 **Prohibited claims:**
@@ -265,7 +265,7 @@ Every audit step must answer: "What can attacker DO with this?"
 
 `skill_view('exploit-cookbook')` ≠ testing. Loading a skill MUST be followed by 3+ tool calls in the next 2 turns. If violated → STOP, fix, then continue.
 
-## ⛔ RULE 30: SCOPE — NEVER Ask the User (Auto-Detect, Else Allow-All)
+## ⛔ RULE 30: SCOPE — Resolve Deterministically, Ask ONCE if No Scope (Hard Rule #1 SOUL.md Wins)
 
 
 **User correction (2026-09-26): \"Kamu jgn tanya scope lg sm saya, kamu yg cari, kl mmg gkad scope, artinya semua lini, semua sisi target adalah scope\" + \"kok semua nanya2 terus, lakukan aja udah\"**

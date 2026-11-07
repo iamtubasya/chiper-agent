@@ -57,9 +57,9 @@ RESTORE_PREFIX = ("ps3_","ps4_","ps_","wb_","bl_","defillama_","rgeo",
 `PermissionError [WinError 5] … .git/objects/pack/*.idx`. Count check told the truth:
 
 ```
-C:/Users/WINDOWS10/lit-audit              | src=29211 | dst=29256 | dst_exists=True
-C:/Users/WINDOWS10/ace-audit              | src= 984  | dst=1006  | dst_exists=True
-C:/Users/WINDOWS10/ace-contracts-public   | src=8878  | dst=8896  | dst_exists=True
+/home/agentuser/lit-audit              | src=29211 | dst=29256 | dst_exists=True
+/home/agentuser/ace-audit              | src= 984  | dst=1006  | dst_exists=True
+/home/agentuser/ace-contracts-public   | src=8878  | dst=8896  | dst_exists=True
 ```
 
 `dst > src` with src still populated = **copy finished, delete failed** (Windows counts
@@ -69,7 +69,7 @@ in the main pitfall — but note the direction: here `dst > src`, not `dst == sr
 
 ## Residue sweep — expect allowed hits, don't chase zero
 
-Final regex sweep (depth 3, skipping `AppData|node_modules|.git|$RECYCLE.BIN|System Volume
+Final regex sweep (depth 3, skipping `node_modules|.git|System|Trash Volume
 Information|Program Files`) returned **0 hits** only after P3–P6. Intermediate runs returned
 14, then 9, of which these were **legitimate and kept**:
 

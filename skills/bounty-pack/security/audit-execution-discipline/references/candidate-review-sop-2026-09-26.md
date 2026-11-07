@@ -5,7 +5,7 @@ jgn kerjakan sekaligus, tp satu persatu ... tidak apa2 kalau prosesnya lama."
 
 ## Script: review-candidates.py
 
-Location: `C:/Users/WINDOWS10/AppData/Local/hermes/scripts/review-candidates.py`
+Location: `~/.chiper/skills/bounty-pack/review-candidates.py`
 
 Usage:
 ```

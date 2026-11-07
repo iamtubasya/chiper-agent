@@ -160,7 +160,7 @@ covers is not a coverage claim.
 ## ⛔ VERIFICATION
 Before claiming audit complete, run:
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-checkpoint.py <target_dir> --phase 0C
+python ~/.chiper/skills/bounty-pack/audit-checkpoint.py <target_dir> --phase 0C
 ```
 Checkpoint reads actual tool output files from disk (slither, aderyn, mythril reports).
 

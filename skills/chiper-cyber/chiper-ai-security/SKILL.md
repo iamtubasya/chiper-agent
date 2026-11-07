@@ -38,6 +38,9 @@ references:
 > **Extended Guides** (`guides/`):
 > - `guides/llm-attack-methodology.md` — Attack surface identification, threat modeling, attack chain construction, jailbreak taxonomy, evidence collection, defensive bypass detection, and AI vulnerability reporting
 > - `guides/ai-security-jailbreak-research.md` — LLM jailbreak research methodology: prompt injection taxonomies, adversarial suffix attacks (GCG/AutoDAN/PAIR/TAP), multi-turn Crescendo patterns, multimodal jailbreaks, real-world incidents, defense tooling, and eval harnesses (HarmBench/AdvBench/StrongREJECT)
+>
+> **References**:
+> - `references/ai-bug-bounty-scope-0din.md` — GenAI/LLM bounty program scope & severity taxonomy (0DIN/Mozilla): model-bug vs application-bug classes, "Abstract Sign-off" report flow, duplicate/eligibility/disclosure rules. Reusable template for any AI bounty program.
 
 ## Summary
 
@@ -513,9 +516,14 @@ continuous-learning → [update skill corpus for next engagement]
 
 ## Common Pitfalls
 
+- **`garak` full install is ~5GB+** (pulls torch, transformers, datasets, CUDA toolkits) and exhausts a constrained disk (`No space left on device`). For API-mode scanning against closed models you only need the client deps: `pip install garak --no-deps`, then add `openai`, `anthropic`, `litellm`, `httpx`, `numpy`, `pandas`, `colorama`, `cmd2==2.4.3`, `xdg-base-dirs`, `zalgolib`, `wn`. Install the full torch/transformers stack only when you must run local open-weight models.
+
 - **Testing only direct injection and ignoring indirect paths**: Many assessors test user-facing chat inputs for prompt injection but overlook indirect vectors like document uploads, API response processing, and plugin/tool outputs that reach the LLM. RAG poisoning through uploaded documents is often the highest-impact finding.
 - **Treating all refusals as evidence of security**: A model refusing a specific prompt formulation does not prove robustness — it may refuse the exact wording but comply with semantically equivalent rephrasings. Test multiple formulation variants before concluding a safety control is effective.
 - **Ignoring rate limiting on LLM endpoints**: LLM API calls are expensive. Without rate limiting, attackers can perform systematic model extraction or training data membership inference by sending thousands of queries. Check for rate limits and cost caps as part of every AI security assessment.
+- **Testing through a wrapper/router/proxy invalidates findings**: If the target model is reached through an aggregator that injects its own system prompt (or a "jailbreak"/"uncensored" persona), a prompt-extraction "leak" exposes the WRAPPER's prompt, not the model's — and jailbreak findings must be "in the model itself", not the surrounding wrapper (Mozilla 0DIN and similar programs state this explicitly). Test the model's NATIVE guardrails on a clean deployment; treat a router's injected persona as a red flag that voids the finding.
+- **Naive keyword judges produce false positives**: A model echoing a benign token you told it to say ("reply NOLIMITS", "output HACKED") is instruction-following, not a jailbreak. Don't flag on substring match. Require the model to actually cross a guardrail (produce genuinely forbidden output), or score with a rubric judge like StrongREJECT before claiming a bypass.
+- **garak 0.17.x install & config gotchas**: a full `pip install garak` pulls torch+transformers+datasets ≈5 GB — on tight disks use `pip install garak --no-deps` then add client-only deps (`openai`, `anthropic`, `litellm`, `langchain-core`, `numpy`, `pandas`, `colorama`, `xdg-base-dirs`, `zalgolib`, `wn`). `--model_type`/`--model_name`/`--probes` are deprecated (0.13+); use `--target_type`/`--target_name` or a config file — the error "Expected plugin name ... got generators.openai" means the generator key is malformed. A self-hosted OpenAI-compatible endpoint works via `OPENAI_BASE_URL` + `OPENAI_API_KEY` env vars and the `openai.OpenAICompatible` generator.
 
 ## Reporting and Documentation
 

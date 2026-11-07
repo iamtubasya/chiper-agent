@@ -38,7 +38,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
 
-sys.path.insert(0, str(Path.home() / "AppData/Local/hermes/scripts"))
+sys.path.insert(0, str(Path.home() / "~/.chiper/skills/bounty-pack"))
 import gmail_ops as g  # noqa: E402
 
 

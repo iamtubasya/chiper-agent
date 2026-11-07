@@ -69,7 +69,7 @@ Each entry is a real, dated lesson — the failure it caused and the rule it pro
 Never say "READY TO SUBMIT" — say "FINDING READY FOR REVIEW" and let user decide.
 
 ## python3 Not Found on Windows
-Use `"/c/Users/WINDOWS10/AppData/Local/Python/bin/python.exe"` or `execute_code` tool.
+Use `"~/.local/share/Python/bin/python.exe"` or `execute_code` tool.
 
 ## Cloudflare WARP VPN DNS Interception — Use Python for True Resolution
 **Problem:** When Cloudflare WARP VPN is active, `curl`, `host`, `dig`, and system DNS all return WARP's virtual IPs (`127.0.2.x`) instead of the actual IP. This makes staging domains APPEAR unreachable when they might actually be accessible, and vice versa.

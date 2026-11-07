@@ -55,7 +55,7 @@ SOLC=/tmp/solc ~/mythril-venv/bin/python -m mythril analyze Contract.sol
 ## Mythril analysis runtime
 
 - First analysis on a non-trivial contract took > 5 minutes → always `background=true, notify_on_complete=true`.
-- Access Windows files from WSL via `/mnt/c/Users/WINDOWS10/...`.
+- Access Windows files from WSL via `/home/agentuser/...`.
 
 ## Halmos property-check results (reference for interpretation)
 

@@ -1018,7 +1018,7 @@ you remember.
 
 - **git-bash / MSYS silently rewrites a leading-slash argument into a Windows path.** On this
   host a bare `/api/...` value — and even a curl `-w` label like `/api/foo -> %{http_code}` —
-  becomes `C:/Users/<user>/.../git/api/...`, so the request or the printed label is wrong and
+  becomes `/home/agentuser/.../git/api/...`, so the request or the printed label is wrong and
   reads like a real result. Prefix each call with `MSYS_NO_PATHCONV=1` (or avoid bare
   leading-slash args) for every curl / harness invocation on Windows.
 

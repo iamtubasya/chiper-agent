@@ -7,7 +7,7 @@ eyeball, and one of them has a built-in false positive you should not chase.
 ## 1. The authoritative check — `qa_pdf_layout.py`
 
 ```bash
-python ~/AppData/Local/hermes/skills/security/pdf-bug-report-generation/scripts/qa_pdf_layout.py \
+python ~/.chiper/skills/bounty-pack/pdf-bug-report-generation/scripts/qa_pdf_layout.py \
   Report.pdf --margin-mm 19.05
 # -> pages: 6
 # -> layout: clean (no stranded headings, no margin overflow, no overlap)

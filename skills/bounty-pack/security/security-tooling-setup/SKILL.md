@@ -47,7 +47,7 @@ Space-safe existence test (**quote + arrays** — `D:\data hermes\...` breaks wo
 
 ```bash
 DIRS=( "/c/Users/$USER/.local/bin" "/c/go/bin" "/c/Users/$USER/go/bin"
-       "/c/Users/$USER/AppData/Roaming/npm" "/d/data hermes/tools" )
+       "/usr/local/bin" "/opt/security-tools" )
 have() { command -v "$1" >/dev/null 2>&1 && { echo "PATH $(command -v "$1")"; return; }
   for d in "${DIRS[@]}"; do
     for e in "" ".exe" ".cmd"; do [ -e "$d/$1$e" ] && { echo "DIR $d/$1$e"; return; }; done
@@ -123,7 +123,7 @@ Order matters — never skip step 4:
 
 1. **Matrix** — per skill, list the tools it *requires*, test presence, group the gaps **by
    skill**. Re-runnable: `scripts/tool-coverage-matrix.py` (deployed copy at
-   `~/AppData/Local/hermes/scripts/web2-tool-matrix.py`). It prints `N present / M missing`.
+   `~/.chiper/skills/bounty-pack/web2-tool-matrix.py`). It prints `N present / M missing`.
 2. **Install in batches by METHOD** — pip → `go install` → release binaries → runtime-bound
    (Ruby/Java/Maven). Batch by method so one failure cannot abort the rest; on a machine with
    no Ruby, a whole batch degrades gracefully.
@@ -138,7 +138,7 @@ on PATH) promotes a git-cloned repo to a first-class tool:
 
 ```bat
 @echo off
-"C:\Users\<u>\AppData\Local\Programs\Python\Python3XX\python.exe" "D:\tools\<repo>\main.py" %*
+"/usr/bin/python3" "D:\tools\<repo>\main.py" %*
 ```
 
 Add `cd /d "<repo>"` as the second line whenever the repo imports **its own package**
@@ -155,7 +155,7 @@ pipeline does) before declaring anything broken.
 
 ### ⛔ Extensionless wrappers: `shutil.which` needs BOTH a shebang script AND a `.cmd` (2026-10-12)
 
-A bare (no-extension) bash wrapper named exactly like the tool in a PATH dir (`C:\Users\<u>\go\bin\ssrfmap`,
+A bare (no-extension) bash wrapper named exactly like the tool in a PATH dir (`/home/agentuser/go/bin/ssrfmap`,
 with `#!/bin/bash\nexec python "<repo>/main.py" "$@"`) resolved from **bash** but `shutil.which('ssrfmap')`
 returned `None` from Python — so the pipeline would skip it. Creating a second file,
 `<name>.cmd` (`@echo off` + `python "<repo>\main.py" %*`), made it resolve. **Ship both** for any
@@ -166,7 +166,7 @@ Working pattern used for 8 cloned tools (`linkfinder`, `secretfinder`, `cloud_en
 `jwt_tool`, `sstimap`, `ssrfmap`, `graphqlmap`):
 ```bash
 GB="/c/Users/$USER/go/bin"
-printf '#!/bin/bash\nexec python "/d/data hermes/tools/LinkFinder/linkfinder.py" "$@"\n' > "$GB/linkfinder"
+printf '#!/bin/bash\nexec python "/opt/security-tools/LinkFinder/linkfinder.py" "$@"\n' > "$GB/linkfinder"
 printf '@echo off\npython "D:\\data hermes\\tools\\LinkFinder\\linkfinder.py" %%*\n' > "$GB/linkfinder.cmd"
 chmod +x "$GB/linkfinder"
 ```
@@ -288,7 +288,7 @@ route around a working tool — re-probe instead of trusting the note.
 
 | tool | was | now |
 |---|---|---|
-| `semgrep` | ImportError chain (`httpx_sse`, `pydantic_settings`, `sse_starlette`) then `mcp` 2.x vs the required 1.29.0 | working — the real cause was **two Python 3.14 installs**; deps belonged to the interpreter the launcher uses, and the shadowing install had to be removed. Fix the interpreter, not the package. **Later variant (2026-10-27): `ImportError: cannot import name '_ExtendedAttributes' from 'opentelemetry.util.types'`** — an opentelemetry exporter/API version skew, and the tell is that the traceback goes `pysemgrep.exe → semgrep/telemetry.py → otlp log exporter`. Fix: `python -m pip install -U opentelemetry-api opentelemetry-sdk opentelemetry-exporter-otlp-proto-http`, **run through the interpreter in the traceback path** (`C:/Users/<u>/AppData/Local/Python/pythoncore-3.14-64/python.exe -m pip …`), not a bare `pip` — a bare `pip` resolves to the *other* 3.14 and the install is a no-op that leaves the error byte-identical. Verify with `semgrep --version`. |
+| `semgrep` | ImportError chain (`httpx_sse`, `pydantic_settings`, `sse_starlette`) then `mcp` 2.x vs the required 1.29.0 | working — the real cause was **two Python 3.14 installs**; deps belonged to the interpreter the launcher uses, and the shadowing install had to be removed. Fix the interpreter, not the package. **Later variant (2026-10-27): `ImportError: cannot import name '_ExtendedAttributes' from 'opentelemetry.util.types'`** — an opentelemetry exporter/API version skew, and the tell is that the traceback goes `pysemgrep.exe → semgrep/telemetry.py → otlp log exporter`. Fix: `python -m pip install -U opentelemetry-api opentelemetry-sdk opentelemetry-exporter-otlp-proto-http`, **run through the interpreter in the traceback path** (`~/.local/share/Python/pythoncore-3.14-64/python.exe -m pip …`), not a bare `pip` — a bare `pip` resolves to the *other* 3.14 and the install is a no-op that leaves the error byte-identical. Verify with `semgrep --version`. |
 | `cloud_enum` | `ModuleNotFoundError: requests_futures` | working |
 | `dnsreaper` | `No module named 'pkg_resources'` (setuptools ≥ 81) | working |
 | `nikto` | AV had **deleted** `nikto.pl`; then `XML::Writer` missing (dead `cpan`); then no `nikto.conf`; then config-not-found from the wrong cwd | working — `nikto -Version` → 2.6.1 |
@@ -314,7 +314,7 @@ all in `tool-health-probe.py` / `tools-registry.json`, all producing confident f
    `PATH_MISSING` (router's declared path absent from disk) and `NO_PATH_RECORD` (router declares
    no path at all). A missing binary is now a visible fact, never an inherited opinion.
 2. **The probe hard-coded its own paths instead of using `TOOL_PATHS`.** Entries like
-   `python "<HOME>/AppData/Local/hermes/tools/smuggler/smuggler.py"` pointed at a directory that
+   `python "<HOME>/~/.chiper/skills/bounty-pack/tools/smuggler/smuggler.py"` pointed at a directory that
    does not exist (the repos live under `D:/data hermes/tools/...` behind a `.cmd` shim). The
    probe therefore reported **BROKEN** for `smuggler`, `sstimap`, `ssrfmap`, `graphqlmap` while
    those tools ran perfectly through the router. **Fix:** build every probe command from
@@ -330,10 +330,10 @@ all in `tool-health-probe.py` / `tools-registry.json`, all producing confident f
 
 ```bash
 # 1. does the registry even store a path?
-python -c "import json,os;d=json.load(open(os.path.expanduser('~/AppData/Local/hermes/tools-registry.json')));\
+python -c "import json,os;d=json.load(open(os.path.expanduser('~/.chiper/skills/bounty-pack/tools-registry.json')));\
 k=[t for t,v in d['tools'].items() if not v.get('declared_path')];print('no path:',len(k),k)"
 # 2. does every path the ROUTER declares exist on disk?
-python -c "import importlib.util,os;s=importlib.util.spec_from_file_location('t',os.path.expanduser('~/AppData/Local/hermes/scripts/tool_router.py'));m=importlib.util.module_from_spec(s);s.loader.exec_module(m);\
+python -c "import importlib.util,os;s=importlib.util.spec_from_file_location('t',os.path.expanduser('~/.chiper/skills/bounty-pack/tool_router.py'));m=importlib.util.module_from_spec(s);s.loader.exec_module(m);\
 print([ (n,p) for n,p in m.TOOL_PATHS.items() if not (p and os.path.exists(p)) ])"
 # 3. run ONE probe command by hand and read the body — not the exit code
 ```
@@ -363,7 +363,7 @@ some launchers.
 | Tool | Fix |
 |---|---|
 | gcloud SDK | set user env `CLOUDSDK_ROOT_DIR` + `CLOUDSDK_PYTHON`; run `python <sdk>/lib/gcloud.py --version`; or `cmd /c "cd /d \"<dir>\" && gcloud.cmd --version"` |
-| NSIS installer (nmap, npcap) | prefer the **ZIP** distribution (`nmap.org/dist/nmap-*-win32.zip`); or copy the `.exe` to a space-free path (`C:\Users\<u>\x.exe`) first |
+| NSIS installer (nmap, npcap) | prefer the **ZIP** distribution (`nmap.org/dist/nmap-*-win32.zip`); or copy the `.exe` to a space-free path (`/home/agentuser/x.exe`) first |
 | `.bat`/`.cmd` from bash | bash can't run them (`@if: command not found`) — call via `cmd.exe /c` or a sibling wrapper `.bat` |
 
 **npcap needs admin (UAC).** Without it nmap works in `connect()` mode (`-sT`); after the npcap
@@ -374,13 +374,13 @@ driver service is Running it gains `-sS`/OS-detect. Verify with `nmap --version`
 The `terminal` tool runs git-bash (MSYS), which rewrites any argument that *looks* like a POSIX
 path into a Windows path. This silently corrupts output and file writes:
 
-- `-w "/path -> %{http_code}"` → the leading `/` becomes `C:/Users/.../git/...`, so your label is
-  garbage (looks like `C:/Users/<u>/AppData/Local/hermes/git/.git/HEAD -> 404`). **Fix:** never
+- `-w "/path -> %{http_code}"` → the leading `/` becomes `/home/agentuser/git/...`, so your label is
+  garbage (looks like `~/.chiper/skills/bounty-pack/git/.git/HEAD -> 404`). **Fix:** never
   start a `-w`/`--write-out` string with `/` — prefix it (`-w "R$p -> …"`), or set
   `MSYS_NO_PATHCONV=1`.
 - But `MSYS_NO_PATHCONV=1` then **breaks `-o /dev/null`** (Windows curl gets a literal `/dev/null`
   and can't open it) → `curl: (23) client returned ERROR on write`. **Fix:** with NO_PATHCONV on,
-  write with a Windows path (`-o "C:/Users/<u>/tmp/x.out"`) or use `-o NUL`. Best pattern: leave
+  write with a Windows path (`-o "/home/agentuser/tmp/x.out"`) or use `-o NUL`. Best pattern: leave
   NO_PATHCONV **unset** and just avoid a leading `/` in `-w` — URLs (`https://…`) are never
   converted, so URL args are always safe.
 
@@ -395,7 +395,7 @@ are passed through **verbatim** to Windows programs that cannot read them.
 
 | You typed | Windows program received | Symptom |
 |---|---|---|
-| `python ~/AppData/Local/hermes/skills/.../asset-coverage.py` | `D:\c\Users\<u>\AppData\...` | `can't open file 'D:\\c\\Users\\...': [Errno 2]` |
+| `python ~/.chiper/skills/bounty-pack/skills/.../asset-coverage.py` | `/mnt/d/...` | `can't open file '/tmp' [Errno 2]` |
 | `python "$(command -v tool)` (a `/c/...` path) | `/c/Users/...` | `WinError 2 The system cannot find the file specified` |
 | `slither x.sol --solc "$(command -v solc)"` | `/c/Users/.../Scripts/solc` | crytic-compile `InvalidCompilation: [WinError 2]` — looks like a `solc` bug, is a path bug |
 | `qa_pdf_layout.py /d/data ...` (MSYS path arg) | `D:\d\data ...` | file-not-found on a file that exists |
@@ -404,9 +404,9 @@ are passed through **verbatim** to Windows programs that cannot read them.
 
 ```bash
 # A) native paths everywhere a Windows program is on either side of the call
-SP="C:/Users/<u>/AppData/Local/hermes/scripts";  PY="C:/Users/<u>/AppData/Local/Programs/Python/Python314/python.exe"
+SP="~/.chiper/skills/bounty-pack";  PY="/usr/bin/python3"
 "$PY" "$SP/asset-coverage.py" "D:/data hermes/bug-bounty/<engagement>" --phase 0C
-slither "$F" --solc "C:/Users/<u>/AppData/Local/Programs/Python/Python314/Scripts/solc.exe"
+slither "$F" --solc "/usr/local/bin/solc.exe"
 # B) inside Python, never `~`: %LOCALAPPDATA%/%APPDATA% via expandvars (they hold Windows paths)
 python -c "import os,pathlib;print(pathlib.Path(os.path.expandvars(r'%LOCALAPPDATA%\hermes\google_token.json')))"
 # C) when you need the POSIX form for bash but a native form for the tool: convert explicitly
@@ -427,8 +427,8 @@ Hit while testing whether a target's exported private key could be unlocked with
 secret. `gpg` here is an **MSYS binary**, so RULE 2c applies to it too:
 
 1. **A Windows path in `GNUPGHOME` breaks the keyring dir.** `tempfile.mkdtemp()` returns
-   `C:\Users\...\Temp\tmp_x`; gpg prefixes the cwd and dies with
-   `keyblock resource 'D:/…/C:\Users\…' : No such file or directory` /
+   `/home/agentuser/Temp/tmp_x`; gpg prefixes the cwd and dies with
+   `keyblock resource 'D:/…//home/agentuser' : No such file or directory` /
    `no writable keyring found` — which *reads like a corrupt key*, not a path bug. Fix: create the
    homedir inside the workdir and pass it relatively: `GNUPGHOME=./gpg_test` (or run `cd` into it).
 2. **A secret key imports fine with the wrong passphrase.** `gpg --import` reported
@@ -448,7 +448,7 @@ would have turned a defended design into a fabricated High.
 ## RULE 2d — Give scanners a RELATIVE output path (a tool that writes nothing still exits 0)
 
 > **Scanner silent-fail gotchas (nuclei/ffuf/httpx/ghauri on this MSYS host, distilled 2026-11-02):**
-> `~` is never translated for native Go binaries (use `C:/Users/<u>/...`), `httpx` this build uses
+> `~` is never translated for native Go binaries (use `/home/agentuser/...`), `httpx` this build uses
 > `-threads` not `-c`, nuclei chokes on httpx's `[...]`/title rows (strip to bare URL first), a 0-byte
 > nuclei `.err` with no summary = died-before-template-load, and ghauri/sqlmap will waste 20+ min on a
 > statically-returning endpoint. Full recipe: `references/scanner-msys-silent-fail-gotchas.md`.
@@ -498,14 +498,14 @@ Same family as 2b/2c, but this one silently kills `go install` for a whole sessi
 that as a RELATIVE path** and aborts before building:
 
 ```
-go: GOPATH entry is relative; must be absolute path: "/c/Users/WINDOWS10/go"
+go: GOPATH entry is relative; must be absolute path: "/home/agentuser/go"
 ```
 
 `go install <tool>@latest` then fails on EVERY tool, so jsluice/arjun/graphql-cop all read as
 MISSING when they were never installable. Set it to the Windows form (in `.bashrc`):
 
 ```bash
-export GOPATH="C:/Users/<u>/go"; export GOBIN="C:/Users/<u>/go/bin"
+export GOPATH="/home/agentuser/go"; export GOBIN="/home/agentuser/go/bin"
 export PATH="$GOBIN:$PATH"          # keep /c/go/bin too — nuclei lives there
 ```
 
@@ -529,9 +529,9 @@ installer also hung the same way — the PS script is the reliable route):
 
 ```bash
 curl -sSL -o dotnet-install.ps1 https://dot.net/v1/dotnet-install.ps1
-powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Set-Location <dir>; ./dotnet-install.ps1 -Channel 10.0 -InstallDir C:\\Users\\WINDOWS10\\.dotnet -NoPath"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Set-Location <dir>; ./dotnet-install.ps1 -Channel 10.0 -InstallDir /home/agentuser/.dotnet -NoPath"
 # verify + build:
-export PATH="/c/Users/WINDOWS10/.dotnet:$PATH"; dotnet --list-sdks   # 8.0.425 + 10.0.403
+export PATH="/home/agentuser/.dotnet:$PATH"; dotnet --list-sdks   # 8.0.425 + 10.0.403
 cd <repo> && dotnet build <solution>.sln -c Release
 ```
 
@@ -596,7 +596,7 @@ child console it spawns — `cmd.exe` from `shell=True` **and console binaries l
 `CREATE_NO_WINDOW` is set. The tool is not at fault; the spawn flags are.
 
 Fix — one module, imported once per script: **`scripts/winquiet.py`** (deployed copy at
-`~/AppData/Local/hermes/scripts/winquiet.py`).
+`~/.chiper/skills/bounty-pack/winquiet.py`).
 
 ```python
 import subprocess, sys
@@ -628,7 +628,7 @@ Deployment pattern used for **31 scripts** on this host: one `import winquiet` l
 immediately after the existing `import subprocess` line. Audit for gaps with:
 
 ```bash
-cd ~/AppData/Local/hermes/scripts
+cd ~/.chiper/skills/bounty-pack
 for f in *.py; do
   grep -qlE "subprocess\.(run|Popen|call|check_output)|os\.system" "$f" 2>/dev/null \
     && ! grep -q "import winquiet" "$f" 2>/dev/null && echo "  belum: $f"

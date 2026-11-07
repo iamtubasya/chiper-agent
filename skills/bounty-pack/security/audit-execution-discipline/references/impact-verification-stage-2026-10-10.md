@@ -26,7 +26,7 @@ Blind variants of every class were invisible by construction.
 ## One verifier, six proof channels
 
 ```bash
-python ~/AppData/Local/hermes/scripts/impact-verify.py <target-dir> <base-url> \
+python ~/.chiper/skills/bounty-pack/impact-verify.py <target-dir> <base-url> \
        [--classes ssrf,lfi,ssti,xxe,open-redirect,blind-sqli] \
        [--limit 12] [--sleep 5] [--ratio 2.5] [--rounds 3] [--timeout 20] [--insecure]
 ```

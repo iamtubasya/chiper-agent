@@ -12,7 +12,7 @@ import json, sys, time, re, requests
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
-COOKIES_FILE = Path("C:/Users/WINDOWS10/AppData/Local/Temp/ps_cookies.json")
+COOKIES_FILE = Path("/tmp/ps_cookies.json")
 
 
 def get_cookies():

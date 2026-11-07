@@ -62,6 +62,22 @@ Practical protocol:
 7. **Report the exposure even when the finding itself is Informative.** The duty to notify
    is separate from whether the program pays for it.
 
+### 1.2 Git & Repository Push Protection (Disclosed Report Archives Pitfall)
+When committing bug bounty reports, reference corpora, or target writeups to Git (GitHub/GitLab):
+- **The Trap:** Disclosed report dumps (e.g. from HackerOne/Bugcrowd public writeups) frequently contain verbatim sample access tokens (`npm` auth tokens, Salesforce `sid=00D...`, Facebook `EAA...`, GitHub PATs). GitHub Push Protection (`GH013`) will reject the push at the server hook.
+- **The Pitfall:** Simply committing a redaction on top does NOT fix it — Git history still holds the offending commit and GitHub will continue blocking `git push`.
+- **The Fix Protocol:**
+  1. Soft/mixed reset the rejected commit: `git reset HEAD~1`
+  2. Run automated regex sanitization across all `.md`, `.json`, `.txt`, `.yaml` files:
+     ```python
+     # Replace matching tokens with [REDACTED_<TYPE>_TOKEN]
+     re.sub(r'npm_[a-zA-Z0-9]{30,}', '[REDACTED_NPM_TOKEN]', text)
+     re.sub(r'_authToken=[a-f0-9\-]{30,}', '_authToken=[REDACTED_NPM_TOKEN]', text)
+     re.sub(r'00D[0-9a-zA-Z]{12,15}![0-9a-zA-Z._\-]{10,}', '[REDACTED_SALESFORCE_TOKEN]', text)
+     re.sub(r'EAA[a-zA-Z0-9]{30,}', '[REDACTED_FACEBOOK_TOKEN]', text)
+     ```
+  3. Re-stage, commit, and push cleanly.
+
 ---
 
 ## 2. Cookie Redaction Protocol

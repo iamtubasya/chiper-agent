@@ -155,7 +155,7 @@ signature replay, reentrancy across composed protocols.
 ## ⛔ VERIFICATION
 Before claiming hunting complete, run:
 ```bash
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/audit-checkpoint.py <target_dir> --phase 0C
+python ~/.chiper/skills/bounty-pack/audit-checkpoint.py <target_dir> --phase 0C
 ```
 Checkpoint reads actual tool output files from disk.
 

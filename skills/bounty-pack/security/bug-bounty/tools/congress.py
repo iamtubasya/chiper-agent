@@ -11,7 +11,7 @@ def format_bugcrowd(findings):
     """Format findings for Bugcrowd submission."""
     lines = [
         "# Bug Report",
-        f"**Date:** {datetime.now(__import__("datetime").timezone.utc).strftime('%Y-%m-%d')}",
+        f"**Date:** {datetime.now(timezone.utc).strftime('%Y-%m-%d')}",
         f"**Total Findings:** {len(findings)}",
         "",
         "---",
@@ -43,7 +43,7 @@ def format_immunefi(findings):
     """Format findings for Immunefi submission."""
     lines = [
         "# Vulnerability Report",
-        f"**Date:** {datetime.now(__import__("datetime").timezone.utc).strftime('%Y-%m-%d')}",
+        f"**Date:** {datetime.now(timezone.utc).strftime('%Y-%m-%d')}",
         "",
         "---",
         ""

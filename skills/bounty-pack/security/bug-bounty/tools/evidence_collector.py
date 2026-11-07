@@ -17,7 +17,7 @@ def collect_headers(url, output_dir):
         )
         with open(headers_file, "w", encoding="utf-8") as f:
             f.write(f"URL: {url}\n")
-            f.write(f"Collected: {datetime.now(__import__("datetime").timezone.utc).isoformat()}\n\n")
+            f.write(f"Collected: {datetime.now(timezone.utc).isoformat()}\n\n")
             f.write(result.stdout)
         print(f"[EVIDENCE] Headers saved: {headers_file}")
         return result.stdout
@@ -35,7 +35,7 @@ def collect_response(url, output_dir):
         )
         with open(body_file, "w", encoding="utf-8") as f:
             f.write(f"URL: {url}\n")
-            f.write(f"Collected: {datetime.now(__import__("datetime").timezone.utc).isoformat()}\n\n")
+            f.write(f"Collected: {datetime.now(timezone.utc).isoformat()}\n\n")
             f.write(result.stdout[:50000])  # limit to 50KB
         print(f"[EVIDENCE] Response body saved: {body_file}")
         return result.stdout[:5000]
@@ -54,7 +54,7 @@ def collect_cookies(url, output_dir):
         cookies = [line for line in result.stdout.split("\n") if "set-cookie" in line.lower()]
         with open(cookies_file, "w", encoding="utf-8") as f:
             f.write(f"URL: {url}\n")
-            f.write(f"Collected: {datetime.now(__import__("datetime").timezone.utc).isoformat()}\n\n")
+            f.write(f"Collected: {datetime.now(timezone.utc).isoformat()}\n\n")
             for c in cookies:
                 f.write(c.strip() + "\n")
         print(f"[EVIDENCE] Cookies saved: {cookies_file}")

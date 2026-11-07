@@ -72,7 +72,7 @@ audit-run-all.py <TARGET> --tech "<tech>"        # thin wrapper, forwards args, 
 ```
 
 Wrapper contract worth knowing: `--tech` is forwarded, **`--output-dir` is silently swallowed**
-(the orchestrator fixes its own output dir under `~/AppData/Local/hermes/poc-plans/orchestrator-<slug>`).
+(the orchestrator fixes its own output dir under `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<slug>`).
 Exit codes: `0` = all done, `1` = gate blocked / failure, `2` = fatal.
 
 ## Verification Chain
@@ -85,7 +85,7 @@ Every step verified by:
 
 ## Resume on Failure
 
-Per-phase state is persisted to `~/AppData/Local/hermes/trackers/audit-pipeline-<sanitised-target>.json`
+Per-phase state is persisted to `~/.chiper/skills/bounty-pack/trackers/audit-pipeline-<sanitised-target>.json`
 under `completed_phases`, written *after each phase* — so a provider/session drop resumes at the next
 phase instead of restarting from 0A.
 

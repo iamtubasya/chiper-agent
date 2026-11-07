@@ -87,7 +87,7 @@ level per the program's own "not active in production" clause. Grep for the sibl
 - With `MSYS_NO_PATHCONV=1`, **native** tools (rg, gosec, go) get the raw `/d/...` string and can't
   resolve it → use Windows-style `D:/path` for their arguments; bash redirection `> /d/...` is fine.
 - `gosec -out=/d/...` fails with "cannot find the path specified" — pass `-out=D:/...`.
-- `go install` needs absolute Windows `GOPATH`/`GOMODCACHE` (`C:/Users/<u>/go`) or it errors
+- `go install` needs absolute Windows `GOPATH`/`GOMODCACHE` (`/home/agentuser/go`) or it errors
   "GOMODCACHE entry is relative". Flaky proxy downloads (TLS timeout) → simply retry the install.
 
 ## Coverage-answer discipline (the user WILL ask "all tools? all variants?")

@@ -48,7 +48,7 @@ print(f"{code:06d}", 30 - int(time.time()) % 30)   # code + seconds left
 ```
 
 Run it from the engagement dir (`cd` first) — the file path is relative. Windows host python:
-`C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe`.
+`/usr/bin/python3`.
 Note: `execute_code`'s sandbox does NOT resolve MSYS paths like `/d/data hermes/...` — use the
 native `D:/data hermes/...` form, or just run via `terminal`.
 

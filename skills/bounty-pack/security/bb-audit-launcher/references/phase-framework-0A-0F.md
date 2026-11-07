@@ -22,7 +22,7 @@ calls it "REPORT" is the drift bug: it silently makes 0E and 0F ungated.
 ## Drift sweep — run this before claiming the framework is aligned
 
 ```bash
-cd ~/AppData/Local/hermes/skills
+cd ~/.chiper/skills/bounty-pack/skills
 grep -rn "0A-0D\|0A→0D\|Phase 0D" --include=*.md .
 ```
 

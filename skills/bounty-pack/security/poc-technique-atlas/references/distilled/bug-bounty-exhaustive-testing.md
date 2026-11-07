@@ -1,6 +1,6 @@
 # Distilled techniques — security/bug-bounty-exhaustive-testing
 
-Source: `C:/Users/WINDOWS10/AppData/Local/hermes/skills\security/bug-bounty-exhaustive-testing\references`  (20 files)
+Source: `~/.chiper/skills/bounty-pack/skills/security/bug-bounty-exhaustive-testing/references`  (20 files)
 
 One card per file: title, section headings, technique bullets.
 

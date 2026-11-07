@@ -19,7 +19,7 @@ so its 0C/0D layers cannot run as written. Resolution:
   (curl/requests + Playwright + the operator's own OAuth app/token).
 - Coverage claims must be **read off disk**: absence of `tools-usage.json`, `variant-usage.json`,
   `business-logic-usage.json`, `poc-execution.json`, `review-candidates.json`, `tool-evidence/`, and
-  `~/AppData/Local/hermes/poc-plans/orchestrator-*<target>*` = those phases did NOT run. Say so.
+  `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-*<target>*` = those phases did NOT run. Say so.
 
 ## 2. Never fire scanners before the written exception exists
 

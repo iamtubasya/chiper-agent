@@ -172,7 +172,7 @@ tree carrying a *different* version of it, so a module's own verification bundle
 of files it does not affect. Only files that change that contract's codegen are evidence.
 
 Path trap on Windows/MSYS: `curl -o /tmp/x` (a Windows binary) writes `C:\tmp\x` while `head /tmp/x`
-(MSYS) reads `C:/Users/<u>/AppData/Local/Temp/x` — so you can read a **stale file from an earlier write
+(MSYS) reads `/tmp/x` — so you can read a **stale file from an earlier write
 and mistake it for this response's body**. Use explicit or relative paths for anything you then read back.
 
 ---

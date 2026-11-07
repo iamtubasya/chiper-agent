@@ -28,15 +28,15 @@ D:/data hermes/target-pool/
   dupes.json    109 KB  794 merge events (audit trail of dedupe)
 ```
 
-CLI: `~/AppData/Local/hermes/scripts/pool.py` — **verify it exists first; on 2026-10-17 the
+CLI: `~/.chiper/skills/bounty-pack/pool.py` — **verify it exists first; on 2026-10-17 the
 scripts dir was gone and only the data files remained.** Fallback = parse `pool.json`
 directly (see "Programmatic access" below — that path needs no CLI).
 
 ## Usage
 
 ```bash
-PY314="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
-cd ~/AppData/Local/hermes/scripts
+PY314="/usr/bin/python3"
+cd ~/.chiper/skills/bounty-pack
 
 # discover
 "$PY314" pool.py stats                        # counts by category + audit state

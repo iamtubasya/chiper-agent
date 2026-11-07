@@ -7,7 +7,7 @@ saved its own state file, and `audit-state.py` was not wired in at all).
 
 ## Files
 
-`~/AppData/Local/hermes/scripts/audit-pipeline-orchestrator.py` additions:
+`~/.chiper/skills/bounty-pack/audit-pipeline-orchestrator.py` additions:
 
 ```python
 def _state_file(self):          # trackers/audit-pipeline-<safe>.json
@@ -69,13 +69,13 @@ output. Two state stores have to be cleared, not one:
 
 | store | path | governs |
 |---|---|---|
-| phase state | `~/AppData/Local/hermes/trackers/audit-pipeline-<safe>.json` | which of 0A/0B/0C/0D/0E/0E-REVIEW/0F are skipped |
-| force state | `~/AppData/Local/hermes/trackers/force-state-<safe>.json` | whether C1 (force-full-execution) runs at all |
+| phase state | `~/.chiper/skills/bounty-pack/trackers/audit-pipeline-<safe>.json` | which of 0A/0B/0C/0D/0E/0E-REVIEW/0F are skipped |
+| force state | `~/.chiper/skills/bounty-pack/trackers/force-state-<safe>.json` | whether C1 (force-full-execution) runs at all |
 
 Reset recipe (replace `<target>` and keep the `sol-source/` + `run-meta.json` you want to survive):
 
 ```bash
-rm -f ~/AppData/Local/hermes/trackers/*<target>*
+rm -f ~/.chiper/skills/bounty-pack/trackers/*<target>*
 rm -rf <out>/tool-evidence <out>/tools-usage.json
 rm -f  <out>/{variant,business-logic,poc-execution,poc-variant,reference,poc-techniques}-usage.json
 ```

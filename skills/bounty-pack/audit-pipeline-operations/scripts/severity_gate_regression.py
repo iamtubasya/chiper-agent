@@ -39,7 +39,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-DEFAULT_SCRIPTS = Path(os.path.expanduser("~")) / "AppData/Local/hermes/scripts"
+DEFAULT_SCRIPTS = Path(os.path.expanduser("~")) / "~/.chiper/skills/bounty-pack"
 
 
 # ── fixture builders ─────────────────────────────────────────────────────────

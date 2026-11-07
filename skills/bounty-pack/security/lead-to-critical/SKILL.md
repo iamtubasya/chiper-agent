@@ -37,9 +37,9 @@ decides whether a lead is worth the next two hours.
 
 ```bash
 # skor + tulis artefak untuk 0E
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/severity_ceiling.py <target_dir>
+python ~/.chiper/skills/bounty-pack/severity_ceiling.py <target_dir>
 # skor + BLOK staging kalau ada lead CAPPED (exit 2)
-python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/severity_ceiling.py <target_dir> --gate
+python ~/.chiper/skills/bounty-pack/severity_ceiling.py <target_dir> --gate
 ```
 
 Reads `findings.json` (list of leads; `title`/`vuln_type`/`reason`/`signal`/`evidence`).

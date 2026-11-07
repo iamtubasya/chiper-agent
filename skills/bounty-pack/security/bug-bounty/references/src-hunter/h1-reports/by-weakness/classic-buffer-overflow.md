@@ -1562,7 +1562,7 @@ A file that implements this payload is attached as `voice_payload`, which can be
 1) Start CS:GO on device A with `-insecure` launch param and join a server (any empty vanilla server will do, I have one at `s1.slidyb.at` if needed).
 2) Extract CSGOSimple.zip from the attachments onto device A and run `injector.exe`. Ensure that it has injected into the CS:GO process successfully by checking if the `send_voice_packet` command exists.
 3) Start CS:GO on device B and join the same server.
-4) Run `send_voice_packet path\to\voice_payload` in the CS:GO console on device A, where `path\to\voice_payload` is the absolute path to the `voice_payload` file without the `C:`. For example, if the file as at `C:\Users\me\Desktop\voice_payload`, then you would use the command `send_voice_packet Users\me\Desktop\voice_payload`.
+4) Run `send_voice_packet path\to\voice_payload` in the CS:GO console on device A, where `path\to\voice_payload` is the absolute path to the `voice_payload` file without the `C:`. For example, if the file as at `/home/agentuser/Desktop/voice_payload`, then you would use the command `send_voice_packet Users\me\Desktop\voice_payload`.
 5) Steam and CS:GO should both crash on device B.
 
 ## Impact

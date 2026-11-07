@@ -83,7 +83,7 @@ audience `https://aghanim.com`, passwordless email OTP.
    - `https://dashboard.aghanim.com/` → Sign up → email → OTP arrives from `notifications@aghanim.com`
      (subject "<6 digits> is your Aghanim verification code").
    - Decode OTP from Gmail API (script: `gmail_otp.py` pattern — refresh token at
-     `~/AppData/Local/hermes/google_token.json`, search `from:aghanim`).
+     `~/.chiper/skills/bounty-pack/google_token.json`, search `from:aghanim`).
    - After login: onboarding page needs `POST /dashboard/v1/customers/accept_agreements` (204) —
      the React checkbox UI is flaky, just call the API.
    - Result: auto-provisioned company `com_...` + game `gm_...`, role **"user" = read-only**

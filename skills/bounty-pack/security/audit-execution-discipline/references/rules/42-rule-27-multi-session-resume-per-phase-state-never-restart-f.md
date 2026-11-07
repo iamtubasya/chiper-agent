@@ -10,7 +10,7 @@ if not self._phase_done("0A"):
     self.run_setup()
     self._save_state(completed_phase="0A", current="0B")
 ```
-State file: `~/AppData/Local/hermes/trackers/audit-pipeline-<safe-target>.json`
+State file: `~/.chiper/skills/bounty-pack/trackers/audit-pipeline-<safe-target>.json`
 `{target, tech, completed_phases:[...], current, updated}` — helpers `_state_file()`, `_load_state()`, `_save_state()`, `_phase_done()`.
 
 **Level 2 — per-sub-phase inside 0C (C2..C6b).** The sub-phase scripts write their own usage JSON; on re-run, orchestrator skips any whose output file already exists on disk (>100B):

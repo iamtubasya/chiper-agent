@@ -1,6 +1,6 @@
 # Distilled techniques — security/bb-audit-launcher
 
-Source: `C:/Users/WINDOWS10/AppData/Local/hermes/skills\security/bb-audit-launcher\references`  (69 files)
+Source: `~/.chiper/skills/bounty-pack/skills/security/bb-audit-launcher/references`  (69 files)
 
 One card per file: title, section headings, technique bullets.
 

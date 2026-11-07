@@ -68,7 +68,7 @@ accompanied by `❌ audit-checkpoint: REPORT-survivors.md exists (finding_gate)`
 - **Fix:**
   ```bash
   cd <target-dir>
-  python C:/Users/WINDOWS10/AppData/Local/hermes/scripts/finding_gate.py findings.json \
+  python ~/.chiper/skills/bounty-pack/finding_gate.py findings.json \
         --out gated.json --report REPORT-survivors.md --survivors survivors.json
   # exit 0 regardless of survivor count; header prints "Survivors: N of M candidates."
   ```
@@ -108,7 +108,7 @@ max 3 attempts → status `BLOCKED-gate` + the failing line → next product
 ```
 
 Resume = **the same command**; state lives in
-`<HOME>/AppData/Local/hermes/trackers/audit-pipeline-<target>.json` (+ `force-state-<target>.json`).
+`<HOME>/~/.chiper/skills/bounty-pack/trackers/audit-pipeline-<target>.json` (+ `force-state-<target>.json`).
 `RESUME MODE: already completed […] — skip those` tells you which phases will NOT re-run.
 
 ## Evidence paths (target dir = `poc-plans/orchestrator-<host_with_underscores>/`)

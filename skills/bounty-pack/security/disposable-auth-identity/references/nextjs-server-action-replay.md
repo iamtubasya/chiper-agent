@@ -120,7 +120,7 @@ hashed digest, and it leaves the victim's data untouched. Save destructive swaps
 ## git-bash / Windows argv caveat
 
 Passing a path argument that starts with `/` (e.g. `/app/sources/<id>`) as a Python argv gets
-MSYS path-mangled into `C:/Users/.../app/...` before your script sees it, producing a bogus
+MSYS path-mangled into `/home/agentuser/app/...` before your script sees it, producing a bogus
 hostname resolution error that looks like a network fault. Prefix the command with
 `MSYS_NO_PATHCONV=1` (or pass URLs, not paths). Also note exported env vars persist across
 `terminal` calls in the same session — `unset` them when a later command must behave normally.

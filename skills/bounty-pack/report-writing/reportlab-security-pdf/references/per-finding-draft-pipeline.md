@@ -147,7 +147,7 @@ same `google_token.json` (refresh the access token, then POST the raw MIME):
 ```python
 import json, base64, os, urllib.request, urllib.parse
 from email.message import EmailMessage
-HOME = os.path.expanduser("C:/Users/<user>/AppData/Local/hermes")
+HOME = os.path.expanduser("~/.chiper/skills/bounty-pack")
 TOK = json.load(open(os.path.join(HOME, "google_token.json"), encoding="utf-8"))
 d = urllib.parse.urlencode({"client_id": TOK["client_id"], "client_secret": TOK["client_secret"],
     "refresh_token": TOK["refresh_token"], "grant_type": "refresh_token"}).encode()

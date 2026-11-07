@@ -45,7 +45,7 @@ cargo-build-sbf --manifest-path Cargo.toml
 
 #### Wrapper Script
 ```bash
-# Usage (Windows): wsl -e bash -c "bash ~/AppData/Local/hermes/scripts/solana_decompile.sh program.so"
+# Usage (Windows): wsl -e bash -c "bash ~/.chiper/skills/bounty-pack/solana_decompile.sh program.so"
 # Usage (WSL): bash ~/.local/hermes/scripts/solana_decompile.sh program.so
 ```
 **Status:** ✅ Created and tested.

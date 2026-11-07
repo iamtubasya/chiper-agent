@@ -12,7 +12,7 @@ description: >-
 
 Also load:
 
-- [upload insecure files](../upload-insecure-files/SKILL.md) when XXE is reachable through SVG, OOXML, import, or preview pipelines
+- [upload insecure files](../../hunt-file-upload/SKILL.md) when XXE is reachable through SVG, OOXML, import, or preview pipelines
 
 ### Extended Scenarios
 
@@ -124,7 +124,7 @@ Use intentional error to leak data in error message:
 C:\Windows\System32\drivers\etc\hosts
 C:\inetpub\wwwroot\web.config    ← ASP.NET connection strings
 C:\xampp\htdocs\wp-config.php    ← WordPress DB credentials
-C:\Users\Administrator\.ssh\id_rsa
+/home/agentuser/.ssh/id_rsa
 ```
 
 ---

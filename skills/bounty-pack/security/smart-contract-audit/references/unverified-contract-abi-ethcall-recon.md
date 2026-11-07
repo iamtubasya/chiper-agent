@@ -11,7 +11,7 @@ source. This is the ChainPort bridge-Vault case (2026-10): proxy `0xca9a74c…` 
 - ⛔ **Etherscan V1 is dead.** `api.etherscan.io/api` (no `chainid`) answers
   `You are using a deprecated V1 endpoint, switch to Etherscan API V2`. Use:
   `https://api.etherscan.io/v2/api?chainid=1&module=contract&action=getsourcecode&address=0x…&apikey=KEY`
-  Key on this host: `C:/Users/WINDOWS10/AppData/Local/hermes/secrets/etherscan.key`.
+  Key on this host: `~/.chiper/skills/bounty-pack/secrets/etherscan.key`.
 - If impl is also `SourceCode == ""` → closed-source. Note it as the barrier; do NOT claim "no bugs".
 
 ## 2. heimdall still gives you the ABI (even when source-gen fails)

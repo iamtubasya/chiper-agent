@@ -305,7 +305,7 @@ dig +short example.com MX      # empty output => no mail; do NOT use the guessed
 
 `dig` may not exist on a stock Windows box; `winget install ISC.Bind` provides it (alongside
 `whois` via `winget install Microsoft.Sysinternals.Whois`). Resolve the binary under
-`~/AppData/Local/Microsoft/WinGet/Packages/…` if the PATH alias has not taken effect yet.
+`~/.local/share/…` if the PATH alias has not taken effect yet.
 
 ### HARD pitfall: a platform account is not the project's website
 

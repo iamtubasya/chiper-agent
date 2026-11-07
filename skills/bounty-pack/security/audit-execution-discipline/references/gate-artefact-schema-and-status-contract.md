@@ -180,7 +180,7 @@ the pipeline will catch it for you.
 
 `audit-checkpoint.py` / `verify-tool-usage.py <target_dir>` read ledgers from the **engagement dir**
 (`D:\data hermes\bug-bounty\<eng>\`), but `audit-pipeline-orchestrator.py` / `audit-run-all.py` write
-them to `~/AppData/Local/hermes/poc-plans/orchestrator-<host>/`. Gate the run untouched and you get
+them to `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host>/`. Gate the run untouched and you get
 `tools-usage.json not found ... 1/25 checks passed` while the orchestrator dir is *full* of ledgers —
 a location mismatch read as missing work. Symptom: checkpoint all-❌, orchestrator dir populated.
 
@@ -225,14 +225,14 @@ is the wrong shape — point `evidence_file` at the tool's real output file, or 
 
 Four facts that are not guessable and each cost a cycle when the 0D gate blocked a finished run.
 
-**9.1 `asset-coverage.py` is NOT in `~/AppData/Local/hermes/scripts/`.** It ships inside the skill, and
+**9.1 `asset-coverage.py` is NOT in `~/.chiper/skills/bounty-pack/`.** It ships inside the skill, and
 CHECK 12 hard-codes that path:
 
 ```
-C:\Users\<u>\AppData\Local\hermes\skills\security\audit-execution-discipline\scripts\asset-coverage.py
+~/.chiper/skills/bounty-pack/audit-execution-discipline/scripts/asset-coverage.py
 ```
 
-`python ~/AppData/Local/hermes/scripts/asset-coverage.py --help` → `can't open file ... [Errno 2]`,
+`python ~/.chiper/skills/bounty-pack/asset-coverage.py --help` → `can't open file ... [Errno 2]`,
 which reads like "the gate's own script is missing" and invites a hunt or a false "phanatom
 requirement" verdict. It is there — under `skills/security/audit-execution-discipline/scripts/`.
 (`scripts/skill-usage.py` ships in the same dir.)

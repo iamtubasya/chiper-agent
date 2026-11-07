@@ -19,7 +19,7 @@ Low = credits.
 4. Exchange: `identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=<webKey>`
    `{"token":"<custom>","returnSecureToken":true}` → `idToken` (iss securetoken.google.com/kindroid-ai).
 5. Gmail API reads the OTP (accounts: RESEARCHER_EMAIL, mrRESEARCHER_EMAIL in
-   `~/AppData/Local/hermes/gmail_accounts/*.json`; empty `account` field resolves after
+   `~/.chiper/skills/bounty-pack/gmail_accounts/*.json`; empty `account` field resolves after
    refresh + `users/me/profile`).
 
 ## What ended up LOCKED (all negative results — target is well-secured)

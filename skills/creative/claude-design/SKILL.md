@@ -580,6 +580,19 @@ When adapting a Claude Design style request into CLI/API mode, use this mental t
 You are running in CLI/API mode, not hosted Claude Design. Ignore references to hosted-only tools or preview panes. Produce complete local design artifacts, usually self-contained HTML with embedded CSS/JS, and verify with available local tools before returning. Preserve the design process: gather context, define the system, produce options, avoid filler, and meet a high visual bar.
 ```
 
+## Mobile & Responsive Experience Standards
+
+See `references/mobile-app-ux-patterns.md` for complete implementation code for bottom docks, Tailwind v4 translate overrides, and drawer architecture.
+
+When redesigning or creating mobile viewports for web applications:
+- **Do not simply scale down desktop layouts.** Users immediately notice when mobile is just a "color swap" or shrunk desktop view. Redesign the interaction model for touch:
+  - Add a **persistent floating bottom navigation dock** for core actions (thumb-zone ergonomics) rather than hiding everything behind a hamburger menu.
+  - Convert multi-column grids (4-col, 3-col) into a clean single-column stream on screens under 768px.
+  - Set input font size to at least 16px to prevent iOS Safari auto-zoom on focus.
+  - Safe area handling: respect `env(safe-area-inset-bottom, 0px)` for bottom navigation docks.
+- **Tailwind CSS v4 `translate` pitfall:** In modern Tailwind v4, translation utilities like `-translate-x-full` compile to the independent CSS property `translate: -100%` rather than traditional `transform: translateX(...)`. Overriding drawer open states with `transform: none` or `transform: translateX(0)` will silently fail; you must set `translate: 0 0 !important` and `--tw-translate-x: 0 !important`.
+- **Backdrop stacking context:** Full-screen backdrop overlays (`backdrop-filter: blur(...)`) must be kept outside or cleanly isolated from sliding drawers to prevent rendering bugs where the drawer itself becomes blurred.
+
 ## Pitfalls
 
 - Do not paste hosted tool schemas into a skill. They cause fake tool calls.

@@ -26,7 +26,7 @@ python scripts/pgp_submit.py send --to security@proton.me --subject "[Bug report
 ## 1. Discover before sending (never guess the address)
 
 ```bash
-python ~/AppData/Local/hermes/scripts/pgp_submit.py discover --target proton.me
+python ~/.chiper/skills/bounty-pack/pgp_submit.py discover --target proton.me
 ```
 Prints `contact`, `encryption` (key URL), `policy`, and `pgp_asked: true|false`.
 - `pgp_asked: true` → send encrypted (default behaviour of `send`).
@@ -40,7 +40,7 @@ Manual fallback (two URLs, both authoritative):
 ## 2. Send
 
 ```bash
-python ~/AppData/Local/hermes/scripts/pgp_submit.py send \
+python ~/.chiper/skills/bounty-pack/pgp_submit.py send \
   --to security@proton.me \
   --subject "[Bug report] <title>" \
   --body   submission/body_F1.txt \
@@ -70,7 +70,7 @@ Indonesian-locale Gmail: the folder is `[Gmail]/Surat Terkirim`, **not** `[Gmail
 ## Pitfalls (all hit for real)
 
 1. **MSYS/git-bash gpg + absolute Windows `GNUPGHOME` = broken.** gpg prepends the cwd, giving
-   `keyblock resource '/c/Users/.../C:\Users\...\pubring.kbx': No such file or directory` and
+   `keyblock resource '/c/Users/...//home/agentuser/pubring.kbx': No such file or directory` and
    `no writable keyring found`. Fix: create the throwaway homedir **inside the cwd** (`tempfile.mkdtemp(dir=os.getcwd())`)
    and pass only the **basename** as `GNUPGHOME`. The script already does this — don't "simplify" it back.
 2. **`chmod 600` is a no-op on Windows.** Use `icacls` (above). A `0o666` from `ls -l` is not a finding.
@@ -234,7 +234,7 @@ does "encrypted draft" alone. Reuse the pieces directly:
 
 ```python
 import base64, sys
-sys.path.insert(0, "C:/Users/WINDOWS10/AppData/Local/hermes/scripts")
+sys.path.insert(0, "~/.chiper/skills/bounty-pack")
 import pgp_submit, bounty_mail
 from pathlib import Path
 from email.message import EmailMessage

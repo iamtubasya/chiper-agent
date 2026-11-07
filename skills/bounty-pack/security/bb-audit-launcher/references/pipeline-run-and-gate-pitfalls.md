@@ -33,7 +33,7 @@ Then confirm: `asset-coverage.py <out_dir> --phase 0C` → all `OK`.
 
 ## 2. The gates read the TARGET DIR — bridge with a FULL copy, never a partial one
 
-The orchestrator **writes** to `~/AppData/Local/hermes/poc-plans/orchestrator-<host>_<...>/`;
+The orchestrator **writes** to `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host>_<...>/`;
 `audit-checkpoint.py` and `deep-audit-mode.py guard` **read** the target dir
 (`D:/data hermes/bug-bounty/<target>/`). A partial bridge (`cp *.json *.txt`) sails through the
 orchestrator's own `TOTAL: 33/33` but makes `deep-audit-mode guard` FAIL with *misleading* reasons —

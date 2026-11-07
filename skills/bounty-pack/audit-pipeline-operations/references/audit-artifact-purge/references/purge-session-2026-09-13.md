@@ -13,7 +13,7 @@ Scope confirmed via `clarify` → **all remaining audit results, permanent `rm -
 
 ## Inventory found (this is the checklist that made the purge safe)
 
-C: home (`C:\Users\WINDOWS10\`)
+C: home (`/home/agentuser/`)
 - `nasa-cors-report\` — 652K, 16 files (2 PDFs + CORS evidence + generator script)
 - `nykaa_audit\`, `tv_recon\`, `fireblocks-bounty\` (63M), `crowdproof-protocol\` (1.1M)
 - loose artifacts: `benqi_source.json`, `bitso_cors_poc.html`, `bugbase_nykaa*.html`,

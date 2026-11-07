@@ -28,7 +28,7 @@ defect — so you find one per run and never converge.
 ## The tool
 
 ```bash
-python ~/AppData/Local/hermes/scripts/pipeline-contract-audit.py
+python ~/.chiper/skills/bounty-pack/pipeline-contract-audit.py
 ```
 
 Reads the whole 0C call chain (`audit-run-all` → `audit-pipeline-orchestrator` →
@@ -118,8 +118,8 @@ self-match. Corrections are cheap; a wrong root cause persisted into the skill i
 ## Checklist before any long-pipeline restart
 
 ```bash
-python ~/AppData/Local/hermes/scripts/pipeline-contract-audit.py     # must be 0 findings
-python ~/AppData/Local/hermes/scripts/reset-stale-markers.py <slug> <target>
+python ~/.chiper/skills/bounty-pack/pipeline-contract-audit.py     # must be 0 findings
+python ~/.chiper/skills/bounty-pack/reset-stale-markers.py <slug> <target>
 python -m py_compile <every file you touched>
 # then sync: cp to bundle-src/... + bundle-sync.py  (must report 0 drift)
 ```

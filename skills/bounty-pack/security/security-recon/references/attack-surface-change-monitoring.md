@@ -34,7 +34,7 @@ run once, then hand the script to the cron tool).
 ## Cron wiring pitfalls (Hermes) — each of these bit for real
 
 1. **Script path must be a BARE FILENAME.** The cron `script` argument resolves
-   relative to `~/AppData/Local/hermes/scripts/`; an absolute path
+   relative to `~/.chiper/skills/bounty-pack/`; an absolute path
    (`D:/.../monitor.py`) is **rejected outright**. Copy the script there first.
 2. **`deliver` defaults to `local` = save-only, no notification.** Set
    `deliver='origin'` or the alert never reaches the operator and the watcher is
@@ -60,7 +60,7 @@ run once, then hand the script to the cron tool).
 - **MSYS vs native paths.** A bash heredoc writes MSYS paths (`/c/Users/...`)
   into the `.py`; Python's `open()`/`os.path` cannot resolve those →
   `FileNotFoundError`. Patch the state path to the **native** form
-  (`C:/Users/...`) after writing the file. Budget one `sed` pass for every
+  (`/home/agentuser`) after writing the file. Budget one `sed` pass for every
   heredoc-written script.
 - **State path must be absolute, not relative to `__file__`** — the script gets
   copied between `~/.hermes/scripts/` and the engagement dir and a relative path

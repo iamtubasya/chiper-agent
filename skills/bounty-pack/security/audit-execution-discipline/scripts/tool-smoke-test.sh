@@ -4,7 +4,7 @@
 # Usage: bash tool-smoke-test.sh
 set -u
 export MSYS_NO_PATHCONV=1
-PY="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
+PY="/usr/bin/python3"
 GO="$HOME/go/bin"
 T="http://127.0.0.1:8099"
 PORT=8099
@@ -15,8 +15,8 @@ echo ok > index.html
 SRV=$!
 sleep 2
 
-WL="C:/Users/WINDOWS10/AppData/Local/hermes/skills/security/exploit-cookbook/references/sensitive-files-wordlist.txt"
-[ -f "$WL" ] || WL="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/Lib/site-packages/dirsearch/db/dicc.txt"
+WL="~/.chiper/skills/bounty-pack/exploit-cookbook/references/sensitive-files-wordlist.txt"
+[ -f "$WL" ] || WL="~/.local/share/Programs/Python/Python314/Lib/site-packages/dirsearch/db/dicc.txt"
 TD="D:/data hermes/nuclei-templates"
 
 PASS=0; FAIL=0
@@ -37,11 +37,11 @@ check "dalfox url"       'dalfox|testing'   "$GO/dalfox.exe" url "$T" --skip-bav
 check "gobuster dir"     'Status|Results'   "$GO/gobuster.exe" dir -u "$T" -w "$WL" --timeout 10s -t 5 -q
 check "ffuf FUZZ"        'ffuf'             "$GO/ffuf.exe" -u "$T/FUZZ" -w "$WL" -mc 200,301,302 -t 20 -s
 check "nuclei"           'tech-detect'      "$GO/nuclei.exe" -u "$T" -silent -timeout 5 -tags tech
-check "CORScanner"       'CORS'             "C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/Scripts/CORScanner.EXE" -u "$T"
-check "race-checker"     'RACE'             "$PY" "C:/Users/WINDOWS10/AppData/Local/hermes/tools/race-checker.py" -u "$T" --attempts 10
-check "arjun (pip)"      'Scanning|chunks'  "C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/Scripts/arjun.exe" -u "$T/" -t 2 -d 0
+check "CORScanner"       'CORS'             "/usr/local/bin/CORScanner.EXE" -u "$T"
+check "race-checker"     'RACE'             "$PY" "~/.chiper/skills/bounty-pack/tools/race-checker.py" -u "$T" --attempts 10
+check "arjun (pip)"      'Scanning|chunks'  "/usr/local/bin/arjun.exe" -u "$T/" -t 2 -d 0
 check "kxss (stdin)"     'checkReflected'   bash -c "echo $T | $GO/kxss.exe"
-check "sqlmap (?id=1)"   'sqlmap'           "$PY" "C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/Scripts/sqlmap.exe" -u "$T/?id=1" --batch --level=1 --risk=1 --timeout 5 --disable-coloring
+check "sqlmap (?id=1)"   'sqlmap'           "$PY" "/usr/local/bin/sqlmap.exe" -u "$T/?id=1" --batch --level=1 --risk=1 --timeout 5 --disable-coloring
 if [ -d "$TD" ]; then
   echo "  [INFO] nuclei local mirror: $TD (-t \"$TD/http\" -tags ...)"
 fi

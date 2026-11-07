@@ -9,9 +9,9 @@ PIL-rendered terminal frames. Everything below is the code that actually produce
 mintty sizes itself from the font, so ask for a grid, then measure and re-derive:
 
 ```python
-MINTTY = r"C:\Users\WINDOWS10\AppData\Local\hermes\git\usr\bin\mintty.exe"
-BASH   = r"C:\Users\WINDOWS10\AppData\Local\hermes\git\usr\bin\bash.exe"
-THEMES = r"C:\Users\WINDOWS10\AppData\Local\hermes\git\usr\share\mintty\themes"
+MINTTY = r"~/.chiper/git/usr/bin/mintty.exe"
+BASH   = r"~/.chiper/git/usr/bin/bash.exe"
+THEMES = r"~/.chiper/git/usr/share/mintty/themes"
 
 # rcfile: keep PS1 bare so no username/hostname/host-path leaks into the frame
 open(RCFILE, "w").write(

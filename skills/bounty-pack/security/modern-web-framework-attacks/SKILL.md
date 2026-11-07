@@ -68,7 +68,7 @@ subprocess.Popen([
     r"C:\Program Files\Google\Chrome\Application\chrome.exe",
     "--remote-debugging-port=9222",
     "--remote-allow-origins=*",
-    "--user-data-dir=C:/Users/WINDOWS10/AppData/Local/Google/Chrome/User Data",
+    "--user-data-dir=~/.local/share/Google/Chrome/User Data",
     "--no-first-run"
 ])
 time.sleep(8)

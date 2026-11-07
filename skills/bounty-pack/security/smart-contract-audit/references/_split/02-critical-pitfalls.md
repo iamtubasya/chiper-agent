@@ -359,8 +359,8 @@ hash verification.
 #   binary path (win+zip) = <compilersDir>/<version>/solc.exe
 #   isCompilerDownloaded() only stats that binary file
 cp ~/.solc-select/artifacts/solc-0.8.20/solc-0.8.20 \
-   ~/AppData/Local/hardhat-nodejs/Cache/compilers-v2/0.8.20/solc.exe
-# and write ~/AppData/Local/hardhat-nodejs/Cache/compilers-v2/windows-amd64/list.json :
+   ~/.cache/hardhat-nodejs/compilers-v2/0.8.20/solc.exe
+# and write ~/.cache/hardhat-nodejs/compilers-v2/windows-amd64/list.json :
 # {"builds":[{"version":"0.8.20","longVersion":"0.8.20+commit.a1b79de6",
 #   "path":"solc-windows-amd64-v0.8.20+commit.a1b79de6.zip",
 #   "keccak256":"0x<b9ad…>","sha256":"0xa0fa…","platform":"windows-amd64","urls":[…]}],
@@ -532,7 +532,7 @@ pip install mythril && myth analyze src/Contract.sol
 echidna /tmp/Contract.sol --contract Test
 
 # ✅ CORRECT — Windows path
-echidna "C:/Users/WINDOWS10/project/src/Contract.sol" --contract Test
+echidna "/home/agentuser/project/src/Contract.sol" --contract Test
 
 # ✅ CORRECT — with foundry compilation
 echidna "C:/project" --contract Test --crytic-args "foundry"

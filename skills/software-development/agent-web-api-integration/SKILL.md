@@ -159,3 +159,9 @@ curl -s http://127.0.0.1:8642/v1/chat/completions \
     "messages": [{"role": "user", "content": "Ping"}]
   }' | jq .
 ```
+
+---
+
+## 5. Supporting References
+
+- Comprehensive catalog of frontend frameworks (Assistant-UI, CopilotKit, Open WebUI) and MCP bridges: see [references/ui-ecosystem-and-repos.md](references/ui-ecosystem-and-repos.md).

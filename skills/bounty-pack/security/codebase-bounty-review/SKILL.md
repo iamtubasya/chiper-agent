@@ -366,7 +366,7 @@ rejected report.
   `execute_code` with a relative path lands relative to ITS cwd, not the git-bash cwd the terminal
   `cd`'d into — and git-bash `/tmp` is `%TEMP%`, which native Windows Python may resolve elsewhere.
   Symptom: `python: can't open file '…/poc.py'` for a file you just "wrote". Fix: write every PoC /
-  report script to an ABSOLUTE Windows path (`C:/Users/.../<target>/poc.py`) and run it from there.
+  report script to an ABSOLUTE Windows path (`/home/agentuser/<target>/poc.py`) and run it from there.
 - **Verify a surface EXISTS before calling it "remaining" — and before calling it untestable.**
   Two self-inflicted errors in one engagement (2026-10, nym-vpn-client), both erring in the
   direction of *understating* coverage:
@@ -1050,7 +1050,7 @@ source + local test evidence. Full recipe, commands and the worked case:
 - **Write outputs where the *Windows* interpreter can read them.** `curl -o /tmp/x.html` then
   `python -c "open('/tmp/x.html')"` fails (*FileNotFoundError*) — MSYS `/tmp` is not what native Python
   sees. Keep all artefacts inside a real workspace dir (`~/<target>-audit/`) and pass native
-  `C:\Users\...` / `D:/...` paths when a native tool reads them.
+  `/home/agentuser` / `D:/...` paths when a native tool reads them.
 - **`web_extract` on a docs site can be backend-blocked** ("ddgs is search-only"). Fall back to
   `curl` + a 6-line strip-tags Python pass; keep the stripped text on disk as the policy artefact so
   later claims can be re-checked against it verbatim.

@@ -38,7 +38,7 @@ Before re-running any target:
 wmic process where "name like '%python%' and (commandline like '%force-full-execution%' or commandline like '%audit-pipeline-orchestrator%')" get processid,commandline
 taskkill /F /T /PID <pid>          # /T is the part that matters
 # 2. then clear the state that outlives the process
-rm -f ~/AppData/Local/hermes/trackers/*<target>*
+rm -f ~/.chiper/skills/bounty-pack/trackers/*<target>*
 ```
 
 If the ledger and the state file disagree (state says complete, evidence files are

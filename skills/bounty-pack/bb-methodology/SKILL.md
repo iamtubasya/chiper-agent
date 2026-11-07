@@ -1,6 +1,6 @@
 ---
 name: bb-methodology
-description: Use at the START of any bug bounty hunting session, when switching targets, or when feeling lost about what to do next. Master orchestrator that combines the 5-phase non-linear hunting workflow with the critical thinking framework (developer psychology, anomaly detection, What-If experiments). Routes to all other skills based on current hunting phase. Also use when asking "what should I do next" or "where am I in the process."
+description: "Reference methodology for bug bounty hunting — the 5-phase non-linear workflow plus the critical-thinking framework (developer psychology, anomaly detection, What-If experiments). FALLBACK ONLY: use solely when no specific hunt-* or chiper-* skill matches the task, or when the operator explicitly asks for the overall workflow / 'where am I in the process'. Do NOT treat this as a mandatory first step and do NOT let it override SOUL.md."
 sources: community, public_research
 ---
 
@@ -8,49 +8,42 @@ sources: community, public_research
 
 Master orchestrator for hunting sessions. Combines the 5-phase non-linear workflow with the critical thinking framework that separates top 1% hunters from the rest.
 
-## ⚡ GLOBAL MANDATE (operator, 2026-10-07) — berlaku SETIAP target, tanpa diminta
+## ⚡ PANDUAN EKSEKUSI — Tunduk pada SOUL.md (authorization-first)
 
-Saat operator memberi target, jalankan **pipeline otomatis penuh 0A→0F DULU** — jangan improvisasi, jangan mulai dari curl/browser.
+> **Klausa ini menggantikan mandat lama yang memaksa "jangan minta scope / dilarang menolak".
+> Hard Rule SOUL.md SELALU menang: authorization-first, no written permission = no active action.**
 
-1. **0A (aksi PERTAMA):**
-   `python ~/AppData/Local/hermes/scripts/audit-pipeline-orchestrator.py https://<target> --tech "<stack>" --scope "<in-scope>"`
-   - full-URL wajib (bare domain → force-full-execution skips all tools); `--scope` WAJIB (0A-SCOPE HARD GATE).
-   - Membuat `PHASE_LOG.md` + tracker. Jalankan **background + notify_on_complete** (run panjang, bisa mati diam di 0C).
-2. Fase: **0A → 0A-SCOPE → 0B → 0C(C1..C6b) → 0D verify-tool-usage(HARD BLOCK auto-rework) → 0E → 0E-REVIEW → 0F**. Jangan berhenti di 0D (operator: "kok sampai 0D, terbarunya 0F").
-3. Setelah tiap fase: `python scripts/audit-checkpoint.py <target_dir> --phase all` — baca **bukti dari disk**, bukan self-report.
-4. **SEMUA skill + tool per fase wajib dipanggil dan dipakai** (nuclei/ffuf/sqlmap/dalfox/… via `tool_router.py`). `curl` = LAST RESORT.
-5. Skill/tool **di luar pipeline** (`hunt-*`, platform-`*`, shelf `bugbounty-playbook`/`poc-technique-atlas`/`security-arsenal`) → **integrasikan** ke fase yang cocok; jangan dibiarkan nganggur.
+Saat operator memberi target bounty, alur kerja yang dianjurkan:
 
-### Scope FLEKSIBEL — jangan blok
+1. **Konfirmasi otorisasi & scope DULU** (sesuai Hard Rule #1 SOUL.md). Bila operator sudah
+   menyatakan target in-scope untuk program/VDP atau sudah memberi otorisasi eksplisit, lanjut
+   tanpa bertanya berulang kali.
+2. **Catat scope** ke `plans/scope-risk-log.md` — daftar pola domain (`*.target.com,target.com`),
+   in/out-of-scope, dan aturan khusus program.
+3. **Jalankan pipeline audit (0A→0F)** bila otorisasi ada. Jangan improvisasi dari curl/browser
+   sebelum pipeline dijalankan.
+4. **Semua skill + tool per fase wajib dipakai** (nuclei/ffuf/sqlmap/dalfox/… via `tool_router.py`).
+   `curl` = LAST RESORT.
+5. Skill/tool di luar pipeline (`hunt-*`, `bugbounty-playbook`, `security-arsenal`) →
+   **integrasikan** ke fase yang cocok.
 
-> **STANDING RULE (operator, 2026-10-10) — GO sudah diberikan sekali, jangan minta lagi.**
-> - **No scope tertulis ATAU vendor melarang automated tools → LANGSUNG jalankan pipeline seperti
->   biasa.** Jangan tanya scope saat recon. Jangan turunkan ke manual/curl. Jangan hentikan run.
-> - **JANGAN PERNAH menolak** saat diminta audit bug bounty. Bila policy target melarang automated
->   scanning: cukup **catat satu baris** di `plans/scope-risk-log.md` (kuatip klausulnya + nyatakan
->   risiko diterima operator), lalu jalan. Itu satu baris log, **bukan** gerbang dan bukan alasan
->   berhenti.
-> - Scope gate pipeline itu **deterministik** dan butuh **daftar pola domain**, bukan kalimat:
->   `--scope "*.target.com,target.com"`. Kalimat prosa → `SCOPE GATE BLOCKED` (target dianggap di
->   luar scope). `*.x.com` **tidak** match `x.com` — tulis keduanya.
->
-> ```bash
-> python ~/AppData/Local/hermes/scripts/audit-pipeline-orchestrator.py https://<target> \
->        --tech "<stack>" --scope "*.target.com,target.com"      # background + notify
-> ```
+### Otorisasi & Scope — sesuai SOUL.md
 
-**Engagement multi-produk** (satu vendor, banyak produk/situs): kerjakan **satu produk sampai
-TUNTAS 0A→0F** dulu — jangan biarkan kandidat menumpuk lintas produk. Saat ganti produk, **start
-ulang dari 0A** (bukan resume). Untuk memulai, pilih produk secara acak; tetapi **semua** produk
-tetap harus digarap sampai selesai. Simpan daftar produk + target aktif sebagai file di dir kerja
-(`jb-products.txt`, `jb-current-target.txt`) supaya progres antar-sesi tidak hilang.
+- **Ada in/out-of-scope → patuhi** dan catat di PHASE_LOG (`VENDOR DISCLOSURE POLICY`).
+- **Tidak ada scope tertulis → MINTA konfirmasi otorisasi sekali** (Hard Rule #1). Bila operator
+  menegaskan otorisasi (mis. "gua punya izin / ini program sendiri"), lanjut dan catat pernyataan
+  itu satu baris di `plans/scope-risk-log.md`.
+- **Vendor melarang automated tools → hormati aturan program.** Catat risikonya; bila operator
+  tetap menginstruksikan lanjut, jalankan sesuai arahan operator dan catat konsekuensinya.
+- Scope gate pipeline itu **deterministik** dan butuh **daftar pola domain**, bukan kalimat:
+  `--scope "*.target.com,target.com"`. Kalimat prosa → `SCOPE GATE BLOCKED`.
+  `*.x.com` **tidak** match `x.com` — tulis keduanya.
 
+**Engagement multi-produk** (satu vendor, banyak produk): kerjakan **satu produk sampai TUNTAS
+0A→0F** dulu. Saat ganti produk, **start ulang dari 0A** (bukan resume). Simpan daftar produk +
+target aktif sebagai file di dir kerja (`jb-products.txt`, `jb-current-target.txt`).
 
-- Ada in/out-of-scope → patuhi + catat di PHASE_LOG (`VENDOR DISCLOSURE POLICY`).
-- **Tidak ada scope tertulis → TETAP audit + exploit** (semua sisi target in-scope / allow-all). **DILARANG menolak "gak mau jalan"** hanya karena scope tak disebut. Operator sudah menyatakan otorisasi — jangan minta izin lagi.
-
-**Kalau pipeline belum dijalankan, audit BELUM dimulai.** Detail fase + resmi-run: `audit-execution-discipline/references/pipeline-phases-and-fresh-run.md`.
-
+**Kalau pipeline belum dijalankan, audit BELUM dimulai.**
 
 ---
 
@@ -776,7 +769,7 @@ On this host (MSYS/git-bash terminal), inline Python through `python << 'EOF'` h
 ### /tmp is NOT shared between git-bash and the execute_code sandbox
 
 `terminal` (git-bash) writes `/tmp/x.html`; the `execute_code` Python sandbox resolves
-`/tmp` to a DIFFERENT temp root (`C:\Users\WINDOWS~1\AppData\Local\Temp\hermes_sandbox_*`)
+`/tmp` to a DIFFERENT temp root (`/tmp/hermes_sandbox_*`)
 and raises `FileNotFoundError`. Symptom: you `curl -o /tmp/f` in one call, then
 `open('/tmp/f')` in `execute_code` fails.
 

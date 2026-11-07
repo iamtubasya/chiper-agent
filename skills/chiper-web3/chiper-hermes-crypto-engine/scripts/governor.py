@@ -9,7 +9,7 @@ slippage ekstrem, gas spike, atau frekuensi tx mendadak abnormal.
 Desain:
 - authorize(intent) dipanggil SEBELUM broadcast. Return Decision(allow/block/halt).
 - record(intent, tx_hash) dipanggil SETELAH broadcast sukses, biar cap-nya update.
-- State persisten di SQLite (default ~/.hermes/governor.db) → tahan restart.
+- State persisten di SQLite (default ~/.chiper/governor.db) → tahan restart.
 - Kill-switch: file flag ATAU trip otomatis kalau anomali. Sekali trip, SEMUA
   authorize() return HALT sampai operator reset manual (reset_killswitch()).
 
@@ -29,8 +29,8 @@ from pathlib import Path
 from typing import Optional, Literal
 
 Verdict = Literal["allow", "block", "halt"]
-DEFAULT_DB = Path(os.environ.get("HERMES_GOVERNOR_DB", "~/.hermes/governor.db")).expanduser()
-KILLSWITCH_FILE = Path(os.environ.get("HERMES_KILLSWITCH", "~/.hermes/HALT")).expanduser()
+DEFAULT_DB = Path(os.environ.get("HERMES_GOVERNOR_DB", "~/.chiper/governor.db")).expanduser()
+KILLSWITCH_FILE = Path(os.environ.get("HERMES_KILLSWITCH", "~/.chiper/HALT")).expanduser()
 
 
 # ───────────────────────────── config ─────────────────────────────

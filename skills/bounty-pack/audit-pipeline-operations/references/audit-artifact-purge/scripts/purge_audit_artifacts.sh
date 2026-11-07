@@ -16,12 +16,12 @@ MANIFEST="${LOCALAPPDATA:-/tmp}/Temp/audit_purge_manifest.txt"
 # ---------------------------------------------------------------- edit this
 items=(
   # C: drive — audit results / reports / loose scripts
-  "/c/Users/WINDOWS10/nasa-vdp-recon"
-  "/c/Users/WINDOWS10/nasa-cors-report"
-  "/c/Users/WINDOWS10/nykaa_audit"
-  "/c/Users/WINDOWS10/tv_recon"
-  "/c/Users/WINDOWS10/fireblocks-bounty"
-  "/c/Users/WINDOWS10/crowdproof-protocol"
+  "/home/agentuser/nasa-vdp-recon"
+  "/home/agentuser/nasa-cors-report"
+  "/home/agentuser/nykaa_audit"
+  "/home/agentuser/tv_recon"
+  "/home/agentuser/fireblocks-bounty"
+  "/home/agentuser/crowdproof-protocol"
   # D: drive — per-target progress + quarantined leftovers
   "/d/data hermes/bug-bounty/_progress/nykaa"
   "/d/data hermes/bug-bounty/_progress/capyfi"
@@ -31,7 +31,7 @@ items=(
 
 # capability that must survive — abort if any of these is in `items`
 protected=(
-  "/c/Users/WINDOWS10/AppData/Local/hermes/skills"
+  "~/.chiper/skills/bounty-pack/skills"
   "/d/data hermes/bug-bounty/bundle"
   "/d/data hermes/bug-bounty/_accounts"
   "/d/data hermes/bug-bounty/_toolkit-v2"

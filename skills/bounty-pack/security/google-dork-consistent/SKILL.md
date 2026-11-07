@@ -46,7 +46,7 @@ description: Use when Google dorking / Google SERP scraping hits the "unusual tr
 `D:/data hermes/advisory-intel/gdork.py`
 
 ```bash
-PY="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
+PY="/usr/bin/python3"
 cd "D:/data hermes/advisory-intel"
 
 # normal run (persistent profile: D:/data hermes/browser-profiles/gc-dork)
@@ -66,7 +66,7 @@ Exit codes: `0` ok/no-results, `3` walled after all retries.
 
 ## Full recon stack — `dork-recon.py` (3 layers)
 
-`C:/Users/WINDOWS10/AppData/Local/hermes/scripts/dork-recon.py` — Google is layer 3, not the
+`~/.chiper/skills/bounty-pack/dork-recon.py` — Google is layer 3, not the
 workhorse. Use the layered script for recon; use `gdork.py` directly only for one-off queries.
 
 | layer | engine | role | why |
@@ -76,7 +76,7 @@ workhorse. Use the layered script for recon; use `gdork.py` directly only for on
 | 3 | **Google** (`gdork.py --pool`) | fallback | most complete, but rate-limited → only for thin queries |
 
 ```bash
-PY="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
+PY="/usr/bin/python3"
 "$PY" dork-recon.py --target target.com --out ./dork-recon            # all 3 layers
 "$PY" dork-recon.py --target target.com --layers 1,2                  # skip Google
 "$PY" dork-recon.py --target target.com --queries my_dorks.txt --google-all
@@ -96,7 +96,7 @@ Integration into the audit pipeline is **additive only** (`audit-pipeline-orches
 ## Operating rules — use POOL MODE
 
 ```bash
-PY="C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe"
+PY="/usr/bin/python3"
 cd "D:/data hermes/advisory-intel"
 
 # RECOMMENDED: rotate a pool of profiles, auto-recycle walled ones

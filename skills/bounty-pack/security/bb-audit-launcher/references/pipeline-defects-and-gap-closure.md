@@ -52,7 +52,7 @@ so a stale ledger keeps producing the same verdict.
 
 | side | path |
 |---|---|
-| orchestrator / `audit-run-all.py` **write** | `~/AppData/Local/hermes/poc-plans/orchestrator-<host>_<...>/` |
+| orchestrator / `audit-run-all.py` **write** | `~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<host>_<...>/` |
 | `audit-checkpoint.py` / `verify-tool-usage.py` / `deep-audit-mode.py guard` **read** | `D:/data hermes/bug-bounty/<target>/` |
 
 Bridging with a hand-listed `cp` misses directories, and the guard then reports FAIL — with failures

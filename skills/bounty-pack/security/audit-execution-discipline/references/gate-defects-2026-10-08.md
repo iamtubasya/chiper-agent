@@ -20,7 +20,7 @@ honest *negative* report. That is the bar.
 |---|---|---|---|
 | 1 | all SC tools "run" but produce nothing useful | `_resolve_solidity_source()` returned `list(rglob("*.sol"))[0]` → `src/common/Multicall3.sol` (a helper), not the target | score candidates: skip `common|lib|interfaces|test|script|mock|openzeppelin|solady|node_modules`, then largest file wins; honour a `sol-target.txt` pin |
 | 2 | `import "@openzeppelin/..." cannot be found` | tools run with `cd <dir-of-the-.sol>` | run from the **project root** with the relative path |
-| 3 | aderyn dies in WSL, slither fine | `remappings.txt` held **Windows** absolute paths (`C:/Users/...`), which WSL cannot resolve | write **relative** remappings (`@openzeppelin/=@openzeppelin/`) — works for both |
+| 3 | aderyn dies in WSL, slither fine | `remappings.txt` held **Windows** absolute paths (`/home/agentuser`), which WSL cannot resolve | write **relative** remappings (`@openzeppelin/=@openzeppelin/`) — works for both |
 | 4 | `forge` exits `3221225725`, "has overflowed its stack" | `foundry.toml` had `src = "."`, so forge walked `lib/`'s nested duplicate packages | `src = "src"` (a real subdir) |
 | 5 | `...\out\build-info is not a directory` | crytic-compile's Foundry backend needs a prior build | run `forge build --build-info` before slither |
 | 6 | `can't install missing solc 0.8.28 in offline mode` | `offline = true` in `foundry.toml` blocks the solc download | drop `offline`; pin `solc_version` instead |

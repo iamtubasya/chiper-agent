@@ -25,12 +25,12 @@ Hunt + auto-mint free/gas-only Agent-ID-gated NFT mints on BNB Smart Chain.
 4. Skip if `balanceOf(me)>0`.
 
 ## Key tooling (this host)
-- baw CLI = `C:/Users/WINDOWS10/AppData/Roaming/npm/baw.cmd` — Python subprocess MUST use .cmd, not bare `baw`.
-- Telethon python = `C:/Users/WINDOWS10/AppData/Local/Programs/Python/Python314/python.exe` (NOT uv/hermes venv).
-- Etherscan V2 key: `C:/Users/WINDOWS10/AppData/Local/hermes/secrets/etherscan.key` →
+- baw CLI = `/usr/local/bin/baw.cmd` — Python subprocess MUST use .cmd, not bare `baw`.
+- Telethon python = `/usr/bin/python3` (NOT uv/hermes venv).
+- Etherscan V2 key: `~/.chiper/skills/bounty-pack/secrets/etherscan.key` →
   `https://api.etherscan.io/v2/api?chainid=56&module=contract&action=getabi&address=<ca>&apikey=<key>`.
 - BSC RPC: `https://bsc-dataseed.bnbchain.org`, fallback `https://bsc-rpc.publicnode.com`.
-- TG session: `C:/Users/WINDOWS10/telegram_scraper/tg_scan_session` (API_ID 2040).
+- TG session: `/home/agentuser/telegram_scraper/tg_scan_session` (API_ID 2040).
 
 ## Wallet reconnect (drops silently)
 `baw wallet status` → UNCONNECTED/NOT_LOGGED_IN ("illegal parameter" + UV_HANDLE_CLOSING crash).

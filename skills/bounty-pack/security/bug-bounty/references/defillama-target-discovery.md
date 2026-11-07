@@ -71,7 +71,7 @@ Raw JSON + enriched summary + report markdown. (2026-09-07 session mistakenly wr
 **Fix:** Never route large payloads through captured stdout. Run `curl -o <file>` via the `terminal` TOOL directly, then parse from the file.
 
 ### ⛔ Pitfall 2: MSYS /tmp ≠ Windows Python /tmp
-curl (MSYS) writing to `/tmp` lands in `%TEMP%` (`C:\Users\...\AppData\Local\Temp\`), but Windows-native Python resolving `/tmp/...` raises FileNotFoundError — even though `ls /tmp` works in bash.
+curl (MSYS) writing to `/tmp` lands in `%TEMP%` (`/tmp/`), but Windows-native Python resolving `/tmp/...` raises FileNotFoundError — even though `ls /tmp` works in bash.
 **Fix:** Use `~/` (home dir) as the handoff directory between bash tools and Windows Python, or explicit `C:\...` paths.
 
 ### ⛔ Pitfall 3: DuckDuckGo HTML endpoint returns garbage

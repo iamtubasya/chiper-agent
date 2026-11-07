@@ -105,8 +105,8 @@ Working method for authenticated API testing:
 ## Host notes (Windows + Playwright, this machine)
 - `playwright` ships but its **headless_shell is missing**; `chromium.launch(headless=True)`
   fails with "Executable doesn't exist ... chrome-headless-shell". Fix: pass
-  `executable_path="C:/Users/WINDOWS10/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe"`
-  (check `ls ~/AppData/Local/ms-playwright/` for the installed version dir — it drifts).
+  `executable_path="~/.local/share/ms-playwright/chromium-1234/chrome-win64/chrome.exe"`
+  (check `ls ~/.cache/ms-playwright/` for the installed version dir — it drifts).
 - **Backticks inside `page.evaluate` JS template literals break the eval** (a payload like
   `` detest`id` `` closes the template). Pass such strings as Python-side arguments
   (`page.evaluate(js, [data, names])`), never inline.

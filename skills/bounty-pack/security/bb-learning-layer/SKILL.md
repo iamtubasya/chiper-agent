@@ -226,7 +226,7 @@ directly (the store is plain SQLite at `trackers/bb-lessons.db`):
 
 ```python
 import sqlite3, os
-c = sqlite3.connect(os.path.expanduser("~/AppData/Local/hermes/trackers/bb-lessons.db"))
+c = sqlite3.connect(os.path.expanduser("~/.chiper/skills/bounty-pack/trackers/bb-lessons.db"))
 cur = c.cursor()
 FIX = "<the lesson text>"
 cur.execute("SELECT id FROM lessons WHERE status='unresolved' AND error_text LIKE ?", (pattern,))

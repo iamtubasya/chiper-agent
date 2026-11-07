@@ -34,7 +34,7 @@ def output_dir_for(target: str) -> Path:
     slug = (target.replace("https://", "").replace("http://", "")
             .replace("/", "_").replace(":", "_").replace(".", "_")
             .replace("?", "_").replace("=", "_"))
-    return Path.home() / "AppData/Local/hermes/poc-plans" / f"orchestrator-{slug}"
+    return Path.home() / "~/.chiper/skills/bounty-pack/poc-plans" / f"orchestrator-{slug}"
 
 
 def main() -> int:

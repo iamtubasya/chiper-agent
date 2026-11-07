@@ -38,7 +38,7 @@ lines = poc_text.split('\n')
 write_file(path="~/project/gen_pdf.py", content=script_content)
 
 # Step 2: Run it
-terminal(command="/c/Users/WINDOWS10/AppData/Local/Python/bin/python.exe gen_pdf.py",
+terminal(command="~/.local/share/Python/bin/python.exe gen_pdf.py",
          workdir="~/project")
 ```
 

@@ -584,8 +584,8 @@ further down, so a naive `text.slice(0,500)` misclassified a free account as Pro
 slice, or grep for the plan string directly.
 
 ```bash
-python scripts/chrome_profile_creds.py --profile-dir "C:/Users/X/AppData/Local/Google/Chrome/User Data" --match target.com
-python scripts/chrome_profile_creds.py --profile-dir "C:/Users/X/qw_chrome_cdp_b3" --cookie-name qw_session
+python scripts/chrome_profile_creds.py --profile-dir "~/.local/share/Google/Chrome/User Data" --match target.com
+python scripts/chrome_profile_creds.py --profile-dir "/home/agentuser/qw_chrome_cdp_b3" --cookie-name qw_session
 ```
 
 ## MFA stage: check which cookies exist, then try the protected route with them

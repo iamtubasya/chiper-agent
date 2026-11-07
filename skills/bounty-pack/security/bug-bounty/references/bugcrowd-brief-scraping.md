@@ -92,9 +92,9 @@ If the extract step returns nothing for these pages (search-only extract backend
 render in a browser — the briefs are SPAs.
 
 ## Stack: camofox server (~/camofox-browser)
-- Start: `cd /c/Users/WINDOWS10/camofox-browser && npm start` (background, port 9377)
+- Start: `cd /home/agentuser/camofox-browser && npm start` (background, port 9377)
 - Health: `curl -s http://localhost:9377/health`
-- Underlying binary: Camoufox (anti-detect Firefox) at `~/AppData/Local/camoufox/`
+- Underlying binary: Camoufox (anti-detect Firefox) at `~/.local/share/camoufox/`
 
 ## API (verified working)
 1. Open tab:
@@ -113,16 +113,16 @@ render in a browser — the briefs are SPAs.
    Then read snapshot.txt with offset/limit and mine sections: rewards tables, targets, announcements, exclusions.
 
 ## Camoufox binary recovery (server fails to launch: cache empty/incomplete)
-Symptom: `/tabs/open` hangs or errors; cache dir `~/AppData/Local/camoufox/camoufox/Cache/browsers/official/<ver>/` empty or missing exe.
+Symptom: `/tabs/open` hangs or errors; cache dir `~/.cache/camoufox/browsers/official/<ver>/` empty or missing exe.
 `camoufox fetch` / `python -m camoufox fetch` can hang past 5min timeout (500MB download) — do it MANUALLY:
-1. Check cache: `ls ~/AppData/Local/camoufox/camoufox/Cache/browsers/official/` → note version dir name (e.g. `152.0.4-beta.30-ea52a02f`).
+1. Check cache: `ls ~/.cache/camoufox/browsers/official/` → note version dir name (e.g. `152.0.4-beta.30-ea52a02f`).
 2. Download matching release zip (~500MB, run in background):
    `https://github.com/daijro/camoufox/releases/download/v<release>/camoufox-<release>-<build>-win.x86_64.zip`
    e.g. `v152.0.4-beta.30/camoufox-152.0.4-beta.30-win.x86_64.zip`
-3. Unzip INTO the version dir: `cd ~/AppData/Local/camoufox/camoufox/Cache/browsers/official/<ver> && unzip -o -q <zip>`
+3. Unzip INTO the version dir: `cd ~/.cache/camoufox/browsers/official/<ver> && unzip -o -q <zip>`
 4. Create `version.json` in that dir: `{"release":"152.0.4","version":"beta.30"}` (match dir name parts).
 5. **CRITICAL: server resolves the exe at Cache ROOT, not only the version dir:**
-   `cd ~/AppData/Local/camoufox/camoufox/Cache && cp -rn browsers/official/<ver>/* .`
+   `cd ~/.cache/camoufox && cp -rn browsers/official/<ver>/* .`
    Verify: `ls camoufox.exe version.json properties.json` all present at Cache root.
 6. Restart server (`npm start`), then POST /tabs/open → must return targetId in seconds.
 

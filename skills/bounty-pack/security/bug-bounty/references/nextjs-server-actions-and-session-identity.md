@@ -56,7 +56,7 @@ cookie (200 = live, 307→/login = dead) before a long run.
 
 On Windows git-bash, a bare argument starting with `/` (e.g. a `$p` holding `/api/v1/me`, or a
 `-w "label"` string) gets converted to a `C:/...` path. Symptoms: curl says "no URL specified" or
-the output label shows `C:/Users/.../git/api/...`. Fix: `MSYS_NO_PATHCONV=1` on the command, or
+the output label shows `/home/agentuser/git/api/...`. Fix: `MSYS_NO_PATHCONV=1` on the command, or
 always pass full `https://host` URLs. Also: Hermes redacts secrets in tool output, so a command that
 echoes a token can look corrupted (`Bearer ***`) — pass secrets via a file/variable read inside the
 script (python `pathlib.read_text()`), not inline.

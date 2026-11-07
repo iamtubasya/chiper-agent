@@ -54,7 +54,7 @@ for f in sorted(glob('audits/*.pdf')):
 
 Install note (Windows): bare `pip install pypdf` may resolve to a different interpreter and silently
 no-op, leaving `No module named 'pypdf'` on the next run. Use the full interpreter path:
-`/c/Users/<user>/AppData/Local/Programs/Python/Python3xx/python.exe -m pip install pypdf`, then run
+`/usr/bin/python3 -m pip install pypdf`, then run
 the script with the same interpreter.
 
 ## Step 3 — NEW == UNREVIEWED (post-audit commits are the prime surface)

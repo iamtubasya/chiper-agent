@@ -21,7 +21,7 @@ integrity check) atau nguras dana. Jadi:
 - Self-improve TIDAK PERNAH: sign tx, ubah spend cap, regenerate SKILLS.lock,
                   matiin governor, atau ubah dirinya sendiri (reflection.py).
 
-Semua aksi otonom dicatat ke audit log (~/.hermes/reflection-audit.log).
+Semua aksi otonom dicatat ke audit log (~/.chiper/reflection-audit.log).
 """
 from __future__ import annotations
 
@@ -33,8 +33,8 @@ from pathlib import Path
 from typing import Callable, Optional
 
 ROOT = Path(__file__).resolve().parent.parent           # .../openclaw
-PROPOSALS_DIR = Path(os.environ.get("HERMES_PROPOSALS", "~/.hermes/proposals")).expanduser()
-AUDIT_LOG = Path(os.environ.get("HERMES_REFLECTION_AUDIT", "~/.hermes/reflection-audit.log")).expanduser()
+PROPOSALS_DIR = Path(os.environ.get("HERMES_PROPOSALS", "~/.chiper/proposals")).expanduser()
+AUDIT_LOG = Path(os.environ.get("HERMES_REFLECTION_AUDIT", "~/.chiper/reflection-audit.log")).expanduser()
 
 # ── HARD GUARDS — jangan longgarin tanpa paham konsekuensinya ──
 FROZEN_PATHS = {

@@ -23,7 +23,7 @@ persiapan audit / bug bounty target real. Proses SOLVED yang sudah terbukti
   user harus kasih password sekali; **jangan looping tanya**, kalau user bilang
   "kamu cari/login aja" maka cek Chrome Login Data dulu, kalau tidak ada minta
   sekali dengan jelas.
-- Cookie hasil login: `C:/Users/WINDOWS10/AppData/Local/Temp/ps_cookies.json`
+- Cookie hasil login: `/tmp/ps_cookies.json`
   (39 cookies). Setup meta: `D:/data hermes/portswigger-setup.json`.
 - Progress: `D:/data hermes/portswigger-progress.json`.
 

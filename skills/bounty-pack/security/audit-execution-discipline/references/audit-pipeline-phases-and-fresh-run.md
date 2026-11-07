@@ -1,8 +1,8 @@
 # Audit pipeline — the REAL phase model, and how to force a genuine fresh run
 
-Source of truth: `~/AppData/Local/hermes/scripts/` (the LIVE toolkit that actually runs).
+Source of truth: `~/.chiper/skills/bounty-pack/` (the LIVE toolkit that actually runs).
 `bundle-src/audit-pipeline-bundle-v1/toolkit/scripts/` is a **synced copy** for shipping — keep it in
-step with `python ~/AppData/Local/hermes/scripts/bundle-sync.py sync` and check it with `... check`.
+step with `python ~/.chiper/skills/bounty-pack/bundle-sync.py sync` and check it with `... check`.
 (`audit-pipeline-orchestrator.py` = single brain; `audit-run-all.py` = thin wrapper).
 Companion: `pipeline-triaging-2026-09-26.md` (how to triage its output — do not trust it blindly).
 
@@ -36,7 +36,7 @@ python toolkit/scripts/audit-pipeline-orchestrator.py https://target.example \
   up, but nothing was tested either.
 - `audit-run-all.py --output-dir DIR` is ACCEPTED and then partially ignored: the orchestrator's
   `main()` only parses `--tech/--scope/--exclude` and computes its own output dir
-  (`~/AppData/Local/hermes/poc-plans/orchestrator-<sanitized-target>/`). Look for artifacts there, not
+  (`~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<sanitized-target>/`). Look for artifacts there, not
   in the dir you passed.
 
 ## 3. Fresh run ≠ deleting anything: the resume state lives OUTSIDE poc-plans
@@ -51,11 +51,11 @@ against a stale surface. Archiving only `poc-plans/orchestrator-<target>/` does 
 State files to archive (move to `*.bak_<YYYYMMDD>`, never delete):
 
 ```
-~/AppData/Local/hermes/trackers/audit-pipeline-<sanitized-url>.json   # completed_phases / current
-~/AppData/Local/hermes/trackers/force-state-<sanitized-url>.json      # force-full-execution progress
-~/AppData/Local/hermes/trackers/https___<host>.json                   # tracker state
-~/AppData/Local/hermes/trackers/_archive_<target>_*                   # older archives, leave alone
-~/AppData/Local/hermes/poc-plans/orchestrator-<sanitized-target>/     # urls.txt + tool-evidence/
+~/.chiper/skills/bounty-pack/trackers/audit-pipeline-<sanitized-url>.json   # completed_phases / current
+~/.chiper/skills/bounty-pack/trackers/force-state-<sanitized-url>.json      # force-full-execution progress
+~/.chiper/skills/bounty-pack/trackers/https___<host>.json                   # tracker state
+~/.chiper/skills/bounty-pack/trackers/_archive_<target>_*                   # older archives, leave alone
+~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<sanitized-target>/     # urls.txt + tool-evidence/
 ```
 Then re-run: the log should show `PHASE 0A: SETUP … ✅ PHASE 0A COMPLETE` and a real
 `STEP RECON: subfinder … httpx … urls.txt: N candidate URLs written`.

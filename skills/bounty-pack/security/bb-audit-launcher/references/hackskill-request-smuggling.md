@@ -308,7 +308,7 @@ Also load [H2_SMUGGLING_VARIANTS.md](./H2_SMUGGLING_VARIANTS.md) when you need:
 ## 12. RELATED ROUTING
 
 - **Input enters interpreter/query language/template** (not HTTP framing) -> [Injection Testing Router](../injection-checking/SKILL.md) (then drill down into XSS, SQLi, SSTI, etc.).
-- **Response header splitting / Location CRLF** -> [CRLF Injection](../crlf-injection/SKILL.md).
-- **Cache and path-key confusion** -> [Web Cache Deception](../web-cache-deception/SKILL.md).
+- **Response header splitting / Location CRLF** -> [CRLF Injection](../../hunt-http-smuggling/SKILL.md).
+- **Cache and path-key confusion** -> [Web Cache Deception](../../hunt-cache-poison/SKILL.md).
 
 Once confirmed as an **HTTP message-boundary** issue rather than parameter injection, **stay in this skill** to avoid misrouting into general injection workflows.

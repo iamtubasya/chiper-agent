@@ -15,7 +15,7 @@ import os
 from pathlib import Path
 from typing import Optional
 
-AUDIT_LOG = Path(os.environ.get("HERMES_REFLECTION_AUDIT", "~/.hermes/reflection-audit.log")).expanduser()
+AUDIT_LOG = Path(os.environ.get("HERMES_REFLECTION_AUDIT", "~/.chiper/reflection-audit.log")).expanduser()
 
 EVENT_LABEL = {
     "AUTOFIX_EXECUTED": "🔧 auto-fix dijalankan",

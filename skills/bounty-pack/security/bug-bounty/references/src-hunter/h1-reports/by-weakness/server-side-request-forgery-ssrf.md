@@ -3722,7 +3722,7 @@ def queueRequests(target, wordlists):
                            pipeline=False
                            )
 
-    for word in open('C:/Users/user/dev/SecLists/Usernames/Names/names.txt'):
+    for word in open('/home/agentuser/dev/SecLists/Usernames/Names/names.txt'):
         engine.queue(target.req, word.strip())
 
 
@@ -3741,7 +3741,7 @@ def queueRequests(target, wordlists):
                            pipeline=False
                            )
 
-    for word in open('C:/Users/user/dev/SecLists/Passwords/Leaked-Databases/rockyou-50.txt'):
+    for word in open('/home/agentuser/dev/SecLists/Passwords/Leaked-Databases/rockyou-50.txt'):
         engine.queue(target.req, word.strip())
 
 

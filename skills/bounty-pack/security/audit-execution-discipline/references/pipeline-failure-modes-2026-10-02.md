@@ -1,7 +1,7 @@
 # Pipeline failure modes observed 2026-10-02 (landlordstudio.com resume) — and the fixes
 
 Session: interrupted 0C at 09:36, resumed 16:13. Five engine bugs made the pipeline die or
-hang on this target. All were fixed in `~/AppData/Local/hermes/scripts/`. None of them said
+hang on this target. All were fixed in `~/.chiper/skills/bounty-pack/`. None of them said
 anything about the target.
 
 ## 1. C2 `execute-variants.py` — unbounded per-tool timeouts kill the whole orchestrator
@@ -157,11 +157,11 @@ evidence file. **Re-run and re-classify; never just relabel.**
 ## 6. Pitfall: `MSYS_NO_PATHCONV=1` + `/c/Users/...` silently writes to `C:\c\Users\...`
 
 To stop git-bash mangling `--path /properties`, the reflex is `export MSYS_NO_PATHCONV=1`.
-That keeps `/c/Users/WINDOWS10/AppData/...` **literal**, so Python's
+That keeps `/home/agentuser/C:/Windows/...` **literal**, so Python's
 `Path("/c/Users/...")` resolves to `C:\c\Users\...` — a different, empty tree. A C6b run
 "finished" and left `poc-techniques-usage.json` nowhere the gate looks; the evidence was
 sitting under `C:\c\...\`. When a pipeline script takes `--target-dir`, always pass the
-**native Windows path** (`C:/Users/...` works too); use `MSYS_NO_PATHCONV=1` only for
+**native Windows path** (`/home/agentuser` works too); use `MSYS_NO_PATHCONV=1` only for
 URL-path arguments (`--path /subscription`). Confirm with
 `ls -la "$OUT/poc-variants"` *and* `ls -la /c/c/Users/...` before trusting a run.
 

@@ -543,7 +543,7 @@ daripada menulis `N/A`.
 1. Buka Chromium **headed** dengan profil persisten khusus target, biarkan proses hidup:
    ```python
    ctx = pw.chromium.launch_persistent_context(
-       r"C:\Users\<user>\<target>-manual-profile", headless=False,
+       r"/home/agentuser/<target>-manual-profile", headless=False,
        args=["--disable-blink-features=AutomationControlled","--start-maximized"],
        no_viewport=True, locale="en-US", timezone_id="Asia/Jakarta")
    ```

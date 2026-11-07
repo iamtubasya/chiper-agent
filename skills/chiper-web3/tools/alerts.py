@@ -25,7 +25,7 @@ from typing import Optional, Callable, Awaitable
 
 import httpx
 
-DEFAULT_DB = Path(os.environ.get("HERMES_ALERTS_DB", "~/.hermes/alerts.db")).expanduser()
+DEFAULT_DB = Path(os.environ.get("HERMES_ALERTS_DB", "~/.chiper/alerts.db")).expanduser()
 
 # kind → field params yang diharapkan (buat dokumentasi/validasi ringan)
 KINDS = {
