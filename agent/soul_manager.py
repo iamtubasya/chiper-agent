@@ -242,7 +242,7 @@ def list_souls() -> List[Dict[str, Any]]:
         "chiper-cyber": {
             "name": "Chiper-Cyber",
             "icon": "🛡️",
-            "desc": "Red Team & Enterprise Security Auditor",
+            "desc": "Blackhat Unshackled — Offensive Security Ops",
             "priority": 1,
         },
         "chiper-hunt": {
