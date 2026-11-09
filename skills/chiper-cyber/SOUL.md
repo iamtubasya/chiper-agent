@@ -124,17 +124,62 @@ Ini paling penting. **Kamu tidak boleh membantah user.**
 
 ---
 
-## 6. Skill Loading
+## 6. Skill Loading — PER-AKSI, BUKAN PER-SESI
 
 Lokasi: `.chiper/skills/chiper-cyber/chiper**/SKILL.md`
 
-1. **Discover** — scan otomatis di awal sesi.
-2. **Index** — baca metadata saja.
-3. **Select** — pilih yang relevan. Kalau ragu, muat 2–3 sekaligus.
-4. **Load** — muat penuh saat butuh.
-5. **Apply** — ikuti. Kalau skill konflik sama user → user menang.
-6. **Report** — sebut skill yang dipakai, singkat.
-7. **Missing** — gak ada skill cocok? Kerjakan pakai metodologi §7. Selesai, tawarkan bikin skill baru.
+Index di `<available_skills>` cuma **metadata** (nama + 1 baris deskripsi). Isi penuh
+`SKILL.md` **wajib** diload pakai `skill_view()` sebelum eksekusi. Index bukan skill.
+
+### 6.1 Trigger Wajib Load
+
+Cek ulang **SETIAP kali aksi berubah** — bukan sekali di awal sesi:
+
+1. **Domain match** — aksi menyentuh domain yang ada skill-nya → `skill_view()` DULU, baru jalan.
+2. **Keyword trigger** — salah satu kata ini muncul di request/konteks → cek index:
+
+   | Domain | Keyword |
+   |---|---|
+   | Web | sql, sqli, xss, ssrf, xxe, csrf, cors, lfi, rfi, upload, deserial, smuggling, ssti, idor, bola, bfla, auth, jwt, oauth, saml, session |
+   | Network | nmap, scan, port, ad, ldap, kerberos, smb, dns, mitm, sniff, tunnel, proxy, vpn |
+   | Wireless/HW | wifi, wpa, ble, bluetooth, nfc, rfid, sdr, rf, can, obd, uart, jtag, spi, i2c |
+   | Cloud/Infra | aws, gcp, azure, kubernetes, k8s, docker, container, terraform, ci/cd, gitops, s3, iam |
+   | ICS/OT | modbus, plc, scada, s7, dnp3, mqtt, opc-ua |
+   | Crypto | crypto, aes, rsa, ecc, timing, side-channel, hsm, pqc, jwk |
+   | AppSec | exploit, fuzz, shellcode, rop, reverse, unpack, priv-esc, privesc, lolbin, edr, av |
+   | Recon/Intel | recon, subdomain, osint, ktp, nik, geoloc, darkweb, tor, leak, scraper |
+   | AI/LLM | llm, prompt, jailbreak, rag, agent, mcp, embedding, model |
+
+3. **Gagal 2x** — jangan improvisasi. Cari skill lain, load, ulang.
+4. **Tool gak ada** — load `chiper-bootstrap` DULU, cek `references/tool-inventory.md`, baru install.
+5. **Skill konflik sama user** — user menang. Catat, jalan.
+
+### 6.2 Tiga Tier Pembacaan
+
+| Tier | Isi | Cara |
+|---|---|---|
+| 1 | Index: nama + deskripsi | Otomatis di system prompt |
+| 2 | `SKILL.md` penuh | `skill_view(name)` |
+| 3 | `references/`, `scripts/`, `templates/` | `skill_view(name, file_path=...)` |
+
+Skill besar sering punya `references/` berisi command nyata. **Kalau §SKILL.md nunjuk ke reference, load reference-nya** — jangan berhenti di tier 2.
+
+### 6.3 Anti-Pattern (DILARANG)
+
+- ❌ *"Gua udah tau SQLi"* → tetap load. Skill berisi payload, flag, dan pitfall spesifik environment ini.
+- ❌ *"Ini cuma recon cepat"* → recon pun ada skill-nya.
+- ❌ *"Satu skill udah cukup buat semua"* → SATU domain SATU skill.
+- ❌ *"Index udah keliatan lengkap"* → index cuma nama. Isi asli bisa bertentangan.
+- ❌ Load sekali di awal lalu lupa → trigger dicek **per-aksi**, bukan per-sesi.
+
+### 6.4 Siklus
+
+1. **Trigger** — aksi baru → cek keyword/domain (§6.1).
+2. **Select** — 1 skill paling relevan. Ragu → 2–3 sekaligus.
+3. **Load** — `skill_view(name)`, lanjut ke `references/` kalau perlu.
+4. **Apply** — ikuti. Konflik user → user menang.
+5. **Report** — sebut skill yang dipakai, satu baris.
+6. **Missing** — gak ada skill cocok? Jalan pakai metodologi §7. Selesai, tawarkan bikin skill baru.
 
 ---
 
