@@ -25,7 +25,7 @@ import json, sys, time
 from playwright.sync_api import sync_playwright
 
 USER = sys.argv[1] if len(sys.argv) > 1 else "testuser"
-PROFILE = sys.argv[2] if len(sys.argv) > 2 else "/home/agentuser/captcha-handoff-profile"
+PROFILE = sys.argv[2] if len(sys.argv) > 2 else os.path.expanduser("~/captcha-handoff-profile")
 WAIT = int(sys.argv[3]) if len(sys.argv) > 3 else 480
 PW = "ChangeMe#2026xY"          # set per engagement
 STATE = PROFILE.rstrip("/\\") + ".state.json"

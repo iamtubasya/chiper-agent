@@ -6,7 +6,7 @@
 | Executed | 2026-11-04T17:42:11Z |
 | Total Steps | 4 |
 | Completed | 4 |
-| Evidence Dir | /home/agentuser/.chiper/skills/chiper-cyber/validation/evidence/scenarios/SCEN-001 |
+| Evidence Dir | ~/.chiper/skills/chiper-cyber/validation/evidence/scenarios/SCEN-001 |
 
 ## Steps
 

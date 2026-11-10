@@ -23,12 +23,12 @@ The apt path hangs on `gpg --dearmor` (network to `mongodb.org` is slow/blocked)
 
 ```bash
 wsl -d Ubuntu-26.04 -e bash -lc '
-  cd /home/windows10
+  cd $HOME
   curl -fsSL -o mongo.tgz "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2204-7.0.14.tgz"
   tar xzf mongo.tgz && mv mongodb-linux-x86_64-ubuntu2204-7.0.14 mongodb && rm -f mongo.tgz'
 # symlink (needs root):
 wsl -d Ubuntu-26.04 -u root -e bash -lc '
-  ln -sf /home/windows10/mongodb/bin/mongod /usr/local/bin/mongod'
+  ln -sf $HOME/mongodb/bin/mongod /usr/local/bin/mongod'
 ```
 
 Note: the tarball ships `mongod` but NOT `mongosh` (mongosh is a separate package) — Countly only
@@ -47,7 +47,7 @@ wsl -d Ubuntu-26.04 -u root -e bash -lc '
 
 ```bash
 wsl -d Ubuntu-26.04 -e bash -lc '
-  cd /home/windows10 && git clone --depth 1 https://github.com/Countly/countly-server.git countly
+  cd $HOME && git clone --depth 1 https://github.com/Countly/countly-server.git countly
   cd countly && npm install --no-audit --no-fund'   # ~650 packages, ~2 min
 ```
 
@@ -55,16 +55,16 @@ wsl -d Ubuntu-26.04 -e bash -lc '
 
 ```bash
 wsl -d Ubuntu-26.04 -e bash -lc '
-  mkdir -p /home/windows10/mongodb/data /home/windows10/mongodb/log
-  /home/windows10/mongodb/bin/mongod --dbpath /home/windows10/mongodb/data \
-    --bind_ip 127.0.0.1 --port 27017 --fork --logpath /home/windows10/mongodb/log/mongod.log'
+  mkdir -p $HOME/mongodb/data $HOME/mongodb/log
+  $HOME/mongodb/bin/mongod --dbpath $HOME/mongodb/data \
+    --bind_ip 127.0.0.1 --port 27017 --fork --logpath $HOME/mongodb/log/mongod.log'
 ```
 
 ## 5. Config + the `plugins.json` quirk (CRITICAL)
 
 ```bash
 wsl -d Ubuntu-26.04 -e bash -lc '
-  cd /home/windows10/countly
+  cd $HOME/countly
   cp api/config.sample.js api/config.js
   cp frontend/express/config.sample.js frontend/express/config.js
   cp plugins/plugins.default.json plugins/plugins.json'   # ← without this, `Cannot find module ./plugins.json`
@@ -82,8 +82,8 @@ master exited"). Launch with `setsid nohup ... < /dev/null &` to fully detach:
 
 ```bash
 wsl -d Ubuntu-26.04 -e bash -lc '
-  cd /home/windows10/countly
-  setsid nohup /usr/bin/node api/api.js > /home/windows10/countly-api.log 2>&1 < /dev/null &'
+  cd $HOME/countly
+  setsid nohup /usr/bin/node api/api.js > $HOME/countly-api.log 2>&1 < /dev/null &'
 ```
 
 Health check (port 3001 is the API default):

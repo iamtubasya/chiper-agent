@@ -50,12 +50,12 @@ round-robins requests across them. On this host:
 Quick probes:
 ```bash
 # list tables + row counts
-python3 -c "import sqlite3; c=sqlite3.connect('/home/agentuser/.9router/db/data.sqlite'); \
+python3 -c "import sqlite3; c=sqlite3.connect(os.path.expanduser('~/.9router/db/data.sqlite')); \
   [print(t[0], c.execute('SELECT COUNT(*) FROM \"%s\"'%t[0]).fetchone()[0]) \
    for t in c.execute(\"SELECT name FROM sqlite_master WHERE type='table'\")]"
 
 # group providers by auth type + active count (avoid dumping key/secret columns)
-python3 -c "import sqlite3; c=sqlite3.connect('/home/agentuser/.9router/db/data.sqlite'); \
+python3 -c "import sqlite3; c=sqlite3.connect(os.path.expanduser('~/.9router/db/data.sqlite')); \
   [print(r) for r in c.execute('SELECT provider, authType, SUM(isActive), COUNT(*) FROM providerConnections GROUP BY provider, authType')]"
 ```
 

@@ -176,7 +176,7 @@ Diagnose BEFORE declaring a tool missing (three probes, in order):
 Fix (persistent, one-time):
 ```powershell
 $cur = [Environment]::GetEnvironmentVariable('Path','User')
-if ($cur -notlike '*C:\go\bin*') { $cur += ';C:\go\bin;/home/agentuser/go/bin' }
+if ($cur -notlike '*C:\go\bin*') { $cur += ';C:\go\bin;$HOME/go/bin' }
 [Environment]::SetEnvironmentVariable('Path', $cur, 'User')
 # then broadcast WM_SETTINGCHANGE ('Environment') so already-open shells/Explorer pick it up
 ```
@@ -282,10 +282,10 @@ rather than an error:
 
 ```bash
 # git-bash resolves this; Windows Python's pathlib does NOT
-python execute-poc-variants.py https://target --target-dir "/home/agentuser/.../orchestrator-x"
+python execute-poc-variants.py https://target --target-dir "$HOME/.../orchestrator-x"
 #   -> "Matched repos: 0"     (exit 0, no error, writes [])
 # correct:
-python execute-poc-variants.py https://target --target-dir "/home/agentuser/.../orchestrator-x"
+python execute-poc-variants.py https://target --target-dir "$HOME/.../orchestrator-x"
 ```
 
 The script does `Path(target_dir) / "poc-execution.json"`, gets a nonexistent path, finds zero repos and

@@ -169,7 +169,7 @@ sys.excepthook = excepthook
 ### 安装
 
 ```bash
-source /home/agentuser/chiper/.venv/bin/activate
+source ~/chiper/.venv/bin/activate
 pip install debugpy
 ```
 
@@ -266,7 +266,7 @@ send({"type": "request", "command": "configurationDone"})
   "connect": { "host": "127.0.0.1", "port": 5678 },
   "justMyCode": false,
   "pathMappings": [
-    { "localRoot": "${workspaceFolder}", "remoteRoot": "/home/agentuser/chiper" }
+    { "localRoot": "${workspaceFolder}", "remoteRoot": "${workspaceFolder}" }
   ]
 }
 ```

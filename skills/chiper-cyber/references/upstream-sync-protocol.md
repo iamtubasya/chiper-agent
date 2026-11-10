@@ -24,4 +24,4 @@ python3 validation/chiper-skill-lint.py
 python3 validation/chiper-validate-payloads.py
 python3 validation/chiper-validate-testcases.py
 ```
-Sync changes across `~/.chiper/skills/chiper-cyber`, `~/.chiper/skills/chiper-cyber`, and `/home/agentuser/chiper/skills/chiper-cyber`.
+Sync changes across `~/.chiper/skills/chiper-cyber`, `~/.chiper/skills/chiper-cyber`, and `${REPO_ROOT:-$HOME/chiper}/skills/chiper-cyber`.

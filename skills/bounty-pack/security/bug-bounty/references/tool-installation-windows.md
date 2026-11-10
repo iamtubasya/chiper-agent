@@ -9,7 +9,7 @@
 
 ### Step 1: Audit — Check What's Installed
 ```bash
-export PATH="/c/go/bin:/home/agentuser/go/bin:$PATH"
+export PATH="/c/go/bin:$HOME/go/bin:$PATH"
 echo "--- Go Tools ---"
 for tool in subfinder nuclei katana ffuf gobuster gau medusa trufflehog; do
   command -v $tool &>/dev/null && echo "✅ $tool" || echo "❌ $tool"
@@ -34,7 +34,7 @@ command -v hardhat &>/dev/null && echo "✅ hardhat" || echo "❌ hardhat (check
 curl -L -o /d/data\ hermes/go.zip "https://go.dev/dl/go1.24.6.windows-amd64.zip"
 powershell -Command "Expand-Archive -Path 'D:\data hermes\go.zip' -DestinationPath 'C:\' -Force"
 echo 'export PATH="/c/go/bin:$HOME/go/bin:$PATH"' >> ~/.bashrc
-echo 'export GOPATH="/home/agentuser/go"' >> ~/.bashrc
+echo 'export GOPATH="$HOME/go"' >> ~/.bashrc
 ```
 
 #### Phase B: Go Tools (ProjectDiscovery + others)
@@ -184,7 +184,7 @@ Verified 2026-10 on Windows 10 during the Octopus Deploy audit (Octopus Server /
 Tentacle are closed-source .NET; the Tentacle source is public).
 
 1. Install the SDK user-local (no admin):
-   `powershell -ExecutionPolicy Bypass -File dotnet-install.ps1 -Channel 8.0 -InstallDir /home/agentuser/.dotnet`
+   `powershell -ExecutionPolicy Bypass -File dotnet-install.ps1 -Channel 8.0 -InstallDir $HOME/.dotnet`
    (fetch https://dot.net/v1/dotnet-install.ps1)
    - The bash `dotnet-install.sh` FAILS under git-bash:
      `OS name could not be detected: UName = MINGW64_NT-10.0-19045`. Use the .ps1.
@@ -194,7 +194,7 @@ Tentacle are closed-source .NET; the Tentacle source is public).
 2. ilspycmd: the CURRENT package fails with
    `Settings file 'DotnetToolSettings.xml' was not found in the package`.
    Pin a version that ships it and add the runtime it wants:
-     `dotnet-install.ps1 -Channel 6.0 -Runtime dotnet -InstallDir /home/agentuser/.dotnet`
+     `dotnet-install.ps1 -Channel 6.0 -Runtime dotnet -InstallDir $HOME/.dotnet`
      `dotnet tool install -g ilspycmd --version 8.2.0.7535`
    Without DOTNET_ROOT+PATH set, the tool reports `You must install or update .NET`
    or `Failed to resolve hostfxr.dll`.

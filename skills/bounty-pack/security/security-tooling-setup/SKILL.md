@@ -155,7 +155,7 @@ pipeline does) before declaring anything broken.
 
 ### ⛔ Extensionless wrappers: `shutil.which` needs BOTH a shebang script AND a `.cmd` (2026-10-12)
 
-A bare (no-extension) bash wrapper named exactly like the tool in a PATH dir (`/home/agentuser/go/bin/ssrfmap`,
+A bare (no-extension) bash wrapper named exactly like the tool in a PATH dir (`$HOME/go/bin/ssrfmap`,
 with `#!/bin/bash\nexec python "<repo>/main.py" "$@"`) resolved from **bash** but `shutil.which('ssrfmap')`
 returned `None` from Python — so the pipeline would skip it. Creating a second file,
 `<name>.cmd` (`@echo off` + `python "<repo>\main.py" %*`), made it resolve. **Ship both** for any
@@ -363,7 +363,7 @@ some launchers.
 | Tool | Fix |
 |---|---|
 | gcloud SDK | set user env `CLOUDSDK_ROOT_DIR` + `CLOUDSDK_PYTHON`; run `python <sdk>/lib/gcloud.py --version`; or `cmd /c "cd /d \"<dir>\" && gcloud.cmd --version"` |
-| NSIS installer (nmap, npcap) | prefer the **ZIP** distribution (`nmap.org/dist/nmap-*-win32.zip`); or copy the `.exe` to a space-free path (`/home/agentuser/x.exe`) first |
+| NSIS installer (nmap, npcap) | prefer the **ZIP** distribution (`nmap.org/dist/nmap-*-win32.zip`); or copy the `.exe` to a space-free path (`$HOME/x.exe`) first |
 | `.bat`/`.cmd` from bash | bash can't run them (`@if: command not found`) — call via `cmd.exe /c` or a sibling wrapper `.bat` |
 
 **npcap needs admin (UAC).** Without it nmap works in `connect()` mode (`-sT`); after the npcap
@@ -374,13 +374,13 @@ driver service is Running it gains `-sS`/OS-detect. Verify with `nmap --version`
 The `terminal` tool runs git-bash (MSYS), which rewrites any argument that *looks* like a POSIX
 path into a Windows path. This silently corrupts output and file writes:
 
-- `-w "/path -> %{http_code}"` → the leading `/` becomes `/home/agentuser/git/...`, so your label is
+- `-w "/path -> %{http_code}"` → the leading `/` becomes `$HOME/git/...`, so your label is
   garbage (looks like `~/.chiper/skills/bounty-pack/git/.git/HEAD -> 404`). **Fix:** never
   start a `-w`/`--write-out` string with `/` — prefix it (`-w "R$p -> …"`), or set
   `MSYS_NO_PATHCONV=1`.
 - But `MSYS_NO_PATHCONV=1` then **breaks `-o /dev/null`** (Windows curl gets a literal `/dev/null`
   and can't open it) → `curl: (23) client returned ERROR on write`. **Fix:** with NO_PATHCONV on,
-  write with a Windows path (`-o "/home/agentuser/tmp/x.out"`) or use `-o NUL`. Best pattern: leave
+  write with a Windows path (`-o "$HOME/tmp/x.out"`) or use `-o NUL`. Best pattern: leave
   NO_PATHCONV **unset** and just avoid a leading `/` in `-w` — URLs (`https://…`) are never
   converted, so URL args are always safe.
 
@@ -427,8 +427,8 @@ Hit while testing whether a target's exported private key could be unlocked with
 secret. `gpg` here is an **MSYS binary**, so RULE 2c applies to it too:
 
 1. **A Windows path in `GNUPGHOME` breaks the keyring dir.** `tempfile.mkdtemp()` returns
-   `/home/agentuser/Temp/tmp_x`; gpg prefixes the cwd and dies with
-   `keyblock resource 'D:/…//home/agentuser' : No such file or directory` /
+   `$HOME/Temp/tmp_x`; gpg prefixes the cwd and dies with
+   `keyblock resource 'D:/…/$HOME' : No such file or directory` /
    `no writable keyring found` — which *reads like a corrupt key*, not a path bug. Fix: create the
    homedir inside the workdir and pass it relatively: `GNUPGHOME=./gpg_test` (or run `cd` into it).
 2. **A secret key imports fine with the wrong passphrase.** `gpg --import` reported
@@ -448,7 +448,7 @@ would have turned a defended design into a fabricated High.
 ## RULE 2d — Give scanners a RELATIVE output path (a tool that writes nothing still exits 0)
 
 > **Scanner silent-fail gotchas (nuclei/ffuf/httpx/ghauri on this MSYS host, distilled 2026-11-02):**
-> `~` is never translated for native Go binaries (use `/home/agentuser/...`), `httpx` this build uses
+> `~` is never translated for native Go binaries (use `$HOME/...`), `httpx` this build uses
 > `-threads` not `-c`, nuclei chokes on httpx's `[...]`/title rows (strip to bare URL first), a 0-byte
 > nuclei `.err` with no summary = died-before-template-load, and ghauri/sqlmap will waste 20+ min on a
 > statically-returning endpoint. Full recipe: `references/scanner-msys-silent-fail-gotchas.md`.
@@ -498,14 +498,14 @@ Same family as 2b/2c, but this one silently kills `go install` for a whole sessi
 that as a RELATIVE path** and aborts before building:
 
 ```
-go: GOPATH entry is relative; must be absolute path: "/home/agentuser/go"
+go: GOPATH entry is relative; must be absolute path: "$HOME/go"
 ```
 
 `go install <tool>@latest` then fails on EVERY tool, so jsluice/arjun/graphql-cop all read as
 MISSING when they were never installable. Set it to the Windows form (in `.bashrc`):
 
 ```bash
-export GOPATH="/home/agentuser/go"; export GOBIN="/home/agentuser/go/bin"
+export GOPATH="$HOME/go"; export GOBIN="$HOME/go/bin"
 export PATH="$GOBIN:$PATH"          # keep /c/go/bin too — nuclei lives there
 ```
 
@@ -529,9 +529,9 @@ installer also hung the same way — the PS script is the reliable route):
 
 ```bash
 curl -sSL -o dotnet-install.ps1 https://dot.net/v1/dotnet-install.ps1
-powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Set-Location <dir>; ./dotnet-install.ps1 -Channel 10.0 -InstallDir /home/agentuser/.dotnet -NoPath"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Set-Location <dir>; ./dotnet-install.ps1 -Channel 10.0 -InstallDir $HOME/.dotnet -NoPath"
 # verify + build:
-export PATH="/home/agentuser/.dotnet:$PATH"; dotnet --list-sdks   # 8.0.425 + 10.0.403
+export PATH="$HOME/.dotnet:$PATH"; dotnet --list-sdks   # 8.0.425 + 10.0.403
 cd <repo> && dotnet build <solution>.sln -c Release
 ```
 

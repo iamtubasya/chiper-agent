@@ -13,7 +13,7 @@ one draft per finding.
 
 ```python
 import json, base64, os, urllib.request, urllib.parse
-HOME = os.path.expanduser(r"/home/agentuser/.chiper")   # CHIPER_HOME
+HOME = os.environ.get("CHIPER_HOME") or os.environ.get("CHIPER_PATH") or os.path.expanduser("~/.chiper")   # CHIPER_HOME
 TOK = json.load(open(os.path.join(HOME, "google_token.json"), encoding="utf-8"))
 data = urllib.parse.urlencode({"client_id": TOK["client_id"], "client_secret": TOK["client_secret"],
         "refresh_token": TOK["refresh_token"], "grant_type": "refresh_token"}).encode()

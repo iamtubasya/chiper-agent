@@ -170,7 +170,7 @@ curl -sI http://127.0.0.1:20128
 ```
 
 ## Git Repository & Clean Commits
-In `/home/agentuser/chiperrouter`, create `.gitignore` before committing:
+In `~/chiperrouter`, create `.gitignore` before committing:
 ```
 node_modules/
 app/node_modules/

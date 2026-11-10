@@ -3,7 +3,7 @@
 Playbook and workflow patterns for maintaining, branding, and standardizing the customized Chiper Agent repository.
 
 ## 1. Repository & Identity Architecture
-- **Canonical Custom Repo Path**: `/home/agentuser/chiper`
+- **Canonical Custom Repo Path**: `~/chiper`
 - **Branding Standard**:
   - Eliminasi total seluruh referensi: `Nous Research`, `nousresearch.com`, `Hermes`, `hermes-agent`, `ChiperFlux`.
   - Author/Maintainer: **Tubasya** (`iamtubasya@chiper.local`).
@@ -27,7 +27,7 @@ Playbook and workflow patterns for maintaining, branding, and standardizing the 
   ```
 - To make custom skill ecosystems (such as `chiper-cyber` with 144 security domains) available out-of-the-box on new VPS installations without manual copy commands:
   1. Audit and sanitize all legacy paths/branding in the skill files.
-  2. Place the ecosystem directly inside the repo: `/home/agentuser/chiper/skills/<category>/`.
+  2. Place the ecosystem directly inside the repo: `~/chiper/skills/<category>/`.
   3. Commit to the git repository.
   4. On any new server running `install.sh`, the installer copies and activates all domains automatically on first run.
 

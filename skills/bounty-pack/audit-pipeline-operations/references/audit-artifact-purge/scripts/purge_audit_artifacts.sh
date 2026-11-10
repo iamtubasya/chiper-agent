@@ -16,12 +16,12 @@ MANIFEST="${LOCALAPPDATA:-/tmp}/Temp/audit_purge_manifest.txt"
 # ---------------------------------------------------------------- edit this
 items=(
   # C: drive — audit results / reports / loose scripts
-  "/home/agentuser/nasa-vdp-recon"
-  "/home/agentuser/nasa-cors-report"
-  "/home/agentuser/nykaa_audit"
-  "/home/agentuser/tv_recon"
-  "/home/agentuser/fireblocks-bounty"
-  "/home/agentuser/crowdproof-protocol"
+  "$HOME/nasa-vdp-recon"
+  "$HOME/nasa-cors-report"
+  "$HOME/nykaa_audit"
+  "$HOME/tv_recon"
+  "$HOME/fireblocks-bounty"
+  "$HOME/crowdproof-protocol"
   # D: drive — per-target progress + quarantined leftovers
   "/d/data hermes/bug-bounty/_progress/nykaa"
   "/d/data hermes/bug-bounty/_progress/capyfi"

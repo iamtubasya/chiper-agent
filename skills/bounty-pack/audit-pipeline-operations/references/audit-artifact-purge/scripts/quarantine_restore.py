@@ -8,8 +8,8 @@ engagement output and get swept with it. Never hand-move files back; this script
 decodes the quarantine's flattened naming and restores exactly what you list.
 
 Quarantine naming written by the purge passes:
-    /home/agentuser/ps3_logic-flaws-idor.html
-      -> <Q>/c__Users__WINDOWS10__ps3_logic-flaws-idor.html
+    ~/.local/state/ps3_logic-flaws-idor.html
+      -> <Q>/c__Users__user__ps3_logic-flaws-idor.html
     D:/data hermes/mail-com-audit
       -> <Q>/d__data hermes__mail-com-audit
 Note: the drive letter is lowercased and the ':' is dropped by shutil.move, and
@@ -47,7 +47,7 @@ TEMP = os.environ.get("LOCALAPPDATA") or os.environ.get("TMPDIR") or "/tmp"
 
 
 def decode(flat: str) -> str | None:
-    """c__Users__WINDOWS10__ps3_x.html -> /home/agentuser/ps3_x.html"""
+    """c__Users__user__ps3_x.html -> ~/.local/state/ps3_x.html"""
     parts = flat.split("__")
     if len(parts) < 2:
         return None

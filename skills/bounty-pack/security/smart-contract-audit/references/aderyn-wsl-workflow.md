@@ -6,7 +6,7 @@ Aderyn is a Rust-based Solidity static analyzer. Official releases only provide 
 - `aarch64-apple-darwin` (Apple Silicon)
 - `x86_64-apple-darwin` (Intel Mac)
 
-**No native Windows binary exists.** Attempting to run aderyn.exe on Windows produces: "This version of /home/agentuser/aderyn.exe is not compatible with the version of Windows you're running."
+**No native Windows binary exists.** Attempting to run aderyn.exe on Windows produces: "This version of $HOME/aderyn.exe is not compatible with the version of Windows you're running."
 
 ## Solution: Run Aderyn Inside WSL Ubuntu
 
@@ -37,14 +37,14 @@ aderyn --version  # Should output: aderyn 0.6.8
 ```python
 # In execute_all_tools(), smart_contract branch for tool == "aderyn":
 wsl_root = self._win_to_wsl_path(str(Path(sol_src).parent))
-cmd = f'wsl -d Ubuntu -- bash -c "PATH=/home/windows10/.local/bin:/usr/local/bin:/usr/bin:/bin /home/windows10/.local/bin/aderyn {wsl_root}"'
+cmd = f'wsl -d Ubuntu -- bash -c "PATH=$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin $HOME/.local/bin/aderyn {wsl_root}"'
 ```
 
 **Key points:**
 - Always call WSL **directly**, NOT the wrapper `~/go/bin/myth` (myth itself also has recursive issues)
 - Set **explicit PATH** (do NOT inherit Windows PATH — `C:\Program Files\...` breaks bash quoting)
 - Pass the **DIRECTORY (project root)**, not a single file — aderyn scans all contracts in the root
-- Path conversion must handle backslashes correctly (`/home/agentuser` → `/mnt/c/Users/...`)
+- Path conversion must handle backslashes correctly (`$HOME` → `/mnt/c/Users/...`)
 
 ### Full Command Example
 
@@ -53,7 +53,7 @@ cmd = f'wsl -d Ubuntu -- bash -c "PATH=/home/windows10/.local/bin:/usr/local/bin
 "/usr/bin/python3" -c "..."
 
 # Which calls internally:
-wsl -d Ubuntu -- bash -c "PATH=/home/windows10/.local/bin:/usr/local/bin:/usr/bin:/bin /home/windows10/.local/bin/aderyn /tmp/sc-test"
+wsl -d Ubuntu -- bash -c "PATH=$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin $HOME/.local/bin/aderyn /tmp/sc-test"
 ```
 
 ### Evidence Format

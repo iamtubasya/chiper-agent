@@ -28,7 +28,7 @@ from reportlab.platypus import (
 from PIL import Image as PILImage
 import os, textwrap
 
-BASE = r"/home/agentuser/fireblocks-bounty"
+BASE = os.environ.get("TARGET_DIR") or os.path.expanduser("~/bounty-output")
 W, H = A4  # unpack for width reference only — pagesize=A4 (tuple) in doc
 
 SEV_COLORS = {

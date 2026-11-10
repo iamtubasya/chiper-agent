@@ -18,7 +18,7 @@ metadata:
 There are two places a SKILL.md can live:
 
 1. **User-local:** `~/.chiper/skills/<maybe-category>/<name>/SKILL.md` (or legacy `~/.chiperflux/skills/`) — personal, not shared. Created via `skill_manage(action='create')`.
-2. **In-repo (this skill is about this case):** `<repo_root>/skills/<category>/<name>/SKILL.md` (e.g. `/home/agentuser/chiper/skills/...`) — committed, shipped with the package. Use `write_file` + `git add`. `skill_manage(action='create')` does NOT target this tree.
+2. **In-repo (this skill is about this case):** `<repo_root>/skills/<category>/<name>/SKILL.md` (e.g. `~/chiper/skills/...`) — committed, shipped with the package. Use `write_file` + `git add`. `skill_manage(action='create')` does NOT target this tree.
 
 ## When to Use
 

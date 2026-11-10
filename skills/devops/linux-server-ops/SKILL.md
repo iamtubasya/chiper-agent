@@ -106,7 +106,7 @@ A common user desire: "I want to SSH in and `ls` / edit `~/.hermes`, `~/.chiperf
 - **The clean solution:**
   1. Simply set a password on the existing `agentuser`:
      ```bash
-     echo 'agentuser:password' | sudo chpasswd
+     echo '$USER:password' | sudo chpasswd
      ```
   2. If the user previously asked for a separate user (e.g. `chiper`), kill its processes and delete it:
      ```bash
@@ -115,9 +115,9 @@ A common user desire: "I want to SSH in and `ls` / edit `~/.hermes`, `~/.chiperf
      ```
   3. Symlink the agent CLI globally so non-login shells can find it without path configuration:
      ```bash
-     sudo ln -sf /home/agentuser/.local/bin/chiper /usr/local/bin/chiper
+     sudo ln -sf "$HOME/.local/bin/chiper" /usr/local/bin/chiper
      ```
-  4. Now the user logs into Termius directly as `agentuser`:
+  4. Now the user logs into Termius directly as the server user:
      - Full read/write access to `~/.chiperflux`, `~/.hermes`, projects, and sessions without permission fights.
      - Natural passwordless `sudo` (`NOPASSWD: ALL` already granted).
      - Native environment with no wrappers or sudoers shims needed.

@@ -17,7 +17,7 @@ Countly adalah **white-box source bounty** (SECURITY.md): in-scope = repo publik
    curl -fsSL -o mongo.tgz "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2204-7.0.14.tgz"
    tar xzf mongo.tgz && mv mongodb-linux-x86_64-ubuntu2204-7.0.14 mongodb
    ```
-2. **`cd /root` permission denied.** WSL default user = `windows10` (bukan root). Pakai `/home/windows10`, dan jalankan `ln -sf` ke `/usr/local/bin` lewat `-u root` (atau langsung panggil `/home/windows10/mongodb/bin/mongod`).
+2. **`cd /root` permission denied.** WSL default user = `windows10` (bukan root). Pakai `$HOME`, dan jalankan `ln -sf` ke `/usr/local/bin` lewat `-u root` (atau langsung panggil `$HOME/mongodb/bin/mongod`).
 3. **`plugins/plugins.json` hilang** di clone fresh (`.gitignore`). Error: `Cannot find module './plugins.json'`. Fix: `cp plugins/plugins.default.json plugins/plugins.json` — `getFixedPluginList` auto-overwrite resolusinya.
 4. **API mati kena SIGHUP** kalau di-launch `&` di dalam `bash -lc` (parent shell exit → child tewas). Fix: `setsid nohup node api/api.js > log 2>&1 < /dev/null &` atau via systemd unit (`/etc/wsl.conf` `[boot] systemd=true`).
 5. **Mongod harus `--fork`** supaya survive (jangan foreground).
@@ -27,7 +27,7 @@ Countly adalah **white-box source bounty** (SECURITY.md): in-scope = repo publik
 ```bash
 # 1. mongod (tarball fastdl)
 wsl -d Ubuntu-26.04 -e bash -lc '
- cd /home/windows10 && curl -fsSL -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2204-7.0.14.tgz
+ cd $HOME && curl -fsSL -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2204-7.0.14.tgz
  tar xzf mongodb-linux-x86_64-ubuntu2204-7.0.14.tgz && mv mongodb-linux-x86_64-ubuntu2204-7.0.14 mongodb
  mkdir -p mongodb/data mongodb/log
  mongodb/bin/mongod --dbpath mongodb/data --bind_ip 127.0.0.1 --port 27017 --fork --logpath mongodb/log/mongod.log'
@@ -36,16 +36,16 @@ wsl -d Ubuntu-26.04 -e bash -lc '
 wsl -d Ubuntu-26.04 -u root -e bash -lc 'curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs'
 
 # 3. clone + deps
-wsl -d Ubuntu-26.04 -e bash -lc 'cd /home/windows10 && git clone --depth 1 https://github.com/Countly/countly-server.git countly
+wsl -d Ubuntu-26.04 -e bash -lc 'cd $HOME && git clone --depth 1 https://github.com/Countly/countly-server.git countly
  cd countly && npm install --no-audit --no-fund'
 
 # 4. config + plugins.json
-wsl -d Ubuntu-26.04 -e bash -lc 'cd /home/windows10/countly && cp api/config.sample.js api/config.js
+wsl -d Ubuntu-26.04 -e bash -lc 'cd $HOME/countly && cp api/config.sample.js api/config.js
  cp frontend/express/config.sample.js frontend/express/config.js
  cp plugins/plugins.default.json plugins/plugins.json'
 
 # 5. boot API (survive)
-wsl -d Ubuntu-26.04 -e bash -lc 'cd /home/windows10/countly && setsid nohup node api/api.js > /home/windows10/countly-api.log 2>&1 < /dev/null &'
+wsl -d Ubuntu-26.04 -e bash -lc 'cd $HOME/countly && setsid nohup node api/api.js > $HOME/countly-api.log 2>&1 < /dev/null &'
 ```
 
 Health check: `curl http://127.0.0.1:3001/i` → `{"result":"Missing parameter \"app_key\"..."}` = hidup (port 3001 default).

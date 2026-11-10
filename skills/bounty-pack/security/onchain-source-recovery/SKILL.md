@@ -23,7 +23,7 @@ Regex that works on GitBook text: `([A-Za-z0-9 \-]{3,45}?)\s*-?\s*https?://[^\s]
 ERC-1967 implementation slot = `0xREDACTED_********`
 
 ```bash
-export PATH="$PATH:/home/agentuser/.foundry/bin"
+export PATH="$PATH:$HOME/.foundry/bin"
 RPC=https://ethereum-sepolia-rpc.publicnode.com      # works for regular (non-archive) eth_call
 cast storage <PROXY_ADDR> 0xREDACTED_******** --rpc-url $RPC
 # -> 0x000...000<impl address>
@@ -369,7 +369,7 @@ one-shot `initialize(...)` is a different conversation from one on the live mone
 8. **When source-mode compilation keeps failing, analyse BYTECODE — and prefer the DEPLOYED bytecode.**
    mythril's `--solv 0.8.28` tries to download solc from `solc-bin.ethereum.org`, a **deprecated host** (Solidity
    moved to `binaries.soliditylang.org`), so it dies with a DNS error on machines that can't reach it. Fix:
-   export a local compiler instead of asking for a version — `SOLC=/home/windows10/.local/bin/solc myth analyze
+   export a local compiler instead of asking for a version — `SOLC=$HOME/.local/bin/solc myth analyze
    <file>.sol` (WSL has 0.8.28). If imports still fail because mythril does not apply `--solc-json` remappings,
    stop fighting the compiler and switch to bytecode:
    ```bash
