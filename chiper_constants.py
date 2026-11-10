@@ -70,7 +70,7 @@ def get_chiper_home() -> Path:
     if override:
         return Path(override)
 
-    val = os.environ.get("CHIPER_HOME", "").strip()
+    val = os.environ.get("CHIPER_HOME", "").strip() or os.environ.get("CHIPER_PATH", "").strip()
     if val:
         return Path(val)
 

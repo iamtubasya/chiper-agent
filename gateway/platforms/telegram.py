@@ -3965,81 +3965,74 @@ class TelegramAdapter(BasePlatformAdapter):
             await query.edit_message_text(reply, parse_mode=ParseMode.MARKDOWN_V2)
 
     # ------------------------------------------------------------------
-    # Config path resolution — auto-detect, never assume a fixed home dir
+    # Config path resolution — auto path detection for ANY server / user
     # ------------------------------------------------------------------
 
     _CONFIG_FILENAME = "config.yaml"
 
     @staticmethod
-    def _config_path_candidates() -> List[Any]:
-        """Candidate config.yaml paths for THIS process, most canonical first.
+    def _detect_chiper_home() -> Any:
+        """Dynamically detect the Chiper home directory for THIS server and user.
 
-        Nothing here is hardcoded to a specific server: every candidate is
-        derived from the live environment (CHIPER_HOME, the effective user's
-        home, or the gateway's working directory).
+        Priority:
+        1. CHIPER_PATH env var (e.g. export CHIPER_PATH="$HOME/.chiper")
+        2. CHIPER_HOME env var
+        3. Canonical get_chiper_home() from chiper_constants
+        4. Environment $HOME/.chiper
+        5. Standard library Path.home() / ".chiper"
+        6. os.path.expanduser("~/.chiper")
+
+        Never assumes a hardcoded username or path — adapts to any server layout
+        (e.g. /home/agentuser, /home/ubuntu, /home/userai, /root, /opt/data, etc.).
         """
         from pathlib import Path as _Path
 
-        candidates: List[Any] = []
+        # 1. Direct environment variable overrides
+        for env_key in ("CHIPER_PATH", "CHIPER_HOME"):
+            val = (os.environ.get(env_key) or "").strip()
+            if val:
+                return _Path(val).expanduser()
 
-        def _add(raw: Any) -> None:
-            try:
-                path = _Path(raw).expanduser()
-            except Exception:
-                return
-            if path not in candidates:
-                candidates.append(path)
-
-        # 1. Explicit env overrides first — they are live and unambiguous
-        #    (may point at a file or at a directory).
-        for env_key in ("CHIPER_HOME", "CHIPER_CONFIG", "CHIPER_CONFIG_PATH"):
-            raw_env = (os.environ.get(env_key) or "").strip()
-            if not raw_env:
-                continue
-            env_path = _Path(raw_env)
-            _add(
-                env_path
-                if env_path.suffix in (".yaml", ".yml")
-                else env_path / TelegramAdapter._CONFIG_FILENAME
-            )
-
-        # 2. Canonical runtime home (CHIPER_HOME → platform default).
+        # 2. Canonical runtime helper from chiper_constants
         try:
             from chiper_constants import get_chiper_home
 
             home = get_chiper_home()
             if home:
-                _add(_Path(home) / TelegramAdapter._CONFIG_FILENAME)
+                return _Path(home)
         except Exception:
             pass
 
-        # 3. Platform default home for the effective user.
+        # 3. Environment $HOME
+        home_env = (os.environ.get("HOME") or "").strip()
+        if home_env:
+            return _Path(home_env) / ".chiper"
+
+        # 4. Standard library user home
         try:
-            _add(_Path.home() / ".chiper" / TelegramAdapter._CONFIG_FILENAME)
+            return _Path.home() / ".chiper"
         except Exception:
             pass
 
-        # 4. Relative to the gateway's working directory.
-        try:
-            _add(_Path.cwd() / ".chiper" / TelegramAdapter._CONFIG_FILENAME)
-        except Exception:
-            pass
-
-        return candidates
+        return _Path("~/.chiper").expanduser()
 
     def _resolve_config_path(self) -> Any:
-        """Resolve the config.yaml this runtime should write to.
+        """Resolve the config.yaml path for the active server environment.
 
-        Always the primary candidate — this process's own CHIPER_HOME / user
-        home.  Falling back to another location just because a config file
-        happens to exist there would write into a *different* install on the
-        same machine; and a missing config.yaml is not an error either, it is
-        created.  ``_config_path_candidates()`` is kept for diagnostics only.
+        1. If CHIPER_CONFIG or CHIPER_CONFIG_PATH is set directly, use that file.
+        2. Otherwise, use {detected_chiper_home}/config.yaml.
         """
-        candidates = self._config_path_candidates()
-        if not candidates:
-            raise RuntimeError("tidak ada kandidat path config.yaml")
-        return candidates[0]
+        from pathlib import Path as _Path
+
+        cfg_name = getattr(self, "_CONFIG_FILENAME", "config.yaml")
+        for env_key in ("CHIPER_CONFIG", "CHIPER_CONFIG_PATH"):
+            cfg_env = (os.environ.get(env_key) or "").strip()
+            if cfg_env:
+                p = _Path(cfg_env).expanduser()
+                return p if p.suffix in (".yaml", ".yml") else (p / cfg_name)
+
+        home_dir = self._detect_chiper_home()
+        return home_dir / cfg_name
 
     @staticmethod
     def _write_yaml_atomic(path: Any, data: Dict[str, Any]) -> None:

@@ -91,7 +91,8 @@ else
 fi
 
 # 5. Install httpx
-if ! command -v httpx >/dev/null 2>&1 || [ "$(command -v httpx)" = "/home/agentuser/chiper/.venv/bin/httpx" ]; then
+HTTPX_CMD=$(command -v httpx 2>/dev/null || true)
+if [ -z "$HTTPX_CMD" ] || [[ "$HTTPX_CMD" == *"/.venv/bin/httpx"* ]] || [[ "$HTTPX_CMD" == *"/venv/bin/httpx"* ]] || ! "$HTTPX_CMD" -version 2>&1 | grep -qi "projectdiscovery"; then
     if [ ! -f "$INSTALL_DIR/httpx" ]; then
         echo -e "${CYAN}→${NC} Mengunduh ProjectDiscovery httpx..."
         TAG=$(get_github_latest_tag "projectdiscovery/httpx")
