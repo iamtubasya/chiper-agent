@@ -3940,11 +3940,13 @@ class TelegramAdapter(BasePlatformAdapter):
             self._pending_endpoint_wizard.pop(chat_id, None)
 
             if success:
+                saved_path = msg
                 if make_default:
                     reply = self.format_message(
                         f"🎉 *Endpoint Berhasil Diaktifkan\\!*\n\n"
                         f"• 🌐 *Base URL:* `{base_url}`\n"
                         f"• 🤖 *Model:* `{model}`\n"
+                        f"• 📄 *Config:* `{saved_path}`\n"
                         f"• 🌟 *Status:* **Default Model Aktif** & tersimpan di `custom_providers`\n\n"
                         f"✅ _Model ini sekarang aktif sebagai model utama agent\\._"
                     )
@@ -3953,29 +3955,142 @@ class TelegramAdapter(BasePlatformAdapter):
                         f"💾 *Endpoint Berhasil Disimpan\\!*\n\n"
                         f"• 🌐 *Base URL:* `{base_url}`\n"
                         f"• 🤖 *Model:* `{model}`\n"
+                        f"• 📄 *Config:* `{saved_path}`\n"
                         f"• 📁 *Status:* Tersimpan di daftar provider (`custom_providers`)\n\n"
                         f"ℹ️ _Gunakan perintah `/model` untuk berpindah ke model ini kapan saja\\._"
                     )
             else:
-                reply = self.format_message(f"❌ *Gagal menyimpan konfigurasi:*\n{msg}")
+                    reply = self.format_message(f"❌ *Gagal menyimpan konfigurasi:*\n{msg}")
 
             await query.edit_message_text(reply, parse_mode=ParseMode.MARKDOWN_V2)
+
+    # ------------------------------------------------------------------
+    # Config path resolution — auto-detect, never assume a fixed home dir
+    # ------------------------------------------------------------------
+
+    _CONFIG_FILENAME = "config.yaml"
+
+    @staticmethod
+    def _config_path_candidates() -> List[Any]:
+        """Candidate config.yaml paths for THIS process, most canonical first.
+
+        Nothing here is hardcoded to a specific server: every candidate is
+        derived from the live environment (CHIPER_HOME, the effective user's
+        home, or the gateway's working directory).
+        """
+        from pathlib import Path as _Path
+
+        candidates: List[Any] = []
+
+        def _add(raw: Any) -> None:
+            try:
+                path = _Path(raw).expanduser()
+            except Exception:
+                return
+            if path not in candidates:
+                candidates.append(path)
+
+        # 1. Explicit env overrides first — they are live and unambiguous
+        #    (may point at a file or at a directory).
+        for env_key in ("CHIPER_HOME", "CHIPER_CONFIG", "CHIPER_CONFIG_PATH"):
+            raw_env = (os.environ.get(env_key) or "").strip()
+            if not raw_env:
+                continue
+            env_path = _Path(raw_env)
+            _add(
+                env_path
+                if env_path.suffix in (".yaml", ".yml")
+                else env_path / TelegramAdapter._CONFIG_FILENAME
+            )
+
+        # 2. Canonical runtime home (CHIPER_HOME → platform default).
+        try:
+            from chiper_constants import get_chiper_home
+
+            home = get_chiper_home()
+            if home:
+                _add(_Path(home) / TelegramAdapter._CONFIG_FILENAME)
+        except Exception:
+            pass
+
+        # 3. Platform default home for the effective user.
+        try:
+            _add(_Path.home() / ".chiper" / TelegramAdapter._CONFIG_FILENAME)
+        except Exception:
+            pass
+
+        # 4. Relative to the gateway's working directory.
+        try:
+            _add(_Path.cwd() / ".chiper" / TelegramAdapter._CONFIG_FILENAME)
+        except Exception:
+            pass
+
+        return candidates
+
+    def _resolve_config_path(self) -> Any:
+        """Resolve the config.yaml this runtime should write to.
+
+        Always the primary candidate — this process's own CHIPER_HOME / user
+        home.  Falling back to another location just because a config file
+        happens to exist there would write into a *different* install on the
+        same machine; and a missing config.yaml is not an error either, it is
+        created.  ``_config_path_candidates()`` is kept for diagnostics only.
+        """
+        candidates = self._config_path_candidates()
+        if not candidates:
+            raise RuntimeError("tidak ada kandidat path config.yaml")
+        return candidates[0]
+
+    @staticmethod
+    def _write_yaml_atomic(path: Any, data: Dict[str, Any]) -> None:
+        """Write YAML atomically, creating parent directories when missing."""
+        import tempfile
+        import yaml
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fd, tmp_name = tempfile.mkstemp(dir=str(path.parent), prefix=".config-", suffix=".tmp")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                yaml.safe_dump(data, handle, sort_keys=False, allow_unicode=True)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(tmp_name, path)
+        finally:
+            try:
+                if os.path.exists(tmp_name):
+                    os.unlink(tmp_name)
+            except OSError:
+                pass
 
     def _save_endpoint_provider(
         self, base_url: str, api_key: str, model: str, make_default: bool = False
     ) -> Tuple[bool, str]:
-        """Save the new endpoint provider to config.yaml."""
-        from chiper_cli.config import get_config_path
-        from utils import atomic_yaml_write
+        """Persist an endpoint provider into the config this gateway really uses.
+
+        Returns ``(True, <config path>)`` on success, ``(False, <reason>)``
+        otherwise.  The path is resolved at call time, so the same code works on
+        any server — different user, different CHIPER_HOME, host or container —
+        and a missing config.yaml is created instead of aborting the wizard.
+        """
         import urllib.parse
         import yaml
 
-        cfg_path = get_config_path()
-        try:
-            with open(cfg_path, "r", encoding="utf-8") as f:
-                cfg = yaml.safe_load(f) or {}
-        except Exception as e:
-            return False, f"Gagal membaca config.yaml: {e}"
+        candidates = self._config_path_candidates()
+        cfg_path = self._resolve_config_path()
+
+        cfg: Dict[str, Any] = {}
+        if cfg_path.exists():
+            try:
+                with open(cfg_path, "r", encoding="utf-8") as handle:
+                    loaded = yaml.safe_load(handle) or {}
+                cfg = loaded if isinstance(loaded, dict) else {}
+            except Exception as exc:
+                return False, f"Gagal membaca {cfg_path}: {exc}"
+        else:
+            logger.warning(
+                "[%s] config.yaml tidak ada di %s — membuat berkas baru",
+                self.name, cfg_path,
+            )
 
         parsed = urllib.parse.urlparse(base_url)
         host = parsed.netloc or parsed.path or "Custom"
@@ -3988,11 +4103,11 @@ class TelegramAdapter(BasePlatformAdapter):
             custom_provs = []
 
         found = False
-        for cp in custom_provs:
-            if isinstance(cp, dict) and cp.get("base_url") == base_url:
-                cp["model"] = model
+        for entry in custom_provs:
+            if isinstance(entry, dict) and entry.get("base_url") == base_url:
+                entry["model"] = model
                 if api_key:
-                    cp["api_key"] = api_key
+                    entry["api_key"] = api_key
                 found = True
                 break
         if not found:
@@ -4013,10 +4128,16 @@ class TelegramAdapter(BasePlatformAdapter):
             cfg["model"]["provider"] = "custom"
 
         try:
-            atomic_yaml_write(cfg_path, cfg)
-            return True, "Sukses"
-        except Exception as e:
-            return False, f"Gagal menyimpan ke config.yaml: {e}"
+            self._write_yaml_atomic(cfg_path, cfg)
+        except Exception as exc:
+            tried = ", ".join(str(candle) for candle in candidates)
+            return False, f"Gagal menulis {cfg_path}: {exc}\nKandidat path: {tried}"
+
+        logger.info(
+            "[%s] Endpoint provider tersimpan: %s (model=%s, default=%s)",
+            self.name, cfg_path, model, make_default,
+        )
+        return True, str(cfg_path)
 
     async def send_model_picker(
         self,
