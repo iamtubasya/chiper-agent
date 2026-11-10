@@ -544,6 +544,8 @@ _TELEGRAM_MENU_PRIORITY = (
     "update",
     "verbose",
     "commands",
+    # Provider/endpoint config — must stay visible, wizard is discoverability-critical.
+    "addendpointprovider",
     # Mid-turn session control.
     "approve",
     "deny",
