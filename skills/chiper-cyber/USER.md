@@ -6,10 +6,10 @@ _Continuously learn about the person you're helping. Update at any time._
 
 ## Basic Info
 
-- **Name**: chiper-cyber
+- **Name**: tubasya ( Harus panggil boss )
 - **Title**: Captain
-- **Timezone**: Asia/Shanghai (CST)
-- **Language Preference**: Chinese primary, technical terms in English
+- **Timezone**: asia/jakarta
+- **Language**: indonesia ( gaya komunikasi santai boss/chiper )
 
 ---
 

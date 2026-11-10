@@ -133,6 +133,8 @@ COMMAND_REGISTRY: list[CommandDef] = [
 
     CommandDef("soul", "Pilih atau ganti jiwa/otak agent (Chiper-Cyber, Chiper-Dev, atau Custom)", "Configuration",
                args_hint="[cyber|dev|list|set <name>]", aliases=("persona",)),
+    CommandDef("addendpointprovider", "Tambah endpoint OpenAI provider baru via wizard chat interaktif", "Configuration",
+               aliases=("addendpoint", "addenpointprovider", "addprovider")),
     CommandDef("personality", "Set a predefined personality", "Configuration",
                args_hint="[name]"),
     CommandDef("statusbar", "Toggle the context/model status bar", "Configuration",

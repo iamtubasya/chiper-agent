@@ -305,6 +305,21 @@ class GatewaySlashCommandsMixin:
             )
         return f"❌ {msg}"
 
+    async def _handle_addendpointprovider_command(self, event: MessageEvent) -> Optional[str]:
+        """Handle /addendpointprovider command — interactive wizard to add an OpenAI-compatible endpoint."""
+        source = event.source
+        adapter = self.adapters.get(source.platform) if getattr(self, "adapters", None) else None
+        if adapter and hasattr(adapter, "start_add_endpoint_wizard"):
+            metadata = self._thread_metadata_for_source(source, self._reply_anchor_for_event(event))
+            res = await adapter.start_add_endpoint_wizard(
+                chat_id=source.chat_id,
+                metadata=metadata,
+            )
+            if res and res.success:
+                return None
+
+        return "Gunakan perintah `/addendpointprovider` di Telegram untuk panduan interaktif."
+
     async def _handle_profile_command(self, event: MessageEvent) -> str:
         """Handle /profile — show active profile name and home directory."""
         from chiper_constants import display_chiper_home
