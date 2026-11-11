@@ -3880,7 +3880,10 @@ class TelegramAdapter(BasePlatformAdapter):
 
     async def _handle_endpoint_wizard_callback(self, query: Any, data: str) -> None:
         """Handle inline button clicks for AddEndpointProvider wizard."""
-        await query.answer()
+        try:
+            await query.answer()
+        except Exception:
+            pass
         chat_id = str(query.message.chat_id) if query.message else None
         if not chat_id or chat_id not in self._pending_endpoint_wizard:
             try:
@@ -3892,81 +3895,101 @@ class TelegramAdapter(BasePlatformAdapter):
         import time
         entry = self._pending_endpoint_wizard[chat_id]
 
-        if data == "aep:cancel":
-            self._pending_endpoint_wizard.pop(chat_id, None)
-            reply = self.format_message("❌ *Penambahan endpoint provider dibatalkan.*")
-            await query.edit_message_text(reply, parse_mode=ParseMode.MARKDOWN_V2)
-            return
-
-        if data == "aep:no_key":
-            entry["api_key"] = ""
-            entry["timestamp"] = time.time()
-            await self._scan_and_show_models(query.message, chat_id, entry)
-            return
-
-        if data.startswith("aep:m:"):
-            sub = data[len("aep:m:"):]
-            if sub == "manual":
-                entry["step"] = "waiting_manual_model"
-                entry["timestamp"] = time.time()
-                reply = self.format_message(
-                    "⌨️ *Ketik Nama Model:*\n\n"
-                    "Silakan ketik nama model yang ingin digunakan langsung di chat ini:\n\n"
-                    "_(Ketik `batal` untuk membatalkan)_"
-                )
-                await query.edit_message_text(reply, parse_mode=ParseMode.MARKDOWN_V2)
+        try:
+            if data == "aep:cancel":
+                self._pending_endpoint_wizard.pop(chat_id, None)
+                reply = self.format_message("❌ *Penambahan endpoint provider dibatalkan.*")
+                try:
+                    await query.edit_message_text(reply, parse_mode=ParseMode.MARKDOWN_V2)
+                except Exception:
+                    await query.edit_message_text("❌ Penambahan endpoint provider dibatalkan.")
                 return
-            try:
-                idx = int(sub)
-                models = entry.get("scanned_models", [])
-                if 0 <= idx < len(models):
-                    entry["selected_model"] = models[idx]
-                    entry["step"] = "confirming_action"
+
+            if data == "aep:no_key":
+                entry["api_key"] = ""
+                entry["timestamp"] = time.time()
+                await self._scan_and_show_models(query.message, chat_id, entry)
+                return
+
+            if data.startswith("aep:m:"):
+                sub = data[len("aep:m:"):]
+                if sub == "manual":
+                    entry["step"] = "waiting_manual_model"
                     entry["timestamp"] = time.time()
-                    await self._show_endpoint_confirmation(query, chat_id, entry)
+                    reply = self.format_message(
+                        "⌨️ *Ketik Nama Model:*\n\n"
+                        "Silakan ketik nama model yang ingin digunakan langsung di chat ini:\n\n"
+                        "_(Ketik `batal` untuk membatalkan)_"
+                    )
+                    try:
+                        await query.edit_message_text(reply, parse_mode=ParseMode.MARKDOWN_V2)
+                    except Exception:
+                        await query.edit_message_text("⌨️ Ketik Nama Model:\nSilakan ketik nama model yang ingin digunakan:")
                     return
-            except Exception as e:
-                logger.debug("Failed to pick model index: %s", e)
+                try:
+                    idx = int(sub)
+                    models = entry.get("scanned_models", [])
+                    if 0 <= idx < len(models):
+                        entry["selected_model"] = models[idx]
+                        entry["step"] = "confirming_action"
+                        entry["timestamp"] = time.time()
+                        await self._show_endpoint_confirmation(query, chat_id, entry)
+                        return
+                except Exception as e:
+                    logger.debug("Failed to pick model index: %s", e)
 
-        if data.startswith("aep:act:"):
-            action = data[len("aep:act:"):]
-            base_url = entry.get("base_url", "")
-            api_key = entry.get("api_key", "")
-            model = entry.get("selected_model", "")
+            if data.startswith("aep:act:"):
+                action = data[len("aep:act:"):]
+                base_url = entry.get("base_url", "")
+                api_key = entry.get("api_key", "")
+                model = entry.get("selected_model", "")
 
-            make_default = (action == "default")
-            success, msg = self._save_endpoint_provider(base_url, api_key, model, make_default=make_default)
+                make_default = (action == "default")
+                success, msg = self._save_endpoint_provider(base_url, api_key, model, make_default=make_default)
 
-            self._pending_endpoint_wizard.pop(chat_id, None)
+                self._pending_endpoint_wizard.pop(chat_id, None)
 
-            if success:
-                saved_path = msg
-                if make_default:
-                    reply = self.format_message(
-                        f"🎉 *Endpoint Berhasil Diaktifkan\\!*\n\n"
-                        f"• 🌐 *Base URL:* `{base_url}`\n"
-                        f"• 🤖 *Model:* `{model}`\n"
-                        f"• 📄 *Config:* `{saved_path}`\n"
-                        f"• 🌟 *Status:* **Default Model Aktif** & tersimpan di `custom_providers`\n\n"
-                        f"✅ _Model ini sekarang aktif sebagai model utama agent\\._"
-                    )
+                if success:
+                    saved_path = msg
+                    if make_default:
+                        reply = self.format_message(
+                            f"🎉 *Endpoint Berhasil Diaktifkan\\!*\n\n"
+                            f"• 🌐 *Base URL:* `{base_url}`\n"
+                            f"• 🤖 *Model:* `{model}`\n"
+                            f"• 📄 *Config:* `{saved_path}`\n"
+                            f"• 🌟 *Status:* **Default Model Aktif** & tersimpan di `custom_providers`\n\n"
+                            f"✅ _Model ini sekarang aktif sebagai model utama agent\\._"
+                        )
+                    else:
+                        reply = self.format_message(
+                            f"💾 *Endpoint Berhasil Disimpan\\!*\n\n"
+                            f"• 🌐 *Base URL:* `{base_url}`\n"
+                            f"• 🤖 *Model:* `{model}`\n"
+                            f"• 📄 *Config:* `{saved_path}`\n"
+                            f"• 📁 *Status:* Tersimpan di daftar provider (`custom_providers`)\n\n"
+                            f"ℹ️ _Gunakan perintah `/model` untuk berpindah ke model ini kapan saja\\._"
+                        )
                 else:
-                    reply = self.format_message(
-                        f"💾 *Endpoint Berhasil Disimpan\\!*\n\n"
-                        f"• 🌐 *Base URL:* `{base_url}`\n"
-                        f"• 🤖 *Model:* `{model}`\n"
-                        f"• 📄 *Config:* `{saved_path}`\n"
-                        f"• 📁 *Status:* Tersimpan di daftar provider (`custom_providers`)\n\n"
-                        f"ℹ️ _Gunakan perintah `/model` untuk berpindah ke model ini kapan saja\\._"
-                    )
-            else:
                     reply = self.format_message(f"❌ *Gagal menyimpan konfigurasi:*\n{msg}")
 
-            keyboard = InlineKeyboardMarkup([
-                [InlineKeyboardButton("🌐 Kelola Provider", callback_data="pm:back")],
-                [InlineKeyboardButton("✅ Selesai", callback_data="pm:done")],
-            ])
-            await query.edit_message_text(reply, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=keyboard)
+                keyboard = InlineKeyboardMarkup([
+                    [InlineKeyboardButton("🌐 Kelola Provider", callback_data="pm:back")],
+                    [InlineKeyboardButton("✅ Selesai", callback_data="pm:done")],
+                ])
+                try:
+                    await query.edit_message_text(reply, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=keyboard)
+                except Exception as e:
+                    logger.warning("[%s] Failed edit with MarkdownV2: %s", self.name, e)
+                    try:
+                        await query.edit_message_text(reply.replace("\\", ""), reply_markup=keyboard)
+                    except Exception:
+                        pass
+        except Exception as e:
+            logger.error("[%s] _handle_endpoint_wizard_callback failed: %s", self.name, e, exc_info=True)
+            try:
+                await query.edit_message_text(f"❌ Terjadi kesalahan: {e}")
+            except Exception:
+                pass
 
     # ------------------------------------------------------------------
     # Provider Manager (/provider) methods
@@ -4296,7 +4319,6 @@ class TelegramAdapter(BasePlatformAdapter):
         import urllib.parse
         import yaml
 
-        candidates = self._config_path_candidates()
         cfg_path = self._resolve_config_path()
 
         cfg: Dict[str, Any] = {}
@@ -4351,8 +4373,7 @@ class TelegramAdapter(BasePlatformAdapter):
         try:
             self._write_yaml_atomic(cfg_path, cfg)
         except Exception as exc:
-            tried = ", ".join(str(candle) for candle in candidates)
-            return False, f"Gagal menulis {cfg_path}: {exc}\nKandidat path: {tried}"
+            return False, f"Gagal menulis {cfg_path}: {exc}"
 
         logger.info(
             "[%s] Endpoint provider tersimpan: %s (model=%s, default=%s)",
