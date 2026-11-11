@@ -92,7 +92,7 @@ try {
 # Configuration
 # ============================================================================
 
-$RepoUrlSsh = "git@github.com:Chiper/chiper-agent.git"
+$RepoUrlSsh = "git@github.com:iamtubasya/chiper-agent.git"
 $RepoUrlHttps = "https://github.com/iamtubasya/chiper-agent.git"
 $PythonVersion = "3.11"
 $NodeVersion = "22"
@@ -1375,13 +1375,13 @@ function Install-Repository {
                 # for.  GitHub supports archive URLs for commits, tags, and
                 # branches; we honour Commit > Tag > Branch.
                 if ($Commit) {
-                    $zipUrl = "https://github.com/iamtubasya/chiper-agent.git/archive/$Commit.zip"
+                    $zipUrl = "https://github.com/iamtubasya/chiper-agent/archive/$Commit.zip"
                     $zipLabel = $Commit
                 } elseif ($Tag) {
-                    $zipUrl = "https://github.com/iamtubasya/chiper-agent.git/archive/refs/tags/$Tag.zip"
+                    $zipUrl = "https://github.com/iamtubasya/chiper-agent/archive/refs/tags/$Tag.zip"
                     $zipLabel = $Tag
                 } else {
-                    $zipUrl = "https://github.com/iamtubasya/chiper-agent.git/archive/refs/heads/$Branch.zip"
+                    $zipUrl = "https://github.com/iamtubasya/chiper-agent/archive/refs/heads/$Branch.zip"
                     $zipLabel = $Branch
                 }
                 $zipPath = "$env:TEMP\chiper-agent-$zipLabel.zip"

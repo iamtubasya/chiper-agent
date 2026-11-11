@@ -5961,7 +5961,7 @@ def _update_via_zip(args):
         )
         sys.exit(1)
     zip_url = (
-        f"https://github.com/iamtubasya/chiper-agent.git/archive/refs/heads/{branch}.zip"
+        f"https://github.com/iamtubasya/chiper-agent/archive/refs/heads/{branch}.zip"
     )
 
     print("→ Downloading latest version...")
@@ -6370,9 +6370,9 @@ def _discard_stashed_changes(
 
 OFFICIAL_REPO_URLS = {
     "https://github.com/iamtubasya/chiper-agent.git",
-    "git@github.com:Chiper/chiper-agent.git",
-    "https://github.com/iamtubasya/chiper-agent.git",
-    "git@github.com:Chiper/chiper-agent",
+    "git@github.com:iamtubasya/chiper-agent.git",
+    "https://github.com/iamtubasya/chiper-agent",
+    "git@github.com:iamtubasya/chiper-agent",
 }
 OFFICIAL_REPO_URL = "https://github.com/iamtubasya/chiper-agent.git"
 SKIP_UPSTREAM_PROMPT_FILE = ".skip_upstream_prompt"
@@ -6508,7 +6508,7 @@ def _sync_with_upstream_if_needed(git_cmd: list[str], cwd: Path) -> None:
         # Ask user if they want to add upstream
         print()
         print("ℹ Your fork is not tracking the official Chiper repository.")
-        print("  This means you may miss updates from Chiper/chiper-agent.")
+        print("  This means you may miss updates from iamtubasya/chiper-agent.")
         print()
         try:
             response = (
@@ -8623,7 +8623,7 @@ def _cmd_update_impl(args, gateway_mode: bool):
                 return
             print("✗ Not a git repository. Please reinstall:")
             print(
-                "  curl -fsSL https://iamtubasya.github.io/chiper-agent/install.sh | bash"
+                "  curl -fsSL https://raw.githubusercontent.com/iamtubasya/chiper-agent/main/install.sh | bash"
             )
             sys.exit(1)
 
