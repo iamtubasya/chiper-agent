@@ -7640,6 +7640,9 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         if canonical == "soul":
             return await self._handle_soul_command(event)
         
+        if canonical in ("provider", "providers"):
+            return await self._handle_provider_command(event)
+
         if canonical in ("addendpointprovider", "addendpoint", "addenpointprovider", "addprovider"):
             return await self._handle_addendpointprovider_command(event)
         

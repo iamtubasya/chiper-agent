@@ -7061,6 +7061,41 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
         else:
             _cprint("    (session only — add --global to persist)")
 
+    def _handle_provider_command(self, cmd_original: str) -> None:
+        """Handle /provider command in CLI — list manual endpoint providers."""
+        try:
+            from chiper_cli.config import load_config
+            cfg = load_config() or {}
+            custom_provs = cfg.get("custom_providers", [])
+            if not custom_provs:
+                _cprint(f"  {_CYAN}🌐 Daftar Provider Endpoint (Manual):{_RST}")
+                _cprint(f"  {_DIM}Belum ada custom provider yang terdaftar di config.yaml.{_RST}")
+                _cprint(f"  {_DIM}Gunakan bot Telegram /provider untuk menambah atau menghapus secara interaktif.{_RST}")
+                return
+
+            _cprint(f"\n  {_CYAN}🌐 Daftar Provider Endpoint (Manual):{_RST}\n")
+            active_model_cfg = cfg.get("model") if isinstance(cfg.get("model"), dict) else {}
+            active_base = (active_model_cfg.get("base_url") or "").rstrip("/")
+            active_prov = (active_model_cfg.get("provider") or "").lower()
+
+            for i, p in enumerate(custom_provs, 1):
+                if not isinstance(p, dict):
+                    continue
+                name = p.get("name") or f"Provider {i}"
+                url = p.get("base_url") or "-"
+                model = p.get("model") or "-"
+                api_key = p.get("api_key") or ""
+                key_disp = (api_key[:6] + "..." + api_key[-4:]) if len(api_key) > 12 else ("***" if api_key else "(none)")
+                is_active = (url.rstrip("/") == active_base and active_prov == "custom")
+                active_str = f" {_GREEN}⭐ [Default Active]{_RST}" if is_active else ""
+                _cprint(f"  {_BOLD}{i}. {name}{_RST}{active_str}")
+                _cprint(f"     • URL   : {url}")
+                _cprint(f"     • Model : {model}")
+                _cprint(f"     • Key   : {key_disp}")
+            _cprint(f"\n  {_DIM}Gunakan bot Telegram /provider untuk menambah atau menghapus secara interaktif.{_RST}\n")
+        except Exception as e:
+            _cprint(f"  {_RED}❌ Gagal memuat custom provider: {e}{_RST}")
+
     def _handle_codex_runtime(self, cmd_original: str) -> None:
         """Handle /codex-runtime — toggle the codex app-server runtime opt-in.
 
@@ -7426,6 +7461,8 @@ class ChiperCLI(CLIAgentSetupMixin, CLICommandsMixin):
             self._handle_sessions_command(cmd_original)
         elif canonical == "model":
             self._handle_model_switch(cmd_original)
+        elif canonical in ("provider", "providers"):
+            self._handle_provider_command(cmd_original)
         elif canonical == "codex-runtime":
             self._handle_codex_runtime(cmd_original)
         elif canonical == "gquota":

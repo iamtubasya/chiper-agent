@@ -305,6 +305,41 @@ class GatewaySlashCommandsMixin:
             )
         return f"❌ {msg}"
 
+    async def _handle_provider_command(self, event: MessageEvent) -> Optional[str]:
+        """Handle /provider command — interactive provider manager (view, add, delete)."""
+        source = event.source
+        adapter = self.adapters.get(source.platform) if getattr(self, "adapters", None) else None
+        if adapter and hasattr(adapter, "start_provider_manager"):
+            metadata = self._thread_metadata_for_source(source, self._reply_anchor_for_event(event))
+            res = await adapter.start_provider_manager(
+                chat_id=source.chat_id,
+                metadata=metadata,
+            )
+            if res and res.success:
+                return None
+
+        # Fallback for non-interactive / other platforms
+        try:
+            from chiper_cli.config import load_config
+            cfg = load_config() or {}
+            custom_provs = cfg.get("custom_providers", [])
+            if not custom_provs:
+                return (
+                    "🌐 **Daftar Provider Endpoint (Manual):**\n\n"
+                    "_Belum ada provider manual yang ditambahkan._\n\n"
+                    "Gunakan `/addendpointprovider` untuk menambahkan endpoint baru."
+                )
+            lines = ["🌐 **Daftar Provider Endpoint (Manual):**\n"]
+            for i, p in enumerate(custom_provs, 1):
+                name = p.get("name") or f"Provider {i}"
+                url = p.get("base_url") or "-"
+                m = p.get("model") or "-"
+                lines.append(f"{i}. **{name}**\n   • URL: `{url}`\n   • Model: `{m}`")
+            lines.append("\n_Gunakan bot Telegram untuk menambah atau menghapus provider secara interaktif._")
+            return "\n".join(lines)
+        except Exception as e:
+            return f"❌ Gagal memuat daftar provider: {e}"
+
     async def _handle_addendpointprovider_command(self, event: MessageEvent) -> Optional[str]:
         """Handle /addendpointprovider command — interactive wizard to add an OpenAI-compatible endpoint."""
         source = event.source

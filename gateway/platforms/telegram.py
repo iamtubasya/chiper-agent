@@ -3962,7 +3962,235 @@ class TelegramAdapter(BasePlatformAdapter):
             else:
                     reply = self.format_message(f"❌ *Gagal menyimpan konfigurasi:*\n{msg}")
 
-            await query.edit_message_text(reply, parse_mode=ParseMode.MARKDOWN_V2)
+            keyboard = InlineKeyboardMarkup([
+                [InlineKeyboardButton("🌐 Kelola Provider", callback_data="pm:back")],
+                [InlineKeyboardButton("✅ Selesai", callback_data="pm:done")],
+            ])
+            await query.edit_message_text(reply, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=keyboard)
+
+    # ------------------------------------------------------------------
+    # Provider Manager (/provider) methods
+    # ------------------------------------------------------------------
+
+    def _get_provider_manager_data(self) -> Tuple[List[Dict[str, Any]], str, Dict[str, Any]]:
+        """Load custom_providers, active base_url, and full cfg from config.yaml."""
+        import yaml
+        cfg_path = self._resolve_config_path()
+        cfg: Dict[str, Any] = {}
+        if cfg_path.exists():
+            try:
+                with open(cfg_path, "r", encoding="utf-8") as handle:
+                    loaded = yaml.safe_load(handle) or {}
+                cfg = loaded if isinstance(loaded, dict) else {}
+            except Exception as e:
+                logger.warning("[%s] Failed to load config.yaml for provider manager: %s", self.name, e)
+
+        custom_provs = cfg.get("custom_providers", [])
+        if not isinstance(custom_provs, list):
+            custom_provs = []
+
+        model_cfg = cfg.get("model") if isinstance(cfg.get("model"), dict) else {}
+        active_base = (model_cfg.get("base_url") or "").rstrip("/")
+        return custom_provs, active_base, cfg
+
+    def _render_provider_list_text_and_markup(self) -> Tuple[str, Any]:
+        """Render text and inline keyboard for the /provider overview."""
+        custom_provs, active_base, _ = self._get_provider_manager_data()
+
+        if not custom_provs:
+            text = self.format_message(
+                "🌐 *Kelola Provider Endpoint (Manual)*\n\n"
+                "_Belum ada custom provider yang terdaftar di config.yaml._\n\n"
+                "Silakan klik tombol di bawah untuk menambahkan endpoint OpenAI\\-compatible baru:"
+            )
+            keyboard = InlineKeyboardMarkup([
+                [InlineKeyboardButton("➕ Tambah Provider (URL Endpoint)", callback_data="pm:add")],
+                [InlineKeyboardButton("✅ Selesai", callback_data="pm:done")],
+            ])
+            return text, keyboard
+
+        lines = ["🌐 *Daftar Provider Endpoint (Manual)*\n"]
+        for idx, p in enumerate(custom_provs, 1):
+            if not isinstance(p, dict):
+                continue
+            name = p.get("name") or f"Provider {idx}"
+            url = p.get("base_url") or "-"
+            m = p.get("model") or "-"
+            api_key = p.get("api_key") or ""
+            key_disp = (api_key[:6] + "..." + api_key[-4:]) if len(api_key) > 12 else ("***" if api_key else "(none)")
+            is_active = (url.rstrip("/") == active_base)
+            star = " ⭐ *[Default Aktif]*" if is_active else ""
+
+            lines.append(
+                f"*{idx}\\. {name}*{star}\n"
+                f"   • *URL:* `{url}`\n"
+                f"   • *Model:* `{m}`\n"
+                f"   • *Key:* `{key_disp}`\n"
+            )
+
+        lines.append("Pilih aksi di bawah ini:")
+        text = self.format_message("\n".join(lines))
+
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("➕ Tambah Provider (URL Endpoint)", callback_data="pm:add")],
+            [InlineKeyboardButton("🗑️ Hapus Provider", callback_data="pm:del_menu")],
+            [InlineKeyboardButton("✅ Selesai", callback_data="pm:done")],
+        ])
+        return text, keyboard
+
+    async def start_provider_manager(
+        self, chat_id: str, metadata: Optional[Dict[str, Any]] = None
+    ) -> SendResult:
+        """Start the interactive provider manager (/provider)."""
+        if not self._bot:
+            return SendResult(success=False, error="Not connected")
+
+        text, keyboard = self._render_provider_list_text_and_markup()
+
+        thread_id = metadata.get("thread_id") if metadata else None
+        reply_to_id = self._reply_to_message_id_for_send(None, metadata, reply_to_mode=self._reply_to_mode)
+        try:
+            msg = await self._send_message_with_thread_fallback(
+                chat_id=int(chat_id),
+                text=text,
+                parse_mode=ParseMode.MARKDOWN_V2,
+                reply_markup=keyboard,
+                reply_to_message_id=reply_to_id,
+                **self._thread_kwargs_for_send(
+                    chat_id,
+                    thread_id,
+                    metadata,
+                    reply_to_message_id=reply_to_id,
+                    reply_to_mode=self._reply_to_mode
+                ),
+                **self._link_preview_kwargs(),
+            )
+            return SendResult(success=True, message_id=str(msg.message_id))
+        except Exception as e:
+            logger.error("[%s] start_provider_manager failed: %s", self.name, e, exc_info=True)
+            return SendResult(success=False, error=str(e))
+
+    async def _handle_provider_manager_callback(self, query: Any, data: str) -> None:
+        """Handle inline button clicks for /provider manager."""
+        await query.answer()
+        chat_id = str(query.message.chat_id) if query.message else None
+        if not chat_id:
+            return
+
+        import time
+
+        if data == "pm:done":
+            reply = self.format_message("✅ *Kelola provider endpoint selesai.*")
+            try:
+                await query.edit_message_text(reply, parse_mode=ParseMode.MARKDOWN_V2)
+            except Exception:
+                pass
+            return
+
+        if data == "pm:back":
+            text, keyboard = self._render_provider_list_text_and_markup()
+            try:
+                await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=keyboard)
+            except Exception as e:
+                logger.debug("[%s] Failed to edit back to provider list: %s", self.name, e)
+            return
+
+        if data == "pm:add":
+            # Switch into AddEndpointProvider wizard
+            self._pending_endpoint_wizard[chat_id] = {
+                "step": "waiting_base_url",
+                "timestamp": time.time(),
+                "msg_id": query.message.message_id if query.message else None,
+            }
+            text = self.format_message(
+                "🌐 *Tambah Endpoint Provider Baru*\n\n"
+                "Silakan kirimkan *Base URL* endpoint OpenAI\\-compatible API Anda:\n\n"
+                "💡 *Contoh:*\n"
+                "• `http://localhost:20128/v1`\n"
+                "• `https://api.openai.com/v1`\n"
+                "• `https://pi.chiper.site/v1`\n\n"
+                "_(Ketik `batal` untuk membatalkan)_"
+            )
+            keyboard = InlineKeyboardMarkup([[
+                InlineKeyboardButton("❌ Batal", callback_data="aep:cancel"),
+            ]])
+            try:
+                await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=keyboard)
+            except Exception as e:
+                logger.debug("[%s] Failed to switch to add endpoint wizard: %s", self.name, e)
+            return
+
+        if data == "pm:del_menu":
+            custom_provs, _, _ = self._get_provider_manager_data()
+            if not custom_provs:
+                text = self.format_message("ℹ️ _Tidak ada custom provider yang dapat dihapus._")
+                keyboard = InlineKeyboardMarkup([[
+                    InlineKeyboardButton("🔙 Kembali", callback_data="pm:back"),
+                ]])
+                try:
+                    await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=keyboard)
+                except Exception:
+                    pass
+                return
+
+            buttons = []
+            for idx, p in enumerate(custom_provs):
+                if not isinstance(p, dict):
+                    continue
+                name = p.get("name") or f"Provider {idx+1}"
+                m = p.get("model") or "-"
+                label = f"🗑️ {name} ({m})"
+                if len(label) > 40:
+                    label = label[:37] + "..."
+                buttons.append([InlineKeyboardButton(label, callback_data=f"pm:del:{idx}")])
+
+            buttons.append([InlineKeyboardButton("🔙 Kembali", callback_data="pm:back")])
+            keyboard = InlineKeyboardMarkup(buttons)
+            text = self.format_message(
+                "🗑️ *Pilih Provider yang Ingin Dihapus:*\n\n"
+                "Klik salah satu provider di bawah untuk menghapusnya dari daftar `config.yaml`:"
+            )
+            try:
+                await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=keyboard)
+            except Exception as e:
+                logger.debug("[%s] Failed to show delete menu: %s", self.name, e)
+            return
+
+        if data.startswith("pm:del:"):
+            try:
+                idx = int(data[len("pm:del:"):])
+            except ValueError:
+                return
+
+            custom_provs, _, cfg = self._get_provider_manager_data()
+            if 0 <= idx < len(custom_provs):
+                removed = custom_provs.pop(idx)
+                cfg["custom_providers"] = custom_provs
+                cfg_path = self._resolve_config_path()
+                try:
+                    self._write_yaml_atomic(cfg_path, cfg)
+                    rem_name = removed.get("name") or "Provider"
+                    rem_url = removed.get("base_url") or "-"
+                    text = self.format_message(
+                        f"🗑️ *Provider Berhasil Dihapus\\!*\n\n"
+                        f"• *Nama:* {rem_name}\n"
+                        f"• *URL:* `{rem_url}`\n\n"
+                        f"✅ _Provider telah dihapus dari `config.yaml`\\._"
+                    )
+                except Exception as exc:
+                    text = self.format_message(f"❌ *Gagal menghapus provider:*\n{exc}")
+            else:
+                text = self.format_message("❌ *Provider tidak ditemukan atau sudah dihapus.*")
+
+            keyboard = InlineKeyboardMarkup([
+                [InlineKeyboardButton("🔙 Kembali ke Daftar", callback_data="pm:back")],
+                [InlineKeyboardButton("✅ Selesai", callback_data="pm:done")],
+            ])
+            try:
+                await query.edit_message_text(text, parse_mode=ParseMode.MARKDOWN_V2, reply_markup=keyboard)
+            except Exception as e:
+                logger.debug("[%s] Failed to show delete result: %s", self.name, e)
+            return
 
     # ------------------------------------------------------------------
     # Config path resolution — auto path detection for ANY server / user
@@ -4614,6 +4842,11 @@ class TelegramAdapter(BasePlatformAdapter):
         # --- Soul switcher callbacks ---
         if data.startswith("soul:"):
             await self._handle_soul_callback(query, data)
+            return
+
+        # --- Provider Manager callbacks ---
+        if data.startswith("pm:"):
+            await self._handle_provider_manager_callback(query, data)
             return
 
         # --- AddEndpointProvider callbacks ---

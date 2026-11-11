@@ -133,6 +133,8 @@ COMMAND_REGISTRY: list[CommandDef] = [
 
     CommandDef("soul", "Pilih atau ganti jiwa/otak agent (Chiper-Cyber, Chiper-Dev, atau Custom)", "Configuration",
                args_hint="[cyber|dev|list|set <name>]", aliases=("persona",)),
+    CommandDef("provider", "Kelola daftar provider endpoint manual (lihat, tambah, hapus)", "Configuration",
+               aliases=("providers",)),
     CommandDef("addendpointprovider", "Tambah endpoint OpenAI provider baru via wizard chat interaktif", "Configuration",
                aliases=("addendpoint", "addenpointprovider", "addprovider")),
     CommandDef("personality", "Set a predefined personality", "Configuration",
@@ -545,6 +547,7 @@ _TELEGRAM_MENU_PRIORITY = (
     "verbose",
     "commands",
     # Provider/endpoint config — must stay visible, wizard is discoverability-critical.
+    "provider",
     "addendpointprovider",
     # Mid-turn session control.
     "approve",
@@ -1060,7 +1063,7 @@ _SLACK_PRIORITY_ALIASES = ("btw", "bg")
 # "Slack-via-/chiper" decision, not a silent clamp.
 #   - credits: the billing/top-up surface; reached via /chiper credits on Slack.
 #   - debug: the log/report upload surface; reached via /chiper debug on Slack.
-_SLACK_VIA_CHIPER_ONLY = frozenset({"credits", "debug"})
+_SLACK_VIA_CHIPER_ONLY = frozenset({"credits", "debug", "version", "addendpointprovider"})
 
 
 def _sanitize_slack_name(raw: str) -> str:
