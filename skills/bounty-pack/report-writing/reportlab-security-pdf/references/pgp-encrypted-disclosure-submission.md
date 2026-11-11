@@ -39,8 +39,8 @@ Reconstruct structurally:
 
 ## MSYS / Git-bash gpg on the Windows host — pitfalls
 
-- `gpg` on PATH is the MSYS build (`/usr/bin/gpg`, GnuPG 2.4.x). `GNUPGHOME="/home/agentuser"` is
-  treated as **relative** → `keyblock resource '/c/Users/<user>//home/agentuser'`. Use the MSYS path:
+- `gpg` on PATH is the MSYS build (`/usr/bin/gpg`, GnuPG 2.4.x). `GNUPGHOME="$HOME"` is
+  treated as **relative** → `keyblock resource '/c/Users/<user>/$HOME'`. Use the MSYS path:
   `export GNUPGHOME="/c/Users/<user>/.../gnupg"` then `chmod 700 "$GNUPGHOME"`.
 - Import confirms the identity: `gpg --batch --import key.asc` prints the uid; then
   `gpg --list-keys --with-colons | grep -E '^(pub|uid|fpr|sub)'` shows the fingerprint + encryption subkey.

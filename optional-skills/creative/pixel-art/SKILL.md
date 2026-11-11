@@ -136,7 +136,10 @@ pixel_art("in.png", "out.png", preset="snes", palette="PICO_8", block=6)
 
 ```python
 import sys
-sys.path.insert(0, "/home/teknium/.chiper/skills/creative/pixel-art/scripts")
+import os
+from pathlib import Path
+_base = Path(os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME") or (Path.home() / ".chiper"))
+sys.path.insert(0, str(_base / "skills/creative/pixel-art/scripts"))
 from pixel_art import pixel_art
 from pixel_art_video import pixel_art_video
 
@@ -158,7 +161,7 @@ pixel_art_video(
 ### CLI
 
 ```bash
-cd /home/teknium/.chiper/skills/creative/pixel-art/scripts
+cd "${CHIPER_PATH:-${CHIPER_HOME:-$HOME/.chiper}}/skills/creative/pixel-art/scripts"
 
 python pixel_art.py in.jpg out.png --preset gameboy
 python pixel_art.py in.jpg out.png --preset snes --palette PICO_8 --block 6

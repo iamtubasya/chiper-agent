@@ -14,7 +14,7 @@
 ```
 Wrapper:    0.5.10 (pip install cloakbrowser)
 Python:     3.14.6, Windows AMD64
-Binary:     v146.0.7680.177.5 (free tier) at /home/agentuser/.cloakbrowser/chromium-146.0.7680.177.5/chrome.exe
+Binary:     v146.0.7680.177.5 (free tier) at $HOME/.cloakbrowser/chromium-146.0.7680.177.5/chrome.exe
 GeoIP:      geoip2 installed (ready for geoip=True)
 Verified:   launch OK — UA "Chrome/146.0.0.0" (no HeadlessChrome leak), navigator.webdriver=False
 ```

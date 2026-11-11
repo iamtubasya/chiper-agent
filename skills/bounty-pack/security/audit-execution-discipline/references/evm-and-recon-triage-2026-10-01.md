@@ -19,13 +19,13 @@ Obstacles hit, in order:
 1. `myth analyze <file> --solv 0.8.28` -> `requests.exceptions.ConnectionError` to
    `solc-bin.ethereum.org` / `Failed to resolve`. **That host is dead** (Solidity moved to
    `binaries.soliditylang.org`); it is a stale-tool bug, not a target problem.
-   Fix: `SOLC=/home/windows10/.local/bin/solc` (WSL already had 0.8.28) and DROP `--solv`.
+   Fix: `SOLC=$HOME/.local/bin/solc` (WSL already had 0.8.28) and DROP `--solv`.
 2. `--solc-json '{"remappings":[...]}'` was **not applied** — crytic still reported
    `Searched the following locations: ""`. Don't burn time here; use bytecode.
 3. Get the bytecode that actually matters — the DEPLOYED one:
 
 ```bash
-export PATH="$PATH:/home/agentuser/.foundry/bin"
+export PATH="$PATH:$HOME/.foundry/bin"
 RPC=https://ethereum-rpc.publicnode.com
 # EIP-1967 implementation slot behind a proxy
 cast storage <PROXY> 0xREDACTED_******** --rpc-url $RPC

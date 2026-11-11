@@ -66,7 +66,7 @@ the DB directly:
 PY="/usr/bin/python3"
 "$PY" - <<'EOF'
 import sqlite3, datetime
-c = sqlite3.connect(r"~/.chiper/state.db")
+c = sqlite3.connect(os.path.expanduser("~/.chiper/state.db"))
 c.row_factory = sqlite3.Row
 ts0 = datetime.datetime(2026,9,29,0,0).timestamp()      # epoch seconds!
 for r in c.execute("select id,title,source,message_count,started_at,last_activity_at"

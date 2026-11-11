@@ -342,7 +342,7 @@ is set, MSYS-style paths (`/d/data hermes/...`, `/tmp/...`, `$HOME/...`) are **n
 for *native* binaries. Result: `rg` dies with `IO error ... cannot find the path specified`, native
 `python` opens `/d/...` → `FileNotFoundError`, `git -C /d/...` → `cannot change to ...`, and `go`
 reads a mangled `GOMODCACHE`. Rule: hand **native** tools **native** paths (`D:/data hermes/...`,
-`/home/agentuser`) and reserve POSIX paths for bash builtins; `cd` into a repo instead of `git -C`.
+`$HOME`) and reserve POSIX paths for bash builtins; `cd` into a repo instead of `git -C`.
 Also write helper scripts with `write_file`, not a shell heredoc — a heredoc whose body merely
 *contains* a blocklisted word (e.g. the plain word "shutdown" in a scope note) gets the whole
 command rejected as a hardline block.

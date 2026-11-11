@@ -38,7 +38,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
 
-sys.path.insert(0, str(Path.home() / "~/.chiper/skills/bounty-pack"))
+_chiper_base = os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME")
+_pack_dir = (Path(_chiper_base) if _chiper_base else (Path.home() / ".chiper")) / "skills/bounty-pack"
+sys.path.insert(0, str(_pack_dir))
 import gmail_ops as g  # noqa: E402
 
 

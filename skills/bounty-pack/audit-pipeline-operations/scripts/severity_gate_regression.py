@@ -39,7 +39,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-DEFAULT_SCRIPTS = Path(os.path.expanduser("~")) / "~/.chiper/skills/bounty-pack"
+_chiper_base = os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME")
+DEFAULT_SCRIPTS = (Path(_chiper_base) if _chiper_base else (Path.home() / ".chiper")) / "skills/bounty-pack"
 
 
 # ── fixture builders ─────────────────────────────────────────────────────────

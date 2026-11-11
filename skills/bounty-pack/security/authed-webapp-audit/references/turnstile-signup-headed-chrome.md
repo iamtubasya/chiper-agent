@@ -16,7 +16,7 @@ non-interactively in ~9–10 s.
 import time, os
 from playwright.sync_api import sync_playwright
 
-D      = r"/home/agentuser/bounty\<target>"
+D      = r"$HOME/bounty\<target>"
 EMAIL  = "RESEARCHER_USERNAME+sm1@gmail.com"      # plus-alias = a real inbox, one per identity
 PWD    = "Zq7vLm2Kx9pR4t!a"
 

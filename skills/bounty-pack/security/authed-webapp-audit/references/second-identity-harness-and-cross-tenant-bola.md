@@ -12,7 +12,7 @@ headed browser we opened. The handoff and the harvest are separate steps:
 ```python
 # open for the human — background=true + notify_on_complete=true, NEVER foreground
 ctx = pw.chromium.launch_persistent_context(
-    r"/home/agentuser/<target>-manual-profile", headless=False,
+    r"$HOME/<target>-manual-profile", headless=False,
     args=["--disable-blink-features=AutomationControlled", "--start-maximized"],
     no_viewport=True, locale="en-US")
 ```

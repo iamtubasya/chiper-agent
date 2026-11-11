@@ -201,7 +201,7 @@ portal's own `/api/*`. The profitable surface is the vendor's origin and the ven
 
 ## 5. What round 3 closed, and what remains open
 
-**Closed (with evidence on disk, `/home/agentuser/zenya_audit\`):**
+**Closed (with evidence on disk, `$HOME/zenya_audit\`):**
 all 17 `zenya-software.com` subdomains; the 165-tenant `zenya.work` API surface (OpenAPI v1–v5,
 310-endpoint anonymous GET sweep, 359 write ops); WebShare document ACL; the marketing-mcp
 OAuth/MCP chain; the DevRev portal; `collect`; `werkenbij`; `blog`.

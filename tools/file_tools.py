@@ -344,7 +344,9 @@ def _get_chiper_config_resolved() -> str | None:
         _chiper_config_resolved = str(get_config_path().resolve())
     except Exception:
         try:
-            _chiper_config_resolved = str(Path("~/.chiper/config.yaml").expanduser().resolve())
+            env_home = os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME")
+            base = Path(env_home) if env_home else (Path.home() / ".chiper")
+            _chiper_config_resolved = str((base / "config.yaml").resolve())
         except Exception:
             _chiper_config_resolved = None
     return _chiper_config_resolved

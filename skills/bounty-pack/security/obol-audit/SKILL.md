@@ -130,7 +130,7 @@ correct `"0".repeat(22)` / `0x${"0".repeat(64)}`. The redaction happens in the *
 Build/test charon in WSL (Windows CGO build fails):
 ```
 MSYS_NO_PATHCONV=1 wsl -e bash -lc "export PATH=\$HOME/go/bin:/usr/local/go/bin:\$PATH; \
-  export GOPATH=/home/agentuser/go; export GOFLAGS=-mod=mod; export CGO_ENABLED=1; \
+  export GOPATH=$HOME/go; export GOFLAGS=-mod=mod; export CGO_ENABLED=1; \
   cd /mnt/d/bb/obol/charon && go test -run TestX -v ./dkg/"
 ```
 - Go install: `curl -sL https://go.dev/dl/go1.24.6.linux-amd64.tar.gz | tar -C $HOME -xzf -` → `$HOME/go/bin/go`; charon auto-downloads toolchain go1.27.3.

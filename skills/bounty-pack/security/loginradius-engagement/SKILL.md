@@ -45,7 +45,7 @@ Validated 3/3: `saml_postmedia`/`saml_ultabeauty`/`saml_northumbrianwater` = tru
 Root cause: the server gates it with the client-controlled `Origin: https://console.loginradius.com` +
 `X-Is-LoginRadius-Ajax: true` headers; without them the body is `{"ErrorCode":500,"Message":"Not allowed by CORS"}`.
 Both headers are non-secret and spoofable, so it's unauth enumeration. Reported as Medium. Draft (with 4
-raw-evidence attachments) in Gmail account RESEARCHER_USERNAME; evidence in `/home/agentuser/loginradius-audit/evidence\`.
+raw-evidence attachments) in Gmail account RESEARCHER_USERNAME; evidence in `~/loginradius-audit/evidence\`.
 
 > **Reusable pattern (tried, produced a real finding):** when a server echoes
 > `"Not allowed by CORS"` IN THE RESPONSE BODY (a JSON ErrorCode, not a browser-level CORS block), that is a

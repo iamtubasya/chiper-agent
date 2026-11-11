@@ -513,7 +513,7 @@ finds that themselves after reading three pages will distrust the rest.
 
 ### Windows Tool Quirks (2026-09-22)
 
-**Mythril wrapper recursive call:** `~/go/bin/myth` is a bash wrapper that calls `wsl -d Ubuntu -- bash -c "/home/windows10/.local/bin/myth $*"`. Inside WSL, this wrapper tries to call `wsl` again = recursive hang. Fix: call WSL directly.
+**Mythril wrapper recursive call:** `~/go/bin/myth` is a bash wrapper that calls `wsl -d Ubuntu -- bash -c "$HOME/.local/bin/myth $*"`. Inside WSL, this wrapper tries to call `wsl` again = recursive hang. Fix: call WSL directly.
 ```bash
 # ❌ WRONG — recursive wrapper, hangs 30s+
 ~/go/bin/myth analyze src/Contract.sol
@@ -532,7 +532,7 @@ pip install mythril && myth analyze src/Contract.sol
 echidna /tmp/Contract.sol --contract Test
 
 # ✅ CORRECT — Windows path
-echidna "/home/agentuser/project/src/Contract.sol" --contract Test
+echidna "$HOME/project/src/Contract.sol" --contract Test
 
 # ✅ CORRECT — with foundry compilation
 echidna "C:/project" --contract Test --crytic-args "foundry"

@@ -483,7 +483,7 @@ cross-tenant matrix is testing A vs A and proves nothing. Launch a SECOND Chrome
 different `--user-data-dir` AND different `--remote-debugging-port`:
 ```
 cmd.exe /c start chrome --remote-debugging-port=9223 --remote-allow-origins=* \
-  --user-data-dir="/home/agentuser/chrome_cdp_B" --no-first-run about:blank   # account B
+  --user-data-dir="~/chrome_cdp_B" --no-first-run about:blank   # account B
 # (account A already on 9222 / its own user-data-dir)
 ```
 

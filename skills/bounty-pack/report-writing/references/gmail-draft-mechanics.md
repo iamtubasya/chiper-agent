@@ -34,7 +34,7 @@ The app password is already on disk. Recover it the same way the helper script d
 ```python
 import re, imaplib, time
 from email.message import EmailMessage
-src = open(r"/home/agentuser/check_basabasi_email.py", encoding="utf-8", errors="replace").read()
+src = open(r"$HOME/check_basabasi_email.py", encoding="utf-8", errors="replace").read()
 APP = (re.search(r"APP_PASSWORD\s*=\s*re\.\w+\([^,]+,\s*['\"]([^'\"]+)['\"]", src)
        or re.search(r"APP_PASSWORD\s*=\s*['\"]([^'\"]+)['\"]", src)).group(1)
 

@@ -177,7 +177,7 @@ Remaining live leads (unchanged, both need credentials we do not have): one **de
 |---|---|---|
 | dir-bust | `ffuf` | wordlists live in `D:/data hermes/wordlists/<category>/*.txt` (e.g. `0C-sensitive-files/sensitive-files-wordlist.txt`). There is **no `dicc.txt`**. If the `-w` path does not exist, ffuf **prints its help and scans nothing** — always confirm the list exists and that ffuf is not just echoing usage |
 | vuln templates | `nuclei -t "D:/data hermes/nuclei-templates"` | 13 754 templates present. TLS `weak-cipher-suites` hits are the program's excluded TLS class |
-| OOB | `/home/agentuser/go/bin/interactsh-client.exe -o <log> -json` (+ `webhook.site/token` as backup) | kill it when done — the .bat/exe pair survives the shell job |
+| OOB | `$HOME/go/bin/interactsh-client.exe -o <log> -json` (+ `webhook.site/token` as backup) | kill it when done — the .bat/exe pair survives the shell job |
 | race | `~/.chiper/skills/bounty-pack/tools/race-checker.py -u URL --threads N --attempts N` | **no cookie support** → unauthenticated only |
 | GraphQL | `~/.chiper/skills/bounty-pack/tools/graphqlmap.bat` | no GraphQL endpoint exists here |
 | param discovery | manual fuzz scripts | `arjun` is broken on this box (`'dict' object has no attribute 'status_code'`) and hangs on this target |

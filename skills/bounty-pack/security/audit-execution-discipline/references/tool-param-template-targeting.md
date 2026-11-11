@@ -75,12 +75,12 @@ Run: `nuclei -t my-template.yaml -u target -o out.txt`. Build a small set of the
 | tool | install | result path |
 |---|---|---|
 | arjun | `python -m pip install arjun` (NOT `go install` — no Go package exists) | `/usr/local/bin/arjun.exe` |
-| kxss | `go install github.com/Emoe/kxss@latest` | `/home/agentuser/go/bin/kxss.exe` (reads URL from stdin) |
+| kxss | `go install github.com/Emoe/kxss@latest` | `$HOME/go/bin/kxss.exe` (reads URL from stdin) |
 
-**MSYS/go env pitfall:** under git-bash, `go env` fails with `GOPATH entry is relative; must be absolute path: "/home/agentuser/go"`. Per-command fix:
+**MSYS/go env pitfall:** under git-bash, `go env` fails with `GOPATH entry is relative; must be absolute path: "$HOME/go"`. Per-command fix:
 ```bash
 export MSYS_NO_PATHCONV=1
-export GOPATH="/home/agentuser/go" GOBIN="/home/agentuser/go/bin"
+export GOPATH="$HOME/go" GOBIN="$HOME/go/bin"
 go install <pkg>@latest
 ```
 

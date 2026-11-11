@@ -143,7 +143,7 @@ Rules:
   Pre-check the host: fetch two random nonsense paths; identical bytes/status = catch-all, and
   then only `-mc 200` fuzzing is meaningless there. Use `-fs <size>` / `-ac` to filter.
 - **Native-path gotcha (Windows/MSYS):** `ffuf`/`gobuster` are native binaries — `-w /c/Users/...`
-  silently fails; pass `/home/agentuser`. `gobuster dir -s 200,301 -b ""` (its default status
+  silently fails; pass `$HOME`. `gobuster dir -s 200,301 -b ""` (its default status
   blacklist conflicts with `-s` and the run refuses to start).
 - A verified **"0 hits"** is a real deliverable — write it into the log with the exact command,
   and separate "tested, nothing there" from "not tested".

@@ -19,7 +19,7 @@ tar = tarfile.open('/tmp/pyethash/pyethash-0.1.27.tar.gz', 'r:gz')
 tar.extractall('/tmp/pyethash-extract')
 tar.close()
 "
-cp -r /tmp/pyethash-extract/pyethash-0.1.27 /home/agentuser/pyethash-build
+cp -r /tmp/pyethash-extract/pyethash-0.1.27 $HOME/pyethash-build
 ```
 
 ### Step 2: Create io_win32.c (src/libethash/io_win32.c)
@@ -130,8 +130,8 @@ Replace `#include <alloca.h>` with:
 
 ### Step 6: Build
 ```bash
-cd /home/agentuser/pyethash-build
-/home/agentuser/mythril-env/Scripts/python.exe setup.py install
+cd $HOME/pyethash-build
+$HOME/mythril-env/Scripts/python.exe setup.py install
 ```
 
 ## Dependency Chain (install order)

@@ -1112,7 +1112,7 @@ Four-part verification, ALWAYS from disk (never from claims). Run in this order:
 - FULL sweep: for every manifest entry, `repo_dir / f` must exist (try `\\`→`/` and `/`→`\\` variants — manifest uses backslashes). 2026-09-24 sweep: 61,135 files, found 40 missing across 36 repos → all recovered via raw.githubusercontent.com fetch (`https://raw.githubusercontent.com/{owner}/{repo}/main/{path}`, fallback `master`). Repo name format: `Owner_RepoName` (first `_` splits owner/repo).
 - Zero-file repos (304) are legit empty entries, not data loss — do not "fix" them.
 
-**MSYS pitfall (recurring):** MSYS `/tmp` ≠ Windows `C:\tmp` for native Python; `python "C:\tmp\..."` fails. Copy to `$LOCALAPPDATA/Temp` with native-style `/home/agentuser` paths, or `wslpath -w` to convert.
+**MSYS pitfall (recurring):** MSYS `/tmp` ≠ Windows `C:\tmp` for native Python; `python "C:\tmp\..."` fails. Copy to `$LOCALAPPDATA/Temp` with native-style `$HOME` paths, or `wslpath -w` to convert.
 
 **When a fix is needed:** patch the script, re-run `py_compile`, re-run the failed part of the sweep, report before/after with numbers.
 
@@ -1279,13 +1279,13 @@ Also ensure `--tech` is passed properly (orchestrator used positional arg withou
 
 ## ⛔ RULE 22: Tool Detection on Windows — Use shutil.which + Explicit Paths
 
-**Live discovery (2026-09-24):** `force-full-execution.py` hardcoded Linux bin paths (`/home/windows10/go/bin/`) → tools like `sqlmap`, `dalfox`, `nuclei` showed `NOT_FOUND` even though they were installed under `C:/go/bin` and `/home/agentuser/go/bin`. The gate checked 5 static paths that didn't include Windows locations.
+**Live discovery (2026-09-24):** `force-full-execution.py` hardcoded Linux bin paths (`/home/windows10/go/bin/`) → tools like `sqlmap`, `dalfox`, `nuclei` showed `NOT_FOUND` even though they were installed under `C:/go/bin` and `$HOME/go/bin`. The gate checked 5 static paths that didn't include Windows locations.
 
 **The FIX:** First call `shutil.which(tool)` for standard PATH lookup; if that fails, check explicit Windows dirs:
 - `Path.home() / "go/bin"`
 - `"C:/go/bin"`
 - `Path.home() / "/usr/local/bin"`
-- `Path.home() / "~/.chiper/skills/bounty-pack/bin"`
+- `Path(os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME") or (Path.home() / ".chiper")) / "/skills/bounty-pack/bin"`
 
 Try extensions `.exe` explicitly too (native Python doesn't add it in PATH search). This pattern ensures tools fire reliably across both Unix and Windows environments.
 

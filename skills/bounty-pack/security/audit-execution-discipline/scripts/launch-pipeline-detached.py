@@ -34,7 +34,9 @@ def output_dir_for(target: str) -> Path:
     slug = (target.replace("https://", "").replace("http://", "")
             .replace("/", "_").replace(":", "_").replace(".", "_")
             .replace("?", "_").replace("=", "_"))
-    return Path.home() / "~/.chiper/skills/bounty-pack/poc-plans" / f"orchestrator-{slug}"
+    _chiper_base = os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME")
+    _poc_root = (Path(_chiper_base) if _chiper_base else (Path.home() / ".chiper")) / "skills/bounty-pack/poc-plans"
+    return _poc_root / f"orchestrator-{slug}"
 
 
 def main() -> int:

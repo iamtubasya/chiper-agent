@@ -184,7 +184,7 @@ Invoke it two ways, and **ship both**, because bash and `cmd` resolve different 
 
 ```bash
 # bash / git-bash caller  ->  /usr/local/bin/baw   (chmod +x)
-export NODE_OPTIONS="--require /home/agentuser/.baw/baw-dns-fix.js ${NODE_OPTIONS}"
+export NODE_OPTIONS="--require $HOME/.baw/baw-dns-fix.js ${NODE_OPTIONS}"
 exec "/usr/local/bin/baw-original" "$@"
 ```
 
@@ -192,7 +192,7 @@ exec "/usr/local/bin/baw-original" "$@"
 :: cmd / PowerShell caller  ->  %APPDATA%\npm\baw.cmd
 @echo off
 setlocal EnableExtensions
-set "NODE_OPTIONS=--require /home/agentuser/.baw/baw-dns-fix.js %NODE_OPTIONS%"
+set "NODE_OPTIONS=--require $HOME/.baw/baw-dns-fix.js %NODE_OPTIONS%"
 node "/usr/local/bin\node_modules\@binance\agentic-wallet\dist\index.js" %*
 ```
 
@@ -226,7 +226,7 @@ Fix — a junction (works without admin, and survives the installer's own layout
 
 ```bash
 cd ~/.chiper/skills/bounty-pack/skills && \
-  cmd /c "mklink /J binance-agentic-wallet /home/agentuser/.agents/skills/binance-agentic-wallet"
+  cmd /c "mklink /J binance-agentic-wallet $HOME/.agents/skills/binance-agentic-wallet"
 ```
 
 Verify with `skill_view(name='<skill>')` — a directory that exists is not a skill that loads.

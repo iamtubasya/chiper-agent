@@ -53,7 +53,7 @@ own scanners for RAM (host wedged at ~360 MB free).
 Never iterate bare `/path` items in a `for` loop and hand them to curl:
 
 ```bash
-for p in /wp-json/x /api/y; do curl -s "https://host$p" ...; done   # ← MSYS rewrites /wp-json → /home/agentuser/git/wp-json, curl exits 000
+for p in /wp-json/x /api/y; do curl -s "https://host$p" ...; done   # ← MSYS rewrites /wp-json → $HOME/git/wp-json, curl exits 000
 ```
 
 MSYS (git-bash) converts args that begin with `/` into Windows paths; curl then fails with code

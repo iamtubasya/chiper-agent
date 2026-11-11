@@ -123,7 +123,7 @@ FRAGMENT) → product app calls `GET <app>/api/auth/v4/sessions/forks/{selector}
 ## Engagement state
 
 - Test account: `auditfz77310@proton.me` (free, self-provisioned, password in
-  `D:/data hermes/proton-audit/testpw.txt`); profile `/home/agentuser/proton-test-profile`.
+  `D:/data hermes/proton-audit/testpw.txt`); profile `$HOME/proton-test-profile`.
   Second account signup failed (form silently blocked after repeat attempts) — no cross-account
   IDOR matrix was run.
 - F1 = session-fork token issuance (this file §"Session-fork mechanism"). Validated 4x.

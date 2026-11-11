@@ -125,7 +125,7 @@ secure_sock = ctx.wrap_socket(sock, server_hostname=host)
 **Problem:** New bash shells don't have GOPATH in PATH.
 ```bash
 # Add to start of every terminal call
-export GOPATH="/home/agentuser/go"
+export GOPATH="$HOME/go"
 export PATH="$PATH:$GOPATH/bin"
 ```
 

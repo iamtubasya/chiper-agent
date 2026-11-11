@@ -428,9 +428,9 @@ wafw00f https://target.com
 ```
 
 ## File Locations
-- Detailed command reference: `/home/parallels/.chiper/workspace/security-tools-67/information-gathering-cli-reference.md`
+- Detailed command reference: `${CHIPER_PATH:-${CHIPER_HOME:-$HOME/.chiper}}/workspace/security-tools-67/information-gathering-cli-reference.md`
 - This learning record: current file
-- Tool classification statistics: `/home/parallels/.chiper/workspace/kali-517-analysis/`
+- Tool classification statistics: `${CHIPER_PATH:-${CHIPER_HOME:-$HOME/.chiper}}/workspace/kali-517-analysis/`
 
 ## Follow-up Learning Plan
 - Deep study of web application security tools (Burp Suite CLI, ZAP CLI, etc.)

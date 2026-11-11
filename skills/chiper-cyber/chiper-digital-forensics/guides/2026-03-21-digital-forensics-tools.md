@@ -105,9 +105,9 @@
 - monitoringdisk空intervalUse
 
 ## File Locations
-- Detailed Command Reference: `/home/parallels/.chiper/workspace/security-tools-67/digital-forensics-cli-reference.md`
+- Detailed Command Reference: `${CHIPER_PATH:-${CHIPER_HOME:-$HOME/.chiper}}/workspace/security-tools-67/digital-forensics-cli-reference.md`
 - This learning record: Current file
-- Tool classification statistics: `/home/parallels/.chiper/workspace/kali-517-analysis/`
+- Tool classification statistics: `${CHIPER_PATH:-${CHIPER_HOME:-$HOME/.chiper}}/workspace/kali-517-analysis/`
 
 ## Follow-up Learning Plan
 - deep LearningnolineSecurityTool（kismet, aircrack-ng, reaveretc.）

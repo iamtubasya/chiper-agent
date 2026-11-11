@@ -65,7 +65,7 @@ photon -u http://testphp.vulnweb.com
 
 ### Detailed Crawl
 ```bash
-photon -u http://testphp.vulnweb.com -t 50 -o /home/parallels/photon-testphp -d 3
+photon -u http://testphp.vulnweb.com -t 50 -o $HOME/photon-testphp -d 3
 ```
 
 ### Download Files

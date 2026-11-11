@@ -47,7 +47,7 @@ with a manifest → verify both the deletion **and** that the protected side sur
 | `D:\data hermes\bug-bounty\_progress\<target>\` | `BUG-BOUNTY-BUNDLE-v1.zip` + `.sha256`, `bundle/`, `_toolkit-v2/`, `HUNTING-TOOLKIT-v2.zip` |
 | PoC / evidence output: `poc_*.json`, `poc_*.txt`, `*_results.json`, `*_scan_results.json`, `*_output.txt` | `_accounts/`, `_skill-backup-*/` (skill backups — the user keeps these), `rpc/`, `kebersihan-sumatra/` |
 | report PDFs / report markdown for that target + report generators | KB `.md` (`PLAYBOOK-HUNTING-v2.md`, skill `references/*.md`), usage DB (`usageDaily`) |
-| loose scripts in `/home/agentuser/` (`scan_*.py`, `*_source.json`, `*_subs.txt`, `*_poc.html`, `*_tabid*.txt`) | target **profiles** (`skills/vuln-hunter/profiles/<target>.yaml`) unless the operator says otherwise |
+| loose scripts in `$HOME/` (`scan_*.py`, `*_source.json`, `*_subs.txt`, `*_poc.html`, `*_tabid*.txt`) | target **profiles** (`skills/vuln-hunter/profiles/<target>.yaml`) unless the operator says otherwise |
 | residual `%LOCALAPPDATA%\Temp\*<target-pattern>*` (browser dumps, cloned repos, screenshots) | non-audit Temp content — never an unpatterned `rm -rf *` in Temp |
 | per-engagement **browser profiles the hunt created** (`~/<target>_profile`, `~/<tgt>_pro_profile`, `~/<tgt>_probe_*`, `~/<tgt>_mfa_probe`) — 130–190 MB each | the operator's **pre-existing** profiles (`~/<tgt>_chrome_cdp*`) and any **pending Gmail draft** for the target — a staged draft is a deliverable he has not sent yet — **UNLESS** the delete instruction explicitly covers all results ("hapus semua hasil auditny", coderpad 2026-10-17: staged drafts included, deleted via Gmail API = trash-recoverable, draft count verified back to baseline) |
 | per-engagement tool state under `~/.<tool>/<target>` (`.ghauri/<target>`) and loose session files (`_<tgt>_sessions.json`, `_<tgt>_cred.json`) | shared credential/helper scripts (`check_*_email.py`) — used by every engagement |
@@ -350,7 +350,7 @@ python scripts/quarantine_restore.py "$Q" --restore-exact nuclei-index.json vrt.
 ```
 
 It decodes the flattened quarantine names (`c__Users__WINDOWS10__ps3_x.html` →
-`/home/agentuser/ps3_x.html`), **never overwrites** an existing original
+`$HOME/ps3_x.html`), **never overwrites** an existing original
 (`EXISTS` + skip), refuses directories unless `--restore-dir`, and logs
 `RESTORED|` per item. Also handy for the "you swept a skill-adjacent file" panic: point it at
 the quarantine, `--list` the name, and prove the item is still recoverable.
@@ -375,7 +375,7 @@ clean; budget for that shape instead of trying to be exhaustive in one script:
    `~/Downloads/<Target>-C1-*.pdf` report PDFs, `repair/*.pdf`.
 5. **RESTORE passes** interleaved the moment a restore candidate is identified (§3b).
 6. **Residue verification sweep last**, and it is the only one allowed to declare "clean":
-   walk `/home/agentuser` and `D:\` to depth 3 with a regex of every target shorthand, skipping
+   walk `$HOME` and `D:\` to depth 3 with a regex of every target shorthand, skipping
    `node_modules|.git|System|Trash Volume Information|Program Files`, and write
    hits to a file. Expect it to keep returning 3–9 hits of legitimate knowledge
    (`wordlists/<target>-paths.txt`, competitor spreadsheets, `bbskills-extract-*.zip`) — those
@@ -504,13 +504,13 @@ mobile APKs during target testing?" — **wrong**. A real inventory found:
 |---|---|
 | `WSL ext4 disk` (Ubuntu) | **34.2 GB** ← the actual cause |
 | `/tmp` | 9.0 GB |
-| `/home/agentuser/.config/google-chrome` (Chrome user data) | 8.7 GB |
+| `$HOME/.config/google-chrome` (Chrome user data) | 8.7 GB |
 | `/usr/local` | 7.7 GB |
 | `.gradle` | 845 MB (tooling — keep) |
 
 Only two APKs existed in Temp (`yarbo.apk` 198 MB, `mailcom.apk` tiny). So: **measure before
 theorising.** The sweep to run first is
-`find /home/agentuser/.local/share -maxdepth 5 -name "*.vhdx" -exec ls -la {} \;` — a vhdx is a
+`find $HOME/.local/share -maxdepth 5 -name "*.vhdx" -exec ls -la {} \;` — a vhdx is a
 single opaque file, invisible to any per-directory `du` that skips it.
 
 A `du -sm` over all of `~/.local/share` **times out** (measured, >240 s). Do it per-subtree, in a

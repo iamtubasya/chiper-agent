@@ -33,7 +33,8 @@ import sys
 import textwrap
 from pathlib import Path
 
-DEFAULT_ORCH = Path.home() / "~/.chiper/skills/bounty-pack/audit-pipeline-orchestrator.py"
+_chiper_base = os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME")
+DEFAULT_ORCH = (Path(_chiper_base) if _chiper_base else (Path.home() / ".chiper")) / "skills/bounty-pack/audit-pipeline-orchestrator.py"
 
 
 def extract_reaper_block(src: str) -> str:

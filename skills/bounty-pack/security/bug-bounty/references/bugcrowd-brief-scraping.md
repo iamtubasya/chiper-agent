@@ -92,7 +92,7 @@ If the extract step returns nothing for these pages (search-only extract backend
 render in a browser — the briefs are SPAs.
 
 ## Stack: camofox server (~/camofox-browser)
-- Start: `cd /home/agentuser/camofox-browser && npm start` (background, port 9377)
+- Start: `cd $HOME/camofox-browser && npm start` (background, port 9377)
 - Health: `curl -s http://localhost:9377/health`
 - Underlying binary: Camoufox (anti-detect Firefox) at `~/.local/share/camoufox/`
 

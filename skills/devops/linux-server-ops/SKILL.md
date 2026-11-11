@@ -65,7 +65,7 @@ Use when the VM has only a private IP (e.g. Tencent `10.x.x.x`) and no public IP
    - Send that URL to the user; after they authenticate, `tailscale up` exits "Success.".
    - **Crucial**: Always enable Tailscale SSH (`tailscale up --ssh` or `sudo tailscale set --ssh`), otherwise remote Termius connection attempts will fail with `connection refused` on the Tailscale IP.
 4. Get the stable IP: `sudo tailscale ip -4` (e.g. `100.x.x.x`) and `sudo tailscale status`.
-5. Termius config: `Host = <100.x.x.x>`, `Port = 22`, `User = root` or `agentuser`, `Password/Key`.
+5. Termius config: `Host = <100.x.x.x>`, `Port = 22`, `User = root` or `$USER`, `Password/Key`.
 6. Ensure SSH is on and reachable: `ss -tlnp | grep :22`, `PasswordAuthentication yes`.
 7. **Keepalive & Watchdog Protection (Never Disconnect)**:
    - Systemd override for auto-restart:
@@ -99,12 +99,12 @@ sudo chmod 440 /etc/sudoers.d/<cmd> && sudo visudo -c
 ## Making data folders accessible to an SSH user (The Primary Account Rule)
 A common user desire: "I want to SSH in and `ls` / edit `~/.hermes`, `~/.chiperflux`, and the agent files."
 
-**RULE: Prefer setting credentials directly on the primary owner account (`agentuser`) rather than creating a secondary user.**
+**RULE: Prefer setting credentials directly on the primary owner account (`$USER`) rather than creating a secondary user.**
 - **Why creating a secondary user fails for agent files:**
   - `chmod 750` / group-sharing / POSIX ACLs (`setfacl`) on `~/.chiperflux` will be **silently undone** by Chiper Agent runtime, which enforces `0700` on every start / write cycle to protect API keys and tokens. Even if you open it, it locks back down within seconds.
   - POSIX ACL default masks (`mask::---`) get applied when permissions are recalculated, silently stripping `effective:r-x` permissions for secondary users.
 - **The clean solution:**
-  1. Simply set a password on the existing `agentuser`:
+  1. Simply set a password on the existing `$USER`:
      ```bash
      echo '$USER:password' | sudo chpasswd
      ```
@@ -143,8 +143,8 @@ When a user demands complete, unrestricted access across all system files and ot
   Rather than telling the user to use `sudo` every time, apply POSIX ACLs recursively and open traversal permissions:
   ```bash
   sudo chmod 755 /home/ubuntu
-  sudo setfacl -R -m u:agentuser:rwx /home/ubuntu
-  sudo setfacl -R -d -m u:agentuser:rwx /home/ubuntu
+  sudo setfacl -R -m u:$USER:rwx "$OTHER_USER_HOME"
+  sudo setfacl -R -d -m u:$USER:rwx "$OTHER_USER_HOME"
   ```
 
 ## Disk / storage cleanup (free space)

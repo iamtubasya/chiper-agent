@@ -139,6 +139,6 @@ The backend itself is IP-locked (403 "Web App - Unavailable").
 
 ## Artifacts
 
-`/home/agentuser/zenya_audit\`: `COVERAGE-LEDGER.json`, `swagger_v5.json` (2.5 MB full route map),
+`$HOME/zenya_audit\`: `COVERAGE-LEDGER.json`, `swagger_v5.json` (2.5 MB full route map),
 `swagger.json` (v1), `anon_sweep.json` (310-endpoint results), `fingerprint.json`, `sweep.py`,
 `sweep_list.json`, plus saved HTML for developer / portal / webshare / mcp-chat.

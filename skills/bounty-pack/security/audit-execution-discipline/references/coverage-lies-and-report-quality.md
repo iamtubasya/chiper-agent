@@ -234,7 +234,7 @@ python -c "import json;print(json.load(open(r'<trackers>/audit-pipeline-<slug>.j
 
 Fix — invalidate the cache, do **not** delete it (operator rule: delete = `_QUARANTINE` + manifest):
 ```python
-S = Path.home()/"~/.chiper/skills/bounty-pack/trackers"/"audit-pipeline-<slug>.json"
+S = Path(os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME") or (Path.home() / ".chiper")) / "/skills/bounty-pack/trackers"/"audit-pipeline-<slug>.json"
 cur = json.loads(S.read_text(encoding="utf-8"))
 shutil.copy2(S, Q/f"state.before_rerun_{ts}.json")            # backup first
 cur["completed_phases"] = ["0A","0B","0C"]                     # keep only phases you TRUST

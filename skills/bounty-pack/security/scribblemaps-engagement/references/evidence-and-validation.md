@@ -1,6 +1,6 @@
 # Evidence and validation record (2026-10-31)
 
-Workdir: `/home/agentuser/bounty/scribblemaps\`
+Workdir: `$HOME/bounty/scribblemaps\`
 Coverage doc: `COVERAGE.md` (rounds 1–8, tested / negative-with-artifact / blocked / unproven).
 
 ## Pre-submit validation (operator requires >= 3x before anything is sent)

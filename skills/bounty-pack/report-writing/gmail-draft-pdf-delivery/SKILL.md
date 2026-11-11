@@ -53,7 +53,10 @@ raw = base64.urlsafe_b64encode(m.as_bytes()).decode("ascii")
 
 ```python
 import sys
-sys.path.insert(0, r"~/.chiper/scripts")
+import os
+from pathlib import Path
+_base = Path(os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME") or (Path.home() / ".chiper"))
+sys.path.insert(0, str(_base / "scripts"))
 from gmail_ops import pick_service
 label, svc = pick_service("RESEARCHER_USERNAME")   # akun utama
 

@@ -11,7 +11,7 @@ Edit the CONFIG block for the target. Two supported feed shapes:
                      (OpenAPI) or its sorted top-level keys.
   * text_feeds     : any text/JSON list endpoint kept as a sorted unique line set.
 
-NOTE (MSYS/git-bash): STATE_PATH must be a NATIVE path (/home/agentuser), not
+NOTE (Dynamic path): STATE_PATH resolves dynamically via CHIPER_PATH/CHIPER_HOME/HOME, not
 /c/Users/... — Python's open() cannot resolve MSYS paths. Also, at runtime the
 CWD of the cron job is not guaranteed, so STATE_PATH must stay absolute.
 """
@@ -136,7 +136,12 @@ def diff(old, new, path=""):
 
 def main():
     cfg = CONFIG
-    state = cfg["state_path"]
+    _base = os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME")
+    _raw_state = cfg["state_path"]
+    if _base and _raw_state.startswith("~/.chiper/"):
+        state = os.path.join(_base, _raw_state[len("~/.chiper/"):])
+    else:
+        state = os.path.expanduser(_raw_state)
     new = snapshot(cfg)
 
     # Guard: an all-empty snapshot means the fetch layer failed, not "no surface".

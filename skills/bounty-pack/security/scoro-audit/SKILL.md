@@ -88,7 +88,7 @@ F1 (Low/Info) — Internal env disclosure di production signup: bundle
 `create-site.scoro.com/assets/SetupPage-ItioMtqO.js` menampilkan cluster **"Staging"**
 di dropdown "Server" (dan jadi DEFAULT `clusterSelection=Ce[0].id="staging"`), plus teks
 internal `"Welcome, Scorer! ... @scoro.com Google account ... scorotesttemp prefix"`.
-Evidence + PoC: `/home/agentuser/scoro_work/FINDINGS.md`. Belum dipastikan server
+Evidence + PoC: `~/scoro_work/FINDINGS.md`. Belum dipastikan server
 menerima "staging" (perlu akun terverifikasi).
 
 ## Lanjut bila akun tersedia

@@ -15,7 +15,7 @@ FIX (do not re-introduce):
 
 ## Orchestrator output dir sanitize (Windows)
 
-`output_dir = Path.home() / "~/.chiper/skills/bounty-pack/poc-plans/orchestrator-{target...}"`
+`output_dir = Path(os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME") or (Path.home() / ".chiper")) / "/skills/bounty-pack/poc-plans/orchestrator-{target...}"`
 must strip scheme and replace `:/?=.` → `_`, else `os.mkdir` fails
 (`NotADirectoryError: 'C:\...\orchestrator-https:__httpbin_org'`).
 

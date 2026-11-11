@@ -233,7 +233,7 @@ Prosedur:
    manifest):
    ```python
    from pathlib import Path; import shutil, json, time
-   D = Path.home()/"~/.chiper/skills/bounty-pack/poc-plans/orchestrator-<slug>"   # hitung DI DALAM Python
+   D = Path(os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME") or (Path.home() / ".chiper")) / "/skills/bounty-pack/poc-plans/orchestrator-<slug>"   # hitung DI DALAM Python
    Q = D/"_QUARANTINE"; Q.mkdir(exist_ok=True)
    ts = time.strftime("%Y%m%d_%H%M%S")
    shutil.move(str(D/"business-logic-usage.json"), str(Q/f"business-logic-usage.json.corrupt_{ts}"))

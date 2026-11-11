@@ -92,7 +92,7 @@ ever says "RE-RUN" is just slow. **Both verdicts must appear in the same test ru
 ### The same shape in `_force_state_complete()`
 
 ```python
-f = Path.home() / f"~/.chiper/skills/bounty-pack/trackers/force-state-{safe}.json"
+f = Path(os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME") or (Path.home() / ".chiper")) / f"/skills/bounty-pack/trackers/force-state-{safe}.json"
 if d.get("status") != "complete": return False
 n = len(list(ev.iterdir()))                       # ONLY counted files
 if n == 0: return False
@@ -354,7 +354,7 @@ bash passes MSYS-style paths to the native `go.exe`, which refuses them. Set nat
 absolute paths first and persist them:
 
 ```bash
-export GOPATH='/home/agentuser/go'
+export GOPATH='$HOME/go'
 export GOMODCACHE="$GOPATH\pkg\mod"
 export GOCACHE="$GOPATH\cache\build"
 export GOBIN="$GOPATH\bin"

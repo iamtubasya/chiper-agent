@@ -80,7 +80,7 @@ in the URL is what removes the payment UI.)
 ```python
 # open, and KEEP ALIVE from a background process
 ctx = pw.chromium.launch_persistent_context(
-    r"/home/agentuser/<target>-manual-profile", headless=False,
+    r"$HOME/<target>-manual-profile", headless=False,
     args=["--disable-blink-features=AutomationControlled", "--start-maximized"],
     no_viewport=True, locale="en-US", timezone_id="Asia/Jakarta")
 # poll ctx.pages so the script notices when the operator closes the window

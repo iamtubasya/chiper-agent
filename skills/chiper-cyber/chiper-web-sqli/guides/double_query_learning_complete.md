@@ -117,7 +117,7 @@ class DoubleQuerySQLi:
     - full_extraction()       # Complete extraction workflow
 ```
 
-**Tool Location**: `/home/parallels/.chiper/workspace/master_double_query_final.py`
+**Tool Location**: `${CHIPER_PATH:-${CHIPER_HOME:-$HOME/.chiper}}/workspace/master_double_query_final.py`
 **Lines of Code**: ~300 lines
 **Feature Completeness**: 95%
 

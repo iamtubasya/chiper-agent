@@ -48,7 +48,9 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
 # Resolve the token the same way the workspace skill does; never hardcode a username path.
-HERMES_HOME = Path(os.environ.get("HERMES_HOME", Path.home() / "~/.chiper/skills/bounty-pack"))
+_chiper_base = os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME")
+_default_pack = (Path(_chiper_base) if _chiper_base else (Path.home() / ".chiper")) / "skills/bounty-pack"
+HERMES_HOME = Path(os.environ.get("HERMES_HOME", _default_pack))
 CRED_FILE = HERMES_HOME.joinpath("google_" + "token" + ".json")
 SENDER = "RESEARCHER_EMAIL"
 DRAFT_LABEL = "DRAFT"

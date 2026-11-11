@@ -153,7 +153,7 @@ linkfinder, secretfinder, cloud_enum, kube-hunter` = all `FUZZ_ONLY` under a pas
 `force-full-execution` + the orchestrator locate tools with `shutil.which`. On Windows:
 
 * **`shutil.which` needs an extension.** A bare bash script named `linkfinder` may resolve from
-  bash but not from Python. Create **both** wrappers in a PATH dir (`/home/agentuser/go/bin`):
+  bash but not from Python. Create **both** wrappers in a PATH dir (`$HOME/go/bin`):
   a shebang script *and* a `<name>.cmd` that calls the real script
   (`@echo off` + `python "<repo>\linkfinder.py" %*`). Verify from **bash-launched** Python
   (same env the pipeline uses): `python -c "import shutil;print([t for t in TOOLS if not shutil.which(t)])"`.

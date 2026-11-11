@@ -15,7 +15,7 @@ Gmail access tokens expire in ~1h. Refresh before the first call, or every query
 import json, urllib.parse, urllib.request
 from pathlib import Path
 
-TOK = Path.home()/"~/.chiper/skills/bounty-pack/google_token.json"
+TOK = Path(os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME") or (Path.home() / ".chiper")) / "/skills/bounty-pack/google_token.json"
 d = json.loads(TOK.read_text(encoding="utf-8"))
 data = urllib.parse.urlencode({
     "client_id": d["client_id"], "client_secret": d["client_secret"],

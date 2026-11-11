@@ -157,8 +157,8 @@
 
 ### Learning Resources
 - SQLi-Labs source code: `/var/www/html/sqli-labs/`
-- Progress record: `/home/parallels/.chiper/workspace/memory/sqli-labs-progress.md`
-- Batch notes: `/home/parallels/.chiper/workspace/memory/sqli-labs-batch-notes.md`
+- Progress record: `${CHIPER_PATH:-${CHIPER_HOME:-$HOME/.chiper}}/workspace/memory/sqli-labs-progress.md`
+- Batch notes: `${CHIPER_PATH:-${CHIPER_HOME:-$HOME/.chiper}}/workspace/memory/sqli-labs-batch-notes.md`
 
 ---
 

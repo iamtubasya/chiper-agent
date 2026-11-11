@@ -70,7 +70,7 @@ Indonesian-locale Gmail: the folder is `[Gmail]/Surat Terkirim`, **not** `[Gmail
 ## Pitfalls (all hit for real)
 
 1. **MSYS/git-bash gpg + absolute Windows `GNUPGHOME` = broken.** gpg prepends the cwd, giving
-   `keyblock resource '/c/Users/...//home/agentuser/pubring.kbx': No such file or directory` and
+   `keyblock resource '/c/Users/.../$HOME/pubring.kbx': No such file or directory` and
    `no writable keyring found`. Fix: create the throwaway homedir **inside the cwd** (`tempfile.mkdtemp(dir=os.getcwd())`)
    and pass only the **basename** as `GNUPGHOME`. The script already does this — don't "simplify" it back.
 2. **`chmod 600` is a no-op on Windows.** Use `icacls` (above). A `0o666` from `ls -l` is not a finding.
@@ -234,7 +234,10 @@ does "encrypted draft" alone. Reuse the pieces directly:
 
 ```python
 import base64, sys
-sys.path.insert(0, "~/.chiper/skills/bounty-pack")
+import os
+from pathlib import Path
+_base = Path(os.environ.get("CHIPER_PATH") or os.environ.get("CHIPER_HOME") or (Path.home() / ".chiper"))
+sys.path.insert(0, str(_base / "skills/bounty-pack"))
 import pgp_submit, bounty_mail
 from pathlib import Path
 from email.message import EmailMessage

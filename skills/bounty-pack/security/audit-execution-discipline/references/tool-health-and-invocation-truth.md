@@ -103,17 +103,17 @@ tr.TOOL_PATHS["nikto"]     # -> ...\Python314\Scripts\nikto.bat   (use THIS)
 
 Symptom (two different wordings, same cause):
 ```
-go: GOPATH entry is relative; must be absolute path: "/home/agentuser/go".
+go: GOPATH entry is relative; must be absolute path: "$HOME/go".
 go: GOMODCACHE entry is relative; must be absolute path: "\\c\\Users\\WINDOWS10\\go\\pkg\\mod"
 ```
 Fix — set **native** absolute paths in the child env (and persist with `go env -w`):
 
 ```python
 env = dict(os.environ)
-env["GOPATH"]     = r"/home/agentuser/go"
-env["GOMODCACHE"] = r"/home/agentuser/go/pkg/mod"
-env["GOCACHE"]    = r"/home/agentuser/go/cache/build"
-env["GOBIN"]      = r"/home/agentuser/go/bin"
+env["GOPATH"]     = r"$HOME/go"
+env["GOMODCACHE"] = r"$HOME/go/pkg/mod"
+env["GOCACHE"]    = r"$HOME/go/cache/build"
+env["GOBIN"]      = r"$HOME/go/bin"
 subprocess.run("go install <mod>@latest", shell=True, env=env)
 ```
 A `.bat` wrapper with `set GOPATH=...` works equally well when you must run it from a shell.
