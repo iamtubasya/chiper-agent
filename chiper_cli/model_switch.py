@@ -958,6 +958,26 @@ def switch_model(
             api_key = current_api_key
             base_url = current_base_url
             api_mode = determine_api_mode(target_provider, base_url)
+        elif target_provider.startswith("custom:") and custom_pdef is not None:
+            base_url = custom_pdef.base_url or ""
+            _c_entry = next(
+                (
+                    e
+                    for e in (custom_providers or [])
+                    if isinstance(e, dict)
+                    and custom_provider_slug(e.get("name") or "") == target_provider
+                ),
+                None,
+            )
+            if _c_entry:
+                api_key = _c_entry.get("api_key") or (
+                    os.environ.get(_c_entry.get("key_env", ""))
+                    if _c_entry.get("key_env")
+                    else ""
+                ) or ""
+            else:
+                api_key = current_api_key
+            api_mode = determine_api_mode("custom", base_url)
         else:
             try:
                 runtime = resolve_runtime_provider(
@@ -1758,7 +1778,7 @@ def list_authenticated_providers(
             if should_probe:
                 try:
                     from chiper_cli.models import fetch_api_models
-                    live_models = fetch_api_models(api_key, api_url)
+                    live_models = fetch_api_models(api_key, api_url, timeout=10.0)
                     if live_models:
                         models_list = live_models
                 except Exception:
@@ -2005,7 +2025,7 @@ def list_authenticated_providers(
                 try:
                     from chiper_cli.models import fetch_api_models
 
-                    live_models = fetch_api_models(api_key, api_url)
+                    live_models = fetch_api_models(api_key, api_url, timeout=10.0)
                     if live_models:
                         grp["models"] = live_models
                         grp["total_models"] = len(live_models)

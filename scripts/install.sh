@@ -1528,7 +1528,7 @@ switch_soul('chiper-cyber')
     elif [ ! -f "$CHIPER_HOME/SOUL.md" ] && [ -f "$INSTALL_DIR/skills/chiper-cyber/SOUL.md" ]; then
         mkdir -p "$CHIPER_HOME/souls"
         cp -f "$INSTALL_DIR/skills/chiper-cyber/SOUL.md" "$CHIPER_HOME/souls/chiper-cyber.md" 2>/dev/null || true
-        cp -f "$INSTALL_DIR/skills/bounty-pack/SOUL.md" "$CHIPER_HOME/souls/chiper-hunt.md" 2>/dev/null || true
+        cp -f "$INSTALL_DIR/skills/chiper-bounty/SOUL.md" "$CHIPER_HOME/souls/chiper-hunt.md" 2>/dev/null || cp -f "$INSTALL_DIR/skills/bounty-pack/SOUL.md" "$CHIPER_HOME/souls/chiper-hunt.md" 2>/dev/null || true
         cp -f "$INSTALL_DIR/skills/chiper-web3/SOUL.md" "$CHIPER_HOME/souls/chiper-web3.md" 2>/dev/null || true
         cp -f "$INSTALL_DIR/skills/chiper-cyber/SOUL.md" "$CHIPER_HOME/SOUL.md"
         log_success "Created ~/.chiper/SOUL.md (Chiper-Cyber)"

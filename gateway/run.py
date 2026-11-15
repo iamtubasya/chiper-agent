@@ -7639,6 +7639,9 @@ class GatewayRunner(GatewayAuthorizationMixin, GatewayKanbanWatchersMixin, Gatew
         
         if canonical == "soul":
             return await self._handle_soul_command(event)
+
+        if canonical in ("swipemodel", "swipemodels", "swipe_model"):
+            return await self._handle_model_command(event)
         
         if canonical in ("provider", "providers"):
             return await self._handle_provider_command(event)

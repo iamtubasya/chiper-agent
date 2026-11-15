@@ -25,20 +25,25 @@ def test_is_skill_allowed_for_soul_matrix():
     assert is_skill_allowed_for_soul("chiper-dev", "github", "github-pr-workflow")
     assert is_skill_allowed_for_soul("chiper-dev", "devops", "linux-server-ops")
     assert is_skill_allowed_for_soul("chiper-dev", "autonomous-ai-agents", "chiper-agent")
+    assert not is_skill_allowed_for_soul("chiper-dev", "chiper-bounty", "hunt-sqli")
     assert not is_skill_allowed_for_soul("chiper-dev", "bounty-pack", "hunt-sqli")
     assert not is_skill_allowed_for_soul("chiper-dev", "chiper-cyber", "chiper-web-sqli")
     assert not is_skill_allowed_for_soul("chiper-dev", "chiper-web3", "chiper-airdrop-intelligence")
 
     # Chiper-Cyber
     assert is_skill_allowed_for_soul("chiper-cyber", "chiper-cyber", "chiper-web-sqli")
+    assert is_skill_allowed_for_soul("chiper-cyber", "chiper-bounty/tob", "semgrep")
     assert is_skill_allowed_for_soul("chiper-cyber", "bounty-pack/tob", "semgrep")
     assert is_skill_allowed_for_soul("chiper-cyber", "software-development", "systematic-debugging")
+    assert not is_skill_allowed_for_soul("chiper-cyber", "chiper-bounty", "hunt-sqli")
     assert not is_skill_allowed_for_soul("chiper-cyber", "bounty-pack", "hunt-sqli")
     assert not is_skill_allowed_for_soul("chiper-cyber", "chiper-web3", "chiper-airdrop-intelligence")
     assert not is_skill_allowed_for_soul("chiper-cyber", "creative", "manim-video")
 
     # Chiper-Hunt
+    assert is_skill_allowed_for_soul("chiper-hunt", "chiper-bounty", "hunt-sqli")
     assert is_skill_allowed_for_soul("chiper-hunt", "bounty-pack", "hunt-sqli")
+    assert is_skill_allowed_for_soul("chiper-hunt", "chiper-bounty/security", "smart-contract-audit")
     assert is_skill_allowed_for_soul("chiper-hunt", "bounty-pack/security", "smart-contract-audit")
     assert is_skill_allowed_for_soul("chiper-hunt", "software-development", "systematic-debugging")
     assert not is_skill_allowed_for_soul("chiper-hunt", "chiper-cyber", "chiper-web-sqli")
@@ -46,8 +51,10 @@ def test_is_skill_allowed_for_soul_matrix():
 
     # Chiper-Web3
     assert is_skill_allowed_for_soul("chiper-web3", "chiper-web3", "chiper-airdrop-intelligence")
+    assert is_skill_allowed_for_soul("chiper-web3", "chiper-bounty/tob", "solana-vulnerability-scanner")
     assert is_skill_allowed_for_soul("chiper-web3", "bounty-pack/tob", "solana-vulnerability-scanner")
     assert not is_skill_allowed_for_soul("chiper-web3", "chiper-cyber", "chiper-web-sqli")
+    assert not is_skill_allowed_for_soul("chiper-web3", "chiper-bounty", "hunt-sqli")
     assert not is_skill_allowed_for_soul("chiper-web3", "bounty-pack", "hunt-sqli")
 
     # Unknown or default: everything allowed
@@ -57,6 +64,7 @@ def test_is_skill_allowed_for_soul_matrix():
 
 def test_get_soul_for_skill():
     assert get_soul_for_skill("chiper-cyber", "chiper-web-sqli") == "chiper-cyber"
+    assert get_soul_for_skill("chiper-bounty", "hunt-sqli") == "chiper-hunt"
     assert get_soul_for_skill("bounty-pack", "hunt-sqli") == "chiper-hunt"
     assert get_soul_for_skill("chiper-web3", "chiper-airdrop-intelligence") == "chiper-web3"
     assert get_soul_for_skill("software-development", "fastapi-backend-architecture") == "chiper-dev"

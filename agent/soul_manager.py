@@ -85,7 +85,7 @@ Kamu berpikir seperti hacker komersial papan atas: **cerdik, efisien, patuh pada
 7. **Triager Empathy.** Tulis laporan yang jelas, ringkas, mudah direproduksi dalam 10 menit oleh triager, dan dilengkapi rekomendasi perbaikan konkret.
 
 ## 3. Skill Loading Protocol & Persenjataan
-Lokasi skill: `.chiper/skills/bounty-pack/**/SKILL.md` (67 checklist `hunt-*`, 29 modul `tob/*`, dan reporting).
+Lokasi skill: `.chiper/skills/chiper-bounty/**/SKILL.md` (67 checklist `hunt-*`, 29 modul `tob/*`, dan reporting).
 Database PoC: `~/.chiper/bounty-data/` (802 MB `pocindex`, `wordlists`, mirror bugbounty.info).
 """
 
@@ -207,7 +207,11 @@ def ensure_default_souls() -> None:
     # 4. Chiper-Hunt
     hunt_dest = souls_dir / "chiper-hunt.md"
     if not hunt_dest.exists():
-        hunt_src = chiper_home / "skills" / "bounty-pack" / "SOUL.md"
+        hunt_src = chiper_home / "skills" / "chiper-bounty" / "SOUL.md"
+        if not hunt_src.exists():
+            hunt_src = chiper_home / "skills" / "bounty-pack" / "SOUL.md"
+        if not hunt_src.exists():
+            hunt_src = Path(__file__).resolve().parent.parent / "skills" / "chiper-bounty" / "SOUL.md"
         if not hunt_src.exists():
             hunt_src = Path(__file__).resolve().parent.parent / "skills" / "bounty-pack" / "SOUL.md"
         if hunt_src.exists():
@@ -479,6 +483,7 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
         "name": "Chiper-Cyber",
         "allow_categories": [
             "chiper-cyber",
+            "chiper-bounty/tob",
             "bounty-pack/tob",
             "software-development",
             "devops",
@@ -492,6 +497,7 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
         ],
         "deny_categories": [
             "chiper-web3",
+            "chiper-bounty",
             "bounty-pack",
             "creative",
             "productivity",
@@ -506,6 +512,7 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
     "chiper-hunt": {
         "name": "Chiper-Hunt",
         "allow_categories": [
+            "chiper-bounty",
             "bounty-pack",
             "software-development",
             "devops",
@@ -534,7 +541,9 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
         "name": "Chiper-Web3",
         "allow_categories": [
             "chiper-web3",
+            "chiper-bounty/tob",
             "bounty-pack/tob",
+            "chiper-bounty/security/smart-contract-audit",
             "bounty-pack/security/smart-contract-audit",
             "software-development",
             "devops",
@@ -548,6 +557,7 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
         ],
         "deny_categories": [
             "chiper-cyber",
+            "chiper-bounty",
             "bounty-pack",
             "creative",
             "productivity",
@@ -582,6 +592,7 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
             "chiper-agent",
         ],
         "deny_categories": [
+            "chiper-bounty",
             "bounty-pack",
             "chiper-cyber",
             "chiper-web3",
@@ -665,7 +676,7 @@ def get_soul_for_skill(category: Optional[str], skill_name: str) -> Optional[str
         if top == "chiper-web3":
             return "chiper-web3"
         return "chiper-cyber"
-    if top == "bounty-pack":
+    if top in ("chiper-bounty", "bounty-pack"):
         return "chiper-hunt"
     if top == "chiper-web3":
         return "chiper-web3"

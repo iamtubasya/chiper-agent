@@ -133,6 +133,8 @@ COMMAND_REGISTRY: list[CommandDef] = [
 
     CommandDef("soul", "Pilih atau ganti jiwa/otak agent (Chiper-Cyber, Chiper-Dev, atau Custom)", "Configuration",
                args_hint="[cyber|dev|list|set <name>]", aliases=("persona",)),
+    CommandDef("swipemodel", "Pilih provider dan scan model secara realtime via Base URL", "Configuration",
+               aliases=("swipemodels", "swipe_model")),
     CommandDef("provider", "Kelola daftar provider endpoint manual (lihat, tambah, hapus)", "Configuration",
                aliases=("providers",)),
     CommandDef("addendpointprovider", "Tambah endpoint OpenAI provider baru via wizard chat interaktif", "Configuration",
@@ -540,6 +542,7 @@ _TELEGRAM_MENU_PRIORITY = (
     "resume",
     "sessions",
     "model",
+    "swipemodel",
     # Maintenance / diagnostics — the ones that prompted this priority list.
     "debug",
     "restart",
