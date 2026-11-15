@@ -4755,29 +4755,57 @@ class TelegramAdapter(BasePlatformAdapter):
                 result_text = f"Error switching model: {exc}"
                 switch_failed = True
 
-            # Edit message to show confirmation, remove buttons
-            try:
-                await query.edit_message_text(
-                    text=self.format_message(result_text),
-                    parse_mode=ParseMode.MARKDOWN_V2,
-                    reply_markup=None,
-                )
-            except Exception:
-                # Markdown parse failure — retry as plain text
+            if switch_failed:
+                # Edit message to show the error, remove buttons
                 try:
                     await query.edit_message_text(
-                        text=result_text,
-                        parse_mode=None,
+                        text=self.format_message(result_text),
+                        parse_mode=ParseMode.MARKDOWN_V2,
                         reply_markup=None,
                     )
                 except Exception:
-                    pass
-            await query.answer(
-                text="Switch failed." if switch_failed else "Model switched!"
-            )
+                    try:
+                        await query.edit_message_text(
+                            text=result_text,
+                            parse_mode=None,
+                            reply_markup=None,
+                        )
+                    except Exception:
+                        pass
+                await query.answer(text="Switch failed.")
+                self._model_picker_state.pop(chat_id, None)
+                return
 
-            # Clean up state
-            self._model_picker_state.pop(chat_id, None)
+            # Success: offer to persist as the global default.  The switch
+            # above applied to THIS session only (is_global=False); the user
+            # can tap "Jadikan Default" to write it to config.yaml.
+            state["switched_model"] = model_id
+            state["switched_provider"] = provider_slug
+            keyboard = InlineKeyboardMarkup([
+                [InlineKeyboardButton("🌟 Jadikan Default", callback_data="md:yes")],
+                [InlineKeyboardButton("✅ Cukup (Sesi Ini)", callback_data="md:no")],
+            ])
+            prompt_text = (
+                f"{result_text}\n\n"
+                f"⭐ *Jadikan model ini default?*\n"
+                f"Default berlaku untuk semua sesi baru & tahan restart."
+            )
+            try:
+                await query.edit_message_text(
+                    text=self.format_message(prompt_text),
+                    parse_mode=ParseMode.MARKDOWN_V2,
+                    reply_markup=keyboard,
+                )
+            except Exception:
+                try:
+                    await query.edit_message_text(
+                        text=prompt_text,
+                        parse_mode=None,
+                        reply_markup=keyboard,
+                    )
+                except Exception:
+                    pass
+            await query.answer(text="Model switched!")
 
         elif data.startswith("mpg:"):
             # --- Provider group selected: show member providers ---
@@ -4846,6 +4874,83 @@ class TelegramAdapter(BasePlatformAdapter):
             )
             await query.answer()
 
+        elif data.startswith("md:"):
+            # --- Post-switch: persist as global default? (md:yes / md:no) ---
+            choice = data[3:]
+            model_id = state.get("switched_model")
+            provider_slug = state.get("switched_provider", "")
+            self._model_picker_state.pop(chat_id, None)
+
+            if choice == "no" or not model_id:
+                await query.edit_message_text(
+                    text=self.format_message(
+                        f"✅ Model `{model_id or '?'}` aktif untuk *sesi ini saja*."
+                    ),
+                    parse_mode=ParseMode.MARKDOWN_V2,
+                    reply_markup=None,
+                )
+                await query.answer(text="Sesi ini saja")
+                return
+
+            # md:yes — persist to config.yaml via is_global=True
+            callback = state.get("on_model_selected")
+            if not callback:
+                await query.edit_message_text(
+                    text=self.format_message(
+                        "Picker expired — ketik `/model <nama> --global` untuk menyimpan."
+                    ),
+                    parse_mode=ParseMode.MARKDOWN_V2,
+                    reply_markup=None,
+                )
+                await query.answer(text="Picker expired")
+                return
+
+            try:
+                # The picker's on_model_selected closure is built with
+                # is_global=False.  We need the global variant here, so
+                # call switch_model directly with is_global=True, reusing
+                # the same config context the closure captured.
+                from chiper_cli.model_switch import switch_model as _switch_model
+
+                _cfg = state.get("picker_switch_ctx") or {}
+                result = _switch_model(
+                    raw_input=model_id,
+                    current_provider=_cfg.get("current_provider", ""),
+                    current_model=_cfg.get("current_model", ""),
+                    current_base_url=_cfg.get("current_base_url", ""),
+                    current_api_key=_cfg.get("current_api_key", ""),
+                    is_global=True,
+                    explicit_provider=provider_slug,
+                    user_providers=_cfg.get("user_providers"),
+                    custom_providers=_cfg.get("custom_providers"),
+                )
+                if result.success:
+                    msg = (
+                        f"🌟 *Tersimpan sebagai default!*\n\n"
+                        f"Model `{result.new_model}` kini default untuk semua sesi baru "
+                        f"dan tahan restart."
+                    )
+                else:
+                    msg = f"⚠ Gagal menyimpan default: {result.error_message}"
+            except Exception as exc:
+                logger.error("Persist default via picker failed: %s", exc)
+                msg = f"⚠ Gagal menyimpan default: {exc}"
+
+            try:
+                await query.edit_message_text(
+                    text=self.format_message(msg),
+                    parse_mode=ParseMode.MARKDOWN_V2,
+                    reply_markup=None,
+                )
+            except Exception:
+                try:
+                    await query.edit_message_text(
+                        text=msg, parse_mode=None, reply_markup=None
+                    )
+                except Exception:
+                    pass
+            await query.answer(text="Default disimpan" if "Tersimpan" in msg else "Gagal")
+
         elif data == "mx":
             # --- Cancel ---
             self._model_picker_state.pop(chat_id, None)
@@ -4890,7 +4995,7 @@ class TelegramAdapter(BasePlatformAdapter):
             return
 
         # --- Model picker callbacks ---
-        if data.startswith(("mp:", "mpg:", "mm:", "mc:", "mb", "mx", "mg:")):
+        if data.startswith(("mp:", "mpg:", "mm:", "mc:", "md:", "mb", "mx", "mg:")):
             chat_id = str(query.message.chat_id) if query.message else None
             if chat_id:
                 await self._handle_model_picker_callback(query, data, chat_id)

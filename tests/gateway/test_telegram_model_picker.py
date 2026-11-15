@@ -100,11 +100,10 @@ class TestTelegramModelPicker:
 
     @pytest.mark.asyncio
     async def test_model_selected_edits_message_on_success(self):
-        """Regression: the mm: (model selected → switch) success path must
-        edit the picker message to show the confirmation and remove the
-        buttons.  An earlier revision of this PR over-indented the
-        edit_message_text block so it lived inside the except branch and
-        only fired when the callback raised."""
+        """The mm: (model selected → switch) success path must edit the
+        picker message to show the confirmation AND offer the follow-up
+        "Jadikan Default?" buttons.  The picker state is intentionally kept
+        alive so the md: callback can resolve the just-switched model."""
         adapter = _make_adapter()
         callback = AsyncMock(return_value="Switched to `gpt-5`")
         adapter._model_picker_state["12345"] = {
@@ -134,7 +133,9 @@ class TestTelegramModelPicker:
         edit_kwargs = query.edit_message_text.call_args[1]
         assert "MARKDOWN_V2" in repr(edit_kwargs["parse_mode"])
         assert "`gpt-5`" in edit_kwargs["text"]
-        assert "12345" not in adapter._model_picker_state
+        # State is retained so the md: button can persist the selection.
+        assert "12345" in adapter._model_picker_state
+        assert adapter._model_picker_state["12345"]["switched_model"] == "gpt-5"
 
     @pytest.mark.asyncio
     async def test_provider_group_folds_and_drills_down(self, monkeypatch):
@@ -278,3 +279,98 @@ class TestTelegramModelPicker:
         assert len(call_log) == 2
         assert call_log[0]["message_thread_id"] == 99999
         assert "message_thread_id" not in call_log[1] or call_log[1]["message_thread_id"] is None
+
+    @pytest.mark.asyncio
+    async def test_md_no_keeps_session_only(self):
+        """md:no — user declines persisting; message confirms session-only,
+        no switch_model(is_global=True) call happens, state is cleared."""
+        adapter = _make_adapter()
+        adapter._model_picker_state["12345"] = {
+            "providers": [],
+            "current_model": "m",
+            "current_provider": "custom",
+            "session_key": "s",
+            "on_model_selected": AsyncMock(),
+            "switched_model": "DS-v4.1-flash-combo",
+            "switched_provider": "custom:localhost",
+        }
+
+        called = {}
+
+        def _fake_switch(**kwargs):
+            called.update(kwargs)
+            return SimpleNamespace(
+                success=True, new_model="x", error_message="", target_provider="",
+                api_key="", base_url="", api_mode="",
+            )
+
+        import chiper_cli.model_switch as _ms
+        orig = getattr(_ms, "switch_model", None)
+        _ms.switch_model = _fake_switch
+        try:
+            query = AsyncMock()
+            query.answer = AsyncMock()
+            query.edit_message_text = AsyncMock()
+            await adapter._handle_model_picker_callback(query, "md:no", "12345")
+        finally:
+            if orig is not None:
+                _ms.switch_model = orig
+
+        assert called == {}  # no global persist attempted
+        assert "12345" not in adapter._model_picker_state
+        text = query.edit_message_text.call_args[1]["text"]
+        assert "sesi ini" in text.lower()
+
+    @pytest.mark.asyncio
+    async def test_md_yes_persists_global(self):
+        """md:yes — user opts in; switch_model is called with is_global=True
+        and the stored picker context, then the message confirms default."""
+        adapter = _make_adapter()
+        adapter._model_picker_state["12345"] = {
+            "providers": [],
+            "current_model": "m",
+            "current_provider": "custom",
+            "session_key": "s",
+            "on_model_selected": AsyncMock(),
+            "switched_model": "DS-v4.1-flash-combo",
+            "switched_provider": "custom:localhost",
+            "picker_switch_ctx": {
+                "current_provider": "custom",
+                "current_model": "old",
+                "current_base_url": "http://localhost:20128/v1",
+                "current_api_key": "sk-xxx",
+                "user_providers": None,
+                "custom_providers": [{"name": "Localhost", "base_url": "http://localhost:20128/v1"}],
+            },
+        }
+
+        called = {}
+
+        def _fake_switch(**kwargs):
+            called.update(kwargs)
+            return SimpleNamespace(
+                success=True, new_model="DS-v4.1-flash-combo",
+                error_message="", target_provider="custom:localhost",
+                api_key="sk-xxx", base_url="http://localhost:20128/v1", api_mode="",
+            )
+
+        import chiper_cli.model_switch as _ms
+        orig = getattr(_ms, "switch_model", None)
+        _ms.switch_model = _fake_switch
+        try:
+            query = AsyncMock()
+            query.answer = AsyncMock()
+            query.edit_message_text = AsyncMock()
+            await adapter._handle_model_picker_callback(query, "md:yes", "12345")
+        finally:
+            if orig is not None:
+                _ms.switch_model = orig
+
+        assert called.get("is_global") is True
+        assert called.get("explicit_provider") == "custom:localhost"
+        assert called.get("custom_providers") == [
+            {"name": "Localhost", "base_url": "http://localhost:20128/v1"}
+        ]
+        assert "12345" not in adapter._model_picker_state
+        text = query.edit_message_text.call_args[1]["text"]
+        assert "default" in text.lower()

@@ -1271,6 +1271,26 @@ class GatewaySlashCommandsMixin:
                         _chat_id: str, model_id: str, provider_slug: str
                     ) -> str:
                         """Perform the model switch and return confirmation text."""
+                        # Stash the config context on the picker state so the
+                        # follow-up "Jadikan Default?" button (callback md:yes)
+                        # can persist the same selection globally without
+                        # re-deriving provider/base_url/api_key.
+                        try:
+                            _pstate = getattr(adapter, "_model_picker_state", None)
+                            if _pstate is not None:
+                                _entry = _pstate.get(str(_chat_id))
+                                if _entry is not None:
+                                    _entry["picker_switch_ctx"] = {
+                                        "current_provider": _cur_provider,
+                                        "current_model": _cur_model,
+                                        "current_base_url": _cur_base_url,
+                                        "current_api_key": _cur_api_key,
+                                        "user_providers": user_provs,
+                                        "custom_providers": custom_provs,
+                                    }
+                        except Exception:
+                            pass
+
                         result = _switch_model(
                             raw_input=model_id,
                             current_provider=_cur_provider,
