@@ -4474,6 +4474,20 @@ class TelegramAdapter(BasePlatformAdapter):
         def _provider_button(p):
             count = p.get("total_models", len(p.get("models", [])))
             label = f"{p['name']} ({count})"
+            # Custom endpoints: surface the host:port so two gateways with
+            # generic names ("Localhost", "Local") stay distinguishable in
+            # the picker.  Built-ins keep the plain name (their identities
+            # are already unique).
+            if p.get("is_user_defined"):
+                _url = str(p.get("api_url") or "").strip()
+                if _url:
+                    try:
+                        from urllib.parse import urlparse
+                        _netloc = urlparse(_url).netloc
+                        if _netloc:
+                            label = f"{label} · {_netloc}"
+                    except Exception:
+                        pass
             if p.get("is_current"):
                 label = f"✓ {label}"
             return InlineKeyboardButton(label, callback_data=f"mp:{p['slug']}")
