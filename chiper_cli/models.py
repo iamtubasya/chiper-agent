@@ -3682,10 +3682,13 @@ def validate_requested_model(
 
     if normalized == "custom" or normalized.startswith("custom:"):
         # Try probing with correct auth for the api_mode.
+        # 10s timeout: aggregate gateways (e.g. 9router with 400+ models,
+        # ~200KB payload) regularly take 5-7s and would otherwise be
+        # reported as "unreachable" during endpoint validation.
         if api_mode == "anthropic_messages":
-            probe = probe_api_models(api_key, base_url, api_mode=api_mode)
+            probe = probe_api_models(api_key, base_url, timeout=10.0, api_mode=api_mode)
         else:
-            probe = probe_api_models(api_key, base_url)
+            probe = probe_api_models(api_key, base_url, timeout=10.0)
         api_models = probe.get("models")
         if api_models is not None:
             if requested_for_lookup in set(api_models):

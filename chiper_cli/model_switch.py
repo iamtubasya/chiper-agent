@@ -970,13 +970,18 @@ def switch_model(
                 None,
             )
             if _c_entry:
-                api_key = _c_entry.get("api_key") or (
-                    os.environ.get(_c_entry.get("key_env", ""))
-                    if _c_entry.get("key_env")
-                    else ""
-                ) or ""
+                api_key = (
+                    _c_entry.get("api_key")
+                    or (
+                        os.environ.get(_c_entry.get("key_env", ""))
+                        if _c_entry.get("key_env")
+                        else ""
+                    )
+                    or current_api_key
+                    or "no-key-required"
+                )
             else:
-                api_key = current_api_key
+                api_key = current_api_key or "no-key-required"
             api_mode = determine_api_mode("custom", base_url)
         else:
             try:

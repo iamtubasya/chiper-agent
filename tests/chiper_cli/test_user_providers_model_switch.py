@@ -144,7 +144,7 @@ def test_list_authenticated_providers_uses_live_models_for_user_provider(monkeyp
 
     calls = []
 
-    def fake_fetch_api_models(api_key, base_url):
+    def fake_fetch_api_models(api_key, base_url, **kwargs):
         calls.append((api_key, base_url))
         return ["old-configured-model", "new-live-model"]
 
@@ -1063,7 +1063,7 @@ def test_section3_probes_no_key_endpoint_without_explicit_models(monkeypatch):
 
     probed = {}
 
-    def _fake_fetch(api_key, api_url):
+    def _fake_fetch(api_key, api_url, **kwargs):
         probed["called"] = True
         probed["api_key"] = api_key
         probed["api_url"] = api_url
