@@ -229,62 +229,127 @@ def _seed_soul(
         )
 
 
-def ensure_default_souls() -> None:
-    """Ensure the built-in souls exist in ~/.chiper/souls."""
-    souls_dir = get_souls_dir()
+# The generic identity that chiper_cli.config._ensure_default_soul_md() writes
+# into CHIPER_HOME/SOUL.md on first run. It is a fallback, NOT a persona: a few
+# hundred bytes of "You are Chiper Agent, ...".
+_GENERIC_SOUL_MARKER = "You are Chiper Agent, an intelligent AI assistant created by Chiper."
+
+# A persona shorter than this is a stub, not a soul. The smallest real persona
+# (chiper-dev) is ~4.9 KB; the generic first-run stub is ~0.5 KB.
+_MIN_PERSONA_BYTES = 2000
+
+_BUILTIN_SOUL_IDS = ("chiper-cyber", "chiper-dev", "chiper-web3", "chiper-hunt")
+
+
+def _generic_soul_text() -> str:
+    """Exact text of the first-run generic SOUL.md stub (best effort)."""
+    try:
+        from chiper_cli.default_soul import DEFAULT_SOUL_MD
+
+        return " ".join(DEFAULT_SOUL_MD.split())
+    except Exception:
+        return _GENERIC_SOUL_MARKER
+
+
+def is_generic_default_soul(path: Path) -> bool:
+    """True when *path* holds the empty/generic identity stub, not a persona.
+
+    Fresh installs get ``CHIPER_HOME/SOUL.md`` seeded with the generic
+    "You are Chiper Agent ..." text on the first CLI/gateway call — which
+    happens *before* the installer runs ``ensure_default_souls()``. If that stub
+    is used as the source for ``souls/chiper-cyber.md``, every later soul switch
+    copies the stub back over SOUL.md and the persona never changes. That is the
+    "ganti jiwa tidak mengubah SOUL.md" bug on new servers.
+    """
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except Exception:
+        return False
+
+    stripped = " ".join(raw.split())
+    if not stripped:
+        return True
+    if stripped == _generic_soul_text():
+        return True
+    return (
+        len(stripped.encode("utf-8")) < _MIN_PERSONA_BYTES
+        and stripped.startswith(_GENERIC_SOUL_MARKER)
+    )
+
+
+def _soul_sources(soul_id: str) -> List[Path]:
+    """Ordered candidate paths holding the *full* persona for a built-in soul."""
     chiper_home = get_chiper_home()
     repo_skills = _repo_skills_dir()
 
-    # 1. Chiper-Cyber — the user's own SOUL.md wins (may be hand-edited).
-    _seed_soul(
-        souls_dir / "chiper-cyber.md",
-        [
+    if soul_id == "chiper-cyber":
+        # The user's own SOUL.md wins when it is a real persona (hand-edited, or
+        # carried over from a legacy install) — but never when it is the generic
+        # first-run stub, which is filtered out by _usable_sources().
+        return [
             chiper_home / "SOUL.md",
+            chiper_home / "skills" / "chiper-cyber" / "SOUL.md",
             repo_skills / "chiper-cyber" / "SOUL.md",
             _packaged_soul_path("chiper-cyber"),
-        ],
-        None,
-        "Chiper-Cyber",
-    )
-
-    # 2. Chiper-Dev — skills tree, packaged copy, then the inline constant.
-    _seed_soul(
-        souls_dir / "chiper-dev.md",
-        [
+        ]
+    if soul_id == "chiper-dev":
+        return [
             chiper_home / "skills" / "chiper-dev" / "SOUL.md",
             repo_skills / "chiper-dev" / "SOUL.md",
             _packaged_soul_path("chiper-dev"),
-        ],
-        CHIPER_DEV_SOUL,
-        "Chiper-Dev",
-    )
-
-    # 3. Chiper-Web3 — used to have no fallback branch at all, so the soul file
-    #    was silently never created on installs without the skills tree.
-    _seed_soul(
-        souls_dir / "chiper-web3.md",
-        [
+        ]
+    if soul_id == "chiper-web3":
+        return [
             chiper_home / "skills" / "chiper-web3" / "SOUL.md",
             repo_skills / "chiper-web3" / "SOUL.md",
             _packaged_soul_path("chiper-web3"),
-        ],
-        None,
-        "Chiper-Web3",
-    )
-
-    # 4. Chiper-Hunt — two source trees (legacy bounty-pack kept for compat).
-    _seed_soul(
-        souls_dir / "chiper-hunt.md",
-        [
+        ]
+    if soul_id == "chiper-hunt":
+        # Two source trees (legacy bounty-pack kept for compat).
+        return [
             chiper_home / "skills" / "chiper-bounty" / "SOUL.md",
             chiper_home / "skills" / "bounty-pack" / "SOUL.md",
             repo_skills / "chiper-bounty" / "SOUL.md",
             repo_skills / "bounty-pack" / "SOUL.md",
             _packaged_soul_path("chiper-hunt"),
-        ],
-        CHIPER_HUNT_SOUL,
-        "Chiper-Hunt",
-    )
+        ]
+    return []
+
+
+def _usable_sources(soul_id: str) -> List[Path]:
+    """Candidate personas minus any generic-stub SOUL.md.
+
+    A stub must never poison a persona: it is treated as "no source here" so the
+    next candidate (packaged copy) wins instead.
+    """
+    return [
+        src
+        for src in _soul_sources(soul_id)
+        if not (src.is_file() and is_generic_default_soul(src))
+    ]
+
+
+def ensure_default_souls() -> None:
+    """Ensure the built-in souls exist in ~/.chiper/souls with their full persona."""
+    souls_dir = get_souls_dir()
+    labels = {
+        "chiper-cyber": "Chiper-Cyber",
+        "chiper-dev": "Chiper-Dev",
+        "chiper-web3": "Chiper-Web3",
+        "chiper-hunt": "Chiper-Hunt",
+    }
+    fallbacks = {
+        "chiper-dev": CHIPER_DEV_SOUL,
+        "chiper-hunt": CHIPER_HUNT_SOUL,
+    }
+
+    for soul_id in _BUILTIN_SOUL_IDS:
+        _seed_soul(
+            souls_dir / f"{soul_id}.md",
+            _usable_sources(soul_id),
+            fallbacks.get(soul_id),
+            labels[soul_id],
+        )
 
 
 def list_souls() -> List[Dict[str, Any]]:
@@ -478,12 +543,37 @@ def switch_soul(soul_id: str) -> Tuple[bool, str, Dict[str, Any]]:
     if not target_path.exists():
         return False, f"Soul '{soul_id}' tidak ditemukan di ~/.chiper/souls/", {}
 
+    # Self-heal an install whose built-in soul file was seeded from the generic
+    # first-run stub (fresh servers): refresh it from the packaged persona, so
+    # the switch actually changes the identity instead of copying the stub back
+    # onto SOUL.md.
+    if soul_id in _BUILTIN_SOUL_IDS and is_generic_default_soul(target_path):
+        for src in _usable_sources(soul_id):
+            if not src.is_file() or src.resolve() == target_path.resolve():
+                continue
+            try:
+                shutil.copy2(src, target_path)
+                logger.warning(
+                    "Repaired stub soul %s from %s (fresh-install seeding bug)",
+                    target_path.name,
+                    src,
+                )
+            except Exception as e:
+                logger.warning("Failed to repair stub soul %s: %s", target_path.name, e)
+            break
+
     prev_soul = get_active_soul()
     prev_id = prev_soul.get("id")
 
     dest_path = get_chiper_home() / "SOUL.md"
     try:
         shutil.copy2(target_path, dest_path)
+        # copy2 preserves the source mtime, so a successful switch looks like an
+        # untouched file in `ls -la`. Bump it so the switch is observable.
+        try:
+            os.utime(dest_path, None)
+        except OSError:
+            pass
         # Record active soul ID
         try:
             get_active_soul_file().write_text(soul_id.lower().strip(), encoding="utf-8")

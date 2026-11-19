@@ -136,3 +136,82 @@ def test_seeded_souls_are_not_overwritten(wheel_install):
     soul_manager.ensure_default_souls()
 
     assert custom.read_text(encoding="utf-8") == "# custom persona the user wrote\n"
+
+
+# ---------------------------------------------------------------------------
+# Fresh-install regression: the generic first-run SOUL.md must never be used as
+# a persona source. chiper_cli.config._ensure_default_soul_md() writes a ~0.5 KB
+# "You are Chiper Agent ..." stub into CHIPER_HOME/SOUL.md on the first CLI or
+# gateway call — before scripts/install.sh seeds ~/.chiper/souls/. Because the
+# stub used to be candidate #1 for chiper-cyber, souls/chiper-cyber.md was
+# seeded with the stub, and every later switch copied the stub back onto
+# SOUL.md. Symptom: "/new lalu ganti jiwa" never changes the personality.
+# ---------------------------------------------------------------------------
+
+
+def _generic_stub() -> str:
+    from chiper_cli.default_soul import DEFAULT_SOUL_MD
+
+    return DEFAULT_SOUL_MD
+
+
+def test_generic_first_run_soul_does_not_poison_cyber_persona(wheel_install):
+    from agent import soul_manager
+
+    chiper_home = soul_manager.get_chiper_home()
+    (chiper_home / "SOUL.md").write_text(_generic_stub(), encoding="utf-8")
+
+    soul_manager.ensure_default_souls()
+
+    seeded = soul_manager.get_souls_dir() / "chiper-cyber.md"
+    expected = (PACKAGED_SOULS / "chiper-cyber.md").read_text(encoding="utf-8")
+    assert seeded.read_text(encoding="utf-8") == expected, (
+        "chiper-cyber.md was seeded from the generic first-run SOUL.md stub"
+    )
+
+
+def test_real_user_soul_still_wins_as_cyber_source(wheel_install):
+    """A hand-edited (non-stub) CHIPER_HOME/SOUL.md must keep winning."""
+    from agent import soul_manager
+
+    chiper_home = soul_manager.get_chiper_home()
+    persona = "# SOUL.md — My Own Persona\n\n" + ("rule line\n" * 400)
+    (chiper_home / "SOUL.md").write_text(persona, encoding="utf-8")
+
+    soul_manager.ensure_default_souls()
+
+    seeded = soul_manager.get_souls_dir() / "chiper-cyber.md"
+    assert seeded.read_text(encoding="utf-8") == persona
+
+
+def test_switch_soul_repairs_stub_seeded_soul(wheel_install):
+    """An install already broken by the stub must self-heal on the next switch."""
+    from agent import soul_manager
+
+    chiper_home = soul_manager.get_chiper_home()
+    (chiper_home / "SOUL.md").write_text(_generic_stub(), encoding="utf-8")
+    stale = soul_manager.get_souls_dir() / "chiper-cyber.md"
+    stale.write_text(_generic_stub(), encoding="utf-8")
+
+    ok, _, _ = soul_manager.switch_soul("chiper-cyber")
+    assert ok
+
+    expected = (PACKAGED_SOULS / "chiper-cyber.md").read_text(encoding="utf-8")
+    assert (chiper_home / "SOUL.md").read_text(encoding="utf-8") == expected
+
+
+def test_switching_between_souls_actually_changes_soul_md(wheel_install):
+    from agent import soul_manager
+
+    soul_manager.ensure_default_souls()
+    chiper_home = soul_manager.get_chiper_home()
+
+    assert soul_manager.switch_soul("chiper-dev")[0]
+    dev = (chiper_home / "SOUL.md").read_text(encoding="utf-8")
+
+    assert soul_manager.switch_soul("chiper-hunt")[0]
+    hunt = (chiper_home / "SOUL.md").read_text(encoding="utf-8")
+
+    assert hunt != dev, "switching souls must change SOUL.md"
+    assert "Chiper-Hunt" in hunt
+    assert dev != hunt

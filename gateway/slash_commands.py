@@ -298,10 +298,18 @@ class GatewaySlashCommandsMixin:
 
         success, msg, soul = switch_soul(target_id)
         if success:
+            # Drop the cached agent so the NEXT turn rebuilds its system prompt
+            # from the newly activated SOUL.md — otherwise the running session
+            # keeps the previous persona until /new.
+            try:
+                self._evict_cached_agent(self._session_key_for_source(source))
+            except Exception:
+                pass
             return (
                 f"🎭 *Jiwa Aktif: {soul['icon']} {soul['name']}*\n\n"
                 f"_{soul['desc']}_\n\n"
-                f"✅ *SOUL.md berhasil diaktifkan!* Memori kerja otomatis terisolasi untuk jiwa ini."
+                f"✅ *SOUL.md berhasil diaktifkan!* Memori kerja otomatis terisolasi untuk jiwa ini.\n"
+                f"_Berlaku mulai pesan berikutnya._"
             )
         return f"❌ {msg}"
 
