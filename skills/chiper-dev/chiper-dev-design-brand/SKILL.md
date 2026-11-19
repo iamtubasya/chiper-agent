@@ -1,6 +1,6 @@
 ---
 name: chiper-dev-design-brand
-description: Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of voice, marketing assets, brand compliance, style guides.
+description: "Brand guideline: voice, messaging framework, manajemen aset, konsistensi merek, style guide."
 argument-hint: "[update|review|create] [args]"
 metadata:
   author: claudekit

@@ -1,6 +1,6 @@
 ---
 name: chiper-dev-uiux
-description: "UI/UX design intelligence for web, mobile, and desktop. This skill should be used when designing, building, reviewing, or fixing interfaces, including pages, components, design systems, accessibility, interaction, responsive layout, typography, color, charts, and stack-specific UI implementation. Searchable local data: 80 searchable styles (51 active), 194 product palettes and reasoning profiles, 74 font pairings, 130 UX guidelines, 105 icons, 17 GSAP presets, 25 chart types, and 22 stacks."
+description: "Web UI/UX intelligence: buatkan web, landing page, dashboard, redesign — palette, font pairing, style, UX rules, chart, icons, motion, per-stack. Queryable catalog: 80 styles (51 active), 194 product palettes and reasoning profiles, 74 font pairings, 130 UX guidelines, 105 icons, 17 GSAP presets, 25 chart types, 22 stacks."
 ---
 
 # UI/UX Pro Max - Design Intelligence

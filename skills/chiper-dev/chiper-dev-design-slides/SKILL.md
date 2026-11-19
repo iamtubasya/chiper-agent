@@ -1,6 +1,6 @@
 ---
 name: chiper-dev-design-slides
-description: Create strategic HTML presentations with Chart.js, design tokens, responsive layouts, copywriting formulas, and contextual slide strategies.
+description: "Deck presentasi HTML + Chart.js: layout responsif, design token, copywriting formula, strategi slide."
 argument-hint: "[topic] [slide-count]"
 metadata:
   author: claudekit

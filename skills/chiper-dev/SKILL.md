@@ -1,6 +1,6 @@
 ---
 name: chiper-dev
-description: "Full-stack engineering plus design intelligence. Use for ANY UI/UX work — building or refactoring pages and components, choosing color palettes, typography, spacing, layout, charts, icons or motion, applying shadcn/ui + Tailwind, generating design tokens, reviewing accessibility, designing logos, brand guidelines, banners, social assets or HTML slide decks. Bundles a queryable catalog: 80 styles (51 active), 194 product palettes with reasoning, 74 font pairings, 130 UX guidelines, 105 icons, 17 GSAP presets, 25 chart types, 22 stacks. Keywords: ui, ux, design, desain, tailwind, shadcn, dark mode, responsive, a11y, contrast, palette, font pairing, design token, logo, brand, banner, slide, deck, mockup."
+description: "Web UI/design router: buatkan web, landing page, redesign, design system, token, brand, banner, deck. Bundles 8 sub-skills with a queryable catalog (80 styles, 194 palettes, 74 font pairings, 130 UX rules, 22 stacks)."
 ---
 
 # Chiper-Dev — Engineering + Design Intelligence
