@@ -161,69 +161,130 @@ def sync_soul_memory_on_switch(from_soul_id: Optional[str], to_soul_id: str) -> 
         logger.error("Failed to copy target soul memory to MEMORY.md: %s", e)
 
 
+_PACKAGED_SOULS_DIR = Path(__file__).resolve().parent / "bundled_souls"
+
+
+def _repo_skills_dir() -> Path:
+    """Repo-relative ``skills/`` tree (present only for a source/editable install).
+
+    Module-level indirection so tests can point it at a nonexistent path to
+    simulate the wheel install where ``skills/`` is not shipped.
+    """
+    return Path(__file__).resolve().parent.parent / "skills"
+
+
+def _packaged_soul_path(soul_id: str) -> Path:
+    """Return the SOUL.md bundled as package-data inside ``agent/bundled_souls/``.
+
+    Package-data travels with the package on every install shape (wheel, Nix
+    store venv, Homebrew, ``pip install --target``), unlike the repo-relative
+    ``skills/`` tree — that one is ~935 MB, is synced into ``$CHIPER_HOME/skills``
+    by the installer, and is simply absent from a bare ``pip install``.
+    """
+    return _PACKAGED_SOULS_DIR / f"{soul_id}.md"
+
+
+def _seed_soul(
+    dest: Path,
+    candidates: List[Path],
+    fallback_text: Optional[str],
+    label: str,
+) -> None:
+    """Copy the first existing candidate to ``dest``; else write ``fallback_text``.
+
+    Callers always pass the packaged copy as the last candidate, so a missing
+    ``skills/`` tree degrades to the *full* bundled persona instead of the
+    3-line stub this function used to write for Chiper-Cyber.
+    """
+    if dest.exists():
+        return
+
+    for src in candidates:
+        if not src.is_file():
+            continue
+        try:
+            shutil.copy2(src, dest)
+            logger.debug("Seeded %s SOUL.md from %s", label, src)
+            return
+        except Exception as e:
+            logger.warning("Failed to copy %s SOUL.md from %s: %s", label, src, e)
+
+    tried = ", ".join(str(c) for c in candidates)
+    if fallback_text is not None:
+        try:
+            dest.write_text(fallback_text, encoding="utf-8")
+            logger.warning(
+                "No SOUL.md source found for %s; wrote built-in fallback. Tried: %s",
+                label,
+                tried,
+            )
+        except Exception as e:
+            logger.warning("Failed to write %s SOUL.md fallback: %s", label, e)
+    else:
+        logger.warning(
+            "No SOUL.md source found for %s and no fallback text available; "
+            "soul will be missing. Tried: %s",
+            label,
+            tried,
+        )
+
+
 def ensure_default_souls() -> None:
-    """Ensure default soul files (cyber & dev) exist in ~/.chiper/souls."""
+    """Ensure the built-in souls exist in ~/.chiper/souls."""
     souls_dir = get_souls_dir()
     chiper_home = get_chiper_home()
+    repo_skills = _repo_skills_dir()
 
-    # 1. Chiper-Cyber
-    cyber_dest = souls_dir / "chiper-cyber.md"
-    if not cyber_dest.exists():
-        # Check source candidates
-        cyber_src = chiper_home / "SOUL.md"
-        if not cyber_src.exists():
-            # Fallback to skills repo if available
-            cyber_src = Path(__file__).resolve().parent.parent / "skills" / "chiper-cyber" / "SOUL.md"
-        
-        if cyber_src.exists():
-            try:
-                shutil.copy2(cyber_src, cyber_dest)
-            except Exception as e:
-                logger.warning("Failed to copy Chiper-Cyber SOUL.md: %s", e)
-        else:
-            # Minimal fallback
-            cyber_dest.write_text("# SOUL.md — Chiper-Cyber\n\nKamu adalah Chiper-cyber, bug bounty hunter.", encoding="utf-8")
+    # 1. Chiper-Cyber — the user's own SOUL.md wins (may be hand-edited).
+    _seed_soul(
+        souls_dir / "chiper-cyber.md",
+        [
+            chiper_home / "SOUL.md",
+            repo_skills / "chiper-cyber" / "SOUL.md",
+            _packaged_soul_path("chiper-cyber"),
+        ],
+        None,
+        "Chiper-Cyber",
+    )
 
-    # 2. Chiper-Dev
-    dev_dest = souls_dir / "chiper-dev.md"
-    if not dev_dest.exists():
-        try:
-            dev_dest.write_text(CHIPER_DEV_SOUL, encoding="utf-8")
-        except Exception as e:
-            logger.warning("Failed to write Chiper-Dev SOUL.md: %s", e)
+    # 2. Chiper-Dev — skills tree, packaged copy, then the inline constant.
+    _seed_soul(
+        souls_dir / "chiper-dev.md",
+        [
+            chiper_home / "skills" / "chiper-dev" / "SOUL.md",
+            repo_skills / "chiper-dev" / "SOUL.md",
+            _packaged_soul_path("chiper-dev"),
+        ],
+        CHIPER_DEV_SOUL,
+        "Chiper-Dev",
+    )
 
-    # 3. Chiper-Web3
-    web3_dest = souls_dir / "chiper-web3.md"
-    if not web3_dest.exists():
-        web3_src = chiper_home / "skills" / "chiper-web3" / "SOUL.md"
-        if not web3_src.exists():
-            web3_src = Path(__file__).resolve().parent.parent / "skills" / "chiper-web3" / "SOUL.md"
-        if web3_src.exists():
-            try:
-                shutil.copy2(web3_src, web3_dest)
-            except Exception as e:
-                logger.warning("Failed to copy Chiper-Web3 SOUL.md: %s", e)
+    # 3. Chiper-Web3 — used to have no fallback branch at all, so the soul file
+    #    was silently never created on installs without the skills tree.
+    _seed_soul(
+        souls_dir / "chiper-web3.md",
+        [
+            chiper_home / "skills" / "chiper-web3" / "SOUL.md",
+            repo_skills / "chiper-web3" / "SOUL.md",
+            _packaged_soul_path("chiper-web3"),
+        ],
+        None,
+        "Chiper-Web3",
+    )
 
-    # 4. Chiper-Hunt
-    hunt_dest = souls_dir / "chiper-hunt.md"
-    if not hunt_dest.exists():
-        hunt_src = chiper_home / "skills" / "chiper-bounty" / "SOUL.md"
-        if not hunt_src.exists():
-            hunt_src = chiper_home / "skills" / "bounty-pack" / "SOUL.md"
-        if not hunt_src.exists():
-            hunt_src = Path(__file__).resolve().parent.parent / "skills" / "chiper-bounty" / "SOUL.md"
-        if not hunt_src.exists():
-            hunt_src = Path(__file__).resolve().parent.parent / "skills" / "bounty-pack" / "SOUL.md"
-        if hunt_src.exists():
-            try:
-                shutil.copy2(hunt_src, hunt_dest)
-            except Exception as e:
-                logger.warning("Failed to copy Chiper-Hunt SOUL.md: %s", e)
-        else:
-            try:
-                hunt_dest.write_text(CHIPER_HUNT_SOUL, encoding="utf-8")
-            except Exception as e:
-                logger.warning("Failed to write Chiper-Hunt SOUL.md: %s", e)
+    # 4. Chiper-Hunt — two source trees (legacy bounty-pack kept for compat).
+    _seed_soul(
+        souls_dir / "chiper-hunt.md",
+        [
+            chiper_home / "skills" / "chiper-bounty" / "SOUL.md",
+            chiper_home / "skills" / "bounty-pack" / "SOUL.md",
+            repo_skills / "chiper-bounty" / "SOUL.md",
+            repo_skills / "bounty-pack" / "SOUL.md",
+            _packaged_soul_path("chiper-hunt"),
+        ],
+        CHIPER_HUNT_SOUL,
+        "Chiper-Hunt",
+    )
 
 
 def list_souls() -> List[Dict[str, Any]]:

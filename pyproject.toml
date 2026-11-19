@@ -325,6 +325,21 @@ locales = ["locales/*.yaml"]
 "optional-mcps/n8n" = ["optional-mcps/n8n/manifest.yaml"]
 
 [tool.setuptools.package-data]
+# Bundled soul personas (SOUL.md) — the agent's identity, loaded as system-prompt
+# slot #1 by agent/prompt_builder.py:load_soul_md(). These MUST ship inside a
+# package rather than as [tool.setuptools.data-files]: data-files are dropped by
+# some packagers and by `pip install <wheel>` layouts that relocate the data dir,
+# while package-data always lands next to the module that reads it.
+#
+# Without this, agent/soul_manager.py:ensure_default_souls() finds no source for
+# Chiper-Cyber on a non-editable (wheel/Nix/Homebrew) install and silently writes
+# a 3-line stub, so the agent boots with the right name and none of the persona
+# (no Hukum Tunggal, no anti-bantah, no skill-loading discipline). Chiper-Web3 was
+# worse: it had no fallback branch at all, so the file was never created.
+#
+# Directory is `bundled_souls/`, not `data/souls/`: .gitignore ignores `data/`,
+# so a data/ path would be silently never committed.
+agent = ["bundled_souls/*.md"]
 chiper_cli = ["web_dist/**/*", "tui_dist/**/*", "scripts/install.sh", "scripts/install.ps1"]
 gateway = ["assets/**/*"]
 plugins = [
