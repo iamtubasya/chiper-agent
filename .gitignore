@@ -52,6 +52,14 @@ testlogs
 
 # Data & State
 data/
+# Exception: the chiper-dev design bundle (vendored from
+# nextlevelbuilder/ui-ux-pro-max-skill) ships its whole design intelligence
+# catalog under data/ — 47 CSVs + stack tables + slide catalogs. The global
+# `data/` rule above matches at any depth, so without this negation the repo
+# would commit the scripts but silently drop the data they read, and every
+# fresh install would run search.py against an empty catalog.
+!skills/chiper-dev/**/data/
+!skills/chiper-dev/**/data/**
 source-data/*
 export*
 examples/

@@ -282,6 +282,16 @@ class GatewaySlashCommandsMixin:
         parts = args.split(maxsplit=2)
         action = parts[0].lower()
 
+        if action in ("refresh", "sync", "update"):
+            from agent.soul_manager import refresh_builtin_souls
+            ok, msg = refresh_builtin_souls()
+            if ok:
+                try:
+                    self._evict_cached_agent(self._session_key_for_source(source))
+                except Exception:
+                    pass
+            return msg
+
         if action in ("add", "create", "set") and len(parts) >= 3:
             soul_name = parts[1]
             soul_content = parts[2]

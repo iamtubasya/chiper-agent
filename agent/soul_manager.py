@@ -603,6 +603,64 @@ def switch_soul(soul_id: str) -> Tuple[bool, str, Dict[str, Any]]:
         return False, f"Gagal mengaktifkan jiwa: {e}", {}
 
 
+def refresh_builtin_souls() -> Tuple[bool, str]:
+    """Re-seed the built-in personas from the sources shipped with this build.
+
+    ``ensure_default_souls()`` intentionally never overwrites an existing soul
+    file (user edits must survive). The flip side: after upgrading Chiper, an
+    install keeps its old persona forever, so a bundled persona change would
+    never reach the active ``SOUL.md``. ``/soul refresh`` is the explicit,
+    user-triggered escape hatch — built-in personas are restored, custom souls
+    and per-soul memories are untouched.
+
+    ``$CHIPER_HOME/SOUL.md`` is deliberately excluded as a source: it is the
+    *currently active* persona (possibly another soul), not a stable original.
+    """
+    souls_dir = get_souls_dir()
+    active_id = get_active_soul().get("id")
+    active_home_soul = get_chiper_home() / "SOUL.md"
+
+    restored: List[str] = []
+    missing: List[str] = []
+
+    for soul_id in _BUILTIN_SOUL_IDS:
+        src = next(
+            (
+                s
+                for s in _usable_sources(soul_id)
+                if s.is_file() and s.resolve() != active_home_soul.resolve()
+            ),
+            None,
+        )
+        if src is None:
+            missing.append(soul_id)
+            continue
+        dest = souls_dir / f"{soul_id}.md"
+        try:
+            shutil.copy2(src, dest)
+            os.utime(dest, None)
+            restored.append(soul_id)
+        except Exception as e:
+            logger.warning("Failed to refresh soul %s: %s", soul_id, e)
+            missing.append(f"{soul_id} ({e})")
+
+    # Re-activate the current soul so SOUL.md matches the refreshed persona.
+    if active_id in _BUILTIN_SOUL_IDS:
+        switch_soul(str(active_id))
+
+    if not restored:
+        return False, "❌ Gagal refresh soul: tidak ada sumber persona yang ditemukan."
+
+    msg = (
+        f"♻️ *Soul built-in di-refresh:* {', '.join(restored)}\n"
+        f"Jiwa aktif: *{active_id}* — `SOUL.md` sudah disinkronkan.\n"
+        "_Soul kustom dan memori per-jiwa tidak disentuh._"
+    )
+    if missing:
+        msg += f"\n⚠️ Tanpa sumber (dilewati): {', '.join(missing)}"
+    return True, msg
+
+
 def save_custom_soul(soul_id: str, content: str) -> Tuple[bool, str]:
     """Save a new custom soul to ~/.chiper/souls/<soul_id>.md."""
     if not soul_id or not content.strip():
@@ -723,6 +781,7 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
     "chiper-dev": {
         "name": "Chiper-Dev",
         "allow_categories": [
+            "chiper-dev",
             "software-development",
             "github",
             "devops",
@@ -823,6 +882,10 @@ def get_soul_for_skill(category: Optional[str], skill_name: str) -> Optional[str
     if not category:
         category = ""
     top = category.split("/")[0] if category else ""
+    # Category ownership wins over the name prefix: the chiper-dev design bundle
+    # ships skills named chiper-dev-* and must NOT be claimed by Chiper-Cyber.
+    if top == "chiper-dev":
+        return "chiper-dev"
     if top == "chiper-cyber" or skill_name.startswith("chiper-"):
         if top == "chiper-web3":
             return "chiper-web3"

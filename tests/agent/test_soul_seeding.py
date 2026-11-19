@@ -215,3 +215,41 @@ def test_switching_between_souls_actually_changes_soul_md(wheel_install):
     assert hunt != dev, "switching souls must change SOUL.md"
     assert "Chiper-Hunt" in hunt
     assert dev != hunt
+
+
+def test_refresh_builtin_souls_restores_personas(wheel_install):
+    """`/soul refresh` restores built-in personas after an upgrade; custom souls survive."""
+    from agent import soul_manager
+
+    soul_manager.ensure_default_souls()
+    home = soul_manager.get_chiper_home()
+
+    # An install created by an older build: stale persona on disk.
+    (home / "souls" / "chiper-dev.md").write_text("# old dev persona\n", encoding="utf-8")
+    custom = home / "souls" / "my-company.md"
+    custom.write_text("# My Company Soul\n" + "rule\n" * 400, encoding="utf-8")
+
+    ok, _msg = soul_manager.refresh_builtin_souls()
+    assert ok
+
+    expected_dev = (PACKAGED_SOULS / "chiper-dev.md").read_text(encoding="utf-8")
+    assert (home / "souls" / "chiper-dev.md").read_text(encoding="utf-8") == expected_dev
+    assert custom.read_text(encoding="utf-8").startswith("# My Company Soul")
+
+
+def test_refresh_never_pulls_the_active_persona_into_another_soul(wheel_install):
+    """$CHIPER_HOME/SOUL.md is the live persona — refresh must not use it as a source."""
+    from agent import soul_manager
+
+    soul_manager.ensure_default_souls()
+    home = soul_manager.get_chiper_home()
+
+    # Active soul is Chiper-Dev; refresh must not seed Chiper-Cyber from it.
+    assert soul_manager.switch_soul("chiper-dev")[0]
+    ok, _ = soul_manager.refresh_builtin_souls()
+    assert ok
+
+    cyber = (home / "souls" / "chiper-cyber.md").read_text(encoding="utf-8")
+    expected_cyber = (PACKAGED_SOULS / "chiper-cyber.md").read_text(encoding="utf-8")
+    assert cyber == expected_cyber
+    assert "Chiper Dev" not in cyber.splitlines()[0]
