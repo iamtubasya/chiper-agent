@@ -1280,3 +1280,33 @@ class TestUpdateBackupRecovery:
             result2 = sync_skills(quiet=True)
         assert "old-skill" in result2["updated"]
         assert result2["user_modified"] == []
+
+
+def test_dir_hash_ignores_interpreter_caches(tmp_path):
+    """Running a skill's scripts must not make it look user-modified.
+
+    Skills that ship runnable Python (e.g. skills/chiper-dev/chiper-dev-uiux)
+    accumulate __pycache__/*.pyc inside their installed directory the first
+    time a script runs. If those files counted toward the hash, the skill would
+    read as "user-modified" forever and silently stop receiving updates.
+    """
+    from tools.skills_sync import _dir_hash
+
+    skill = tmp_path / "skill"
+    (skill / "scripts").mkdir(parents=True)
+    (skill / "SKILL.md").write_text("---\nname: demo\n---\n", encoding="utf-8")
+    script = skill / "scripts" / "search.py"
+    script.write_text("print('hi')\n", encoding="utf-8")
+
+    baseline = _dir_hash(skill)
+
+    cache = skill / "scripts" / "__pycache__"
+    cache.mkdir()
+    (cache / "search.cpython-312.pyc").write_bytes(b"\x00\x01\x02")
+    (skill / "scripts" / "stray.pyc").write_bytes(b"\x03\x04")
+
+    assert _dir_hash(skill) == baseline, "__pycache__/*.pyc must not affect the hash"
+
+    # A real content change still registers.
+    script.write_text("print('changed')\n", encoding="utf-8")
+    assert _dir_hash(skill) != baseline

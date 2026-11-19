@@ -200,15 +200,31 @@ def _compute_relative_dest(skill_dir: Path, bundled_dir: Path) -> Path:
     return SKILLS_DIR / rel
 
 
+_HASH_IGNORED_DIRS = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", ".git"}
+_HASH_IGNORED_SUFFIXES = {".pyc", ".pyo"}
+
+
 def _dir_hash(directory: Path) -> str:
-    """Compute a hash of all file contents in a directory for change detection."""
+    """Compute a hash of all file contents in a directory for change detection.
+
+    Interpreter/test caches are skipped: skills that ship runnable scripts (e.g.
+    the chiper-dev design bundle) get ``__pycache__/*.pyc`` written *inside*
+    their installed directory the first time a script runs. Counting those would
+    flip the hash, mark a never-edited skill as "user-modified", and silently
+    freeze it out of every future ``chiper skills sync`` update.
+    """
     hasher = hashlib.md5()
     try:
         for fpath in sorted(directory.rglob("*")):
-            if fpath.is_file():
-                rel = fpath.relative_to(directory)
-                hasher.update(str(rel).encode("utf-8"))
-                hasher.update(fpath.read_bytes())
+            if not fpath.is_file():
+                continue
+            if any(part in _HASH_IGNORED_DIRS for part in fpath.parts):
+                continue
+            if fpath.suffix in _HASH_IGNORED_SUFFIXES:
+                continue
+            rel = fpath.relative_to(directory)
+            hasher.update(str(rel).encode("utf-8"))
+            hasher.update(fpath.read_bytes())
     except (OSError, IOError):
         pass
     return hasher.hexdigest()
