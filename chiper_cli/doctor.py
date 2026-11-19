@@ -1276,10 +1276,25 @@ def run_doctor(args):
 
     if sys.platform != "win32":
         _section("Command Installation")
-        # Determine the venv entry point location
+        # Determine the venv entry point location.
+        #
+        # PROJECT_ROOT is the directory of the *package*, which equals the repo
+        # root only for an editable install (`pip install -e .`). For a wheel /
+        # PyPI / Nix / Homebrew install it resolves to
+        # `<venv>/lib/pythonX.Y/site-packages`, so `<PROJECT_ROOT>/venv/bin/chiper`
+        # never exists — and this check used to report "Venv entry point not
+        # found" plus bogus "reinstall with pip install -e" advice on a perfectly
+        # healthy install. Probe the running interpreter's bin dir and PATH too.
         _venv_bin = None
-        for _venv_name in ("venv", ".venv"):
-            _candidate = PROJECT_ROOT / _venv_name / "bin" / "chiper"
+        _venv_candidates = [
+            PROJECT_ROOT / _venv_name / "bin" / "chiper"
+            for _venv_name in ("venv", ".venv")
+        ]
+        _venv_candidates.append(Path(sys.executable).parent / "chiper")
+        _which_chiper = _safe_which("chiper")
+        if _which_chiper:
+            _venv_candidates.append(Path(_which_chiper))
+        for _candidate in _venv_candidates:
             if _candidate.exists():
                 _venv_bin = _candidate
                 break
@@ -1307,7 +1322,14 @@ def run_doctor(args):
                 f"Reinstall entry point: cd {PROJECT_ROOT} && source venv/bin/activate && pip install -e '.[all]'"
             )
         else:
-            check_ok(f"Venv entry point exists ({_venv_bin.relative_to(PROJECT_ROOT)})")
+            # `relative_to` raises ValueError when the entry point lives outside
+            # PROJECT_ROOT (the normal case for a wheel install, where the bin
+            # dir is a sibling of sitepackages). Fall back to the absolute path.
+            try:
+                _venv_bin_display = str(_venv_bin.relative_to(PROJECT_ROOT))
+            except ValueError:
+                _venv_bin_display = str(_venv_bin)
+            check_ok(f"Venv entry point exists ({_venv_bin_display})")
 
             # Check the symlink at the command link location
             if _cmd_link.is_symlink():

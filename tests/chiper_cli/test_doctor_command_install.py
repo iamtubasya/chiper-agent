@@ -168,6 +168,13 @@ class TestDoctorCommandInstallation:
         monkeypatch.setattr(doctor_mod, "_DHH", str(home))
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
+        # The check now also probes the running interpreter's bin dir and PATH
+        # (that is the fix for wheel installs, where PROJECT_ROOT is
+        # site-packages). To keep this test's intent — "no entry point anywhere
+        # -> warn" — neutralize both of those sources.
+        monkeypatch.setattr(doctor_mod.sys, "executable", str(tmp_path / "emptybin" / "python"))
+        monkeypatch.setattr(doctor_mod, "_safe_which", lambda *_a, **_kw: None)
+
         fake_model_tools = types.SimpleNamespace(
             check_tool_availability=lambda *a, **kw: ([], []),
             TOOLSET_REQUIREMENTS={},
@@ -206,6 +213,62 @@ class TestDoctorCommandInstallation:
         out = _run_doctor(fix=False)
         assert "Venv entry point exists" in out
         assert ".venv/bin/chiper" in out
+
+    @pytest.mark.skipif(sys.platform == "win32", reason="Symlink check is Unix-only")
+    def test_wheel_install_entry_point_is_detected(self, monkeypatch, tmp_path):
+        """Regression: wheel/Nix/Homebrew installs must not report a missing entry point.
+
+        For a non-editable install ``PROJECT_ROOT`` is
+        ``<venv>/lib/pythonX.Y/site-packages``, so ``<PROJECT_ROOT>/venv/bin/chiper``
+        and ``<PROJECT_ROOT>/.venv/bin/chiper`` never exist. The old check only
+        looked at those two paths and reported "Venv entry point not found" plus
+        a bogus ``pip install -e '.[all]'`` remedy on a perfectly healthy install.
+        """
+        home = tmp_path / ".chiper"
+        home.mkdir(parents=True, exist_ok=True)
+        (home / "config.yaml").write_text("memory: {}\n", encoding="utf-8")
+
+        # A wheel install: PROJECT_ROOT is a site-packages dir with no venv inside.
+        site_packages = tmp_path / "venv" / "lib" / "python3.12" / "site-packages"
+        site_packages.mkdir(parents=True, exist_ok=True)
+
+        # The real entry point lives next to the interpreter, not under PROJECT_ROOT.
+        interpreter_dir = tmp_path / "venv" / "bin"
+        interpreter_dir.mkdir(parents=True, exist_ok=True)
+        chiper_bin = interpreter_dir / "chiper"
+        chiper_bin.write_text("#!/usr/bin/env python\n# entry point\n", encoding="utf-8")
+        chiper_bin.chmod(0o755)
+
+        monkeypatch.setattr(doctor_mod, "CHIPER_HOME", home)
+        monkeypatch.setattr(doctor_mod, "PROJECT_ROOT", site_packages)
+        monkeypatch.setattr(doctor_mod, "_DHH", str(home))
+        monkeypatch.setattr(doctor_mod.sys, "executable", str(interpreter_dir / "python"))
+        monkeypatch.setattr(doctor_mod, "_safe_which", lambda *_a, **_kw: None)
+        monkeypatch.setattr(Path, "home", lambda: tmp_path)
+
+        fake_model_tools = types.SimpleNamespace(
+            check_tool_availability=lambda *a, **kw: ([], []),
+            TOOLSET_REQUIREMENTS={},
+        )
+        monkeypatch.setitem(sys.modules, "model_tools", fake_model_tools)
+        try:
+            from chiper_cli import auth as _auth_mod
+            monkeypatch.setattr(_auth_mod, "get_nous_auth_status", lambda: {})
+            monkeypatch.setattr(_auth_mod, "get_codex_auth_status", lambda: {})
+        except Exception:
+            pass
+        try:
+            import httpx
+            monkeypatch.setattr(httpx, "get", lambda *a, **kw: types.SimpleNamespace(status_code=200))
+        except Exception:
+            pass
+
+        out = _run_doctor(fix=False)
+        assert "Venv entry point not found" not in out
+        assert "Venv entry point exists" in out
+        # Must not raise ValueError from relative_to() when the bin dir is
+        # outside PROJECT_ROOT — and must still name the real path.
+        assert str(chiper_bin) in out
 
     @pytest.mark.skipif(sys.platform == "win32", reason="Symlink check is Unix-only")
     def test_non_symlink_regular_file_shows_ok(self, monkeypatch, tmp_path):
