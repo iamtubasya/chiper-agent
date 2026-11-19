@@ -5,6 +5,14 @@ description: "Web UI/design router: buatkan web, landing page, redesign, design 
 
 # Chiper-Dev — Engineering + Design Intelligence
 
+> **ATURAN NOL — WAJIB.** Setiap permintaan web/UI (`buatkan web`, `bikin web`,
+> `landing page`, `redesign`, `dashboard`, `komponen`, `styling`, `dark mode`,
+> `responsive`, `perbaiki tampilan`) **wajib** diawali
+> `skill_view("chiper-dev-uiux")` sebelum menulis satu baris HTML/CSS/JSX/Tailwind
+> dan sebelum memilih warna/font. Tanpa itu = pelanggaran protokol, bukan pilihan
+> gaya. Butuh token/komponen → lanjut `chiper-dev-design-system` /
+> `chiper-dev-ui-styling`. Ragu dua skill → load dua-duanya.
+
 Router for the eight sub-skills bundled under this category. Load the narrowest skill
 that answers the question; do not read all eight.
 

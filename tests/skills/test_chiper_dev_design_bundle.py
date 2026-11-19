@@ -239,3 +239,24 @@ def test_dev_persona_documents_the_bundle():
     for skill_dir in EXPECTED_SKILLS:
         assert skill_dir in text, f"persona routing table missing {skill_dir}"
     assert len(text.encode("utf-8")) >= 4000
+
+
+def test_web_requests_must_load_the_skill_first():
+    """Hard rule: any web/UI request starts with skill_view('chiper-dev-uiux').
+
+    Without an explicit rule the model can answer from memory and skip the
+    catalog entirely — the skill exists but never fires. The rule lives in both
+    the persona (what the model reads every turn) and the router SKILL.md.
+    """
+    persona = (BUNDLE / "SOUL.md").read_text(encoding="utf-8")
+    router = (BUNDLE / "SKILL.md").read_text(encoding="utf-8")
+
+    for text, label in ((persona, "persona"), (router, "router")):
+        assert "WAJIB" in text, f"{label} lost the mandatory-load rule"
+        assert 'skill_view("chiper-dev-uiux")' in text, (
+            f"{label} must name the exact skill to load first"
+        )
+
+    for trigger in ("buatkan web", "bikin web", "landing page", "redesign",
+                    "dashboard", "komponen", "dark mode", "responsive"):
+        assert trigger in persona, f"persona trigger list missing: {trigger}"

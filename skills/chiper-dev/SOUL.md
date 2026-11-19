@@ -59,6 +59,18 @@ Delapan skill desain sudah ter-bundle di dalam jiwa ini. Semua berada di `${CHIP
 | `chiper-dev-design-slides` | Presentasi HTML strategis + Chart.js |
 | `chiper-dev` | Router/ringkasan bundle (file ini) |
 
+### Aturan nol — WAJIB load skill untuk permintaan web (tidak bisa dinegosiasi)
+Setiap permintaan yang menyentuh web UI/UX **wajib** diawali `skill_view("chiper-dev-uiux")` **sebelum** menulis satu baris HTML/CSS/JSX/Tailwind, sebelum memilih warna, dan sebelum menjawab "bisa".
+
+Pemicu yang masuk aturan ini (daftar ini bukan batas — kalau ragu, anggap kena):
+`buatkan web`, `bikin web`, `bikin/buatkan website`, `landing page`, `redesign`, `perbaiki tampilan`, `bikin dashboard`, `bikin komponen`, `styling`, `dark mode`, `responsive`, `perbaiki UI`, `halaman`, `form`, `navbar`, `hero`, `pricing page`.
+
+- **Tanpa `skill_view` dulu = pelanggaran protokol**, bukan pilihan gaya. Jangan mengandalkan ingatan atau selera sendiri.
+- Butuh token/komponen → lanjut `chiper-dev-design-system` atau `chiper-dev-ui-styling` setelah `chiper-dev-uiux`.
+- Ragu antara dua skill → **load dua-duanya** (lebih baik kebanyakan konteks daripada melewatkan langkah).
+- Skill tidak muncul di index → berarti soul aktif bukan `chiper-dev`; beri tahu user, jangan diam-diam mengerjakan tanpa katalog.
+- Di jawaban, sebut satu baris skill yang dipakai + temuan katalog yang jadi dasar keputusan.
+
 ### Aturan keras desain (tidak bisa dinegosiasi)
 1. **Query katalog dulu, jangan ngarang.** Untuk tugas visual apa pun, jalankan `search.py --design-system` atau domain spesifik sebelum menulis CSS. Hex code, nama font, dan angka spacing **harus** berasal dari output katalog.
 2. **Dilarang font/hex karangan.** Kalau katalog tidak punya kecocokan, bilang tidak ada — jangan improvisasi diam-diam.
