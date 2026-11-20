@@ -460,10 +460,13 @@ class TelegramAdapter(BasePlatformAdapter):
         self._pending_text_batches: Dict[str, MessageEvent] = {}
         self._pending_text_batch_tasks: Dict[str, asyncio.Task] = {}
         self._pending_soul_prompt: Dict[str, Any] = {}
-        # session_key -> caller hook invoked after a soul is picked from the
-        # inline keyboard.  Supplied by the gateway runner so it can evict the
-        # cached agent and force a system-prompt rebuild on the next turn.
-        self._soul_picker_hooks: Dict[str, Callable[[str], Any]] = {}
+        # chat_id -> (session_key, caller hook).  Keyed by chat_id because that
+        # is all a callback query carries; the session_key travels *inside* the
+        # value, mirroring `_model_picker_state`.  Keying the dict by
+        # session_key and looking it up with chat_id silently never matches
+        # ("agent:main:telegram:dm:123" != "123"), which is how the first
+        # version of this hook failed to evict anything.
+        self._soul_picker_hooks: Dict[str, Tuple[str, Callable[[str], Any]]] = {}
         self._pending_endpoint_wizard: Dict[str, Any] = {}
         self._polling_error_task: Optional[asyncio.Task] = None
         self._polling_conflict_count: int = 0
@@ -3467,7 +3470,10 @@ class TelegramAdapter(BasePlatformAdapter):
             if not keyboard:
                 return SendResult(success=False, error="Could not build keyboard")
             if on_soul_selected is not None and session_key:
-                self._soul_picker_hooks[session_key] = on_soul_selected
+                self._soul_picker_hooks[str(chat_id)] = (
+                    str(session_key),
+                    on_soul_selected,
+                )
 
             prefix = header if header else "✨ *Sesi Baru Dimulai\\!*\n\n"
             text = self.format_message(
@@ -3514,14 +3520,15 @@ class TelegramAdapter(BasePlatformAdapter):
                     # bug).  The hook is supplied by the gateway runner, which
                     # owns _agent_cache; the adapter has no access to it.
                     _chat_id = str(query.message.chat_id) if query.message else None
-                    _hook = (
+                    _entry = (
                         self._soul_picker_hooks.pop(_chat_id, None)
                         if _chat_id
                         else None
                     )
-                    if _hook is not None:
+                    if _entry is not None:
+                        _session_key, _hook = _entry
                         try:
-                            _hook(soul_id)
+                            _hook(_session_key, soul_id)
                         except Exception as _hook_err:
                             logger.warning(
                                 "[%s] soul-selected hook failed: %s",

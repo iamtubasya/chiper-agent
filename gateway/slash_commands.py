@@ -253,11 +253,18 @@ class GatewaySlashCommandsMixin:
         the next turn.  Adapters own the inline keyboard but not
         ``_agent_cache``, so they call this hook back into the runner.
         Mirrors ``_handle_soul_command``'s own eviction.
+
+        The adapter passes back the ``session_key`` it was given, so the
+        eviction targets the session that actually rendered the picker.  The
+        captured ``session_key`` is only a fallback for adapters that pass
+        nothing; a callback query carries the chat_id, not the session key, and
+        "agent:main:telegram:dm:123" never equals "123".
         """
-        def _on_soul_selected(_soul_id: str) -> None:
-            if not session_key:
+        def _on_soul_selected(passed_session_key: str = "", _soul_id: str = "") -> None:
+            target = passed_session_key or session_key
+            if not target:
                 return
-            self._evict_cached_agent(session_key)
+            self._evict_cached_agent(target)
 
         return _on_soul_selected
 
