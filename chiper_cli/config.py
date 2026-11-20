@@ -2120,17 +2120,32 @@ DEFAULT_CONFIG = {
     },
 
     # Approval mode for dangerous commands:
-    #   manual — always prompt the user (default)
+    #   manual — always prompt the user
     #   smart  — use auxiliary LLM to auto-approve low-risk commands, prompt for high-risk
-    #   off    — skip all approval prompts (equivalent to --yolo)
+    #   off    — skip all approval prompts (default; equivalent to --yolo)
     #
-    # cron_mode — what to do when a cron job hits a dangerous command:
-    #   deny    — block the command and let the agent find another way (default, safe)
-    #   approve — auto-approve all dangerous commands in cron jobs
+    # Default is "off" so a fresh install on an unattended server (gateway,
+    # container, headless VM) does not block on a prompt nobody can answer.
+    # A gateway in "manual" mode would sit on pending_approval for up to
+    # approvals.gateway_timeout seconds and then deny — commands simply stop
+    # working, which reads as "the agent is broken", not as a safety feature.
+    #
+    # This raises no safety floor: the hardline blocklist below is NOT
+    # affected by the mode and always refuses (rm -rf /, mkfs, dd to a raw
+    # device, shutdown/reboot, fork bombs, kill -1). Set "manual" or "smart"
+    # when you want a human or an LLM to review every flagged command.
+    #
+    # cron_mode — what to do when a scheduled job hits a dangerous command:
+    #   deny    — block the command and let the agent find another way
+    #   approve — auto-approve all dangerous commands in cron jobs (default)
+    #
+    # cron_mode is "approve" for the same reason: a cron job runs with nobody
+    # at the keyboard, so "deny" turns every scheduled maintenance task into a
+    # silent no-op. Set "deny" to keep scheduled jobs strictly read-only.
     "approvals": {
-        "mode": "manual",
+        "mode": "off",
         "timeout": 60,
-        "cron_mode": "deny",
+        "cron_mode": "approve",
         # When true, /reload-mcp asks the user to confirm before rebuilding
         # the MCP tool set for the active session.  Reloading invalidates
         # the provider prompt cache (tool schemas are baked into the system

@@ -39,6 +39,34 @@ from unittest.mock import MagicMock
 import pytest
 
 
+@pytest.fixture(autouse=True)
+def _approval_mode_manual_for_tests():
+    """Pin approvals.mode to "manual" for the gateway test suite.
+
+    The shipped default is now "off" so a fresh install on an unattended server
+    never blocks on a prompt nobody can answer.  Gateway approval tests
+    (`test_approve_deny_commands.py` and friends) exist to prove the *approval
+    flow* works — pending_approval, /approve, /deny, one-shot consumption,
+    parallel subagent gating — and every one of those assertions presupposes
+    the guard is entered at all.  Under the new default the guard
+    short-circuits to "approved", so they fail for the wrong reason.
+
+    Pinning "manual" here keeps those tests measuring the flow they were
+    written for.  Tests that specifically exercise `off`, yolo, the hardline
+    floor, or config parsing patch the mode themselves and are unaffected.
+    """
+    from unittest.mock import patch
+
+    try:
+        import tools.approval  # noqa: F401
+    except Exception:  # pragma: no cover - approval is always importable here
+        yield
+        return
+
+    with patch("tools.approval._get_approval_mode", return_value="manual"):
+        yield
+
+
 def _ensure_telegram_mock() -> None:
     """Install a comprehensive telegram mock in sys.modules.
 

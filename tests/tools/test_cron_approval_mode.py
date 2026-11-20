@@ -183,7 +183,13 @@ class TestCronDenyModeAllGuards:
         monkeypatch.delenv("CHIPER_YOLO_MODE", raising=False)
 
         from unittest.mock import patch as mock_patch
-        with mock_patch("tools.approval._get_cron_approval_mode", return_value="deny"):
+        # cron_mode=deny is an explicit opt-in now (the shipped default is
+        # "approve"), and mode=off must be simulated too — the default config
+        # short-circuits the guard before cron_mode is even consulted.
+        with (
+            mock_patch("tools.approval._get_cron_approval_mode", return_value="deny"),
+            mock_patch("tools.approval._get_approval_mode", return_value="manual"),
+        ):
             result = check_all_command_guards("rm -rf /tmp/stuff", "local")
             assert not result["approved"]
             assert "BLOCKED" in result["message"]
@@ -332,7 +338,10 @@ class TestCronWithGatewayOrigin:
         tokens = set_session_vars(platform="telegram", chat_id="789")
         try:
             from unittest.mock import patch as mock_patch
-            with mock_patch("tools.approval._get_cron_approval_mode", return_value="deny"):
+            with (
+                mock_patch("tools.approval._get_cron_approval_mode", return_value="deny"),
+                mock_patch("tools.approval._get_approval_mode", return_value="manual"),
+            ):
                 result = check_all_command_guards("rm -rf /tmp/stuff", "local")
                 assert not result["approved"]
                 assert "BLOCKED" in result["message"]

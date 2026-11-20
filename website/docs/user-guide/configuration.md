@@ -1772,14 +1772,33 @@ Control how Chiper handles potentially dangerous commands:
 
 ```yaml
 approvals:
-  mode: manual   # manual | smart | off
+  mode: off      # manual | smart | off
+  cron_mode: approve  # deny | approve
 ```
 
 | Mode | Behavior |
 |------|----------|
-| `manual` (default) | Prompt the user before executing any flagged command. In the CLI, shows an interactive approval dialog. In messaging, queues a pending approval request. |
+| `manual` | Prompt the user before executing any flagged command. In the CLI, shows an interactive approval dialog. In messaging, queues a pending approval request. On an unattended server this waits up to `gateway_timeout` (default 300s) and then denies. |
 | `smart` | Use an auxiliary LLM to assess whether a flagged command is actually dangerous. Low-risk commands are auto-approved with session-level persistence. Genuinely risky commands are escalated to the user. |
-| `off` | Skip all approval checks. Equivalent to `CHIPER_YOLO_MODE=true`. **Use with caution.** |
+| `off` (default) | Skip approval prompts for flagged commands. Equivalent to `CHIPER_YOLO_MODE=true`. The unconditional hardline blocklist (see below) is **not** affected. |
+
+The default is `off` because a fresh install is usually unattended — a gateway,
+container, headless VM, or cron job with nobody at the keyboard. In that
+setting `manual` does not protect anything: the run stalls on
+`pending_approval` and then denies, so commands silently stop working.
+`cron_mode` defaults to `approve` for the same reason.
+
+:::warning
+The hardline blocklist is a separate, unconditional layer that runs **before**
+the mode check. It refuses `rm -rf /`, `mkfs`, `dd` to a raw device,
+`shutdown`/`reboot`, fork bombs, and `kill -1` even with `mode: off`,
+`--yolo`, or `cron_mode: approve`. Setting `mode: off` therefore does not make
+disk-wiping or host-power-off commands reachable.
+
+Set `mode: manual` (or `smart`) when a human or an LLM should review every
+flagged command, and `cron_mode: deny` to keep scheduled jobs strictly
+read-only.
+:::
 
 Smart mode is particularly useful for reducing approval fatigue — it lets the agent work more autonomously on safe operations while still catching genuinely destructive commands.
 

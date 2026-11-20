@@ -13,6 +13,31 @@ from unittest.mock import patch
 import pytest
 
 
+@pytest.fixture(autouse=True)
+def _approval_mode_manual_for_tests():
+    """Pin approvals.mode to "manual" for approval-guard tests.
+
+    The shipped default is now "off" (fresh installs on unattended servers must
+    not block on a prompt nobody can answer).  But almost every guard test in
+    this directory asserts that a dangerous command is *stopped* and that the
+    safe/allowlisted/approved paths run — all of which presupposes the guard is
+    actually consulted.  Under the new default those tests would pass or fail
+    for the wrong reason.
+
+    Pinning "manual" here keeps each test focused on the guard logic it was
+    written for, instead of every file having to know the shipped default.
+    Tests that specifically exercise `off` / `permanent allowlist` / config
+    parsing patch the mode themselves and are unaffected.
+    """
+    try:
+        import tools.approval as _approval
+
+        with patch("tools.approval._get_approval_mode", return_value="manual"):
+            yield
+    except Exception:  # pragma: no cover - approval module always importable here
+        yield
+
+
 def register_all_web_providers():
     """Register all bundled web-search providers into the global registry.
 
