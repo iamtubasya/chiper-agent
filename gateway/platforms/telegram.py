@@ -17,7 +17,7 @@ import tempfile
 import html as _html
 import re
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Set, Any, Tuple
+from typing import Dict, List, Optional, Set, Any, Tuple, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -460,6 +460,10 @@ class TelegramAdapter(BasePlatformAdapter):
         self._pending_text_batches: Dict[str, MessageEvent] = {}
         self._pending_text_batch_tasks: Dict[str, asyncio.Task] = {}
         self._pending_soul_prompt: Dict[str, Any] = {}
+        # session_key -> caller hook invoked after a soul is picked from the
+        # inline keyboard.  Supplied by the gateway runner so it can evict the
+        # cached agent and force a system-prompt rebuild on the next turn.
+        self._soul_picker_hooks: Dict[str, Callable[[str], Any]] = {}
         self._pending_endpoint_wizard: Dict[str, Any] = {}
         self._polling_error_task: Optional[asyncio.Task] = None
         self._polling_conflict_count: int = 0
@@ -3441,8 +3445,18 @@ class TelegramAdapter(BasePlatformAdapter):
         session_key: str = "",
         header: str = "",
         metadata: Optional[Dict[str, Any]] = None,
+        on_soul_selected: Optional[Callable[[str], Any]] = None,
     ) -> SendResult:
-        """Send an interactive inline-keyboard soul/persona picker."""
+        """Send an interactive inline-keyboard soul/persona picker.
+
+        ``on_soul_selected`` is the caller's hook, invoked with the chosen
+        ``soul_id`` after ``switch_soul()`` succeeds.  The gateway runner uses
+        it to evict the cached agent for *session_key* — without that eviction
+        the running AIAgent keeps its previously-built (cached) system prompt,
+        so the persona only changes after ``/new``.  The adapter cannot reach
+        ``_agent_cache`` itself, so the runner hands the hook in here (same
+        pattern as the model picker's ``on_model_selected`` closure).
+        """
         if not self._bot:
             return SendResult(success=False, error="Not connected")
 
@@ -3452,6 +3466,8 @@ class TelegramAdapter(BasePlatformAdapter):
             keyboard = self._build_soul_keyboard()
             if not keyboard:
                 return SendResult(success=False, error="Could not build keyboard")
+            if on_soul_selected is not None and session_key:
+                self._soul_picker_hooks[session_key] = on_soul_selected
 
             prefix = header if header else "✨ *Sesi Baru Dimulai\\!*\n\n"
             text = self.format_message(
@@ -3490,6 +3506,29 @@ class TelegramAdapter(BasePlatformAdapter):
                 soul_id = data[len("soul:set:"):]
                 success, msg, soul = switch_soul(soul_id)
                 if success:
+                    # Drop the cached agent for this session so the NEXT turn
+                    # rebuilds its system prompt from the freshly activated
+                    # SOUL.md.  SOUL.md lives in the prompt-cached stable tier,
+                    # so without this the running agent keeps the old persona
+                    # until /new (the "ganti jiwa tapi SOUL.md tidak berubah"
+                    # bug).  The hook is supplied by the gateway runner, which
+                    # owns _agent_cache; the adapter has no access to it.
+                    _chat_id = str(query.message.chat_id) if query.message else None
+                    _hook = (
+                        self._soul_picker_hooks.pop(_chat_id, None)
+                        if _chat_id
+                        else None
+                    )
+                    if _hook is not None:
+                        try:
+                            _hook(soul_id)
+                        except Exception as _hook_err:
+                            logger.warning(
+                                "[%s] soul-selected hook failed: %s",
+                                self.name,
+                                _hook_err,
+                                exc_info=True,
+                            )
                     await query.answer(f"Jiwa diaktifkan: {soul['name']}")
                     reply_text = self.format_message(
                         f"🎭 *Jiwa Aktif: {soul['icon']} {soul['name']}*\n\n"

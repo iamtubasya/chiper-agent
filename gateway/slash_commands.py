@@ -234,6 +234,7 @@ class GatewaySlashCommandsMixin:
                     session_key=session_key,
                     header=f"{header}\n\n",
                     metadata=metadata,
+                    on_soul_selected=self._soul_selected_hook(session_key),
                 )
                 if picker_res and picker_res.success:
                     return None
@@ -243,6 +244,22 @@ class GatewaySlashCommandsMixin:
         if session_info:
             return EphemeralReply(f"{header}\n\n{session_info}{_tip_line}")
         return EphemeralReply(f"{header}{_tip_line}")
+
+    def _soul_selected_hook(self, session_key: str):
+        """Return the callback an adapter fires after a soul-picker click.
+
+        SOUL.md sits in the prompt-cached stable tier, so the running AIAgent
+        must be dropped for the freshly activated persona to take effect on
+        the next turn.  Adapters own the inline keyboard but not
+        ``_agent_cache``, so they call this hook back into the runner.
+        Mirrors ``_handle_soul_command``'s own eviction.
+        """
+        def _on_soul_selected(_soul_id: str) -> None:
+            if not session_key:
+                return
+            self._evict_cached_agent(session_key)
+
+        return _on_soul_selected
 
     async def _handle_soul_command(self, event: MessageEvent) -> Optional[str]:
         """Handle /soul command — list, switch, or customize agent soul (SOUL.md)."""
@@ -260,6 +277,7 @@ class GatewaySlashCommandsMixin:
                     session_key=session_key,
                     header="",
                     metadata=metadata,
+                    on_soul_selected=self._soul_selected_hook(session_key),
                 )
                 if res and res.success:
                     return None
