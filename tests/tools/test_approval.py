@@ -528,6 +528,30 @@ class TestChiperConfigWriteProtection:
         dangerous, key, desc = detect_dangerous_command("echo data > /tmp/scratch.txt")
         assert dangerous is False
 
+    def test_in_place_edit_of_project_config_still_safe(self):
+        # The Chiper policy path is gated; a project-owned config.yaml is not.
+        # Guards against over-correcting the path fragment into "any file
+        # named config.yaml anywhere".
+        dangerous, key, desc = detect_dangerous_command(
+            "sed -i 's/a/b/' /srv/app/config.yaml"
+        )
+        assert dangerous is False
+
+    def test_in_place_edit_of_arbitrary_text_file_safe(self):
+        # `sed -i` on an unrelated file is ordinary editing, not a policy write.
+        dangerous, key, desc = detect_dangerous_command(
+            "sed -i 's/foo/bar/' /tmp/notes.txt"
+        )
+        assert dangerous is False
+
+    def test_bare_chiper_dir_without_config_name_safe(self):
+        # Only config.yaml/.env are policy files. A different file under
+        # ~/.chiper/ (logs, caches) must not be gated by the config fragment.
+        dangerous, key, desc = detect_dangerous_command(
+            "sed -i 's/a/b/' ~/.chiper/notes.txt"
+        )
+        assert dangerous is False
+
 
 class TestFindExecFullPathRm:
     """Detect find -exec with full-path rm bypasses."""

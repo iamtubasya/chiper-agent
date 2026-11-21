@@ -161,11 +161,11 @@ def _is_gateway_approval_context() -> bool:
 # hermetic test conftest or any deferred-profile-resolution path).
 _SSH_SENSITIVE_PATH = r'(?:~|\$home|\$\{home\})/\.ssh(?:/|$)'
 _CHIPER_ENV_PATH = (
-    r'(?:~/\\.chiper/|~/\\.Chiper/|'
-    r'(?:\\$home|\\$\{home\})/\\.chiper/|'
-    r'(?:\\$home|\\$\{home\})/\\.Chiper/|'
-    r'(?:\\$chiper_home|\\$\{chiper_home\})/)'
-    r'\\.env\\b'
+    r'(?:~/\.chiper/|~/\.Chiper/|'
+    r'(?:\$home|\$\{home\})/\.chiper/|'
+    r'(?:\$home|\$\{home\})/\.Chiper/|'
+    r'(?:\$chiper_home|\$\{chiper_home\})/)'
+    r'\.env\b'
 )
 # ~/.chiper/config.yaml IS the security policy: approvals.mode, yolo, and the
 # permanent-approval allowlist live here, and the config cache is mtime-keyed
@@ -176,11 +176,11 @@ _CHIPER_ENV_PATH = (
 # theater. Mirrors _CHIPER_ENV_PATH; matches the CHIPER_HOME override form as
 # well as ~/.chiper/.
 _CHIPER_CONFIG_PATH = (
-    r'(?:~/\\.chiper/|~/\\.Chiper/|'
-    r'(?:\\$home|\\$\{home\})/\\.chiper/|'
-    r'(?:\\$home|\\$\{home\})/\\.Chiper/|'
-    r'(?:\\$chiper_home|\\$\{chiper_home\})/)'
-    r'config\\.yaml\\b'
+    r'(?:~/\.chiper/|~/\.Chiper/|'
+    r'(?:\$home|\$\{home\})/\.chiper/|'
+    r'(?:\$home|\$\{home\})/\.Chiper/|'
+    r'(?:\$chiper_home|\$\{chiper_home\})/)'
+    r'config\.yaml\b'
 )
 _PROJECT_ENV_PATH = r'(?:(?:/|\.{1,2}/)?(?:[^\s/"\'`]+/)*\.env(?:\.[^/\s"\'`]+)*)'
 _PROJECT_CONFIG_PATH = r'(?:(?:/|\.{1,2}/)?(?:[^\s/"\'`]+/)*config\.yaml)'
