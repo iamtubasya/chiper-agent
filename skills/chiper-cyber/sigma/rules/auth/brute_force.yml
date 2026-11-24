@@ -1,0 +1,11 @@
+title: Brute Force Authentication Failures
+id: ae1e3d0b-2a80-573d-afcc-3d5f3d29a8a0
+correlation:
+  type: event_count
+  rules:
+    - e5e0ac1f-8c56-506f-8870-7924325ed361
+  timespan: 5m
+  group-by:
+    - source.ip
+  condition:
+    gte: 10

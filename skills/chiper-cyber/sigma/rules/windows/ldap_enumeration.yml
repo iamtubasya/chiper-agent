@@ -1,0 +1,23 @@
+title: LDAP Directory Enumeration Burst
+id: 2698067b-f752-5117-b027-5cc81fe31e3a
+status: experimental
+description: >
+  A client issuing many paged LDAP searches against the directory, the discovery pattern in chiper-ad-ldap-attack.
+references:
+  - https://ldapwiki.com/wiki/LDAP%20Enumeration
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.discovery
+  - attack.t1087
+logsource:
+  category: windows
+  product: any
+detection:
+  selection:
+    EventID: 1644
+    Searches|gt: 50
+  condition: selection
+falsepositives:
+  - Backup or inventory software indexing the directory
+level: medium

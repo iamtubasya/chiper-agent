@@ -1,0 +1,22 @@
+title: Prompt Injection Pattern In Agent Framework Trace
+id: 8d052e6e-511f-5928-bab2-90b171a7b8b4
+status: experimental
+description: >
+  LangChain or framework trace log line showing an injected instruction being appended to a system or tool message.
+references:
+  - https://attack.mitre.org/
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.initial-access
+  - attack.t1059
+logsource:
+  category: ai_input
+  product: any
+detection:
+  selection:
+    log|contains|all: ['[INJECTED]', 'system_message']
+  condition: selection
+falsepositives:
+  - Debug logging of a deliberate red-team payload
+level: medium

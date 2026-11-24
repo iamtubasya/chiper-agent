@@ -1,0 +1,20 @@
+- rule: K8s Audit - Privileged Pod Created
+  desc: A pod was created with privileged mode enabled
+  condition: ka.target.kind = "Pod" and ka.verb = "create" and ka.obj.spec.containers[*].securityContext.privileged = true
+  output: Privileged pod created (user=%ka.user.name pod=%ka.obj.metadata.name ns=%ka.obj.metadata.namespace)
+  priority: WARNING
+  tags: [k8s, container, privilege_escalation]
+
+- rule: K8s Audit - Host PID Pod Created
+  desc: A pod was created sharing the host PID namespace
+  condition: ka.target.kind = "Pod" and ka.verb = "create" and ka.obj.spec.hostPID = true
+  output: Pod using host PID namespace created (user=%ka.user.name pod=%ka.obj.metadata.name)
+  priority: WARNING
+  tags: [k8s, container, escape]
+
+- rule: K8s Audit - Secret Enumeration Burst
+  desc: One identity listed secrets more than 20 times in the audit stream
+  condition: ka.target.resource = "secrets" and ka.verb = "list"
+  output: Secret enumeration attempt (user=%ka.user.name src=%ka.sourceIPs[0])
+  priority: NOTICE
+  tags: [k8s, credential_access, discovery]

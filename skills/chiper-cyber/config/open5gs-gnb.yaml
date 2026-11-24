@@ -1,0 +1,25 @@
+# open5gs gNB configuration used by chiper-5g-telecom-attack lab runs:
+#   ./nr-gnb -c config/open5gs-gnb.yaml
+mcc: "001"
+mnc: "01"
+nci: "0x00000001"
+id_length: 32
+tac: "0x0001"
+gtp_bind_addr: "127.0.0.5"
+ngap_bind_addr: "127.0.0.5"
+gtpc_bind_addr: "127.0.0.5"
+metrics_bind_addr: "127.0.0.5"
+max_ue: 64
+dnn_list:
+  - dnn: "internet"
+    dns:
+      - "8.8.8.8"
+      - "1.1.1.1"
+    mtu: 1400
+amf_name: "open5gs-amf0"
+sctp_bind_addr: "127.0.0.5"
+sctp_port: 38412
+tnl_id: 1
+logger:
+  file: "/tmp/open5gs-gnb.log"
+  level: "info"

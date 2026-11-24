@@ -1,0 +1,32 @@
+# Agent Red Team Report — {{ date }}
+
+Scope: authorised assessment only. Rendered with `report/generate.py`.
+
+## 1. Executive summary
+
+| Metric | Value |
+|---|---|
+| Recon artefacts | {{ recon_count }} |
+| MCP probe results | {{ probe_count }} |
+| Chain evidence files | {{ chain_count }} |
+| Highest severity | {{ highest_severity }} |
+
+## 2. Attack surface
+
+{% for r in recon %}- `{{ r.name }}` — {{ r.lines }} lines — {{ r.preview }}
+{% endfor %}
+## 3. MCP probe results
+
+{% for p in mcp_probes %}- `{{ p.name }}` — {{ p.lines }} lines — {{ p.preview }}
+{% endfor %}
+## 4. Exploit chains
+
+{% for c in chains %}- `{{ c.name }}` — {{ c.lines }} lines — {{ c.preview }}
+{% endfor %}
+## 5. Recommendations
+
+1. Constrain the tool layer to an explicit allow-list.
+2. Treat every tool result as untrusted input (indirect injection).
+3. Keep credentials out of the model context.
+
+_Generated {{ date }} by chiper-cyber._

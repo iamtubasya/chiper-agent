@@ -1,0 +1,12 @@
+title: Impossible Travel Login
+id: e48f3511-a6f7-5ac6-b099-c75eefa39af8
+correlation:
+  type: value_count
+  rules:
+    - 0192f161-0ec1-5f97-ab43-80b89b4338dc
+  timespan: 10m
+  group-by:
+    - user.id
+  condition:
+    gte: 2
+    field: geo.country_code

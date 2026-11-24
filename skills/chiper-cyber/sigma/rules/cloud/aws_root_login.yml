@@ -1,0 +1,24 @@
+title: AWS Root Account Console Sign-In
+id: 0cec56aa-0353-5654-97d9-983ffef4d0b2
+status: experimental
+description: >
+  A sign-in by the account root user, which should never be used for daily work.
+references:
+  - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.initial-access
+  - attack.t1550
+logsource:
+  category: cloud
+  product: any
+detection:
+  selection:
+    eventSource: signin.amazonaws.com
+    userIdentity.type: Root
+    eventName: ConsoleLogin
+  condition: selection
+falsepositives:
+  - Emergency break-glass procedure executed by the owner
+level: high

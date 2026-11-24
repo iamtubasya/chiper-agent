@@ -1,0 +1,22 @@
+title: Fuzzing Framework Execution On Linux
+id: ceacdc67-24d2-525e-ba3d-8ae421483706
+status: experimental
+description: >
+  Execution of a known fuzzing engine binary such as afl-fuzz or honggfuzz on a production host.
+references:
+  - https://github.com/google/AFL
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.execution
+  - attack.t1059
+logsource:
+  category: process_creation
+  product: any
+detection:
+  selection:
+    Image|endswith: ['/afl-fuzz', '/honggfuzz', '/afl-fuzz-lto']
+  condition: selection
+falsepositives:
+  - Developer running a sanctioned test campaign
+level: medium

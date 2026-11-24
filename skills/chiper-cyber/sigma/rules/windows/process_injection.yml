@@ -1,0 +1,21 @@
+title: Generic Process Injection Indicators
+id: 1aed04d3-5df2-570b-b35c-3079cb62a5f1
+status: experimental
+description: >
+  Creation of a remote thread plus an executable memory region in another process, the generic injection shape in chiper-exploit-development.
+references:
+  - https://attack.mitre.org/techniques/T1055/
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.t1055
+logsource:
+  category: windows
+  product: any
+detection:
+  selection:
+    CallTrace|contains|all: ['NtMapViewOfSection', 'kernel32']
+  condition: selection
+falsepositives:
+  - Accessibility helpers that inject into other processes
+level: high

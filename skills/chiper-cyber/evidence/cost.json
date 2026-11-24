@@ -1,0 +1,22 @@
+{
+  "run_id": "agentic-pentest-2026-11-24",
+  "currency": "USD",
+  "window": {"from": "2026-11-24T00:00:00+08:00", "to": "2026-11-24T23:59:00+08:00"},
+  "totals": {
+    "input_tokens": 1842000,
+    "output_tokens": 96000,
+    "estimated_cost": 12.44,
+    "wall_clock_minutes": 187
+  },
+  "by_phase": [
+    {"phase": "recon", "tokens": 402000, "cost": 2.71},
+    {"phase": "scan", "tokens": 310000, "cost": 2.08},
+    {"phase": "exploit", "tokens": 780000, "cost": 5.22},
+    {"phase": "report", "tokens": 350000, "cost": 2.43}
+  ],
+  "by_model": [
+    {"model": "deepseek-v4.1-flash", "tokens": 1620000, "cost": 8.10},
+    {"model": "chiperflux", "tokens": 318000, "cost": 4.34}
+  ],
+  "budget": {"limit": 25.00, "consumed_pct": 49.8, "alert_at_pct": 80}
+}

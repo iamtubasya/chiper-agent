@@ -1,0 +1,23 @@
+title: Agentic AI Excessive Tool Call Burst
+id: 46bd9889-b134-50fd-b584-70c118bf5893
+status: experimental
+description: >
+  An agent issuing a burst of tool invocations inside a single turn, the runaway-loop or tool-flooding behaviour hunted by chiper-agentic-pentest.
+references:
+  - https://owasp.org/www-project-top-10-for-large-language-model-applications/
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.execution
+  - attack.t1059
+logsource:
+  category: ai_agent
+  product: any
+detection:
+  selection:
+    event.type: tool.call
+    event.count|gt: 25
+  condition: selection
+falsepositives:
+  - Legitimate batch workflows that fan out deliberately
+level: medium

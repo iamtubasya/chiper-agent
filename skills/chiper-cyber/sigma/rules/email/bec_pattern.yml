@@ -1,0 +1,22 @@
+title: Business Email Compromise Payment Request
+id: dffdc982-845b-5456-81be-a5066addfde5
+status: experimental
+description: >
+  An inbound mail that combines payment-change wording with executive impersonation, the CEO-fraud pattern hunted by chiper-social-engineering.
+references:
+  - https://www.ic3.gov/CrimeInfo/BEC.htm
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.initial-access
+  - attack.t1566
+logsource:
+  category: email
+  product: any
+detection:
+  selection:
+    subject|contains|all: ['urgent', 'invoice']
+  condition: selection
+falsepositives:
+  - Finance department receiving a genuine urgent invoice
+level: medium

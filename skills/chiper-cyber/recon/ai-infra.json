@@ -1,0 +1,25 @@
+{
+  "target": "example-ai-stack",
+  "collected_at": "2026-11-24T22:30:00+08:00",
+  "model_endpoints": [
+    {"url": "https://api.example.com/v1/chat/completions", "auth": "bearer", "stream": true},
+    {"url": "https://api.example.com/v1/embeddings", "auth": "bearer", "stream": false}
+  ],
+  "gateways": [
+    {"name": "openai-compatible-proxy", "port": 8080, "admin_ui": true, "default_creds": false}
+  ],
+  "vector_store": {"kind": "pgvector", "exposed": false, "collection": "docs"},
+  "agent_runtimes": [
+    {"framework": "langgraph", "checkpointing": true, "tool_policy": "allow-list"}
+  ],
+  "mcp_servers": [
+    {"name": "fs-tools", "transport": "stdio", "tools": ["read_file", "write_file"]}
+  ],
+  "storage": [
+    {"kind": "s3", "bucket": "example-model-artifacts", "public": false, "signed_urls": true}
+  ],
+  "findings_seed": [
+    "admin UI reachable without SSO",
+    "checkpoint store holds full conversation history in plaintext"
+  ]
+}

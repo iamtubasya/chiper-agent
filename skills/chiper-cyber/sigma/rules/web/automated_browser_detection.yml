@@ -1,0 +1,21 @@
+title: Automated Browser Session Indicators
+id: 8758bb91-0ecf-5f44-8db7-1b6244ae59f4
+status: experimental
+description: >
+  A web session whose client fingerprint carries headless or automation markers used by chiper-browser-qa.
+references:
+  - https://playwright.dev/docs/intro
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.t1070
+logsource:
+  category: web_server
+  product: any
+detection:
+  selection:
+    cs-user-agent|contains|all: ['HeadlessChrome', 'Playwright']
+  condition: selection
+falsepositives:
+  - Approved synthetic monitoring probes
+level: low

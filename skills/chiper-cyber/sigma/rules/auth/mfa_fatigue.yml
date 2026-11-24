@@ -1,0 +1,11 @@
+title: MFA Fatigue Challenge Flood
+id: 8b1c01da-2acc-55b3-ac6a-fdf476a336c6
+correlation:
+  type: event_count
+  rules:
+    - f9baada4-2ac1-59e4-bc40-9962d8ff8250
+  timespan: 1m
+  group-by:
+    - user.id
+  condition:
+    gte: 5

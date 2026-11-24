@@ -1,0 +1,26 @@
+# LLM Red Team Report — {{ date }}
+
+Authorised testing only. Corpus and objectives live under `payloads/`.
+
+## 1. Summary
+
+| Metric | Value |
+|---|---|
+| Recon artefacts | {{ recon_count }} |
+| Probe results | {{ probe_count }} |
+| Evidence files | {{ chain_count }} |
+
+## 2. Objective results
+
+{% for r in recon %}- `{{ r.name }}` — {{ r.lines }} lines — {{ r.preview }}
+{% endfor %}
+## 3. Evidence excerpts
+
+{% for p in mcp_probes %}- `{{ p.name }}` — {{ p.preview }}
+{% endfor %}
+## 4. Regression set
+
+Every successful bypass is appended to `payloads/successful.txt` and re-checked by
+`defense/validate_llm_guard.py` before release.
+
+_Generated {{ date }} by chiper-cyber._

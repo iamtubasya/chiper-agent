@@ -1,0 +1,22 @@
+title: Subdomain Enumeration Tool Output
+id: da7922fe-b681-5e8c-b9c5-09d894256d73
+status: experimental
+description: >
+  Command lines from subfinder or amass resolving a target's subdomains, per chiper-osint.
+references:
+  - https://github.com/projectdiscovery/subfinder
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.discovery
+  - attack.t1595
+logsource:
+  category: process_creation
+  product: any
+detection:
+  selection:
+    CommandLine|contains|all: ['subfinder', '-d']
+  condition: selection
+falsepositives:
+  - Authorised external attack-surface review
+level: medium

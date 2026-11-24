@@ -1,0 +1,23 @@
+title: BOLA Horizontal Identifier Enumeration
+id: c0a56c59-399b-5fea-99d8-ccfa39c15f6d
+status: experimental
+description: >
+  Rapid sequential GET requests incrementing an object id parameter, the enumeration pattern behind broken object level authorization tests.
+references:
+  - https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.discovery
+  - attack.t1595
+logsource:
+  category: web_server
+  product: any
+detection:
+  selection:
+    cs-method: GET
+    cs-uri-query|contains: id=
+  condition: selection
+falsepositives:
+  - Pagination crawlers and monitoring probes
+level: medium

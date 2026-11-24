@@ -1,0 +1,23 @@
+title: Successful Interactive Login
+id: 0192f161-0ec1-5f97-ab43-80b89b4338dc
+status: experimental
+description: >
+  Base rule: a successful interactive login, used by the impossible-travel correlation.
+references:
+  - https://attack.mitre.org/
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.initial-access
+  - attack.t1078
+logsource:
+  category: authentication
+  product: any
+detection:
+  selection:
+    event.outcome: success
+    event.type: login
+  condition: selection
+falsepositives:
+  - Scheduled service logins recorded as interactive
+level: informational

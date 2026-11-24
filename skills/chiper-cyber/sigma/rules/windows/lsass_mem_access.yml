@@ -1,0 +1,23 @@
+title: LSASS Memory Access By Non-System Process
+id: 832a4543-4ec4-5379-baf3-5b34a3bb2871
+status: experimental
+description: >
+  A process opening LSASS with rights that allow reading its memory, the credential-dump prelude in chiper-post-exploitation.
+references:
+  - https://attack.mitre.org/techniques/T1003/001/
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.credential-access
+  - attack.t1003.001
+logsource:
+  category: windows
+  product: any
+detection:
+  selection:
+    TargetImage|endswith: \lsass.exe
+    GrantedAccess|contains: "0x1010"
+  condition: selection
+falsepositives:
+  - Endpoint agent sampling process memory for crash reporting
+level: high

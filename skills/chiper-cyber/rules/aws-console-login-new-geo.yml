@@ -1,0 +1,25 @@
+title: AWS Console Login From New Geography
+id: ca41c91f-8658-5fd6-87f3-29f81f2daa7a
+status: experimental
+description: >
+  Sign-in to the AWS Management Console from a source country not seen for this account in the preceding 30 days.
+references:
+  - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_getting-report.html
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.initial-access
+  - attack.t1078
+logsource:
+  category: cloud
+  product: any
+detection:
+  selection:
+    eventSource: signin.amazonaws.com
+    eventName: ConsoleLogin
+    additionalEventData.MFAUsed: No
+  condition: selection
+falsepositives:
+  - Corporate VPN egress changing country
+  - Traveling administrator with new laptop
+level: medium

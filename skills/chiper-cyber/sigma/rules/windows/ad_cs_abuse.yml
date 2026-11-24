@@ -1,0 +1,23 @@
+title: AD CS Abuse Indicators - CertReq To Vulnerable Template
+id: ea55a770-49ea-56dd-b4a0-dd542f9fc04a
+status: experimental
+description: >
+  Certificate request activity aimed at a misconfigured template, the ESC1 shape covered by chiper-ad-cs-abuse.
+references:
+  - https://docs.microsoft.com/en-us/windows-server/certification-authority/certification-authority-overview
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.privilege-escalation
+  - attack.t1648
+logsource:
+  category: windows
+  product: any
+detection:
+  selection:
+    EventID: 13000
+    Provider_Name: Microsoft-Windows-CertificateServicesClient
+  condition: selection
+falsepositives:
+  - Helpdesk issuing certificates as part of normal onboarding
+level: high

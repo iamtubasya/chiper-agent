@@ -1,0 +1,26 @@
+# open5gs UE configuration used by chiper-5g-telecom-attack lab runs:
+#   ./nr-ue -c config/open5gs-ue.yaml
+# The IMSI/K values below are lab-only (001/01 test network) — never reuse them.
+supi: "imsi-001010000000001"
+mcc: "001"
+mnc: "01"
+key: "8baf473f2f8fd09487cccbd7097c6862"
+op: "8e27b6af0e6b2091b9ef7f6aaf70a0fd"
+op_type: "OP"
+amf: "8000"
+dnn: "internet"
+snssai:
+  sst: 1
+  sd: "000001"
+session:
+  name: "internet"
+  type: "IPv4"
+  ambr:
+    uplink: "1 Gbps"
+    downlink: "1 Gbps"
+auth_method: "5G-AKA"
+gps:
+  enabled: false
+logger:
+  file: "/tmp/open5gs-ue.log"
+  level: "info"

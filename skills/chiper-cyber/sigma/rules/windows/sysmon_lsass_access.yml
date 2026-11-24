@@ -1,0 +1,23 @@
+title: Sysmon LSASS Handle Access
+id: 4b7c8c29-8e39-5418-9da4-bfdd75af1f5e
+status: experimental
+description: >
+  Sysmon event 10 where a non-system image requests read rights on lsass.exe, used by chiper-av-edr-evasion to reason about telemetry gaps.
+references:
+  - https://docs.microsoft.com/en-us/sysinternals/downloads/sysmon
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.credential-access
+  - attack.t1003.001
+logsource:
+  category: sysmon
+  product: any
+detection:
+  selection:
+    EventID: 10
+    TargetImage|endswith: \lsash.exe
+  condition: selection
+falsepositives:
+  - EDR sensor reading process memory
+level: high

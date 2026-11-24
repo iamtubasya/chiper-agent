@@ -170,7 +170,7 @@ references:
 author: chiper-cyber detection-engineering skill
 date: 2026/06/17
 tags:
-  - attack.credential_access
+  - attack.credential-access   # ATT&CK v14+ tags are hyphenated; underscore fails sigma check
   - attack.t1003.001
   - attack.t1003.002
 logsource:
@@ -254,7 +254,7 @@ jobs:
       - name: Schema validate every Sigma rule
         run: |
           for f in $(find rules/ -name '*.yml'); do
-            sigma-cli parse "$f" || exit 1
+            sigma check "$f" || exit 1
           done
 
       - name: ATT&CK tag coverage check
@@ -370,7 +370,7 @@ cd detections/t1003-001-mimikatz
 $EDITOR mimikatz-cmdline.yml
 
 # Validate the schema
-sigma-cli parse mimikatz-cmdline.yml
+sigma check mimikatz-cmdline.yml
 
 # Translate to Splunk SPL
 sigma-cli convert -t splunk -p sysmon mimikatz-cmdline.yml
@@ -598,7 +598,7 @@ jobs:
       - name: Parse every rule
         run: |
           for f in $(find rules/ -name '*.yml'); do
-            sigma-cli parse "$f" || exit 1
+            sigma check "$f" || exit 1
           done
       - name: Translate to backends
         run: |
@@ -770,6 +770,12 @@ This skill is the craft layer that produces detectors consumed by hunting, IR, a
 ## Learning Resources
 
 - **This skill's supplementary files**: `payloads.md`, `test-cases.md`
+- **`references/sigma-pysigma-modern-syntax.md`** — verified 2026-11-24 against a live sigma-cli:
+  the `sigma check` → `sigma convert` validation loop, why `sigma check` no longer exists, the
+  nested `correlation:` document shape with its hyphenated `group-by` and `condition: {gte: N}`
+  (threshold rules like ">10 failures in 5 min"), hyphenated ATT&CK tags, `sigma plugin install
+  <backend>` vs the non-existent `pysigma-*` PyPI names, and the pipeline requirement for `convert`.
+  Read it before authoring any threshold/aggregation rule.
 - **Deep-dive guide**: `guides/detection-engineering-playbook.md` — end-to-end detection operations, from threat-intel intake through retirement, with rule authoring recipes, CI/CD pipeline templates, an FP-tuning matrix, and ATT&CK coverage measurement workflows
 - **Related skills** (see Cross-References above)
 - **External resources**:

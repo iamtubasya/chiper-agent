@@ -1,0 +1,23 @@
+title: Nmap Style Port Scan Traffic
+id: dd8b807b-4a23-5144-b3ec-f626c93ea541
+status: experimental
+description: >
+  A single source touching a burst of distinct destination ports, the nmap signature described in chiper-network-pentest.
+references:
+  - https://nmap.org/book/man-port-scanning-techniques.html
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.discovery
+  - attack.t1046
+logsource:
+  category: network_connection
+  product: any
+detection:
+  selection:
+    initiator.bytes|gt: 0
+    destination.port|gt: 100
+  condition: selection
+falsepositives:
+  - Internal vulnerability scanner on its scheduled window
+level: medium

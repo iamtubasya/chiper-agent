@@ -1,0 +1,22 @@
+title: Credential Access via COMSVCS MiniDump
+id: da9b1c59-44fc-53ca-a567-b022341d75d8
+status: experimental
+description: >
+  Same technique filed under the credential_access technique folder used by the detection-engineering git layout.
+references:
+  - https://attack.mitre.org/
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.credential-access
+  - attack.t1003.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    CommandLine|contains|all: ['comsvcs.dll', 'MiniDump']
+  condition: selection
+falsepositives:
+  - Approved incident-response memory acquisition
+level: high

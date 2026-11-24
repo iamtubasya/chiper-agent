@@ -1,0 +1,24 @@
+title: AWS STS Role Chaining
+id: f676593c-90f2-596e-8f10-72a79a8660b4
+status: experimental
+description: >
+  An assumed-role session calling STS AssumeRole again, the chaining pattern used for lateral movement across accounts; shared by chiper-cloud-identity-attack and chiper-identity-provider-attack.
+references:
+  - https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_getting-requested-temporary-credentials.html
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.lateral-movement
+  - attack.t1078
+logsource:
+  category: cloud
+  product: any
+detection:
+  selection:
+    eventSource: sts.amazonaws.com
+    eventName: AssumeRole
+    userIdentity.sessionContext.sessionIssuer.type: AssumeRole
+  condition: selection
+falsepositives:
+  - Automation that legitimately chains roles for cross-account jobs
+level: high

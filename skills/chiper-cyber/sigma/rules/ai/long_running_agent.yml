@@ -1,0 +1,23 @@
+title: Long Running Autonomous Agent Session
+id: 69f40e79-89e1-5fac-8410-7d0eec7fe120
+status: experimental
+description: >
+  An autonomous loop session that exceeded its wall-clock budget without firing a stop condition, hunted by chiper-autonomous-loops.
+references:
+  - https://attack.mitre.org/
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.execution
+  - attack.t1059
+logsource:
+  category: ai_agent
+  product: any
+detection:
+  selection:
+    event.type: loop.tick
+    event.duration_sec|gt: 3600
+  condition: selection
+falsepositives:
+  - Scheduled nightly jobs that legitimately run long
+level: medium

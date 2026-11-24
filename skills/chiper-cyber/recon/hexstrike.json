@@ -1,0 +1,24 @@
+{
+  "tool": "hexstrike",
+  "purpose": "AI-assisted exploit orchestration used during chiper-agentic-pentest recon",
+  "collected_at": "2026-11-24T22:10:00+08:00",
+  "capabilities": {
+    "recon": ["subdomain_enum", "port_scan", "fingerprint"],
+    "vuln": ["nuclei_templates", "cve_matching"],
+    "exploit": ["poc_runner", "chain_builder"],
+    "reporting": ["sarif", "json"]
+  },
+  "endpoints": [
+    {"name": "local-api", "url": "http://127.0.0.1:8000", "auth": "api-key", "exposed": false}
+  ],
+  "model_binding": {"provider": "9router", "model": "deepseek-v4.1-flash", "stream": true},
+  "safety": {
+    "requires_authorization_file": true,
+    "denies_cidr": ["10.0.0.0/8", "192.168.0.0/16"],
+    "rate_limit_rps": 5
+  },
+  "notes": [
+    "run only against in-scope assets",
+    "keep --dry-run for first pass on unknown targets"
+  ]
+}

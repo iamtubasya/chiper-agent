@@ -1,0 +1,22 @@
+title: MFA Challenge Sent
+id: f9baada4-2ac1-59e4-bc40-9962d8ff8250
+status: experimental
+description: >
+  An MFA push or OTP challenge issued to a user, base rule for the MFA-fatigue correlation.
+references:
+  - https://attack.mitre.org/
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.credential-access
+  - attack.t1621
+logsource:
+  category: authentication
+  product: any
+detection:
+  selection:
+    event.action: mfa_challenge
+  condition: selection
+falsepositives:
+  - First login of the day for a normal user
+level: informational

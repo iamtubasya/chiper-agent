@@ -1,0 +1,21 @@
+title: Windows Security Audit Log Cleared
+id: 8172231c-07cc-52c5-8f2e-56b62670f719
+status: experimental
+description: >
+  Event ID 1102 records that a user cleared the security event log, an anti-forensics marker from chiper-anti-forensics.
+references:
+  - https://attack.mitre.org/techniques/T1070/
+author: chiper-cyber
+date: 2026-11-24
+tags:
+  - attack.t1070
+logsource:
+  category: windows
+  product: any
+detection:
+  selection:
+    EventID: 1102
+  condition: selection
+falsepositives:
+  - Administrator rotating logs after a sanctioned cleanup
+level: high
