@@ -686,10 +686,8 @@ def extract_skill_description(frontmatter: Dict[str, Any]) -> str:
     raw_desc = frontmatter.get("description", "")
     if not raw_desc:
         return ""
-    desc = str(raw_desc).strip().strip("'\"")
-    if len(desc) > 60:
-        return desc[:57] + "..."
-    return desc
+    # Tanpa batas 60 char — deskripsi penuh masuk index skill (opsi A, approve 2026-11-24).
+    return str(raw_desc).strip().strip("'\"")
 
 
 # ── File iteration ────────────────────────────────────────────────────────
