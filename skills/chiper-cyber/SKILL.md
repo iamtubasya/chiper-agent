@@ -2,6 +2,18 @@
 name: chiper-cyber
 description: Master directory, skill registry, and orchestration entrypoint for the CHIPER Cybersecurity skill collection. Use this skill to discover the correct specialist skills, locate their instructions, load dependencies, and coordinate complete task workflows.
 version: 1.0.0
+references:
+  - path: ~/.chiper/skills/chiper-cyber/README.md
+  - path: ~/.chiper/skills/chiper-cyber/SOUL.md
+  - path: ~/.chiper/skills/chiper-cyber/TOOLS.md
+  - path: ~/.chiper/skills/chiper-cyber/HEARTBEAT.md
+  - path: ~/.chiper/skills/chiper-cyber/AGENTS.md
+  - path: ~/.chiper/skills/chiper-cyber/IDENTITY.md
+  - path: ~/.chiper/skills/chiper-cyber/CHIPER_TOOLS_BASELINE_2026_07.md
+  - path: ~/.chiper/skills/chiper-cyber/CHIPER_TOOLS_BASELINE_2026_08.md
+  - path: ~/.chiper/skills/chiper-cyber/CHIPER_TOOLS_BASELINE_2026_09.md
+  - path: ~/.chiper/skills/chiper-cyber/docs/tools/full-inventory.md
+  - path: ~/.chiper/skills/chiper-cyber/references/upstream-sync-protocol.md
 ---
 
 # CHIPER CYBER — MASTER SKILL DIRECTORY
@@ -20,18 +32,26 @@ Expected root:
 
 ```text
 $HOME/.chiper/skills/chiper-cyber/
-├── SKILL.md                 # this master directory
-├── AGENTS.md                # repository/agent instructions, if present
-├── README.md                # ecosystem overview, if present
-├── TOOLS.md                 # tool notes, if present
-├── references/              # shared references, if present
-├── docs/                    # shared documentation, if present
-├── validation/              # validation resources, if present
-├── engagement/              # engagement resources, if present
-├── memory/                  # project memory resources, if present
-├── chronicle/               # historical records, if present
-└── chiper-***/
-    └── SKILL.md             # authoritative specialist instructions
+├── SKILL.md                 # this master directory (file ini)
+├── AGENTS.md                # workspace instructions
+├── SOUL.md                  # persona & hacker laws
+├── README.md                # overview + quick start
+├── TOOLS.md                 # tool notes
+├── USER.md MEMORY.md IDENTITY.md HEARTBEAT.md TEMPLATE.md CLAUDE.md
+├── CHANGELOG.md UPDATELOG.md   # riwayat rilis (gabungan release notes)
+├── SKILL_REMEDIATION_LIST.json
+├── CHIPER_TOOLS_BASELINE_2026_0{7,8,9}.md
+├── references/              # shared references
+├── docs/                    # shared documentation
+├── validation/              # validation scripts & test resources
+├── engagement/              # engagement scope & planning records
+├── memory/                  # daily notes (memory/YYYY-MM-DD.md)
+├── chronicle/               # monthly/weekly historical records
+└── chiper-***/              # 140 specialist skills
+    ├── SKILL.md             # authoritative specialist instructions
+    ├── payloads.md          # attack payloads
+    ├── test-cases.md        # structured test cases
+    └── guides/              # deep-dive guides
 ```
 
 Each skill path in this catalog is relative to `$HOME/.chiper/skills/chiper-cyber/` and has this form:
@@ -558,6 +578,11 @@ The entries below describe the intended role inferred from each skill directory 
 - **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-binary-reverse/SKILL.md`
 - **Function:** Reverse engineering binary dan analisis perilaku program.
 - **Use when:** Gunakan saat menganalisis executable atau binary tanpa source code.
+
+### `chiper-reverse-engineering-advanced`
+- **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-reverse-engineering-advanced/SKILL.md`
+- **Function:** Reverse engineering lanjutan: symbolic execution (angr, KLEE, manticore), decompiler confusion (Hex-Rays, Ghidra deobfuscation), binary diffing (BinDiff, Diaphora, Kam1n0), firmware RE (binwalk, FACT, EMBA), dan analisis kode ter-obfuscate (OLLVM, Tigress).
+- **Use when:** Gunakan saat menganalisis binary packed/ter-obfuscate, mengotomasi pipeline RE, atau menelusuri teknik APT-grade (Equation Group, Pegasus). Berbeda dari `chiper-binary-reverse` yang bersifat fundamental.
 
 ### `chiper-firmware-reverse`
 - **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-firmware-reverse/SKILL.md`
