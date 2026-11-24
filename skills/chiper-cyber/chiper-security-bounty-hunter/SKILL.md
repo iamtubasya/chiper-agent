@@ -25,6 +25,7 @@ references:
   - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/SKILL.md
   - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/payloads.md
   - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/web3-independent-bounty-hunting.md
   - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/guides
 ---
 
@@ -40,6 +41,9 @@ references:
 > - `references/auditing-imported-skill-packs.md` — **Read before trusting any third-party/bundled skill pack.** 4 failure classes (greedy orchestrator descriptions, behavior overrides that contradict SOUL.md authorization-first rules, cross-machine path contamination, superseded duplicate mirrors) + audit commands, remediation order, and pitfalls.
 > - `references/metaplex-fuzz-harness.md` — Reusable Mollusk invariant-fuzzer for mpl-core (fuzz_layout.rs + fuzz_groups.rs): random instruction sequences asserting plugin-layout consistency + group bidirectional membership. Includes the SBF-vs-Mollusk toolchain version gotcha.
 > - `references/metaplex-audit-result.md` — Full in-scope audit of ALL 5 Metaplex programs (mpl-core, token-auth-rules, token-metadata, bubblegum, candy-guard): coverage matrix, 6 disproven leads (incl. bot_tax, MintLimit overflow, AllowList replay), honest no-bug verdict.
+> - `references/web3-independent-bounty-recon.md` — Web3 independent/direct bug bounty recon: bypassing platform aggregators (Immunefi/HackerOne/Bugcrowd), search dork syntax fixes, `lissy93/bug-bounties` `path=independent-programs.yml` date-window mining, alternative Web3 platforms (Hats Finance on-chain vaults, Code4rena continuous bounties, Cantina, Sherlock), and tier-1 self-hosted foundations.
+> - `references/web3-independent-bounty-hunting.md` — Web3 independent & direct bounty discovery: Google/DDG dorks, GitHub code search for `SECURITY.md`, verified Tier-1 self-hosted programs (Ethereum Foundation, Uniswap $3M, Solana/Anza $1M, Web3 Foundation), and alternative Web3 platforms (Hats Finance, Cantina, Sherlock, Code4rena, BugRap).
+> - `references/betterteam-target-intel.md` — Betterteam self-hosted bug bounty target intel: $50–$2k payout matrix, scope map, fatal ban trigger (applying to real/customer jobs), RFC 9116 discovery, and Cloudflare WAF bypass via Tor Wayback pipeline.
 
 ## Summary
 
@@ -291,8 +295,19 @@ Bounty programs fall into two categories: third-party aggregators and direct/sel
 | Intigriti / YesWeHack | Aggregator (EU-based) | EUR 50 - EUR 50,000+ | EU-focused; strong GDPR-aligned programs |
 | **Self-Hosted / Direct** | Independent (No 3rd Party) | $500 - $1,000,000+ | Run directly via internal portal or RFC 9116 (`/.well-known/security.txt`). Common in Web3 (Ethereum Foundation, Solana/Anza, Kraken, Parity). |
 
+**Web3 Direct & Non-Aggregator Hunting:**
+For searching Web3 targets outside platforms (HackerOne, Bugcrowd, YesWeHack, Intigriti, Immunefi), see `references/web3-independent-bounty-hunting.md`. It documents search engine exclusion dorks, RFC 9116 querying, GitHub code search for Solidity/Rust `SECURITY.md`, verified Tier-1 direct programs (Uniswap $3M, Ethereum Foundation, Solana/Anza $1M), and alternative Web3 contest platforms (Hats Finance, Cantina, Sherlock, Code4rena).
+
 **Direct / Self-Hosted Discovery Protocol:**
 Always check `/.well-known/security.txt` and repository `SECURITY.md` before assuming a program requires an aggregator. Direct programs often provide higher bounties and direct access to core engineering teams without mediator triage friction.
+
+**WAF-Blocked Program Policy Triage (Cloudflare 403 / Bot Block):**
+When a direct program's `/bug-bounty` or `/security` page blocks datacenter/agent IPs via Cloudflare WAF:
+1. *Check RFC 9116 first*: `curl -sL https://target.com/.well-known/security.txt`. CDNs and security teams routinely whitelist `.well-known/*` from WAF challenges to allow legitimate vulnerability disclosures.
+2. *Tor Proxy Setup on Ubuntu*: Do NOT rely on `systemctl start tor` (dummy master service). Use `sudo systemctl start tor@default` to launch the multi-instance daemon on SOCKS5 `127.0.0.1:9050`.
+3. *Wayback Machine through SOCKS5*: If direct archive requests are rate-limited (429), query via Tor:
+   `curl --socks5-hostname 127.0.0.1:9050 -s "https://archive.org/wayback/available?url=<policy_url>"`
+4. *Gzip Archive Pitfall*: Fetching raw snapshots via `http://web.archive.org/web/<ts>id_/<url>` often returns upstream compressed data (`gzip compressed data`). Always check with `file` or decompress with `gzip.open()` in Python before text processing to avoid UTF-8 decode crashes.
 
 **Finding freshly-listed self-hosted programs on GitHub** — the community list `lissy93/bug-bounties` splits `independent-programs.yml` (self-hosted/direct) from `platform-programs.yml` (aggregator programs). To surface programs added in a date window: pull recent commits (`GET /repos/lissy93/bug-bounties/commits?since=<ISO8601>`) and read the "Add program: X" messages, then grep the name against the raw `independent-programs.yml` to confirm it's self-hosted. Each YAML block carries optional reporting fields (`rewards`, `min_payout`/`max_payout`/`currency`, `safe_harbor`, `allows_disclosure`, `excluded_methods`, `out_of_scope`, `disclosure_timeline_days`, `response_sla_days`, `contact`, `hall_of_fame_url`) — enough to rank programs and extract reporting requirements without fetching every policy page. GitHub repo search (`created:>YYYY-MM-DD`) also works but mostly returns tools/wordlists, not programs. See `references/odin-ai-target-intel.md` for a worked example (Mozilla 0DIN GenAI bounty).
 

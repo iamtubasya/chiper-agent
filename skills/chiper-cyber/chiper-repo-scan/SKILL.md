@@ -34,6 +34,7 @@ references:
 > **Supplementary Files**:
 > - `payloads.md` — Repository scanning commands, classification scripts, and analysis payloads organized by scan phase
 > - `test-cases.md` — Structured test cases for surface classification, dependency detection, hotspot mapping, and complete audit workflows
+> - `references/whole-repo-audit-playbook.md` — **Read first for any "audit keseluruhan / full repo audit" request.** Baseline commands, `.venv`/`node_modules` scope discipline (raw grep counts are 8-10× real), subagent parallelization + verify-their-claims protocol, the finding classes only a whole-repo read surfaces (cache-invariant violations, parallel code paths, canonical-helper duplication, portability bypasses, permissive guard conditions), and the report shape with scored table + P0 cap.
 
 ## Summary
 
@@ -68,6 +69,24 @@ Difference from `security-review`: security-review provides a checklist for audi
 | gh | GitHub code search and analysis | `gh search code "<pattern>" --language python` |
 
 ## Methodology
+
+### Full-Repository Audit (the whole-codebase read)
+
+When the request is "audit keseluruhan" / "full audit" / "review this whole
+repo" rather than a targeted scan, follow
+`references/whole-repo-audit-playbook.md`. Its non-negotiables:
+
+- **Scope out `.venv/`, `node_modules/`, `site-packages/`** before any grep.
+  Raw repo-root counts overstate dangerous-pattern hits by ~8-10×; report both
+  the raw and production-scoped number and say which one is real.
+- **Read the repo's own design doc** (`AGENTS.md`, `CONTRIBUTING.md`,
+  `ARCHITECTURE.md`) first. If it states a quality rubric, audit against it.
+- **Parallelize the workstreams, then verify the top findings yourself.**
+  Subagent summaries are self-reports. Re-read the 6-8 highest-severity claims
+  with `read_file` before they enter the report.
+- **Verify claim-vs-reality against the live artifact**, not by grepping:
+  import the registry and `len()` it; `curl -sI` the published docs site and
+  PyPI JSON (a 404 is a headline finding).
 
 ### Repo Scan Four-Phase Process
 
@@ -105,7 +124,14 @@ grype dir:. --output json
 # Check specific library versions
 grep -r "version" vendor/*/package.json
 grep -r "VERSION" libs/*/*.h
+
+# Lockfile-wide audit (what a FRESH install pulls — differs from your venv)
+python ../chiper-supply-chain-security/scripts/osv-lockfile-audit.py uv.lock
+python ../chiper-supply-chain-security/scripts/osv-lockfile-audit.py package-lock.json --ecosystem npm
 ```
+
+> Auditing the installed environment misses vulnerable *pins*. See
+> `chiper-supply-chain-security/references/lockfile-audit-vs-venv.md`.
 
 **Phase 3: Security Hotspot Analysis**
 
@@ -157,6 +183,23 @@ Assign verdicts per module:
 - **Remove dead code**: Every line of code is a potential attack surface
 - **Separate concerns**: Third-party code should be isolated from business logic
 - **Automate scanning**: Integrate repo scanning into CI/CD pipelines
+
+### Pitfalls
+
+- **Raw grep counts include the dependency tree.** `grep -r "shell=True"` at
+  repo root counts `.venv/`. Always scope, then report production-only.
+- **Read 15 lines around every dangerous-pattern hit before assigning
+  severity.** A `tarfile.extractall` flagged HIGH had a `..`/absolute-path
+  member check two lines above; the real residual risk was symlink members
+  only. Bandit on a 300K-LOC Python repo: 23 HIGH, of which 19 were
+  non-security `hashlib` use and 1 was a false-positive bidirectional-char hit
+  on an emoji comment.
+- **Absence claims need the right import path.** Checking "is tool X
+  registered" without enabling the plugin that registers it produces a false
+  "absent from registry".
+- **Report the missing gate, not only the symptom.** "318 CVE advisories" is a
+  triage marathon; "no CI workflow could ever have surfaced them" is the
+  fixable root cause. Pair each finding class with the one gate that catches it.
 
 ## Report Template
 

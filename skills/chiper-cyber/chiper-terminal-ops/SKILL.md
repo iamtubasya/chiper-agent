@@ -216,6 +216,10 @@ Every skill that runs shell commands uses the timestamp, output file, and hash c
 
 ## Pitfalls
 
+- **Report interim, don't tool-loop in silence.** Boss's hard rule: a long audit/scan must emit a
+  short interim finding after every few tool calls (2–4), not one giant answer at the end. Signal
+  seen verbatim: *"Cek info ke gua, lama banget!"*. Batch independent reads in one call, then
+  report; never run 10+ calls with zero output before replying.
 - Never work from stale memory when live state can be re-read
 - Never widen a narrow task into unscoped testing
 - Never use destructive commands without explicit confirmation

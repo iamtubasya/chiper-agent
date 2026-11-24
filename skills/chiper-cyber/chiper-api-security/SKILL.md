@@ -59,9 +59,10 @@ API Security Testing covers security assessment across three major API architect
 - **GraphQL-Specific Risks**: Introspection queries leaking complete schema, deep nested query DoS, batch query brute force enumeration, missing field-level authorization.
 - **gRPC Risks**: Protobuf deserialization vulnerabilities, unencrypted channels (plaintext h2c), reflection service information leakage.
 
-**Related Skills**:
+### Related Skills:
 - `chiper-web-auth-bypass/SKILL.md` — Complete skills for JWT attacks, authentication bypass, and MFA bypass (complements the authentication dimension of JWT/BOLA testing in this skill)
 - `chiper-web-access-control/SKILL.md` — Access control vulnerabilities (defense perspective reference for BOLA/BPLA)
+- `chiper-frontend-api-reverse/SKILL.md` — when there is *no* documented/paid API to test: reconstruct the internal endpoint set, request signing (AES/RSA/hash), upload flow, and quota guard directly from the frontend JS bundles.
 
 ---
 
@@ -235,7 +236,7 @@ A common mistake in API testing is focusing exclusively on CRUD endpoints while 
 
 ## Detection Methods
 
-API vulnerability detection starts with comprehensive endpoint discovery using multiple complementary techniques: kiterunner for spec-based route enumeration, ffuf for path fuzzing, and passive analysis of JavaScript bundles for hardcoded API paths. GraphQL introspection queries and gRPC reflection services provide complete schema maps when available. Once endpoints are catalogued, automated BOLA testing swaps resource IDs across authenticated sessions while Mass Assignment testing injects additional properties into request bodies.
+API vulnerability detection starts with comprehensive endpoint discovery using multiple complementary techniques: kiterunner for spec-based route enumeration, ffuf for path fuzzing, and passive analysis of JavaScript bundles for hardcoded API paths (**for the full bundle→endpoint→crypto reconstruction workflow, use `chiper-frontend-api-reverse`**). GraphQL introspection queries and gRPC reflection services provide complete schema maps when available. Once endpoints are catalogued, automated BOLA testing swaps resource IDs across authenticated sessions while Mass Assignment testing injects additional properties into request bodies.
 
 ### API Gateway / WAF Indicators
 - **Unusual endpoint access**: Requests to undocumented or deprecated endpoints; correlation of paths across multiple user tokens.

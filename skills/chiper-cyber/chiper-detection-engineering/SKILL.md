@@ -451,7 +451,7 @@ description: >-
 references:
   - https://attack.mitre.org/techniques/T1078/
 tags:
-  - attack.initial_access
+  - attack.initial-access
   - attack.t1078
 logsource:
   product: aws
@@ -770,11 +770,17 @@ This skill is the craft layer that produces detectors consumed by hunting, IR, a
 ## Learning Resources
 
 - **This skill's supplementary files**: `payloads.md`, `test-cases.md`
-- **`references/sigma-pysigma-modern-syntax.md`** — verified 2026-11-24 against a live sigma-cli:
-  the `sigma check` → `sigma convert` validation loop, why `sigma check` no longer exists, the
-  nested `correlation:` document shape with its hyphenated `group-by` and `condition: {gte: N}`
-  (threshold rules like ">10 failures in 5 min"), hyphenated ATT&CK tags, `sigma plugin install
-  <backend>` vs the non-existent `pysigma-*` PyPI names, and the pipeline requirement for `convert`.
+- **`references/sigma-pysigma-modern-syntax.md`** — verified against a live sigma-cli 4.0.1
+  (2026-11-24/25): the `sigma check` → `sigma convert` validation loop, why `sigma-cli parse` no
+  longer exists (`parse` was removed; the subcommands are `analyze check convert list plugin
+  pysigma version`), the nested `correlation:` document shape with its hyphenated `group-by` and
+  `condition: {gte: N}` (threshold rules like ">10 failures in 5 min"), hyphenated ATT&CK tags,
+  `sigma plugin install <backend>` vs the non-existent `pysigma-*` PyPI names, and the pipeline
+  requirement for `convert`. It also records three traps found while authoring 34 rules in one
+  sitting: recursive `sigma check <dir>` raising `DuplicateFilenameIssue` for shared basenames
+  (validate per file, per directory for correlations), unquoted `0x1010` parsing as the integer
+  4112 under `|contains`, and `attack.defense-evasion` being rejected because the shipped dataset
+  is ATT&CK v18 (`TA0005 → stealth`) — technique tags are the version-stable choice.
   Read it before authoring any threshold/aggregation rule.
 - **Deep-dive guide**: `guides/detection-engineering-playbook.md` — end-to-end detection operations, from threat-intel intake through retirement, with rule authoring recipes, CI/CD pipeline templates, an FP-tuning matrix, and ATT&CK coverage measurement workflows
 - **Related skills** (see Cross-References above)

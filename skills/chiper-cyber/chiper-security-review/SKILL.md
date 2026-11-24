@@ -21,7 +21,7 @@ metadata:
   tool_count: 0
   guide_count: 5
   mitre: "T1190-Exploit Public-Facing Application, T1059-Command and Scripting Interpreter, T1562.001-Impair Defenses: Disable Tools, T1070-Indicator Removal"
-  last_reviewed: "2026-09-04"
+  last_reviewed: "2026-11-19"
 references:
   - path: ~/.chiper/skills/chiper-cyber/chiper-security-review/SKILL.md
   - path: ~/.chiper/skills/chiper-cyber/chiper-security-review/payloads.md
@@ -34,6 +34,7 @@ references:
 > **Supplementary Files**:
 > - `payloads.md` — Security review commands, test payloads, and audit scripts organized by OWASP category
 > - `test-cases.md` — Structured test cases for security review checklists covering secrets, input validation, injection, authentication, and data exposure
+> - `references/dangerous-pattern-triage.md` — **Read before any "classify every dangerous-pattern hit" task.** Whole-tree grep vs production-source scope reconciliation, benign buckets (scanner-own-rules, guidance docs, docstrings, safe loaders), the who-controls-the-string ladder for `shell=True`/`exec`/pickle sinks, adjacent-guard checks (approval gate, SSRF pre+post redirect, `compare_digest`, fail-open-on-missing-secret), the per-finding write-up block, and grep budget discipline.
 > - `guides/` — Deep-dive methodology guides for systematic security auditing
 
 ## Summary
@@ -183,6 +184,11 @@ trivy image target-image:tag
 - Identify all entry points (web, API, file upload, webhooks)
 - Map authentication boundaries
 - Identify data flows and storage locations
+- **Pin the audit scope before the first grep.** Enumerate production source
+  directories explicitly; never grep the repo root (`.venv/`, `skills/`,
+  `tests/`, `website/`, vendored deps swamp the signal). Any hit count handed
+  to you in a brief must be re-derived and reconciled against production-only
+  counts, reporting both. See `references/dangerous-pattern-triage.md` §0.
 
 **Step 2: Prioritized Review**
 1. Authentication and session management
@@ -192,10 +198,21 @@ trivy image target-image:tag
 5. Security headers and transport
 6. Dependencies and third-party components
 
+**Pattern-hit rule of thumb:** for every `shell=True` / `eval` / `pickle` /
+`verify=False` hit, rate by **who controls the string** (literal → env/config →
+model or tool argument → third-party data) and then **read the adjacent guard**
+(approval denylist, `is_safe_url` pre-*and*-post-redirect, `resolve()`+
+`relative_to()`, `hmac.compare_digest`, fail-closed on missing secret). The
+severity lives in the guard, which is never on the sink line. Do not report a
+hit as a finding without naming the guard and its line numbers — and do not
+report it as benign without naming which benign bucket it falls in.
+
 **Step 3: Evidence Collection**
 - Document each finding with: location, severity, reproduction steps
 - Capture screenshots and HTTP requests/responses
 - Map findings to OWASP Top 10 and CWE classifications
+- Record any area you could not trace as **NEEDS-VERIFY** with the reason,
+  rather than asserting a finding or silently dropping the area
 
 **Step 4: Report**
 - Executive summary with risk ratings

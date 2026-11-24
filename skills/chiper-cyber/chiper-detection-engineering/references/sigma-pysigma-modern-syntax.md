@@ -95,3 +95,32 @@ do not ship it.
 Generic logsources (`category: authentication`, `product: any`) are unmapped, so pipeline-based
 conversion fails with *Rule type not yet supported by the … pipeline*. Use `--without-pipeline`
 for generic logsources, or give the rule a logsource a pipeline knows (`windows`/`sysmon`).
+
+## Three more traps hit while authoring 34 rules (2026-11-25)
+
+| # | What the validator returned | Cause | Fix |
+|---|---|---|---|
+| 5 | `DuplicateFilenameIssue` (severity **HIGH**) from `sigma check rules/` | the check **recurses** into subdirectories and keys uniqueness on the file *basename*, so `rules/comsvcs-minidump.yml` vs `rules/credential_access/comsvcs-minidump.yml` collide — and both paths are legitimately referenced by different skills | validate **per file** (the pack's own CI loop is `for f in …; do sigma check "$f"; done`), and check a correlation **per directory** so its base rule is in the same run |
+| 6 | `SigmaTypeError: Modifier SigmaContainsModifier incompatible to value type of '4112'` | YAML parses unquoted `0x1010` as the **integer 4112**; `|contains` needs a string | quote it: `GrantedAccess\|contains: "0x1010"` |
+| 7 | `InvalidATTACKTagIssue … tag=attack.defense-evasion` on an otherwise clean rule | the installed pySigma ships the **ATT&CK v18** tactic set — `defense-evasion` is gone (`TA0005 → stealth`, `TA0112 → defense-impairment`) and the allowed set contains no `evasion` substring at all | tag the **technique** (`attack.t1070`, `attack.t1055`) rather than the retired tactic, or adopt the v18 shortname if that is what your SIEM indexes |
+
+Validation scope, concretely:
+
+```bash
+sigma check rules/auth/                     # correlation + its base in ONE run -> OK
+sigma check rules/auth/brute_force.yml      # alone -> "Rule '…' not found in rule collection"
+sigma check rules/                          # recurses -> DuplicateFilenameIssue on shared basenames
+```
+
+Do not guess what the dataset allows — ask it. Note `_load_allowed_tags()` **returns** the set
+(it does not assign `self.allowed_tags`):
+
+```bash
+python -c "from sigma.validators.core.tags import ATTACKTagValidator as T; \
+a = T()._load_allowed_tags(); \
+print('defense-evasion' in a, 'stealth' in a, len(a))"
+```
+
+Rule of thumb for tags: **technique IDs are version-stable, tactic shortnames are not.** When a
+tactic tag is rejected, dropping to the technique tag costs nothing in the coverage heatmap
+(techniques are what the Navigator layer colours).

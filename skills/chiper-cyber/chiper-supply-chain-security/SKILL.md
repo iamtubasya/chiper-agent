@@ -35,6 +35,8 @@ references:
 > **Supplementary Files**:
 > - `payloads.md` — Supply chain security testing commands and payloads categorized by dependency scanning, package integrity, typosquatting detection, CI/CD auditing, SBOM analysis, dependency confusion attacks, etc.
 > - `test-cases.md` — Structured test case list with severity classification and statistics
+> - `references/lockfile-audit-vs-venv.md` — **Read before any dependency audit.** Why you scan the lockfile and never the venv, how exact-pinning fails to protect the transitive layer, OSV API batching shape, and reachability-based severity triage.
+> - `scripts/osv-lockfile-audit.py` — Runnable OSV audit over `uv.lock` / `requirements.txt` / `package-lock.json`. Prints per-package advisories + CRITICAL/HIGH counts + minimum fix version, exits 1 on CRITICAL/HIGH so it can gate CI.
 
 ## Summary
 
@@ -128,6 +130,15 @@ Supporting tools: **Syft** (SBOM generation), **Grype** (SBOM vulnerability scan
 
 Use Trivy, npm audit, pip-audit, and other tools to scan project dependencies, identify HIGH/CRITICAL level vulnerabilities, and generate JSON/HTML format reports. Supports multiple scan targets including filesystems, lock files, and Git repositories.
 
+**Scan the lockfile, not the venv** — see `references/lockfile-audit-vs-venv.md`. Fast path:
+
+```bash
+python scripts/osv-lockfile-audit.py uv.lock                    # PyPI project
+python scripts/osv-lockfile-audit.py package-lock.json --ecosystem npm
+```
+
+`pip-audit` on an activated venv answers "what do I have installed". The lockfile answers "what does a fresh install pull" — and those two diverge routinely.
+
 ### 2. Malicious Package Detection
 
 Check post-install script injection points, audit anomalous packages in transitive dependency trees, evaluate package maintainer information and download counts, use Syft + Grype to generate SBOMs and scan for known malicious packages.
@@ -190,6 +201,16 @@ Register malicious packages with the same name as internal packages on public re
 ## Common Pitfalls
 
 Many organizations adopt SCA tools but fail to configure them properly, resulting in false-positive fatigue that leads teams to ignore genuine critical alerts. A frequent mistake is pinning dependency versions without also verifying lock file integrity hashes, which leaves the door open for registry-level tampering. Another common oversight is configuring private registries for internal packages but forgetting to block the public registry fallback path, negating the defense against dependency confusion attacks entirely.
+
+**Auditing the venv instead of the lockfile.** `pip-audit` against an installed environment reports what *you* have, not what *new users install*. A repo can have a clean venv and a vulnerable pin in the same breath — observed directly: `python-multipart` pinned `0.0.20` (14 advisories) in `pyproject.toml` while the venv held the fixed `0.0.33`, and `aiohttp`/`starlette`/`cryptography` all showed the same drift. Always parse the manifest + lockfile. Use `scripts/osv-lockfile-audit.py`.
+
+**Treating exact pins as a supply-chain posture.** Exact pins freeze the direct layer only; the lockfile still resolves 200-1100 transitives, and a freeze is not a monitor — nothing alerts when a pinned version becomes known-vulnerable. A repo documenting exact-pin rationale at length, with Dependabot for pip/npm disabled, carried **318 open advisories across 31 packages (9 CRITICAL)**.
+
+**Trusting inline CVE comments as patched status.** `"requests==2.33.0",  # CVE-2026-25645` records that one CVE was addressed, not that the version is currently clean. `PyJWT==2.13.0` carried a four-id `PYSEC-2026-*` comment and OSV returned 29 open advisories for that exact version. Re-query every audit; never inherit the comment's conclusion.
+
+**Counting advisories instead of ranking reachability.** 88 advisories in an image decoder fed by user uploads outranks 5 advisories in a build-only leaf. Rank by whether the package sits on a trust anchor (cert store, token verification), parses untrusted input, or terminates HTTP — then by count.
+
+**Reporting the finding without the missing gate.** "You have 318 vulnerabilities" invites a triage marathon. "Nothing in your CI could ever have surfaced these" is the fixable root cause. Pair every dependency finding with the one workflow that would have caught it.
 
 ## Detection Methods
 
