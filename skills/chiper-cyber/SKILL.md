@@ -47,7 +47,7 @@ $HOME/.chiper/skills/chiper-cyber/
 ├── engagement/              # engagement scope & planning records
 ├── memory/                  # daily notes (memory/YYYY-MM-DD.md)
 ├── chronicle/               # monthly/weekly historical records
-└── chiper-***/              # 140 specialist skills
+└── chiper-***/              # 143 specialist skills
     ├── SKILL.md             # authoritative specialist instructions
     ├── payloads.md          # attack payloads
     ├── test-cases.md        # structured test cases
