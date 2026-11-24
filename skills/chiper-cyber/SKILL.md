@@ -319,6 +319,16 @@ The entries below describe the intended role inferred from each skill directory 
 - **Function:** Instrumentasi aplikasi mobile untuk observasi runtime dan pengujian perilaku.
 - **Use when:** Gunakan saat assessment mobile memerlukan inspeksi proses aplikasi saat berjalan.
 
+### `chiper-aifaceswap-api`
+- **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-aifaceswap-api/SKILL.md`
+- **Function:** Reverse-engineering API internal sebuah SaaS face-swap berbasis Vue/Element-Plus — memetakan endpoint guest/no-login dan menjalankannya end-to-end dari sisi frontend.
+- **Use when:** Gunakan saat menargetkan SaaS yang API-nya tidak terdokumentasi (mis. `aifaceswap.io`).
+
+### `chiper-frontend-api-reverse`
+- **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-frontend-api-reverse/SKILL.md`
+- **Function:** Merekonstruksi API internal/tak resmi sebuah web app dari bundle JavaScript frontend, termasuk skema signing request (AES/RSA/hash) yang ter-obfuscate.
+- **Use when:** Gunakan saat perlu memahami atau menguji API rahasia sebuah aplikasi web dari sisi klien.
+
 ## Identity, Directory & Access Management
 
 ### `chiper-ad-cs-abuse`
@@ -853,6 +863,11 @@ The entries below describe the intended role inferred from each skill directory 
 - **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-social-engineering/SKILL.md`
 - **Function:** Analisis dan pengujian kesadaran serta risiko social engineering dalam konteks yang diizinkan.
 - **Use when:** Gunakan untuk evaluasi proses manusia dan kontrol anti-social-engineering.
+
+### `chiper-skill-usage-forensics`
+- **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-skill-usage-forensics/SKILL.md`
+- **Function:** Mengukur dan mengaudit skill agent mana yang benar-benar dipakai, berapa konteks yang dikonsumsi, dan mana yang dead weight — dari tiga sumber telemetry.
+- **Use when:** Gunakan saat merapikan pack skill, menekan biaya konteks, atau memutuskan skill mana yang layak dihapus.
 
 ## 5. Cross-domain routing guide
 

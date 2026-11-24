@@ -187,12 +187,23 @@ class TestGetCategoryFromPath:
             skill_md.touch()
             assert _get_category_from_path(skill_md) == "mlops"
 
-    def test_uncategorized_skill(self, tmp_path):
+    def test_root_level_skill_uses_its_dir_as_category(self, tmp_path):
+        # skills/<dir>/SKILL.md is a pack root: the dir IS the category, so soul
+        # masking can match it against SOUL_SKILL_SCOPES allow_categories.
+        # Returning None made callers fall back to "general", which blocked
+        # skill_view() of a pack root even on that pack's own soul.
         with patch("tools.skills_tool.SKILLS_DIR", tmp_path):
             skill_md = tmp_path / "my-skill" / "SKILL.md"
             skill_md.parent.mkdir(parents=True)
             skill_md.touch()
-            assert _get_category_from_path(skill_md) is None
+            assert _get_category_from_path(skill_md) == "my-skill"
+
+    def test_root_level_file_other_than_skill_md_is_uncategorized(self, tmp_path):
+        with patch("tools.skills_tool.SKILLS_DIR", tmp_path):
+            other_md = tmp_path / "my-skill" / "README.md"
+            other_md.parent.mkdir(parents=True)
+            other_md.touch()
+            assert _get_category_from_path(other_md) is None
 
     def test_outside_skills_dir(self, tmp_path):
         with patch("tools.skills_tool.SKILLS_DIR", tmp_path / "skills"):

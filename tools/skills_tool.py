@@ -513,6 +513,11 @@ def _get_category_from_path(skill_path: Path) -> Optional[str]:
             parts = rel_path.parts
             if len(parts) >= 3:
                 return parts[0]
+            # Root-level pack entry: skills/<category>/SKILL.md -> "<category>".
+            # Without this the pack root resolves to None (-> "general") and
+            # soul masking blocks it even on its own soul.
+            if len(parts) == 2 and parts[-1] == "SKILL.md":
+                return parts[0]
         except ValueError:
             continue
     return None
