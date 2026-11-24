@@ -451,7 +451,7 @@ OSINT detection focuses on identifying reconnaissance activity from external sou
 
 - **Supplementary files for this skill**: payloads.md, test-cases.md
 - **Related skills**: chiper-recon-osint/SKILL.md, chiper-social-engineering/SKILL.md, chiper-social-intelligence/SKILL.md, chiper-deep-research/SKILL.md, chiper-password-attack/SKILL.md
-- **Tool memory files**: osint/learning/OSINT_TOOLS_GUIDE.md, memory/maltego.md, memory/recon-ng.md
+- **Tool memory files**: `guides/OSINT_TOOLS_GUIDE.md`, `~/.chiper/skills/chiper-cyber/chiper-recon-osint/guides/maltego.md`, `~/.chiper/skills/chiper-cyber/chiper-recon-osint/guides/recon-ng.md`
 - **External resources**:
   - OSINT Framework: https://osintframework.com
   - TRACE Labs: https://tracelabs.org

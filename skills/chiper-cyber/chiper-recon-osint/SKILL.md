@@ -176,11 +176,11 @@ Cross-correlate collected information and build a complete attack surface map.
 - `guides/2026-03-21-information-gathering-tools.md` - Dirb directory scanner configuration and practical examples
 - `guides/2026-03-21-information-gathering-tools.md` - Dnsenum DNS enumeration tool usage
 - `guides/2026-03-21-information-gathering-tools.md` - Fierce subdomain scanning and DNS analysis
-- `memory/maltego.md` - Maltego visual OSINT analysis workflow
+- `guides/maltego.md` - Maltego visual OSINT analysis workflow
 - `guides/2026-03-21-information-gathering-tools.md` - Legion semi-automated penetration testing framework
-- `memory/recon-ng.md` - Recon-ng modular reconnaissance framework guide
+- `guides/recon-ng.md` - Recon-ng modular reconnaissance framework guide
 - `guides/2026-03-21-information-gathering-tools.md` - Caido web proxy tool
-- `guides/2026-03-22-sniffing-spoofing-tools.md` - Hping3 advanced network probing tool
+- `~/.chiper/skills/chiper-cyber/chiper-network-pentest/guides/2026-03-22-sniffing-spoofing-tools.md` - Hping3 advanced network probing tool
 
 ### Reference Guides (guides/)
 

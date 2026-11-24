@@ -226,8 +226,8 @@ Forensic analysis performance depends heavily on evidence size and tool selectio
 - `chiper-post-exploitation/SKILL.md` - Understanding attacker persistence mechanisms to guide forensic investigation direction
 
 **Internal resources (this workspace)**:
-- `memory/2026-03-21-digital-forensics-tools.md` - Complete digital forensics tool learning notes (SleuthKit/Autopsy/Scalpel/Bulk Extractor/ExifTool/PhotoRec/TestDisk)
-- `security-tools-67/digital-forensics-cli-reference.md` - Forensics command-line tool reference
+- `guides/2026-03-21-digital-forensics-tools.md` - Complete digital forensics tool learning notes (SleuthKit/Autopsy/Scalpel/Bulk Extractor/ExifTool/PhotoRec/TestDisk)
+- `guides/digital-forensics-cli-reference.md` - Forensics command-line tool reference
 
 **External resources**:
 - [SleuthKit Official Documentation](https://sleuthkit.org/sleuthkit/) - Complete reference for filesystem forensics toolset

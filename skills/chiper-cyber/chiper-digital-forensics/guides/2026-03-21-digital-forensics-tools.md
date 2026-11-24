@@ -105,7 +105,7 @@
 - monitoringdisk空intervalUse
 
 ## File Locations
-- Detailed Command Reference: `${CHIPER_PATH:-${CHIPER_HOME:-$HOME/.chiper}}/workspace/security-tools-67/digital-forensics-cli-reference.md`
+- Detailed Command Reference: `${CHIPER_HOME:-$HOME/.chiper}/skills/chiper-cyber/chiper-digital-forensics/guides/digital-forensics-cli-reference.md`
 - This learning record: Current file
 - Tool classification statistics: `${CHIPER_PATH:-${CHIPER_HOME:-$HOME/.chiper}}/workspace/kali-517-analysis/`
 

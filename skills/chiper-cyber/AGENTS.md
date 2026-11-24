@@ -2,7 +2,7 @@
 
 This folder is your home. Take good care of it.
 
-> **Current Version**: v0.3.5 (2026-09-09) — **全量验证与完整性排序**（139 技能三轴验证；机械问题三清零；排名报告上线；skill-lint 0/0/139）。详见 `RELEASE-v0.3.5.md`。
+> **Current Version**: v0.3.5 (2026-09-09) — **全量验证与完整性排序**（139 技能三轴验证；机械问题三清零；排名报告上线；skill-lint 0/0/139）。详见 `UPDATELOG.md`（v0.3.5 段）。
 
 ---
 
@@ -134,7 +134,7 @@ postexp → report: findings_summary.json, evidence_manifest.txt
 - Skills define how tools work — check the corresponding SKILL.md
 - Keep local configuration notes in TOOLS.md
 - Skills directory: `skills/` — each skill is independently usable
-- **139 skill domains** covering all security disciplines (v0.2.4)
+- **143 skill domains** covering all security disciplines
 
 ### Defense Triple Standard (v0.2.0.2+)
 
@@ -144,7 +144,7 @@ All newly standardized SKILLs (Phase 1 + Phase 2) include the complete defense t
 2. **Detection Methods** — SIEM-ready detection rules (Sigma/Splunk SPL/Sysmon/Falco)
 3. **Defense Evasion Techniques** — Modern attacker evasion patterns
 
-See `SKILL_REMEDIATION_LIST.json` for per-SKILL status and `PHASE2_PROGRESS.md` for batch tracking.
+See `SKILL_REMEDIATION_LIST.json` for per-SKILL status and `docs/SKILL_MAINTENANCE.md` for batch tracking.
 
 ---
 

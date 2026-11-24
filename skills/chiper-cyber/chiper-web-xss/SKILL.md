@@ -428,6 +428,6 @@ Modern XSS detection combines signature-based WAF rules, behavioral analysis, an
 - **HTML5 Security CheatSheet**: https://html5sec.org/ (HTML5-related XSS vector collection)
 
 **Workspace related documents**:
-- `plans/web_security_advanced_plan.md` -- XSS advanced techniques learning module
+- `guides/web_security_advanced_plan.md` -- XSS advanced techniques learning module
 - `chiper-security-misconfiguration/guides/security_misconfiguration_complete_guide.md` -- CSP and security header configuration
 - `chiper-web-auth-bypass/guides/auth-bypass-complete-guide.md` -- Session hijacking and cookie security

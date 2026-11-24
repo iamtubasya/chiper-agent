@@ -12,7 +12,7 @@ All notable changes to chiper-cyber are documented in this file.
 - 报告：`docs/SKILL_VALIDATION_RANKING_2026-09-09.md`（全 139 排名表 + findings register）
 - lint 0/0/139 全程无回归
 
-详见 [RELEASE-v0.3.5.md](RELEASE-v0.3.5.md)
+详见 [UPDATELOG.md](UPDATELOG.md)（v0.3.5 段）
 
 ---
 
@@ -25,7 +25,7 @@ All notable changes to chiper-cyber are documented in this file.
 - 新增 `validation/check-tool-versions.py`（08 改进项 #1 落地）：在线 apt/--version 探测 + 离线清单 + --json
 - 文档型 patch（v0.2.3.1 先例）：SKILL 修改仅 3 行；lint 0/0/139
 
-详见 [RELEASE-v0.3.4.md](RELEASE-v0.3.4.md)
+详见 [RELEASE-v0.3.4.md](UPDATELOG.md)
 
 ---
 
@@ -39,7 +39,7 @@ All notable changes to chiper-cyber are documented in this file.
 - Truth-sync：DoD 验证发现 ~85 行陈旧/失真 finding 残留 → 139 个评估文档全部按活体指标重算
 - **评估 backlog（P1/P2/P3 非策略）全仓归零**；lint 0/0/139；testcase warning 17→16
 
-详见 [RELEASE-v0.3.3.md](RELEASE-v0.3.3.md)
+详见 [RELEASE-v0.3.3.md](UPDATELOG.md)
 
 ---
 
@@ -54,7 +54,7 @@ All notable changes to chiper-cyber are documented in this file.
 - Wave 1-3 时期评估文档统一为现行标准格式（旧 evidence 保留）
 - lint 0/0/139 无回归
 
-详见 [RELEASE-v0.3.2.md](RELEASE-v0.3.2.md)
+详见 [RELEASE-v0.3.2.md](UPDATELOG.md)
 
 ---
 
@@ -69,7 +69,7 @@ All notable changes to chiper-cyber are documented in this file.
 - 20 个新增 CVE 全部 NVD API 逐个核验；核验门剔除 1 个错误候选（CVE-2018-11091 实为其他产品）
 - lint 保持 0/0/139 无回归
 
-详见 [RELEASE-v0.3.1.md](RELEASE-v0.3.1.md)
+详见 [RELEASE-v0.3.1.md](UPDATELOG.md)
 
 ---
 
@@ -83,7 +83,7 @@ All notable changes to chiper-cyber are documented in this file.
 - 内置 CVE 纪律：payloads §2.3 强制 NVD 核验门（不引不可核验编号）
 - skill-lint 0/0/139；新技能四件套验证全绿
 
-详见 [RELEASE-v0.3.0.md](RELEASE-v0.3.0.md)
+详见 [RELEASE-v0.3.0.md](UPDATELOG.md)
 
 ---
 
@@ -99,7 +99,7 @@ All notable changes to chiper-cyber are documented in this file.
 - 文档清理：HEARTBEAT 计数 130→139、PHASE2_PROGRESS 废弃头、WORKPLAN 状态回填
 - 第 3 次月度审查并入：lint 0/0/139 无回归；NO_GUIDES 6→0
 
-详见 [RELEASE-v0.2.7.md](RELEASE-v0.2.7.md)
+详见 [RELEASE-v0.2.7.md](UPDATELOG.md)
 
 ---
 
@@ -113,7 +113,7 @@ All notable changes to chiper-cyber are documented in this file.
 - A.4 评估进度: 35/139（25%）, 37 findings applied
 - A.5 v0.2.5.x: 5 patches 37 findings 0 回归 ✅
 
-详见 [RELEASE-v0.2.6.md](RELEASE-v0.2.6.md)
+详见 [RELEASE-v0.2.6.md](UPDATELOG.md)
 
 ---
 
@@ -129,7 +129,7 @@ All notable changes to chiper-cyber are documented in this file.
 | cloud-security | 7 行（T1580/T1078.004/T1530/T1552.005/T1496/T1610/T1555.006）|
 | ai-security | 6 行（T1592.005/T1190/T1562.001/T1557/T1195.001/T1005）|
 
-详见 [RELEASE-v0.2.5.5.md](RELEASE-v0.2.5.5.md)
+详见 [RELEASE-v0.2.5.5.md](UPDATELOG.md)
 
 ---
 
@@ -149,7 +149,7 @@ All notable changes to chiper-cyber are documented in this file.
 - blockchain-l2：7 个重大桥攻击事件（Ronin/Poly/Wormhole/Nomad 等）
 - quantum-crypto：Kyber 勒索软件 2026-03 事件 + 密钥对比 + SNDL 时间线
 
-详见 [RELEASE-v0.2.5.4.md](RELEASE-v0.2.5.4.md)
+详见 [RELEASE-v0.2.5.4.md](UPDATELOG.md)
 
 ---
 
@@ -173,7 +173,7 @@ All notable changes to chiper-cyber are documented in this file.
 - reverse-eng：Ghidra 内置脚本清单 + 5 个 RE CVE
 - gitops：gitleaks + detect-secrets + Kyverno + OPA/conftest
 
-详见 [RELEASE-v0.2.5.3.md](RELEASE-v0.2.5.3.md)
+详见 [RELEASE-v0.2.5.3.md](UPDATELOG.md)
 
 ---
 
@@ -209,7 +209,7 @@ All notable changes to chiper-cyber are documented in this file.
 | skill-lint | 0/0/139 | 0/0/139 |
 | 实战 findings 累计关闭 | 4/18 | **18/18** ✅ |
 
-详见 [RELEASE-v0.2.5.2.md](RELEASE-v0.2.5.2.md)
+详见 [RELEASE-v0.2.5.2.md](UPDATELOG.md)
 
 ---
 
@@ -242,7 +242,7 @@ All notable changes to chiper-cyber are documented in this file.
 | payloads.md 总行数 | 2853 | **2972** (+119) |
 | 实战 findings 关闭数 | 0/4 | **4/4** ✅ |
 
-详见 [RELEASE-v0.2.5.1.md](RELEASE-v0.2.5.1.md)
+详见 [RELEASE-v0.2.5.1.md](UPDATELOG.md)
 
 ---
 
@@ -271,7 +271,7 @@ All notable changes to chiper-cyber are documented in this file.
 | skill-lint | 0/0/139 | 0/0/139（保持） |
 | P3 findings 关闭数 | 0/3 | **3/3** ✅ |
 
-详见 [RELEASE-v0.2.5.md](RELEASE-v0.2.5.md) + [chronicle/2026-09/skill-review-2026-08-09.md](chronicle/2026-09/skill-review-2026-08-09.md)
+详见 [RELEASE-v0.2.5.md](UPDATELOG.md) + [chronicle/2026-09/skill-review-2026-08-09.md](chronicle/2026-09/skill-review-2026-08-09.md)
 
 ---
 
@@ -312,7 +312,7 @@ All notable changes to chiper-cyber are documented in this file.
 | AI 类 SKILL | 6 | **8** |
 | skill-lint | 0/0/137 | **0/0/139** |
 
-详见 [RELEASE-v0.2.4.md](RELEASE-v0.2.4.md)
+详见 [RELEASE-v0.2.4.md](UPDATELOG.md)
 
 ---
 
@@ -330,7 +330,7 @@ All notable changes to chiper-cyber are documented in this file.
 | ~~CPU side-channel 2026~~ | 2 | ❌ 不推荐 |
 | ~~6G RF 物理层~~ | 12 | ❌ 不推荐（已覆盖）|
 
-详见 [RELEASE-v0.2.3.3.md](RELEASE-v0.2.3.3.md)
+详见 [RELEASE-v0.2.3.3.md](UPDATELOG.md)
 
 ---
 
@@ -349,7 +349,7 @@ All notable changes to chiper-cyber are documented in this file.
 
 **平均 4.2/5；0 P0 critical；2 P1 + 3 P2 + 3 P3 findings**
 
-详见 [RELEASE-v0.2.3.2.md](RELEASE-v0.2.3.2.md)
+详见 [RELEASE-v0.2.3.2.md](UPDATELOG.md)
 
 ---
 
@@ -363,7 +363,7 @@ All notable changes to chiper-cyber are documented in this file.
 
 - CVE-2026-33634（2026-03-19）：恶意 trivy v0.69.4 + 75+ trivy-action tags
 
-详见 [RELEASE-v0.2.3.1.md](RELEASE-v0.2.3.1.md) + `CHIPER_TOOLS_BASELINE_2026_08.md`
+详见 [RELEASE-v0.2.3.1.md](UPDATELOG.md) + `CHIPER_TOOLS_BASELINE_2026_08.md`
 
 ---
 
@@ -375,7 +375,7 @@ All notable changes to chiper-cyber are documented in this file.
 - 56 → 0 warnings
 - 5 个攻击类 SKILL 补 Core Tools / Practical Steps
 
-详见 [RELEASE-v0.2.3.md](RELEASE-v0.2.3.md)
+详见 [RELEASE-v0.2.3.md](UPDATELOG.md)
 
 ---
 
@@ -387,7 +387,7 @@ All notable changes to chiper-cyber are documented in this file.
 - 修复 v0.2.1 声称的 "100% Defense Triple 覆盖" 实际只有 54% 严格匹配的问题
 - 45 个 H2→H3 层级修复 + 4 个字面打字错误 + 2 个攻击类补写 + 1 个翻译残留清零
 
-详见 [RELEASE-v0.2.2.md](RELEASE-v0.2.2.md)
+详见 [RELEASE-v0.2.2.md](UPDATELOG.md)
 
 ---
 
@@ -413,7 +413,7 @@ All notable changes to chiper-cyber are documented in this file.
 | `.git/` 大小 | 3.7 GB | **19 MB** |
 | 实际工时 | - | **~45h** (vs 计划 80-100h) |
 
-详见 [RELEASE-v0.2.1.md](RELEASE-v0.2.1.md)。
+详见 [RELEASE-v0.2.1.md](UPDATELOG.md)。
 
 ---
 
@@ -421,7 +421,7 @@ All notable changes to chiper-cyber are documented in this file.
 
 7 个新战略 SKILL 创建：ai-safety-redteam-advanced、identity-provider-attack、data-loss-prevention-bypass、edge-computing-security、quantum-cryptography-transition、hardware-side-channel-advanced、5g-6g-telecom-attack-advanced。SKILL 总数 130 → 137。
 
-详见 [RELEASE-v0.2.0.8.md](RELEASE-v0.2.0.8.md)。
+详见 [RELEASE-v0.2.0.8.md](UPDATELOG.md)。
 
 ---
 
@@ -429,7 +429,7 @@ All notable changes to chiper-cyber are documented in this file.
 
 Phase 2 Batch 6-10 完成。**全部 130 个 SKILL 达到 v0.2.0.2 Defense Triple 标准 (100%)**。
 
-详见 [RELEASE-v0.2.0.7.md](RELEASE-v0.2.0.7.md)。
+详见 [RELEASE-v0.2.0.7.md](UPDATELOG.md)。
 
 ---
 
@@ -437,7 +437,7 @@ Phase 2 Batch 6-10 完成。**全部 130 个 SKILL 达到 v0.2.0.2 Defense Tripl
 
 Phase 2 Batch 3-5 完成 (30 SKILLs)。累计 65/130 (50%)。
 
-详见 [RELEASE-v0.2.0.6.md](RELEASE-v0.2.0.6.md)。
+详见 [RELEASE-v0.2.0.6.md](UPDATELOG.md)。
 
 ---
 
@@ -445,7 +445,7 @@ Phase 2 Batch 3-5 完成 (30 SKILLs)。累计 65/130 (50%)。
 
 Phase 2 Batch 1-2 (20 SKILLs) + 仓库瘦身 (3.7 GB → 19 MB) + 全部核心文档对齐 v0.2.0.4。
 
-详见 [RELEASE-v0.2.0.5.md](RELEASE-v0.2.0.5.md)。
+详见 [RELEASE-v0.2.0.5.md](UPDATELOG.md)。
 
 ---
 
@@ -480,7 +480,7 @@ Phase 2 Batch 1-2 (20 SKILLs) + 仓库瘦身 (3.7 GB → 19 MB) + 全部核心�
 
 ### 详细说明
 
-详见 [RELEASE-v0.2.0.4.md](RELEASE-v0.2.0.4.md)（正式中文发布版本）。
+详见 [RELEASE-v0.2.0.4.md](UPDATELOG.md)（正式中文发布版本）。
 
 ---
 
@@ -493,7 +493,7 @@ Phase 2 Batch 1-2 (20 SKILLs) + 仓库瘦身 (3.7 GB → 19 MB) + 全部核心�
 - **osint**: 新增 Detection (5 类，含 Canary tokens/蜜罐识别) + Evasion (7 类)
 - **cloud-security**: 新增 Detection (6 类) + Evasion (6 类，含 CloudTrail evasion/STS 链)
 
-详见 [RELEASE-v0.2.0.3.md](RELEASE-v0.2.0.3.md)（已重写为正式对外发布的中文版本）。
+详见 [RELEASE-v0.2.0.3.md](UPDATELOG.md)（已重写为正式对外发布的中文版本）。
 
 ---
 
@@ -517,7 +517,7 @@ Phase 2 Batch 1-2 (20 SKILLs) + 仓库瘦身 (3.7 GB → 19 MB) + 全部核心�
 
 - **版本基线统一** (commit `8d4613f6`): 修正 0.1.50 → **v0.2.0.2**（用户澄清 chiper-cyber 已切换到 v0.2.x 编号体系）
 
-详见 [RELEASE-v0.2.0.2.md](RELEASE-v0.2.0.2.md)。
+详见 [RELEASE-v0.2.0.2.md](UPDATELOG.md)。
 
 ---
 
@@ -532,7 +532,7 @@ Phase 2 Batch 1-2 (20 SKILLs) + 仓库瘦身 (3.7 GB → 19 MB) + 全部核心�
 - chiper-cyber：已有 SKILL 的升级维护 + 持续增加新 SKILL + 持续更新使用指南
 - xAgent：将 SKILLs 转变为各种单一工种的智能体 + 探索多智能体协作场景
 
-详见 [RELEASE-v0.2.0.1.md](RELEASE-v0.2.0.1.md)。
+详见 [RELEASE-v0.2.0.1.md](UPDATELOG.md)。
 
 ---
 
@@ -558,7 +558,7 @@ Phase 2 Batch 1-2 (20 SKILLs) + 仓库瘦身 (3.7 GB → 19 MB) + 全部核心�
 - 基础设施改进：closed-book isolation, auto permission mode, mirror fallback
 - Binary mode 切换：352+ instances/hour (88-100x faster)
 
-详见 [RELEASE-v0.1.47.1-analysis.md](RELEASE-v0.1.47.1-analysis.md) 与 [docs/legacy-reports/RELEASE-v0.1.47.1-final-report.md](docs/legacy-reports/RELEASE-v0.1.47.1-final-report.md)。
+详见 [RELEASE-v0.1.47.1-analysis.md](UPDATELOG.md) 与 [docs/legacy-reports/RELEASE-v0.1.47.1-final-report.md](docs/legacy-reports/RELEASE-v0.1.47.1-final-report.md)。
 
 ---
 
@@ -2036,7 +2036,7 @@ Folded into v0.1.27 (no version bump): backfilled the missing release announceme
   - `chiper-security-review/guides/code-review-security-patterns-guide.md` — Code review patterns
   - `chiper-multi-agent-collaboration/guides/agent-failure-handling-and-recovery-guide.md` — Failure handling
   - `chiper-search-first/guides/tool-evaluation-and-selection-guide.md` — Tool evaluation
-- `RELEASE-v0.1.12.md` — Release announcement (Chinese)
+- `UPDATELOG.md` — Release announcement (Chinese)
 
 ### Fixed
 
@@ -2065,7 +2065,7 @@ Folded into v0.1.27 (no version bump): backfilled the missing release announceme
 - `validation/QUALITY-SCORE-TRACKER.md` — Master quality score tracker (all 49 skills)
 - `validation/QUALITY-SCORE-GUIDE.md` — Metric definitions + tier definitions + analysis findings
 - `validation/evidence/quality-scores/` — Per-skill JSON score data (49 files)
-- `RELEASE-v0.1.11.md` — Release announcement
+- `UPDATELOG.md` — Release announcement
 
 ### Changed
 
@@ -2087,7 +2087,7 @@ Folded into v0.1.27 (no version bump): backfilled the missing release announceme
 - `validation/INTEGRATION-TRACKER.md` — Cross-skill integration test tracker (7 scenarios)
 - `validation/INTEGRATION-SCENARIOS.md` — Detailed scenario definitions with data flow diagrams
 - `validation/evidence/integration/` — Integration test evidence directory (7 evidence files)
-- `RELEASE-v0.1.10.md` — Release announcement
+- `UPDATELOG.md` — Release announcement
 
 ### Changed
 
@@ -2102,7 +2102,7 @@ Folded into v0.1.27 (no version bump): backfilled the missing release announceme
 - `validation/VALIDATION-TRACKER.md` — Master validation tracking table (49 skills, 1 test case each)
 - `validation/VALIDATION-GUIDE.md` — Execution playbook: environment setup, workflow, evidence standards, execution order
 - `validation/evidence/` — Evidence storage directory for validation artifacts
-- `RELEASE-v0.1.9.md` — Release announcement
+- `UPDATELOG.md` — Release announcement
 
 ### Changed
 
@@ -2138,7 +2138,7 @@ All 49 skill domains brought to FULL enrichment status (SKILL.md + payloads.md +
 - `HEARTBEAT.md` — Added Skill Domain Completeness check section, added MEMORY.md staleness check, updated priority order
 - `VERSION` — 0.1.7 → 0.1.8
 - `CHANGELOG.md` — v0.1.8 entry
-- `RELEASE-v0.1.8.md` — release announcement
+- `UPDATELOG.md` — release announcement
 
 ## [0.1.7] - 2026-05-16
 
@@ -2194,7 +2194,7 @@ All 49 skill domains brought to FULL enrichment status (SKILL.md + payloads.md +
 - `README.md` — Version 0.1.6
 - `CHANGELOG.md` — v0.1.6 entry
 - `UPDATELOG.md` — v0.1.6 report
-- `RELEASE-v0.1.6.md` — release announcement
+- `UPDATELOG.md` — release announcement
 - 16 new files created (7 payloads + 7 test-cases + 2 guides)
 - 13 SKILL.md files updated (header + Orchestration)
 
@@ -2278,7 +2278,7 @@ All 49 skill domains brought to FULL enrichment status (SKILL.md + payloads.md +
   - SKILL.md — Exa API usage, semantic queries, date/domain filtering
   - payloads.md — API examples for CVE research, exploit techniques, threat intelligence
   - test-cases.md — TC-ES-001 to TC-ES-002 (CVE research, exploit technique research)
-- `RELEASE-v0.1.4.md` — release announcement article
+- `UPDATELOG.md` — release announcement article
 
 ### Changed
 
@@ -2308,7 +2308,7 @@ All 49 skill domains brought to FULL enrichment status (SKILL.md + payloads.md +
 - `deep-research` payloads.md Section 9 (Continuous Monitoring Queries) and Section 10 (Intelligence Correlation Commands)
 - `deep-research` test-cases.md TC-DR-011 to TC-DR-013 (continuous monitoring, correlation, adaptive iteration)
 - `deep-research` Hacker Laws section and Learning Resources section in SKILL.md
-- `RELEASE-v0.1.3.md` — release announcement article
+- `UPDATELOG.md` — release announcement article
 - `memory/2026-05-05-deep-research-migration-report.md` — deep research capability migration research report
 
 ### Changed
