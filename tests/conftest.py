@@ -401,6 +401,50 @@ def _isolate_chiper_home(_hermetic_environment):
     return None
 
 
+@pytest.fixture(autouse=True)
+def _reset_session_context():
+    """Restore session ContextVars to their never-set state after each test.
+
+    ``gateway.session_context.clear_session_vars`` deliberately leaves the
+    vars explicitly set to ``""`` so ``get_session_env`` stops falling back
+    to ``os.environ``. That state is process-wide, so in a single-process run
+    it survives into the next test: ``test_session_platform_env_var`` sets
+    ``CHIPER_SESSION_PLATFORM`` via ``monkeypatch`` and then reads
+    ``{"global-skill"}`` instead of ``{"discord-skill", "global-skill}``
+    because the stale ``""`` shadows the env var.
+
+    The parallel runner isolates each test *file* in its own subprocess, so
+    CI never sees this; a plain ``pytest tests`` does. Reset on teardown only
+    (never on setup) so fixtures that set session vars before the test body
+    are untouched.
+    """
+    yield
+    try:
+        from gateway import session_context as _sc
+    except Exception:  # pragma: no cover - session_context always importable
+        return
+    for var in (
+        _sc._SESSION_PLATFORM,
+        _sc._SESSION_CHAT_ID,
+        _sc._SESSION_CHAT_NAME,
+        _sc._SESSION_THREAD_ID,
+        _sc._SESSION_USER_ID,
+        _sc._SESSION_USER_NAME,
+        _sc._SESSION_KEY,
+        _sc._SESSION_ID,
+        _sc._SESSION_MESSAGE_ID,
+        _sc._CRON_AUTO_DELIVER_PLATFORM,
+        _sc._CRON_AUTO_DELIVER_CHAT_ID,
+        _sc._CRON_AUTO_DELIVER_THREAD_ID,
+    ):
+        var.set(_sc._UNSET)
+    try:
+        from agent.runtime_cwd import clear_session_cwd
+        clear_session_cwd()
+    except Exception:
+        pass
+
+
 # ── Module-level state reset — replaced by per-file process isolation ──────
 #
 # Each test FILE runs in a freshly-spawned ``python -m pytest <file>``

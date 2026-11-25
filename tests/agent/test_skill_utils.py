@@ -165,7 +165,16 @@ def test_skill_config_raw_cache_invalidates_on_config_edit(tmp_path, monkeypatch
 
     config_path.write_text("skills:\n  disabled: [new-skill]\n", encoding="utf-8")
     import os
-    os.utime(config_path, None)
+    import time
+
+    # The cache key is (path, st_mtime_ns, st_size) and the two payloads have
+    # equal size ("old-skill" == "new-skill"), so invalidation rests entirely
+    # on mtime_ns. Filesystem timestamp granularity is coarse: 28 of 50 rapid
+    # rewrites produced a byte-identical st_mtime_ns here, which left the
+    # stale entry cached and failed the assertion. Bump the timestamp
+    # explicitly so the check does not depend on clock resolution.
+    stamp = time.time() + 5.0
+    os.utime(config_path, (stamp, stamp))
 
     assert get_disabled_skill_names() == {"new-skill"}
 def test_iter_skill_index_files_prunes_skill_support_dirs(tmp_path):
