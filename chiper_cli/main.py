@@ -63,6 +63,8 @@ except ModuleNotFoundError:
 
 import os
 import sys
+import re
+import json
 
 
 def _set_process_title() -> None:
@@ -4779,6 +4781,16 @@ def _build_web_ui(web_dir: Path, *, fatal: bool = False) -> bool:
             _say("Web UI frontend not built and npm is not available.")
             _say("Install Node.js, then run:  cd web && npm install && npm run build")
         return not fatal
+    # Same pre-flight as the update flow: if the workspace tree cannot resolve
+    # (private package missing from the registry) say so once instead of
+    # letting npm print its E404 dump a second time.
+    preflight = _npm_preflight(npm, _workspace_root(web_dir), ("web",))
+    if preflight:
+        _say(f"  ⚠ Web UI install skipped: {preflight}")
+        if fatal:
+            _say("  Fix the dependency or configure .npmrc, then run:  "
+                 "npm install --workspace web && npm run build -w web")
+        return False
     _say("→ Building web UI...")
 
     def _relay(result: "subprocess.CompletedProcess") -> None:
@@ -4812,13 +4824,17 @@ def _build_web_ui(web_dir: Path, *, fatal: bool = False) -> bool:
         extra_args=(*npm_workspace_args, "--silent"),
     )
     if r1.returncode != 0:
+        reason = _npm_failure_reason(r1)
         _say(
-            f"  {'✗' if fatal else '⚠'} Web UI npm install failed"
-            + ("" if fatal else " (chiper web will not be available)")
+            f"  {'✗' if fatal else '⚠'} Web UI npm install failed: {reason}"
+            if fatal
+            else f"  ⚠ Web UI install skipped: {reason}"
         )
-        _relay(r1)
         if fatal:
+            _relay(r1)
             _say("  Run manually:  npm install --workspace web && npm run build -w web")
+        # else: one actionable line instead of the full npm E404 dump; the
+        # complete output is still in the update log.
         return False
     # First attempt — stream output via idle-timeout helper (issue #33788).
     # capture_output=True on a long Vite build looks identical to a hang;
@@ -7658,50 +7674,266 @@ def _update_node_dependencies() -> None:
         return
 
     # With a single workspace lockfile the root install would cover ALL
-    # workspaces — but apps/desktop pulls in Electron as a devDependency,
-    # and its postinstall downloads a ~200MB binary.  Most users don't
-    # need desktop during `chiper update`, so we install root-only first
-    # then add just the workspaces the CLI/TUI/web build actually requires.
-    # Desktop deps are installed on demand by the desktop launcher
-    # (see _desktop_build_needed).
+    # workspaces — but apps/desktop pulls in Electron as a devDependency
+    # (~200MB postinstall) and apps/bootstrap-installer pins a private UI
+    # package that 404s on a public registry.  Most users need neither during
+    # `chiper update`, so select the workspaces the CLI/TUI/web build actually
+    # requires and let the rest stay on demand (the desktop launcher installs
+    # its own deps — see _desktop_build_needed).
+    #
+    # The root pass is therefore conditional: ``--workspaces=false`` prevents
+    # *recursion* from the root package but npm still resolves every glob in
+    # the root ``workspaces`` list, so it fails on apps/bootstrap-installer.
+    # When the root declares no dependencies of its own there is nothing to
+    # install there, and running it only produces a 404 dump.
     print("→ Updating Node.js dependencies...")
-    extra_args = ["--no-fund", "--no-audit", "--progress=false"]
 
     nixos_env = _nixos_build_env()
 
-    # Step 1: root install (no workspace recursion).
-    root_args = [*extra_args, "--workspaces=false"]
-    root_result = _run_npm_install_deterministic(
-        npm,
-        PROJECT_ROOT,
-        extra_args=tuple(root_args),
-        capture_output=False,
-        env=nixos_env,
-    )
-    if root_result.returncode != 0:
-        print("  ⚠ npm install failed in repo root")
-        stderr = (root_result.stderr or "").strip() if root_result.stderr else ""
-        if stderr:
-            print(f"    {stderr.splitlines()[-1]}")
+    # Pre-flight: when the lockfile is missing a declared dependency npm has
+    # to resolve from the registry, which is where a private workspace package
+    # 404s and buries the update in E404 dumps.  One dry-run tells us whether
+    # the tree is installable at all; if not, say so once and move on instead
+    # of failing three times.
+    preflight = _npm_preflight(npm, PROJECT_ROOT, ("ui-tui", "web"), env=nixos_env)
+    if preflight:
+        print(f"  ⚠ npm install skipped: {preflight}")
+        print(
+            "    TUI/web dependencies stay unavailable until that package is"
+            " published or a private registry is configured in .npmrc."
+        )
         return
 
-    # Step 2: install only the workspaces update needs (ui-tui, web).
-    # --workspace selects specific workspaces; the rest (desktop) are skipped.
-    ws_args = [*extra_args, "--workspace", "ui-tui", "--workspace", "web"]
-    ws_result = _run_npm_install_deterministic(
-        npm,
-        PROJECT_ROOT,
-        extra_args=tuple(ws_args),
-        capture_output=False,
-        env=nixos_env,
+    if _root_has_own_dependencies(PROJECT_ROOT):
+        # capture_output=False is a contract (issue #18840): postinstall
+        # progress must stay visible, or a long browser-binary download looks
+        # like a hang.  The pre-flight above is what keeps a private package's
+        # 404 dump out of the output — npm is only run when it can succeed.
+        root_result = _run_npm_install_deterministic(
+            npm,
+            PROJECT_ROOT,
+            extra_args=("--no-fund", "--no-audit", "--progress=false", "--workspaces=false"),
+            capture_output=False,
+            env=nixos_env,
+        )
+        if root_result.returncode != 0:
+            print("  ⚠ npm install failed in repo root (see npm output above)")
+        else:
+            print("  ✓ repo root dependencies")
+    else:
+        print("  · repo root has no dependencies of its own, skipping")
+
+    # Install only the workspaces update needs (ui-tui, web); desktop and
+    # bootstrap-installer are deliberately left out.
+    ws_result = _run_npm_install_workspace_only(
+        npm, PROJECT_ROOT, ("ui-tui", "web"), env=nixos_env
     )
     if ws_result.returncode == 0:
-        print("  ✓ repo root + ui-tui, web workspaces (desktop skipped)")
+        print("  ✓ ui-tui + web workspaces (desktop, bootstrap-installer skipped)")
     else:
-        print("  ⚠ npm workspace install failed")
-        stderr = (ws_result.stderr or "").strip() if ws_result.stderr else ""
-        if stderr:
-            print(f"    {stderr.splitlines()[-1]}")
+        print("  ⚠ npm workspace install failed (see npm output above)")
+
+
+def _root_has_own_dependencies(project_root: Path) -> bool:
+    """True when the ROOT package.json declares dependencies of its own.
+
+    The root workspace carries a couple of real deps (``@streamdown/math``,
+    ``agent-browser``) but it also globs ``apps/*``, which pulls in workspace
+    packages whose dependencies may be private or unresolvable.  Knowing
+    whether there is anything to install at the root lets the update path skip
+    the root pass entirely when it would only fail on someone else's private
+    package.
+    """
+    pkg = project_root / "package.json"
+    if not pkg.exists():
+        return False
+    try:
+        doc = json.loads(pkg.read_text(encoding="utf-8"))
+    except Exception:
+        return True  # can't tell -> don't skip
+    if not isinstance(doc, dict):
+        return True
+    for key in ("dependencies", "devDependencies", "optionalDependencies"):
+        block = doc.get(key)
+        if isinstance(block, dict) and block:
+            return True
+    return False
+
+
+def _npm_failure_reason(result: "subprocess.CompletedProcess") -> str:
+    """Compress npm's multi-kilobyte 404 dump into one actionable line.
+
+    A private workspace dependency that is not published (``@chiper-research/ui``
+    is the known one) produces ~20 lines of identical E404 noise per install
+    attempt, twice per update, which buries the lines that actually matter.
+    Returns a short reason plus, when recognisable, a hint naming the package.
+    """
+    blob = "\n".join(
+        part.decode("utf-8", "replace") if isinstance(part, bytes) else (part or "")
+        for part in (result.stdout, result.stderr)
+    )
+    pkg = None
+    m = re.search(r"'(?P<pkg>@[\w.-]+/[\w.-]+|(?<!@)[\w.-]+)@[\w.^~-]+' is not in this registry", blob)
+    if m:
+        pkg = m.group("pkg")
+    else:
+        m = re.search(r"404 Not Found - GET [^\s]*?/(@[\w.-]+%2f[\w.-]+)", blob)
+        if m:
+            pkg = m.group(1).replace("%2f", "/")
+    if pkg and ("registry" in blob or "E404" in blob or "404" in blob):
+        return (
+            f"unresolvable package {pkg} (not published to the configured "
+            f"registry - private workspace dep, skipping)"
+        )
+    if "ENOTFOUND" in blob or "ETIMEDOUT" in blob or "network" in blob.lower():
+        return "network error reaching the npm registry"
+    last = [l.strip() for l in blob.splitlines() if l.strip()]
+    return last[-1][:200] if last else "npm exited non-zero with no output"
+
+
+
+# Memoised result of the npm pre-flight check, keyed by (project root, workspaces).
+# None means "not checked yet"; an empty string means "the tree resolves".
+_NPM_PREFLIGHT: "dict[str, str]" = {}
+
+
+def _npm_declared_missing_from_lock(project_root: Path) -> list:
+    """Dependencies declared in a package.json but absent from the lockfile.
+
+    A lockfile that is missing entries for declared dependencies means npm has
+    to resolve the tree from the registry instead of installing from the lock.
+    That is exactly the path that blows up on a private workspace dependency
+    (``@chiper-research/ui`` is declared by ``web`` and ``apps/*`` but is not
+    published), so this cheap, purely local check tells the update flow to
+    confirm before running npm at all.  Returns an empty list when the lock is
+    in sync, when a package.json cannot be read, or when there is no lockfile
+    (npm install will resolve from scratch anyway).
+    """
+    lock_path = project_root / "package-lock.json"
+    if not lock_path.exists():
+        return []
+    try:
+        lock = json.loads(lock_path.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    locked = {
+        key.split("node_modules/")[-1]
+        for key in (lock.get("packages") or {})
+        if "node_modules/" in key
+    }
+    missing: set = set()
+    manifests = [project_root / "package.json"] + sorted(
+        p for p in project_root.glob("*/package.json")
+    ) + sorted(project_root.glob("apps/*/package.json"))
+    for manifest in manifests:
+        try:
+            doc = json.loads(manifest.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if not isinstance(doc, dict):
+            continue
+        for key in ("dependencies", "devDependencies", "optionalDependencies"):
+            block = doc.get(key)
+            if isinstance(block, dict):
+                missing.update(name for name in block if name not in locked)
+    return sorted(missing)
+
+
+def _npm_preflight(
+    npm: str,
+    project_root: Path,
+    workspaces: "tuple[str, ...]" = (),
+    env: "dict[str, str] | None" = None,
+) -> str:
+    """Return a short reason when the npm tree cannot be installed, else "".
+
+    Runs only when ``_npm_declared_missing_from_lock`` found an out-of-sync
+    manifest, and only once per (root, workspaces): a dry-run costs a registry
+    resolution (~2s here) but writes nothing, so a private package that 404s
+    is caught before npm is allowed to print its multi-kilobyte E404 dump.
+    When the lock is in sync this returns "" immediately with no network call.
+
+    The memo key includes the workspaces so tests can reset it; the whole map
+    is module state because the update flow and ``_build_web_ui`` run in the
+    same process and must agree on the answer.
+    """
+    # Keyed by project root only: the answer describes whether the tree can be
+    # resolved at all, so the update flow and _build_web_ui must agree on it
+    # rather than paying for a second dry-run each.  The first caller's
+    # workspace selection is what gets probed.
+    key = str(project_root)
+    cached = _NPM_PREFLIGHT.get(key)
+    if cached is not None:
+        return cached
+
+    reason = ""
+    if _npm_declared_missing_from_lock(project_root):
+        args = ["install", "--dry-run", "--ignore-scripts", "--no-audit",
+                "--no-fund", "--progress=false"]
+        for ws in workspaces:
+            args += ["--workspace", ws]
+        try:
+            probe = subprocess.run(
+                [npm, *args],
+                cwd=project_root,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                check=False,
+                env={**os.environ, "CI": "1", **(env or {})},
+            )
+        except OSError as exc:
+            probe = None
+            reason = f"cannot run npm: {exc}"
+        if probe is not None and probe.returncode != 0:
+            reason = _npm_failure_reason(probe)
+    _NPM_PREFLIGHT[key] = reason
+    return reason
+
+
+def _npm_preflight_reset() -> None:
+    """Drop the memoised pre-flight answer (test hook)."""
+    _NPM_PREFLIGHT.clear()
+
+
+def _run_npm_install_workspace_only(
+    npm: str,
+    project_root: Path,
+    workspaces: "tuple[str, ...]",
+    env: "dict[str, str] | None" = None,
+) -> "subprocess.CompletedProcess":
+    """Install only the named workspaces, never the whole workspace graph.
+
+    ``--workspaces=false`` only neutralises the root pass; npm still resolves
+    every glob in the root ``workspaces`` list, so ``apps/bootstrap-installer``
+    (pinned to a private UI package) fails an install that was supposed to
+    ignore it.  Selecting explicit workspaces keeps the tree installable.
+
+    Falls back to ``--workspaces=false`` when a selected workspace exists but
+    npm refuses the selection (older npm), and to the root pass as a last
+    resort, so an install that used to work cannot regress.
+    """
+    args: list[str] = ["--no-fund", "--no-audit", "--progress=false"]
+    for ws in workspaces:
+        args += ["--workspace", ws]
+    # capture_output=False on both attempts: same #18840 contract as the root
+    # pass (streamed progress).  Failures are summarised by the caller because
+    # there is no captured text to quote — the streamed npm output is already
+    # on screen.
+    result = _run_npm_install_deterministic(
+        npm, project_root, extra_args=tuple(args), capture_output=False, env=env
+    )
+    if result.returncode == 0:
+        return result
+    fallback = _run_npm_install_deterministic(
+        npm,
+        project_root,
+        extra_args=("--no-fund", "--no-audit", "--progress=false", "--workspaces=false"),
+        capture_output=False,
+        env=env,
+    )
+    return fallback if fallback.returncode == 0 else result
 
 
 class _UpdateOutputStream:

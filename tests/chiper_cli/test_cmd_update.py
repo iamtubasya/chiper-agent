@@ -228,6 +228,12 @@ class TestCmdUpdateBranchFallback:
             for call in mock_run.call_args_list
             if call.args and call.args[0][0] == "/usr/bin/npm"
         ]
+        # The update flow runs one pre-flight `npm install --dry-run` when the
+        # lockfile is missing a declared dependency (private package check).
+        # It must not be mistaken for one of the real installs below.
+        preflight_calls = [c for c in npm_calls if "--dry-run" in c[0]]
+        assert len(preflight_calls) <= 1, "at most one npm pre-flight probe"
+        npm_calls = [c for c in npm_calls if "--dry-run" not in c[0]]
 
         # cmd_update runs npm commands in these locations:
         #   1. repo root  — root-only install (--workspaces=false)
