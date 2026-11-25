@@ -305,12 +305,12 @@ def _soul_sources(soul_id: str) -> List[Path]:
             _packaged_soul_path("chiper-web3"),
         ]
     if soul_id == "chiper-hunt":
-        # Two source trees (legacy bounty-pack kept for compat).
+        # Two source trees (skills/<pack> is the single canonical name).
         return [
             chiper_home / "skills" / "chiper-bounty" / "SOUL.md",
-            chiper_home / "skills" / "bounty-pack" / "SOUL.md",
+            chiper_home / "skills" / "chiper-bounty" / "SOUL.md",
             repo_skills / "chiper-bounty" / "SOUL.md",
-            repo_skills / "bounty-pack" / "SOUL.md",
+            repo_skills / "chiper-bounty" / "SOUL.md",
             _packaged_soul_path("chiper-hunt"),
         ]
     return []
@@ -693,7 +693,6 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
         "allow_categories": [
             "chiper-cyber",
             "chiper-bounty/tob",
-            "bounty-pack/tob",
             "software-development",
             "devops",
             "github",
@@ -707,7 +706,6 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
         "deny_categories": [
             "chiper-web3",
             "chiper-bounty",
-            "bounty-pack",
             "creative",
             "productivity",
             "media",
@@ -722,7 +720,6 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
         "name": "Chiper-Hunt",
         "allow_categories": [
             "chiper-bounty",
-            "bounty-pack",
             "software-development",
             "devops",
             "github",
@@ -751,9 +748,7 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
         "allow_categories": [
             "chiper-web3",
             "chiper-bounty/tob",
-            "bounty-pack/tob",
             "chiper-bounty/security/smart-contract-audit",
-            "bounty-pack/security/smart-contract-audit",
             "software-development",
             "devops",
             "github",
@@ -767,7 +762,6 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
         "deny_categories": [
             "chiper-cyber",
             "chiper-bounty",
-            "bounty-pack",
             "creative",
             "productivity",
             "media",
@@ -803,7 +797,6 @@ SOUL_SKILL_SCOPES: Dict[str, Dict[str, Any]] = {
         ],
         "deny_categories": [
             "chiper-bounty",
-            "bounty-pack",
             "chiper-cyber",
             "chiper-web3",
         ],
@@ -890,7 +883,7 @@ def get_soul_for_skill(category: Optional[str], skill_name: str) -> Optional[str
         if top == "chiper-web3":
             return "chiper-web3"
         return "chiper-cyber"
-    if top in ("chiper-bounty", "bounty-pack"):
+    if top == "chiper-bounty":
         return "chiper-hunt"
     if top == "chiper-web3":
         return "chiper-web3"

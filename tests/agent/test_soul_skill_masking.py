@@ -26,25 +26,20 @@ def test_is_skill_allowed_for_soul_matrix():
     assert is_skill_allowed_for_soul("chiper-dev", "devops", "linux-server-ops")
     assert is_skill_allowed_for_soul("chiper-dev", "autonomous-ai-agents", "chiper-agent")
     assert not is_skill_allowed_for_soul("chiper-dev", "chiper-bounty", "hunt-sqli")
-    assert not is_skill_allowed_for_soul("chiper-dev", "bounty-pack", "hunt-sqli")
     assert not is_skill_allowed_for_soul("chiper-dev", "chiper-cyber", "chiper-web-sqli")
     assert not is_skill_allowed_for_soul("chiper-dev", "chiper-web3", "chiper-airdrop-intelligence")
 
     # Chiper-Cyber
     assert is_skill_allowed_for_soul("chiper-cyber", "chiper-cyber", "chiper-web-sqli")
     assert is_skill_allowed_for_soul("chiper-cyber", "chiper-bounty/tob", "semgrep")
-    assert is_skill_allowed_for_soul("chiper-cyber", "bounty-pack/tob", "semgrep")
     assert is_skill_allowed_for_soul("chiper-cyber", "software-development", "systematic-debugging")
     assert not is_skill_allowed_for_soul("chiper-cyber", "chiper-bounty", "hunt-sqli")
-    assert not is_skill_allowed_for_soul("chiper-cyber", "bounty-pack", "hunt-sqli")
     assert not is_skill_allowed_for_soul("chiper-cyber", "chiper-web3", "chiper-airdrop-intelligence")
     assert not is_skill_allowed_for_soul("chiper-cyber", "creative", "manim-video")
 
     # Chiper-Hunt
     assert is_skill_allowed_for_soul("chiper-hunt", "chiper-bounty", "hunt-sqli")
-    assert is_skill_allowed_for_soul("chiper-hunt", "bounty-pack", "hunt-sqli")
     assert is_skill_allowed_for_soul("chiper-hunt", "chiper-bounty/security", "smart-contract-audit")
-    assert is_skill_allowed_for_soul("chiper-hunt", "bounty-pack/security", "smart-contract-audit")
     assert is_skill_allowed_for_soul("chiper-hunt", "software-development", "systematic-debugging")
     assert not is_skill_allowed_for_soul("chiper-hunt", "chiper-cyber", "chiper-web-sqli")
     assert not is_skill_allowed_for_soul("chiper-hunt", "chiper-web3", "chiper-airdrop-intelligence")
@@ -52,10 +47,10 @@ def test_is_skill_allowed_for_soul_matrix():
     # Chiper-Web3
     assert is_skill_allowed_for_soul("chiper-web3", "chiper-web3", "chiper-airdrop-intelligence")
     assert is_skill_allowed_for_soul("chiper-web3", "chiper-bounty/tob", "solana-vulnerability-scanner")
-    assert is_skill_allowed_for_soul("chiper-web3", "bounty-pack/tob", "solana-vulnerability-scanner")
+    assert is_skill_allowed_for_soul("chiper-web3", "chiper-bounty/tob", "solana-vulnerability-scanner")
     assert not is_skill_allowed_for_soul("chiper-web3", "chiper-cyber", "chiper-web-sqli")
     assert not is_skill_allowed_for_soul("chiper-web3", "chiper-bounty", "hunt-sqli")
-    assert not is_skill_allowed_for_soul("chiper-web3", "bounty-pack", "hunt-sqli")
+    assert not is_skill_allowed_for_soul("chiper-web3", "chiper-bounty", "hunt-sqli")
 
     # Unknown or default: everything allowed
     assert is_skill_allowed_for_soul("unknown", "chiper-cyber", "chiper-web-sqli")
@@ -65,7 +60,7 @@ def test_is_skill_allowed_for_soul_matrix():
 def test_get_soul_for_skill():
     assert get_soul_for_skill("chiper-cyber", "chiper-web-sqli") == "chiper-cyber"
     assert get_soul_for_skill("chiper-bounty", "hunt-sqli") == "chiper-hunt"
-    assert get_soul_for_skill("bounty-pack", "hunt-sqli") == "chiper-hunt"
+    assert get_soul_for_skill("chiper-bounty", "hunt-sqli") == "chiper-hunt"
     assert get_soul_for_skill("chiper-web3", "chiper-airdrop-intelligence") == "chiper-web3"
     assert get_soul_for_skill("software-development", "fastapi-backend-architecture") == "chiper-dev"
 
@@ -84,7 +79,7 @@ def test_prompt_builder_soul_masking_integration(monkeypatch, tmp_path):
     cyber_skill.mkdir(parents=True)
     (cyber_skill / "SKILL.md").write_text("---\nname: sqli-probe\ndescription: SQLi probe\n---\nBody")
 
-    hunt_skill = skills_base / "bounty-pack" / "hunt-sqli"
+    hunt_skill = skills_base / "chiper-bounty" / "hunt-sqli"
     hunt_skill.mkdir(parents=True)
     (hunt_skill / "SKILL.md").write_text("---\nname: hunt-sqli\ndescription: Hunt SQLi\n---\nBody")
 
@@ -92,7 +87,7 @@ def test_prompt_builder_soul_masking_integration(monkeypatch, tmp_path):
     web3_skill.mkdir(parents=True)
     (web3_skill / "SKILL.md").write_text("---\nname: airdrop\ndescription: Airdrop scanner\n---\nBody")
 
-    # In Chiper-Dev: bounty-pack and chiper-cyber must NOT appear
+    # In Chiper-Dev: chiper-bounty and chiper-cyber must NOT appear
     clear_skills_system_prompt_cache(clear_snapshot=True)
     with patch("agent.soul_manager.get_active_soul", return_value={"id": "chiper-dev", "name": "Chiper-Dev"}):
         dev_prompt = build_skills_system_prompt()
@@ -101,7 +96,7 @@ def test_prompt_builder_soul_masking_integration(monkeypatch, tmp_path):
         assert "sqli-probe" not in dev_prompt
         assert "airdrop" not in dev_prompt
 
-    # In Chiper-Cyber: chiper-cyber is present, but bounty-pack hunt-* is hidden
+    # In Chiper-Cyber: chiper-cyber is present, but chiper-bounty hunt-* is hidden
     clear_skills_system_prompt_cache(clear_snapshot=False)
     with patch("agent.soul_manager.get_active_soul", return_value={"id": "chiper-cyber", "name": "Chiper-Cyber"}):
         cyber_prompt = build_skills_system_prompt()
@@ -109,7 +104,7 @@ def test_prompt_builder_soul_masking_integration(monkeypatch, tmp_path):
         assert "hunt-sqli" not in cyber_prompt
         assert "airdrop" not in cyber_prompt
 
-    # In Chiper-Hunt: bounty-pack hunt-* is present, but chiper-cyber is hidden
+    # In Chiper-Hunt: chiper-bounty hunt-* is present, but chiper-cyber is hidden
     clear_skills_system_prompt_cache(clear_snapshot=False)
     with patch("agent.soul_manager.get_active_soul", return_value={"id": "chiper-hunt", "name": "Chiper-Hunt"}):
         hunt_prompt = build_skills_system_prompt()
