@@ -17,16 +17,34 @@ allowed-tools:
   - WebFetch
 metadata:
   domain: assessment
-  tool_count: 0
+  tool_count: 6
   guide_count: 8
   mitre: "T1190-Exploit Public-Facing Application, T1595.002-Vulnerability Scanning, T1210-Exploitation of Remote Services, T1203-Exploitation for Client Execution"
-  last_reviewed: "2026-09-04"
+  last_reviewed: "2026-11-25"
 references:
   - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/SKILL.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/guides/attack-surface-discovery-guide.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/guides/bounty-hunting-methodology.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/guides/bug-bounty-automation.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/guides/bug-bounty-report-writing-guide.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/guides/poc-development-guide.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/guides/responsible-disclosure-workflow.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/guides/scope-recon-guide.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/guides/usage-and-assessment.md
   - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/payloads.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/test-cases.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/auditing-imported-skill-packs.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/betterteam-target-intel.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/coinpayments-target-intel.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/metaplex-audit-result.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/metaplex-fuzz-harness.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/metaplex-target-intel.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/odin-ai-target-intel.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/oidc-spa-login-and-token-capture.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/preflight-verify-pack-inventory.md
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/spa-api-and-mcp-recon.md
   - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/references/web3-independent-bounty-hunting.md
-  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/guides
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/scripts/audit_skills_tree.py
+  - path: ~/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/test-cases.md
 ---
 
 # Skill: Security Bounty Hunter
@@ -41,8 +59,7 @@ references:
 > - `references/auditing-imported-skill-packs.md` — **Read before trusting any third-party/bundled skill pack.** 4 failure classes (greedy orchestrator descriptions, behavior overrides that contradict SOUL.md authorization-first rules, cross-machine path contamination, superseded duplicate mirrors) + audit commands, remediation order, and pitfalls.
 > - `references/metaplex-fuzz-harness.md` — Reusable Mollusk invariant-fuzzer for mpl-core (fuzz_layout.rs + fuzz_groups.rs): random instruction sequences asserting plugin-layout consistency + group bidirectional membership. Includes the SBF-vs-Mollusk toolchain version gotcha.
 > - `references/metaplex-audit-result.md` — Full in-scope audit of ALL 5 Metaplex programs (mpl-core, token-auth-rules, token-metadata, bubblegum, candy-guard): coverage matrix, 6 disproven leads (incl. bot_tax, MintLimit overflow, AllowList replay), honest no-bug verdict.
-> - `references/web3-independent-bounty-recon.md` — Web3 independent/direct bug bounty recon: bypassing platform aggregators (Immunefi/HackerOne/Bugcrowd), search dork syntax fixes, `lissy93/bug-bounties` `path=independent-programs.yml` date-window mining, alternative Web3 platforms (Hats Finance on-chain vaults, Code4rena continuous bounties, Cantina, Sherlock), and tier-1 self-hosted foundations.
-> - `references/web3-independent-bounty-hunting.md` — Web3 independent & direct bounty discovery: Google/DDG dorks, GitHub code search for `SECURITY.md`, verified Tier-1 self-hosted programs (Ethereum Foundation, Uniswap $3M, Solana/Anza $1M, Web3 Foundation), and alternative Web3 platforms (Hats Finance, Cantina, Sherlock, Code4rena, BugRap).
+> - `references/web3-independent-bounty-hunting.md` — Web3 independent & direct bounty discovery (termasuk RFC 9116 / `security.txt` discovery & dork syntax pitfalls, digabung dari `web3-independent-bounty-recon.md`): Google/DDG dorks, GitHub code search for `SECURITY.md`, verified Tier-1 self-hosted programs (Ethereum Foundation, Uniswap $3M, Solana/Anza $1M, Web3 Foundation), and alternative Web3 platforms (Hats Finance, Cantina, Sherlock, Code4rena, BugRap).
 > - `references/betterteam-target-intel.md` — Betterteam self-hosted bug bounty target intel: $50–$2k payout matrix, scope map, fatal ban trigger (applying to real/customer jobs), RFC 9116 discovery, and Cloudflare WAF bypass via Tor Wayback pipeline.
 
 ## Summary
@@ -269,12 +286,39 @@ When the user hands over their own test-account credentials (email/password):
 - **Rationale**: Bounty hunting benefits from continuous target monitoring (new attack surfaces appear over time) combined with a structured per-finding pipeline from discovery to report
 - **Integration**: recon-osint (surface discovery), verification-loop (finding confirmation), knowledge-ops (cross-session pattern tracking), article-writing (report generation)
 
-### Cross-Skill Pipeline
+### Cross-Skill Pipeline (routing ke sub-skill pack)
+
+Skill ini **orchestrator** — eksekusi teknis per kelas vuln selalu serahkan ke sub-skill
+yang punya payload/test-case sendiri. Wajib load saat fase terkait:
+
+| Fase di skill ini | Sub-skill chiper-cyber | Fungsi |
+|---|---|---|
+| Step 1 — Scope check | `chiper-engagement-manager` | scope, rules, eksklusi, tahapan engagement |
+| Step 2 — Entrypoint/recon | `chiper-recon-osint` | surface discovery, subdomain, endpoint |
+| Step 3 — Triage otomatis | `chiper-vulnerability-assessment` | identifikasi, prioritisasi, validasi kerentanan |
+| Step 4–5 — per kelas vuln | `chiper-web-sqli` | SQL injection — payload & test-case |
+| | `chiper-web-xss` | reflected/stored/DOM XSS |
+| | `chiper-web-ssrf` | SSRF + bypass + metadata |
+| | `chiper-web-xxe` | XXE parser attack |
+| | `chiper-web-auth-bypass` | auth/session/token bypass |
+| | `chiper-web-access-control` | IDOR/BOLA/privilege boundary |
+| | `chiper-web-deserialization` | insecure deserialization → RCE |
+| | `chiper-api-security` | REST/GraphQL/BFLA/rate limit |
+| Step 5 — PoC | `chiper-exploit-development` | PoC aman, chain dampak |
+| Step 6 — Report | `chiper-pentest-reporting` | struktur laporan, evidence, CVSS |
+| | `chiper-article-writing` | advisory/artikel bila perlu publikasi |
+| Verifikasi | `chiper-verification-loop` | reproduksi independen sebelum submit |
+| Tool hilang | `chiper-bootstrap` | pre-flight install (sudah dirujuk) |
+| Pasca-submit | `chiper-knowledge-ops` | persist pola, cross-session |
+
+**Pipeline alur:**
 ```
-recon-osint → security-bounty-hunter → verification-loop → article-writing
-                                         ↓
-                                    knowledge-ops (persist patterns)
+recon-osint → engagement-manager → security-bounty-hunter → (per kelas: web-*) →
+exploit-development → verification-loop → pentest-reporting → knowledge-ops
 ```
+
+Kalau kelas vuln gak ada di tabel → cek routing di root `SKILL.md` §5 sebelum
+improvisasi. Jangan eksekusi payload kelas berat tanpa load skill kelasnya.
 
 ### Quality Gate
 - Pre-condition: Scope verified, target authorized for testing
