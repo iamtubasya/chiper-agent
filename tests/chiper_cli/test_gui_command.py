@@ -270,7 +270,8 @@ def test_desktop_build_stamp_skips_build_when_up_to_date(tmp_path, monkeypatch):
 
     launch_ok = subprocess.CompletedProcess([], 0)
 
-    with patch("chiper_cli.main._desktop_build_needed", return_value=False), \
+    with patch("chiper_cli.main.shutil.which", return_value="/usr/bin/npm"), \
+         patch("chiper_cli.main._desktop_build_needed", return_value=False), \
          patch("chiper_cli.main._run_npm_install_deterministic") as mock_install, \
          patch("chiper_cli.main.subprocess.run", return_value=launch_ok) as mock_run, \
          patch("chiper_cli.main._desktop_macos_relaunchable_fixup"), \
