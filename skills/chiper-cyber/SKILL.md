@@ -1,20 +1,28 @@
 ---
 name: chiper-cyber
-description: Master directory, skill registry, and orchestration entrypoint for the CHIPER Cybersecurity skill collection. Use this skill to discover the correct specialist skills, locate their instructions, load dependencies, and coordinate complete task workflows.
-version: 1.0.0
+description: 'Chiper-cyber router: SQL injection, XSS, IDOR, recon, OSINT, red team, sigma rule, deteksi
+  ancaman, forensik, cloud, AD — katalog 143 skill cyber + protokol baca SKILL.md'
+origin: chiper-cyber
+version: 0.3.5
+compatibility:
+- chiper
+- claude-code
+- cursor
+- windsurf
 references:
-  - path: ~/.chiper/skills/chiper-cyber/README.md
-  - path: ~/.chiper/skills/chiper-cyber/SOUL.md
-  - path: ~/.chiper/skills/chiper-cyber/TOOLS.md
-  - path: ~/.chiper/skills/chiper-cyber/HEARTBEAT.md
-  - path: ~/.chiper/skills/chiper-cyber/AGENTS.md
-  - path: ~/.chiper/skills/chiper-cyber/IDENTITY.md
-  - path: ~/.chiper/skills/chiper-cyber/CHIPER_TOOLS_BASELINE_2026_07.md
-  - path: ~/.chiper/skills/chiper-cyber/CHIPER_TOOLS_BASELINE_2026_08.md
-  - path: ~/.chiper/skills/chiper-cyber/CHIPER_TOOLS_BASELINE_2026_09.md
-  - path: ~/.chiper/skills/chiper-cyber/docs/tools/full-inventory.md
-  - path: ~/.chiper/skills/chiper-cyber/references/upstream-sync-protocol.md
+- path: ~/.chiper/skills/chiper-cyber/README.md
+- path: ~/.chiper/skills/chiper-cyber/SOUL.md
+- path: ~/.chiper/skills/chiper-cyber/TOOLS.md
+- path: ~/.chiper/skills/chiper-cyber/HEARTBEAT.md
+- path: ~/.chiper/skills/chiper-cyber/AGENTS.md
+- path: ~/.chiper/skills/chiper-cyber/IDENTITY.md
+- path: ~/.chiper/skills/chiper-cyber/CHIPER_TOOLS_BASELINE_2026_07.md
+- path: ~/.chiper/skills/chiper-cyber/CHIPER_TOOLS_BASELINE_2026_08.md
+- path: ~/.chiper/skills/chiper-cyber/CHIPER_TOOLS_BASELINE_2026_09.md
+- path: ~/.chiper/skills/chiper-cyber/docs/tools/full-inventory.md
+- path: ~/.chiper/skills/chiper-cyber/references/upstream-sync-protocol.md
 ---
+
 
 # CHIPER CYBER — MASTER SKILL DIRECTORY
 
@@ -38,7 +46,7 @@ $HOME/.chiper/skills/chiper-cyber/
 ├── README.md                # overview + quick start
 ├── TOOLS.md                 # tool notes
 ├── USER.md MEMORY.md IDENTITY.md HEARTBEAT.md TEMPLATE.md CLAUDE.md
-├── CHANGELOG.md UPDATELOG.md   # riwayat rilis (gabungan release notes)
+├── CHANGELOG.md UPDATELOG.md  # riwayat rilis (gabungan release notes)
 ├── SKILL_REMEDIATION_LIST.json
 ├── CHIPER_TOOLS_BASELINE_2026_0{7,8,9}.md
 ├── references/              # shared references
@@ -319,10 +327,12 @@ The entries below describe the intended role inferred from each skill directory 
 - **Function:** Instrumentasi aplikasi mobile untuk observasi runtime dan pengujian perilaku.
 - **Use when:** Gunakan saat assessment mobile memerlukan inspeksi proses aplikasi saat berjalan.
 
+
 ### `chiper-aifaceswap-api`
 - **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-aifaceswap-api/SKILL.md`
 - **Function:** Reverse-engineering API internal sebuah SaaS face-swap berbasis Vue/Element-Plus — memetakan endpoint guest/no-login dan menjalankannya end-to-end dari sisi frontend.
 - **Use when:** Gunakan saat menargetkan SaaS yang API-nya tidak terdokumentasi (mis. `aifaceswap.io`).
+
 
 ### `chiper-frontend-api-reverse`
 - **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-frontend-api-reverse/SKILL.md`
@@ -591,7 +601,7 @@ The entries below describe the intended role inferred from each skill directory 
 
 ### `chiper-reverse-engineering-advanced`
 - **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-reverse-engineering-advanced/SKILL.md`
-- **Function:** Reverse engineering lanjutan: symbolic execution (angr, KLEE, manticore), decompiler confusion (Hex-Rays, Ghidra deobfuscation), binary diffing (BinDiff, Diaphora, Kam1n0), firmware RE (binwalk, FACT, EMBA), dan analisis kode ter-obfuscate (OLLVM, Tigress).
+- **Function:** Reverse engineering lanjutan: symbolic execution (angr, KLEE, manticore), decompiler confusion (Hex-Rays, Ghidra), binary diffing (BinDiff, Diaphora), analisis firmware & kode ter-obfuscate (OLLVM, Tigress).
 - **Use when:** Gunakan saat menganalisis binary packed/ter-obfuscate, mengotomasi pipeline RE, atau menelusuri teknik APT-grade (Equation Group, Pegasus). Berbeda dari `chiper-binary-reverse` yang bersifat fundamental.
 
 ### `chiper-firmware-reverse`
@@ -863,6 +873,7 @@ The entries below describe the intended role inferred from each skill directory 
 - **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-social-engineering/SKILL.md`
 - **Function:** Analisis dan pengujian kesadaran serta risiko social engineering dalam konteks yang diizinkan.
 - **Use when:** Gunakan untuk evaluasi proses manusia dan kontrol anti-social-engineering.
+
 
 ### `chiper-skill-usage-forensics`
 - **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-skill-usage-forensics/SKILL.md`
