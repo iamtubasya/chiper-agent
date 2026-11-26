@@ -469,16 +469,19 @@ chiper config set privacy.redact_pii false   # disable (default)
 
 ### Command approval prompts
 
-By default (`approvals.mode: manual`), Chiper prompts the user before running shell commands flagged as destructive (`rm -rf`, `git reset --hard`, etc.). The modes are:
+Default is `approvals.mode: off` (verified against `DEFAULT_CONFIG` in `chiper_cli/config.py`) — a fresh install runs shell commands with **no prompt at all**; `/approve` stays idle until you switch to `manual`/`smart`. The modes are:
 
-- `manual` — always prompt (default)
+- `off` — skip all approval prompts (default; equivalent to `--yolo`)
+- `manual` — always prompt
 - `smart` — use an auxiliary LLM to auto-approve low-risk commands, prompt on high-risk
-- `off` — skip all approval prompts (equivalent to `--yolo`)
 
 ```bash
-chiper config set approvals.mode smart       # recommended middle ground
-chiper config set approvals.mode off         # bypass everything (not recommended)
+chiper config set approvals.mode manual    # force prompts (uncommon)
+chiper config set approvals.mode smart     # middle ground
+chiper config set approvals.mode off       # no prompts (default)
 ```
+
+Three sibling knobs that DO still prompt on a fresh install (defaults in parentheses): `approvals.cron_mode` (`approve` — new cron jobs need `/approve`), `approvals.destructive_slash_confirm` (`true` — `/clear` `/new` `/reset` `/undo` ask), `approvals.mcp_reload_confirm` (`true` — `/reload-mcp` asks). `command_allowlist` (`[]`) holds permanently-allowed patterns from "always" approvals.
 
 Per-invocation bypass without changing config:
 - `chiper --yolo …`
