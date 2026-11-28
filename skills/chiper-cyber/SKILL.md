@@ -1,7 +1,7 @@
 ---
 name: chiper-cyber
 description: 'Chiper-cyber router: SQL injection, XSS, IDOR, recon, OSINT, red team, sigma rule, deteksi
-  ancaman, forensik, cloud, AD — katalog 143 skill cyber + protokol baca SKILL.md'
+  ancaman, forensik, cloud, AD — katalog 144 skill cyber + protokol baca SKILL.md'
 origin: chiper-cyber
 version: 0.3.5
 compatibility:
@@ -189,6 +189,11 @@ The entries below describe the intended role inferred from each skill directory 
 - **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-security-bounty-hunter/SKILL.md`
 - **Function:** Alur kerja bug bounty: memahami program, scope, triage, validasi, bukti, dan pelaporan temuan.
 - **Use when:** Gunakan saat mengerjakan program bug bounty yang memiliki aturan dan scope eksplisit.
+
+### `chiper-bb-methodology`
+- **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-bb-methodology/SKILL.md`
+- **Function:** Metodologi berburu: 5-phase non-linear workflow (scope → recon → map → find → prove → report) + critical-thinking framework (developer psychology, anomaly detection, What-If) + discipline rules anti false-positive; routing dipetakan ke sub-skill & playbook pack ini (`guides/`, `payloads.md`, `test-cases.md`).
+- **Use when:** FALLBACK ONLY — saat tidak ada sub-skill `chiper-*` spesifik yang cocok, atau operator minta gambaran workflow keseluruhan / "di mana posisi kita dalam proses". Jangan dijadikan langkah wajib pertama dan jangan menimpa SOUL.md.
 
 ### `chiper-agentic-pentest`
 - **Location:** `$HOME/.chiper/skills/chiper-cyber/chiper-agentic-pentest/SKILL.md`
@@ -886,7 +891,7 @@ Use these routing patterns as starting points. They are examples, not fixed reci
 
 | User task / objective | Candidate skills to inspect |
 |---|---|
-| Web application bug bounty | `chiper-recon-osint`, `chiper-api-security`, `chiper-web-access-control`, `chiper-web-auth-bypass`, `chiper-web-sqli`, `chiper-web-xss`, `chiper-web-ssrf`, `chiper-web-xxe`, `chiper-web-deserialization`, `chiper-vulnerability-assessment`, `chiper-pentest-reporting` |
+| Web application bug bounty | `chiper-bb-methodology` (workflow fallback), `chiper-recon-osint`, `chiper-api-security`, `chiper-web-access-control`, `chiper-web-auth-bypass`, `chiper-web-sqli`, `chiper-web-xss`, `chiper-web-ssrf`, `chiper-web-xxe`, `chiper-web-deserialization`, `chiper-vulnerability-assessment`, `chiper-verification-loop`, `chiper-pentest-reporting` |
 | API security assessment | `chiper-api-security`, `chiper-web-access-control`, `chiper-web-auth-bypass`, `chiper-web-sqli`, `chiper-web-ssrf`, `chiper-vulnerability-assessment` |
 | Active Directory assessment | `chiper-ad-ldap-attack`, `chiper-ad-cs-abuse`, `chiper-identity-provider-attack`, `chiper-privilege-escalation`, `chiper-pam-privilege-attack`, `chiper-pentest-reporting` |
 | Cloud security assessment | `chiper-cloud-security`, `chiper-cloud-identity-attack`, `chiper-cloud-native-vuln-research`, `chiper-container-security`, `chiper-kubernetes-attack`, `chiper-cspm-casb-attack`, `chiper-security-misconfiguration` |
